@@ -1,12 +1,10 @@
 name: Build & Deploy zu All-Inkl
 
-# Trigger: jeder Push auf main + manuell aus dem Actions-Tab
 on:
   push:
     branches: [main]
   workflow_dispatch:
 
-# Nur ein Deploy gleichzeitig — verhindert Race Conditions auf dem SFTP-Target
 concurrency:
   group: deploy-production
   cancel-in-progress: false
@@ -15,61 +13,31 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     timeout-minutes: 10
-
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Node 20 Setup
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
-
-      - name: Dependencies installieren
-        run: npm ci
-
-      - name: Astro bauen
-        run: npm run build
-        # outDir ist in astro.config.mjs auf /tmp/astro-dist gesetzt.
-
-      - name: Build-Verzeichnis prüfen
+      - run: npm ci
+      - run: npm run build
+      - name: Check build dir
         run: |
-          if [ ! -d /tmp/astro-dist ]; then
-            echo "::error::/tmp/astro-dist existiert nicht — Astro-Build ist fehlgeschlagen"
-            exit 1
-          fi
-          echo "Generated files: $(find /tmp/astro-dist -type f | wc -l)"
-
-      - name: Deploy via SFTP (LFTP)
+          test -d /tmp/astro-dist || (echo Build failed; exit 1)
+          echo Files: $(find /tmp/astro-dist -type f | wc -l)
+      - name: Deploy via lftp + sshpass
         env:
-          SSH_HOST: ${{ secrets.SSH_HOST }}
-          SSH_USER: ${{ secrets.SSH_USER }}
-          SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
-          REMOTE_PATH: /www/htdocs/w0202caa/2fox4
+          H: ${{ secrets.SSH_HOST }}
+          U: ${{ secrets.SSH_USER }}
+          P: ${{ secrets.SSH_PASSWORD }}
+          SSHPASS: ${{ secrets.SSH_PASSWORD }}
+          R: /www/htdocs/w0202caa/2fox4
         run: |
-          sudo apt-get update -qq && sudo apt-get install -y -qq lftp
-          lftp -u "$SSH_USER","$SSH_PASSWORD" -e "
-            set sftp:auto-confirm yes;
-            set net:max-retries 3;
-            set net:reconnect-interval-base 5;
-            mirror --reverse --delete --verbose=1 \
-              --exclude-glob='.htaccess' \
-              --exclude-glob='kontakt.config.php' \
-              --exclude-glob='lib/' \
-              --exclude-glob='_archive-*/' \
-              --exclude-glob='dev/' \
-              --exclude-glob='akquise-system/' \
-              --exclude-glob='reviews/cache/' \
-              /tmp/astro-dist/ $REMOTE_PATH/;
-            bye
-          " sftp://$SSH_HOST
-
-      - name: Smoke-Test (HTTP 200 auf Homepage)
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq lftp sshpass
+          lftp -e "set sftp:auto-confirm yes; set sftp:connect-program 'sshpass -e ssh -a -x -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'; open -u '$U','$P' sftp://$H; mirror -R --delete -v --exclude-glob='.htaccess' --exclude-glob='kontakt.config.php' --exclude-glob='lib/' --exclude-glob='_archive-*/' --exclude-glob='dev/' --exclude-glob='akquise-system/' --exclude-glob='reviews/cache/' /tmp/astro-dist/ $R/; bye"
+      - name: Smoke test
         run: |
-          status=$(curl -s -o /dev/null -w "%{http_code}" https://www.2fox4.de/)
-          if [ "$status" != "200" ]; then
-            echo "::error::Homepage ist nicht erreichbar — HTTP $status"
-            exit 1
-          fi
-          echo "Homepage liefert HTTP 200 ✓"
+          s=$(curl -s -o /dev/null -w '%{http_code}' https://www.2fox4.de/)
+          [ "$s" = '200' ] || (echo Homepage not OK: $s; exit 1)
+          echo OK
