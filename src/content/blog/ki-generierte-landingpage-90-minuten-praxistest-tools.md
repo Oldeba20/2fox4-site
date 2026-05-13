@@ -3,7 +3,7 @@ title: "Deine erste KI-generierte Landingpage in 90 Minuten: Ein ehrlicher Praxi
 date: 2026-05-13
 description: "KI Landingpage erstellen in 90 Minuten – wir testen 4 Tools ehrlich im Vergleich. Welches Tool überzeugt wirklich? Jetzt Ergebnisse entdecken!"
 cover:
-  src: "/uploads/blog/ki-generierte-landingpage-90-minuten-praxistest-tools/01.png"
+  src: "/uploads/blog/ki-generierte-landingpage-90-minuten-praxistest-tools/01.webp"
   alt: "KI Landingpage erstellen – Laptop mit moderner Landing Page auf dem Bildschirm im professionellen Workspace"
 categories:
   - ki
