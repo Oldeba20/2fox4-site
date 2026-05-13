@@ -117,6 +117,11 @@ function mdToPost(entry: {
 /**
  * Alle Posts — gemerged aus WP-Cache und Markdown-Collection.
  * MD gewinnt bei Slug-Konflikt; draft:true wird ausgeschlossen.
+ *
+ * Scheduled Publishing: Posts mit einem `date` in der Zukunft werden
+ * herausgefiltert (Build-Zeit-Filter). Sie liegen im Repo, sind aber nicht
+ * im fertigen Build enthalten. Ein nightly GitHub-Actions-Cron baut die
+ * Site neu, sodass Posts an ihrem Veröffentlichungs-Datum live gehen.
  */
 export async function getAllPosts(): Promise<WPPost[]> {
   const mdEntries = await getCollection(
@@ -129,11 +134,18 @@ export async function getAllPosts(): Promise<WPPost[]> {
   const wpFiltered = cache.posts.filter((p) => !mdSlugs.has(p.slug));
   const merged = [...mdPosts, ...wpFiltered];
 
+  // Scheduled Publishing: Posts mit Datum in der Zukunft ausschließen.
+  // Vergleich auf Tagesebene (00:00 lokal) — wer „1. Juni" eingibt, geht
+  // ab Tagesbeginn 1. Juni live (sobald der nächste Build läuft).
+  const now = new Date();
+  now.setHours(23, 59, 59, 999); // Ende „heute" — ein für heute gesetztes Datum gilt sofort
+  const published = merged.filter((p) => new Date(p.date).getTime() <= now.getTime());
+
   // Neueste zuerst
-  merged.sort(
+  published.sort(
     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
   );
-  return merged;
+  return published;
 }
 
 /**
