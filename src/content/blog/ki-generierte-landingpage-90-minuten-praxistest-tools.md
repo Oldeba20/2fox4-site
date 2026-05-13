@@ -395,25 +395,45 @@ Meine klare Empfehlung für den Einstieg: Nutze ChatGPT für die Texte, Framer f
 
  
 
-DETAILS_0
+<details><summary>Kann ich wirklich in 90 Minuten eine professionelle Landingpage mit KI erstellen?</summary>
+<p>Ja, eine funktionale Seite ist in 90 Minuten möglich – aber „professionell" und „launch-ready" sind zwei verschiedene Dinge. Plane für eine wirklich überzeugend optimierte Seite eher 3 bis 4 Stunden ein, inklusive Texte, Testing und SEO-Basics.</p>
+</details>
 
-DETAILS_1
+<details><summary>Welches KI-Tool ist das beste, um eine Landingpage zu erstellen?</summary>
+<p>Es gibt kein universell bestes Tool. Für Einsteiger empfehle ich Framer AI für das Design kombiniert mit ChatGPT für die Texte. Für Profis mit Conversion-Fokus ist Unbounce trotz des höheren Preises die robusteste Lösung.</p>
+</details>
 
-DETAILS_2
+<details><summary>Was kostet es, eine KI Landingpage erstellen zu lassen?</summary>
+<p>Das hängt stark vom gewählten Tool ab. Framer AI hat einen kostenlosen Einstiegsplan, der für erste Versuche ausreicht. ChatGPT Plus kostet 20 Dollar monatlich. Unbounce beginnt bei etwa 99 Dollar pro Monat. Für den Einstieg kommst Du also mit 20 bis 35 Dollar pro Monat aus.</p>
+</details>
 
-DETAILS_3
+<details><summary>Brauche ich Programmierkenntnisse, um mit KI eine Landingpage zu bauen?</summary>
+<p>Nein. Tools wie Framer AI, Durable und Unbounce sind vollständig No-Code. Wenn Du allerdings ChatGPT für Texte und einen eigenständigen Builder wie Webflow kombinierst, können grundlegende HTML-Kenntnisse die Qualität deutlich verbessern.</p>
+</details>
 
-DETAILS_4
+<details><summary>Wie gut sind die Texte, die KI-Tools für Landingpages generieren?</summary>
+<p>Das hängt stark vom Tool und Deinem Prompt ab. Integrierte Texte in Design-Buildern wie Framer oder Durable sind oft zu generisch. ChatGPT hingegen kann mit einem guten, zielgruppenspezifischen Prompt konversionstarke Texte liefern, die mit guten Copywritern mithalten können.</p>
+</details>
 
-DETAILS_5
+<details><summary>Wie SEO-freundlich sind KI-generierte Landingpages?</summary>
+<p>Die meisten Tools kümmern sich kaum automatisch um SEO. Du musst Meta-Tags, Alt-Texte und strukturierte Daten meist manuell hinzufügen. Plane dafür extra Zeit ein, wenn organischer Traffic ein Ziel ist.</p>
+</details>
 
-DETAILS_6
+<details><summary>Kann ich eine KI-Landingpage für Google Ads oder Meta Ads nutzen?</summary>
+<p>Ja, absolut. Wichtig ist, dass die Landingpage zu Deiner Anzeige passt (Message Match) und schnell lädt. Prüfe die Core Web Vitals Deiner KI-generierten Seite mit Google PageSpeed Insights, bevor Du Traffic draufschickst.</p>
+</details>
 
-DETAILS_7
+<details><summary>Wie viel manuelle Nacharbeit ist bei KI-generierten Landingpages nötig?</summary>
+<p>Plane mindestens 30 Prozent der Gesamtzeit für Überarbeitung ein. Das betrifft vor allem: Texte auf Deine Zielgruppe anpassen, Bilder durch eigene ersetzen, Formular-Logik prüfen, mobile Darstellung testen und SEO-Basics ergänzen.</p>
+</details>
 
-DETAILS_8
+<details><summary>Was ist der häufigste Fehler beim KI Landingpage erstellen?</summary>
+<p>Der häufigste Fehler ist, die generierte Seite ohne Anpassung zu veröffentlichen. Generische KI-Texte und Standard-Templates konvertieren schlecht. Investiere die Zeit, die Du durch KI sparst, in spezifische Anpassungen – das ist der eigentliche Wettbewerbsvorteil.</p>
+</details>
 
-DETAILS_9
+<details><summary>Kann KI auch beim A/B-Testing von Landingpages helfen?</summary>
+<p>Ja. Unbounce hat native A/B-Testing-Funktionen mit KI-Unterstützung. Aber auch ohne spezialisierte Tools kannst Du ChatGPT nutzen, um mehrere Headline-Varianten zu generieren und diese dann mit Tools wie Google Optimize oder VWO zu testen.</p>
+</details>
 
  
  
