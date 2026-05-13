@@ -1,0 +1,74 @@
+---
+/**
+ * ProcessSection — vier nummerierte Schritte + Code-Block mit Ergebnis-Werten.
+ * Sektion mit eigenem Hintergrund (bg-elevated) zur visuellen Trennung.
+ */
+const steps = [
+  {
+    title: "Erstgespräch & Analyse",
+    text: "Kostenlos, unverbindlich, 30 Minuten. Wir schauen uns deine aktuelle Sichtbarkeit an und identifizieren die größten Hebel.",
+  },
+  {
+    title: "Konzept & Design",
+    text: "Wir entwerfen Struktur, Look und Inhaltsstrategie auf Basis deiner Zielgruppe und der Wettbewerbsanalyse.",
+  },
+  {
+    title: "Umsetzung & SEO",
+    text: "Saubere Technik, Schema.org-Markup, lokale Auffindbarkeit. Direkt vom ersten Tag SEO-fertig.",
+  },
+  {
+    title: "Launch & Wachstum",
+    text: "Nach dem Go-Live kümmern wir uns auf Wunsch um Wartung, Content und kontinuierliche Optimierung.",
+  },
+];
+---
+
+<section id="prozess" class="border-y border-[var(--color-border)] bg-[var(--color-bg-elevated)] py-24">
+  <div class="container-content">
+    <div class="grid gap-16 lg:grid-cols-2 items-center">
+      <div>
+        <div class="mb-4 text-xs uppercase tracking-[0.15em] text-[var(--color-accent)]">
+          So arbeiten wir
+        </div>
+        <h2 class="mb-12 text-[clamp(32px,4vw,48px)] font-bold tracking-[-0.03em] leading-[1.1] max-w-[720px]">
+          Vom ersten Gespräch bis zum Launch in vier Schritten.
+        </h2>
+        <div class="flex flex-col gap-5">
+          {steps.map((step, i) => (
+            <div class="flex gap-4 rounded-[10px] border border-[var(--color-border)] bg-black/20 p-5">
+              <div class="flex-shrink-0 flex h-7 w-7 items-center justify-center rounded-full bg-[var(--color-accent-soft)] text-[13px] font-semibold text-[var(--color-accent)]">
+                {i + 1}
+              </div>
+              <div>
+                <h4 class="mb-1 text-[15px] font-semibold">{step.title}</h4>
+                <p class="text-sm leading-relaxed text-[var(--color-text-muted)]">{step.text}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div class="rounded-xl border border-[var(--color-border)] bg-[#050505] p-5 font-mono text-[13px] leading-[1.8] text-[#e0e0e0]">
+        <div class="mb-4 flex gap-1.5 border-b border-[var(--color-border)] pb-3">
+          <span class="block h-2.5 w-2.5 rounded-full bg-[#ff5f56]"></span>
+          <span class="block h-2.5 w-2.5 rounded-full bg-[#ffbd2e]"></span>
+          <span class="block h-2.5 w-2.5 rounded-full bg-[#27c93f]"></span>
+        </div>
+<pre class="m-0 font-mono text-[13px] leading-[1.8]"><span class="text-[#666]"># Deine Website nach dem Relaunch</span>
+{`{`}
+  <span class="text-[var(--color-teal)]">"performance"</span>: <span class="text-[var(--color-accent)]">"98 / 100"</span>,
+  <span class="text-[var(--color-teal)]">"seo"</span>: <span class="text-[var(--color-accent)]">"100 / 100"</span>,
+  <span class="text-[var(--color-teal)]">"accessibility"</span>: <span class="text-[var(--color-accent)]">"96 / 100"</span>,
+  <span class="text-[var(--color-teal)]">"ladezeit"</span>: <span class="text-[#fbbf24]">0.6</span>,
+  <span class="text-[var(--color-teal)]">"local_business_schema"</span>: <span class="text-[var(--color-accent)]">true</span>,
+  <span class="text-[var(--color-teal)]">"keywords_top10"</span>: <span class="text-[#fbbf24]">47</span>,
+  <span class="text-[var(--color-teal)]">"region"</span>: [
+    <span class="text-[var(--color-accent)]">"Stadthagen"</span>,
+    <span class="text-[var(--color-accent)]">"Bückeburg"</span>,
+    <span class="text-[var(--color-accent)]">"Wunstorf"</span>
+  ]
+{`}`}</pre>
+      </div>
+    </div>
+  </div>
+</section>

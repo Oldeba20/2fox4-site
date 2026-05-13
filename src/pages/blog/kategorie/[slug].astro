@@ -1,0 +1,129 @@
+---
+/**
+ * Kategorie-Seiten: /blog/kategorie/[slug]/
+ * Listet alle Posts einer Kategorie.
+ */
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../../components/Breadcrumb.astro";
+import CTASection from "../../../components/CTASection.astro";
+import { getAllPosts, getAllCategories, type WPCategory, type WPPost } from "../../../lib/wp";
+import { breadcrumbSchema } from "../../../lib/schema";
+
+export async function getStaticPaths() {
+  const [categories, posts] = await Promise.all([
+    getAllCategories(),
+    getAllPosts(),
+  ]);
+
+  return categories
+    .filter((c) => c.count > 0)
+    .map((cat) => ({
+      params: { slug: cat.slug },
+      props: {
+        category: cat,
+        posts: posts
+          .filter((p) => p.categorySlugs.includes(cat.slug))
+          .sort(
+            (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+          ),
+      },
+    }));
+}
+
+interface Props {
+  category: WPCategory;
+  posts: WPPost[];
+}
+
+const { category, posts } = Astro.props;
+
+const title = `${category.name} — Blog-Kategorie · 2FOX4`;
+const description = category.description
+  ? category.description.slice(0, 160)
+  : `Alle Blog-Beiträge aus der Kategorie ${category.name} im 2FOX4-Blog.`;
+
+const schema = breadcrumbSchema([
+  { name: "Start", url: "/" },
+  { name: "Blog", url: "/blog/" },
+  { name: category.name, url: `/blog/kategorie/${category.slug}/` },
+]);
+
+const dateFmt = (d: string) =>
+  new Date(d).toLocaleDateString("de-DE", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonicalPath={`/blog/kategorie/${category.slug}/`}
+  noindex={false}
+  schema={schema}
+>
+  <Breadcrumb
+    crumbs={[
+      { label: "Start", href: "/" },
+      { label: "Blog", href: "/blog/" },
+      { label: category.name },
+    ]}
+  />
+
+  <section class="border-b border-[var(--color-border)] pt-16 pb-10">
+    <div class="container-content">
+      <div class="mb-4 text-xs uppercase tracking-[0.16em] text-[var(--color-accent)]">
+        Kategorie · {posts.length} Beiträge
+      </div>
+      <h1 class="mb-5 max-w-[820px] text-[clamp(36px,5vw,56px)] font-bold tracking-[-0.04em] leading-[1.1]">
+        <span class="text-gradient-light">{category.name}</span>
+      </h1>
+      {category.description && (
+        <p class="max-w-[680px] text-lg text-[var(--color-text-muted)]" set:html={category.description} />
+      )}
+      <p class="mt-4">
+        <a href="/blog/" class="text-[var(--color-accent)] text-sm">
+          ← Zurück zum Blog
+        </a>
+      </p>
+    </div>
+  </section>
+
+  <section class="py-12">
+    <div class="container-content">
+      <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {posts.map((post) => (
+          <a
+            href={`/blog/${post.slug}/`}
+            class="group flex flex-col overflow-hidden rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-card)] transition-all hover:border-[var(--color-border-strong)] hover:-translate-y-0.5"
+          >
+            {post.featuredImage && (
+              <div class="aspect-[16/10] overflow-hidden">
+                <img
+                  src={post.featuredImage.src}
+                  alt={post.featuredImage.alt}
+                  class="h-full w-full object-cover transition-transform group-hover:scale-[1.03]"
+                  loading="lazy"
+                />
+              </div>
+            )}
+            <div class="flex flex-col p-6">
+              <h2 class="mb-2 text-[18px] font-semibold leading-[1.3] tracking-[-0.01em]">
+                {post.title}
+              </h2>
+              <p class="mb-4 flex-1 text-[14px] leading-[1.6] text-[var(--color-text-muted)]">
+                {post.excerpt.slice(0, 140)}…
+              </p>
+              <div class="text-[12px] text-[var(--color-text-faint)]">
+                {dateFmt(post.date)}
+              </div>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <CTASection />
+</BaseLayout>

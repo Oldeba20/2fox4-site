@@ -1,0 +1,114 @@
+---
+/**
+ * AuroraSphere — die animierte 3D-Drahtgitter-Kugel im Hero.
+ * Three.js wird hier client-seitig nachgeladen, damit das HTML
+ * weiterhin schnell ausgeliefert wird (kein Render-Blocking).
+ */
+---
+
+<div class="relative w-full h-[360px] flex items-center justify-center">
+  <div
+    aria-hidden="true"
+    class="absolute w-[400px] h-[400px] pointer-events-none"
+    style="background: radial-gradient(circle, var(--color-accent-soft) 0%, transparent 60%); filter: blur(40px);"
+  >
+  </div>
+  <canvas id="aurora-canvas" class="w-[360px] h-[360px]"></canvas>
+</div>
+
+<script>
+  // Three.js dynamisch laden — kein Bundle-Bloat, wenn der Besucher die
+  // Seite nur überfliegt. Wir laden, sobald der Canvas existiert.
+  const init = async () => {
+    const canvas = document.getElementById("aurora-canvas") as HTMLCanvasElement | null;
+    if (!canvas) return;
+
+    // @ts-ignore – Three wird per CDN als globales Objekt geladen
+    const THREE = await new Promise<any>((resolve) => {
+      const s = document.createElement("script");
+      s.src = "https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js";
+      s.onload = () => resolve((window as any).THREE);
+      document.head.appendChild(s);
+    });
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 100);
+    camera.position.z = 4.5;
+
+    const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.setSize(360, 360, false);
+
+    const geo = new THREE.IcosahedronGeometry(1.4, 4);
+    const mat = new THREE.ShaderMaterial({
+      uniforms: { uTime: { value: 0 } },
+      wireframe: true,
+      vertexShader: `
+        varying vec3 vPos;
+        uniform float uTime;
+        void main() {
+          vec3 p = position;
+          float w = sin(p.x * 3.0 + uTime) * cos(p.y * 3.0 - uTime * 0.7) * 0.08;
+          p += normalize(position) * w;
+          vPos = p;
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(p, 1.0);
+        }`,
+      fragmentShader: `
+        varying vec3 vPos;
+        uniform float uTime;
+        void main() {
+          float h = (sin(vPos.x * 2.0 + uTime) + cos(vPos.y * 2.0 - uTime) + sin(vPos.z * 2.0 + uTime * 0.5)) / 3.0;
+          vec3 a = vec3(1.0, 0.42, 0.21);
+          vec3 b = vec3(0.18, 0.83, 0.75);
+          vec3 c = mix(a, b, 0.5 + 0.5 * h);
+          gl_FragColor = vec4(c, 0.85);
+        }`,
+    });
+    const mesh = new THREE.Mesh(geo, mat);
+    scene.add(mesh);
+
+    const mat2 = new THREE.ShaderMaterial({
+      uniforms: { uTime: { value: 0 } },
+      wireframe: true,
+      transparent: true,
+      vertexShader: `
+        uniform float uTime;
+        void main() {
+          vec3 p = position * 0.62;
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(p, 1.0);
+        }`,
+      fragmentShader: `
+        void main() {
+          gl_FragColor = vec4(1.0, 1.0, 1.0, 0.25);
+        }`,
+    });
+    const inner = new THREE.Mesh(new THREE.IcosahedronGeometry(1.4, 2), mat2);
+    scene.add(inner);
+
+    let mx = 0, my = 0;
+    window.addEventListener("mousemove", (e) => {
+      const rect = canvas.getBoundingClientRect();
+      mx = (e.clientX - rect.left - rect.width / 2) / rect.width;
+      my = (e.clientY - rect.top - rect.height / 2) / rect.height;
+    });
+
+    let t = 0;
+    const animate = () => {
+      t += 0.012;
+      mat.uniforms.uTime.value = t;
+      mat2.uniforms.uTime.value = t;
+      mesh.rotation.y += 0.005 + (mx * 0.6 - mesh.rotation.y * 0.01) * 0.008;
+      mesh.rotation.x = Math.sin(t * 0.4) * 0.2 + (-my * 0.3 - mesh.rotation.x * 0.01) * 0.008;
+      inner.rotation.y -= 0.008;
+      inner.rotation.x += 0.005;
+      renderer.render(scene, camera);
+      requestAnimationFrame(animate);
+    };
+    animate();
+  };
+
+  // Reduzierte Bewegung respektieren (Accessibility)
+  if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    init();
+  }
+</script>

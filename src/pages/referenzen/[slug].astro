@@ -1,0 +1,184 @@
+---
+/**
+ * Case-Study-Detail-Seite einer Referenz.
+ * Wird nur für Referenzen mit `featured: true` UND vorhandener `story`
+ * generiert. Alle anderen Refs bleiben Schaufenster-Tiles auf der Übersicht.
+ *
+ * Inhalte kommen aus references.ts → story:
+ *   - challenge / solution / outcome
+ *   - scope[] als Leistungs-Tags
+ *   - extraImages[] für Flyer, Messestand, Detail-Bilder etc.
+ *   - liveUrl für „Zur Live-Seite"-Button
+ */
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import CTASection from "../../components/CTASection.astro";
+import MonitorCard from "../../components/MonitorCard.astro";
+import { featuredReferences, type Reference } from "../../data/references";
+import { breadcrumbSchema } from "../../lib/schema";
+
+export async function getStaticPaths() {
+  return featuredReferences().map((ref) => ({
+    params: { slug: ref.slug },
+    props: { ref },
+  }));
+}
+
+interface Props {
+  ref: Reference;
+}
+
+const { ref } = Astro.props;
+const story = ref.story!; // garantiert da, weil featured + story Filter in featuredReferences()
+
+const title = `${ref.title} — Case Study | 2FOX4`;
+const description = story.challenge;
+
+const schema = breadcrumbSchema([
+  { name: "Start", url: "/" },
+  { name: "Referenzen", url: "/referenzen/" },
+  { name: ref.title, url: `/referenzen/${ref.slug}/` },
+]);
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonicalPath={`/referenzen/${ref.slug}/`}
+  ogImage={ref.image}
+  noindex={false}
+  schema={schema}
+>
+  <Breadcrumb
+    crumbs={[
+      { label: "Start", href: "/" },
+      { label: "Referenzen", href: "/referenzen/" },
+      { label: ref.title },
+    ]}
+  />
+
+  {/* Hero — Titel, Meta, Hauptscreenshot */}
+  <section class="border-b border-[var(--color-border)] pt-12 pb-16">
+    <div class="container-content">
+      <div class="grid gap-10 lg:grid-cols-[1fr_1.2fr] items-center">
+        <div>
+          <div class="mb-3 text-xs uppercase tracking-[0.16em] text-[var(--color-accent)]">
+            Case Study · {ref.date}
+          </div>
+          <h1 class="mb-4 text-[clamp(32px,4.5vw,52px)] font-bold tracking-[-0.03em] leading-[1.1]">
+            {ref.title}
+          </h1>
+          <div class="mb-6 text-[15px] text-[var(--color-text-muted)]">
+            {ref.meta} · <span class="text-[var(--color-text-faint)]">{ref.domain}</span>
+          </div>
+
+          {story.scope && story.scope.length > 0 && (
+            <div class="mb-6 flex flex-wrap gap-2">
+              {story.scope.map((item) => (
+                <span class="rounded-full bg-[var(--color-accent-soft)] px-3 py-1 text-[12px] text-[var(--color-accent)]">
+                  {item}
+                </span>
+              ))}
+            </div>
+          )}
+
+          {story.liveUrl && (
+            <a
+              href={story.liveUrl}
+              target="_blank"
+              rel="noopener nofollow"
+              class="inline-flex items-center gap-2 rounded-lg bg-white px-5 py-3 text-[15px] font-medium text-black transition-all hover:-translate-y-px"
+            >
+              Live-Seite ansehen
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M7 17L17 7M17 7H8M17 7v9" />
+              </svg>
+            </a>
+          )}
+        </div>
+
+        <div>
+          <MonitorCard url={ref.domain} image={ref.image} variant="default">
+            <span class="sr-only">{ref.title}</span>
+          </MonitorCard>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* Story */}
+  <article class="py-16">
+    <div class="container-content max-w-[820px]">
+      <section class="mb-12">
+        <div class="mb-3 text-xs uppercase tracking-[0.16em] text-[var(--color-accent)]">
+          Ausgangslage
+        </div>
+        <h2 class="mb-4 text-[clamp(24px,3vw,34px)] font-bold tracking-[-0.02em] leading-[1.2]">
+          Wo das Projekt begann.
+        </h2>
+        <p class="text-[17px] leading-[1.7] text-[var(--color-text-muted)]">
+          {story.challenge}
+        </p>
+      </section>
+
+      <section class="mb-12">
+        <div class="mb-3 text-xs uppercase tracking-[0.16em] text-[var(--color-accent)]">
+          Unsere Lösung
+        </div>
+        <h2 class="mb-4 text-[clamp(24px,3vw,34px)] font-bold tracking-[-0.02em] leading-[1.2]">
+          Wie wir es umgesetzt haben.
+        </h2>
+        <p class="text-[17px] leading-[1.7] text-[var(--color-text-muted)]">
+          {story.solution}
+        </p>
+      </section>
+
+      {story.outcome && (
+        <section class="mb-12">
+          <div class="mb-3 text-xs uppercase tracking-[0.16em] text-[var(--color-accent)]">
+            Ergebnis
+          </div>
+          <h2 class="mb-4 text-[clamp(24px,3vw,34px)] font-bold tracking-[-0.02em] leading-[1.2]">
+            Was dabei rumgekommen ist.
+          </h2>
+          <p class="text-[17px] leading-[1.7] text-[var(--color-text-muted)]">
+            {story.outcome}
+          </p>
+        </section>
+      )}
+    </div>
+  </article>
+
+  {/* Zusätzliche Bilder — Flyer, Messestand, Details */}
+  {story.extraImages && story.extraImages.length > 0 && (
+    <section class="border-y border-[var(--color-border)] bg-[var(--color-bg-elevated)] py-16">
+      <div class="container-content">
+        <div class="mb-8 text-xs uppercase tracking-[0.16em] text-[var(--color-accent)]">
+          Mehr aus dem Projekt
+        </div>
+        <div class="grid gap-6 md:grid-cols-2">
+          {story.extraImages.map((img) => (
+            <figure class="flex flex-col gap-3">
+              <img
+                src={img.src}
+                alt={img.alt}
+                loading="lazy"
+                class="w-full rounded-xl border border-[var(--color-border)]"
+              />
+              {img.caption && (
+                <figcaption class="text-[13px] text-[var(--color-text-faint)]">
+                  {img.caption}
+                </figcaption>
+              )}
+            </figure>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <CTASection
+    title="Dein Projekt das nächste hier?"
+    text="30 Minuten Erstgespräch, kostenlos und unverbindlich. Wir schauen gemeinsam, was sich für dich realistisch umsetzen lässt."
+  />
+</BaseLayout>

@@ -1,0 +1,206 @@
+---
+/**
+ * /regional/ — Übersicht aller Stadt-Landingpages.
+ * Eine schlichte Listenseite, die als SEO-Hub für die regionalen Unterseiten dient.
+ */
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import CTASection from "../../components/CTASection.astro";
+import { cities } from "../../data/cities";
+import { breadcrumbSchema } from "../../lib/schema";
+
+const title = "Webagentur für 9 Städte im Schaumburger Land | 2FOX4";
+const description =
+  "2FOX4 betreut Unternehmen in Stadthagen, Bückeburg, Wunstorf, Hameln, Rinteln, Minden, Nienburg, Bad Münder und Barsinghausen. Persönlich, regional, seit 2008.";
+
+const schema = breadcrumbSchema([
+  { name: "Start", url: "/" },
+  { name: "Regional", url: "/regional/" },
+]);
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonicalPath="/regional/"
+  noindex={false}
+  schema={schema}
+>
+  <Breadcrumb
+    crumbs={[
+      { label: "Start", href: "/" },
+      { label: "Regional" },
+    ]}
+  />
+
+  <section class="border-b border-[var(--color-border)] pt-22 pb-12">
+    <div class="container-content">
+      <div class="mb-4 text-xs uppercase tracking-[0.16em] text-[var(--color-accent)]">
+        Regional · 9 Städte
+      </div>
+      <h1 class="mb-5 max-w-[800px] text-[clamp(36px,5.5vw,64px)] font-bold tracking-[-0.04em] leading-[1.05]">
+        <span class="text-gradient-light">Webagentur für 9 Städte</span>
+        <span class="text-gradient-accent">im Schaumburger Land.</span>
+      </h1>
+      <p class="max-w-[640px] text-lg text-[var(--color-text-muted)]">
+        Unser Büro liegt in Sachsenhagen. Von dort betreuen wir Unternehmen
+        aus dem Schaumburger Land, dem Hannover-Umland und dem Weserbergland.
+        Für jede Stadt findest du hier eine dedizierte Seite mit lokalen
+        Referenzen und Antworten auf die häufigsten Fragen.
+      </p>
+    </div>
+  </section>
+
+  <section class="py-16">
+    <div class="container-content">
+      <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        {cities.map((city) => (
+          <a
+            href={`/${city.slug}/`}
+            class="group flex flex-col rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg-card)] p-7 transition-all hover:border-[var(--color-border-strong)] hover:-translate-y-0.5"
+          >
+            <div class="mb-3 text-xs uppercase tracking-[0.12em] text-[var(--color-text-faint)]">
+              {city.distance.km} km · {city.distance.note.split(",")[0]}
+            </div>
+            <h2 class="mb-2 text-[22px] font-semibold tracking-[-0.01em]">
+              Webdesigner für {city.name}
+            </h2>
+            <p class="mb-6 flex-1 text-sm leading-[1.6] text-[var(--color-text-muted)]">
+              {city.heroSub.split(".")[0]}.
+            </p>
+            <div class="inline-flex items-center gap-1.5 text-[13px] text-[var(--color-accent)] transition-all group-hover:gap-2.5">
+              Stadt-Seite öffnen
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  {/* Beratungs-Section: echte Menschen, persönliches Gespräch */}
+  <section class="border-t border-[var(--color-border)] bg-[var(--color-bg-elevated)] py-20">
+    <div class="container-content">
+      <div class="grid items-center gap-12 lg:grid-cols-[1fr_1.05fr] lg:gap-16">
+        {/* Foto links mit künstlerischem Cut-out */}
+        <div class="regional-photo-wrap order-2 lg:order-1">
+          <span class="regional-photo-glow" aria-hidden="true"></span>
+          <span class="regional-photo-dot" aria-hidden="true"></span>
+          <div class="regional-photo-frame">
+            <img
+              src="https://www.2fox4.de/wp-content/uploads/2026/05/oliver-beratung.jpg"
+              alt="Oliver Deppe von 2FOX4 berät eine Kundin und einen Kunden am Laptop — persönlich, vor Ort, mit echtem Blick auf die Zahlen."
+              width="1376"
+              height="768"
+              loading="lazy"
+              decoding="async"
+            />
+          </div>
+        </div>
+
+        {/* Text rechts */}
+        <div class="order-1 lg:order-2">
+          <div class="mb-3 text-xs uppercase tracking-[0.16em] text-[var(--color-accent)]">
+            Vor Ort, nicht nur online
+          </div>
+          <h2 class="mb-5 text-[clamp(28px,3.5vw,42px)] font-bold tracking-[-0.03em] leading-[1.1]">
+            Wir reden mit dir.<br />
+            <span class="text-gradient-accent">Nicht zu dir.</span>
+          </h2>
+          <p class="mb-5 text-[17px] leading-[1.7] text-[var(--color-text-muted)]">
+            Eine Website entsteht im Gespräch — nicht in einem Ticket-System.
+            Deshalb setzen wir uns mit dir an einen Tisch, hören zu, schauen
+            uns deine Zahlen an und überlegen gemeinsam, wo sich Aufwand
+            tatsächlich lohnt.
+          </p>
+          <p class="mb-8 text-[17px] leading-[1.7] text-[var(--color-text-muted)]">
+            Vor Ort in Sachsenhagen, bei dir im Büro oder per Videocall —
+            wie es für dich passt.
+          </p>
+          <a
+            href="/kontakt/"
+            class="inline-flex items-center gap-2 rounded-md bg-white px-5 py-3 text-[15px] font-medium text-black transition-all hover:bg-white/85 hover:-translate-y-px"
+          >
+            Termin vereinbaren
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <CTASection />
+</BaseLayout>
+
+<style is:global>
+  /* Beratungs-Foto mit künstlerischem Cut-out, anderes Form als der Hero */
+  .regional-photo-wrap {
+    position: relative;
+    width: 100%;
+    max-width: 560px;
+    margin: 0 auto;
+    aspect-ratio: 16 / 11;
+    isolation: isolate;
+  }
+  .regional-photo-frame {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    /* Andere Blob-Form als der Hero — bewusster Gegenakzent */
+    border-radius: 38% 62% 46% 54% / 56% 44% 60% 40%;
+    border: 1px solid var(--color-border-strong);
+    transform: rotate(1.5deg);
+    box-shadow:
+      0 30px 80px -20px rgba(0, 0, 0, 0.55),
+      0 0 0 1px rgba(255, 255, 255, 0.03) inset;
+    transition: transform 0.5s ease;
+  }
+  .regional-photo-frame:hover { transform: rotate(1.5deg) scale(1.02); }
+  .regional-photo-frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 50% 40%;
+    display: block;
+    transform: rotate(-1.5deg) scale(1.06);
+  }
+  /* Türkis-Glow links oben */
+  .regional-photo-glow {
+    position: absolute;
+    inset: -12% -18% -18% -12%;
+    background: radial-gradient(
+      circle at 70% 65%,
+      rgba(64, 224, 208, 0.30) 0%,
+      rgba(64, 224, 208, 0.0) 55%
+    );
+    filter: blur(34px);
+    z-index: -2;
+    pointer-events: none;
+  }
+  /* Orange-Akzent rechts oben */
+  .regional-photo-dot {
+    position: absolute;
+    left: -8%;
+    top: -6%;
+    width: 40%;
+    height: 40%;
+    background: radial-gradient(
+      circle,
+      rgba(255, 91, 31, 0.24) 0%,
+      rgba(255, 91, 31, 0.0) 65%
+    );
+    filter: blur(28px);
+    z-index: -1;
+    pointer-events: none;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .regional-photo-frame,
+    .regional-photo-frame:hover,
+    .regional-photo-frame img { transform: none; }
+  }
+</style>

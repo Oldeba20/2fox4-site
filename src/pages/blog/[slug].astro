@@ -1,0 +1,312 @@
+---
+/**
+ * Einzelner Blog-Beitrag.
+ * URLs: /blog/[slug]/ — same wie in WordPress, damit alle Backlinks erhalten bleiben.
+ *
+ * Achtung: Der Inhalt kommt mit `set:html` aus WordPress. Inline-Styles werden
+ * in `lib/wp.ts` entfernt. Custom Klassen aus WP werden NICHT gestylt — wir
+ * scopen den Beitragsinhalt über `.post-content` und stylen die wichtigsten
+ * HTML-Tags (h2, h3, p, a, ul, blockquote, img) zentral hier.
+ */
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import { getAllPosts, type WPPost } from "../../lib/wp";
+import { breadcrumbSchema } from "../../lib/schema";
+
+export async function getStaticPaths() {
+  const posts = await getAllPosts();
+  return posts.map((post) => ({
+    params: { slug: post.slug },
+    props: { post, allPosts: posts },
+  }));
+}
+
+interface Props {
+  post: WPPost;
+  allPosts: WPPost[];
+}
+
+const { post, allPosts } = Astro.props;
+
+// Datum formatieren
+const dateFormatted = new Date(post.date).toLocaleDateString("de-DE", {
+  day: "numeric",
+  month: "long",
+  year: "numeric",
+});
+
+/**
+ * Verwandte Beiträge ermitteln:
+ *   1) Posts mit mindestens einer gemeinsamen Kategorie zuerst
+ *   2) Davon mit höherem Title-Wort-Overlap weiter oben
+ *   3) Bei Gleichstand: neuere Posts zuerst
+ *   4) Fallback (zu wenig Treffer): mit den neuesten Posts auffüllen
+ */
+const STOP_WORDS = new Set([
+  "der","die","das","und","oder","aber","mit","von","zu","in","im","am","ein",
+  "eine","einen","einer","fuer","fur","für","auf","an","bei","ist","sind","wird",
+  "werden","wir","wir","du","sie","es","so","wie","was","wer","wann","wo","warum",
+  "the","and","or","of","to","in","on","at","is","are","was","were","for","with",
+]);
+const tokens = (s: string) =>
+  s.toLowerCase()
+    .replace(/[^\p{L}\p{N}\s]/gu, " ")
+    .split(/\s+/)
+    .filter((w) => w.length > 2 && !STOP_WORDS.has(w));
+
+const postTokens = new Set(tokens(post.title));
+const postCats = new Set(post.categorySlugs);
+
+const candidates = allPosts
+  .filter((p) => p.slug !== post.slug)
+  .map((p) => {
+    const sharedCats = p.categorySlugs.filter((c) => postCats.has(c)).length;
+    const pt = tokens(p.title);
+    const sharedTokens = pt.filter((t) => postTokens.has(t)).length;
+    return {
+      post: p,
+      score: sharedCats * 10 + sharedTokens,
+      date: new Date(p.date).getTime(),
+    };
+  })
+  .sort((a, b) => b.score - a.score || b.date - a.date);
+
+const relatedPosts = candidates.slice(0, 3).map((c) => c.post);
+
+// SEO: RankMath > Default
+const seoTitle = post.rankMath?.title || `${post.title} — 2FOX4 Blog`;
+const seoDescription =
+  post.rankMath?.description || post.excerpt || `Blogbeitrag von 2FOX4: ${post.title}`;
+
+const schema = [
+  breadcrumbSchema([
+    { name: "Start", url: "/" },
+    { name: "Blog", url: "/blog/" },
+    { name: post.title, url: `/blog/${post.slug}/` },
+  ]),
+  {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: post.title,
+    description: post.excerpt,
+    image: post.featuredImage?.src,
+    datePublished: post.date,
+    dateModified: post.modified,
+    author: {
+      "@type": "Organization",
+      name: "2FOX4 Websites and more",
+    },
+    publisher: {
+      "@type": "Organization",
+      name: "2FOX4 Websites and more",
+    },
+  },
+];
+---
+
+<BaseLayout
+  title={seoTitle}
+  description={seoDescription}
+  canonicalPath={`/blog/${post.slug}/`}
+  ogImage={post.featuredImage?.src}
+  noindex={false}
+  schema={schema}
+>
+  <Breadcrumb
+    crumbs={[
+      { label: "Start", href: "/" },
+      { label: "Blog", href: "/blog/" },
+      { label: post.title },
+    ]}
+  />
+
+  <article class="pt-8 pb-24">
+    <div class="container-content max-w-[820px]">
+      {post.categoryNames.length > 0 && (
+        <div class="mb-4 flex flex-wrap gap-2">
+          {post.categoryNames.map((name, i) => (
+            <a
+              href={`/blog/kategorie/${post.categorySlugs[i]}/`}
+              class="rounded-full bg-[var(--color-accent-soft)] px-3 py-1 text-[11px] uppercase tracking-[0.12em] text-[var(--color-accent)] transition-colors hover:bg-[var(--color-accent)] hover:text-black"
+            >
+              {name}
+            </a>
+          ))}
+        </div>
+      )}
+
+      <h1 class="mb-5 text-[clamp(32px,4.5vw,52px)] font-bold tracking-[-0.03em] leading-[1.1]">
+        {post.title}
+      </h1>
+
+      <div class="mb-10 flex items-center gap-3 text-sm text-[var(--color-text-muted)]">
+        <time datetime={post.date}>{dateFormatted}</time>
+      </div>
+
+      {post.featuredImage && (
+        <img
+          src={post.featuredImage.src}
+          alt={post.featuredImage.alt}
+          width={post.featuredImage.width}
+          height={post.featuredImage.height}
+          class="mb-12 w-full rounded-xl border border-[var(--color-border)]"
+          loading="eager"
+        />
+      )}
+
+      <div class="post-content" set:html={post.contentHtml} />
+    </div>
+  </article>
+
+  {/* Verwandte Beiträge */}
+  {relatedPosts.length > 0 && (
+    <section class="border-t border-[var(--color-border)] bg-[var(--color-bg-elevated)] py-16">
+      <div class="container-content">
+        <div class="mb-3 text-xs uppercase tracking-[0.16em] text-[var(--color-accent)]">
+          Passt dazu
+        </div>
+        <h2 class="mb-10 text-[clamp(24px,3vw,34px)] font-bold tracking-[-0.02em] leading-[1.2]">
+          Weiterlesen.
+        </h2>
+
+        <div class="grid gap-6 md:grid-cols-3">
+          {relatedPosts.map((rp) => (
+            <a
+              href={`/blog/${rp.slug}/`}
+              class="group flex flex-col overflow-hidden rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-card)] transition-all hover:border-[var(--color-border-strong)] hover:-translate-y-0.5"
+            >
+              {rp.featuredImage && (
+                <div class="aspect-[16/10] overflow-hidden">
+                  <img
+                    src={rp.featuredImage.src}
+                    alt={rp.featuredImage.alt}
+                    class="h-full w-full object-cover transition-transform group-hover:scale-[1.03]"
+                    loading="lazy"
+                  />
+                </div>
+              )}
+              <div class="flex flex-1 flex-col p-6">
+                {rp.categoryNames[0] && (
+                  <div class="mb-2 text-[11px] uppercase tracking-[0.12em] text-[var(--color-accent)]">
+                    {rp.categoryNames[0]}
+                  </div>
+                )}
+                <h3 class="mb-2 text-[17px] font-semibold leading-[1.3] tracking-[-0.01em]">
+                  {rp.title}
+                </h3>
+                <p class="mb-4 flex-1 text-[14px] leading-[1.6] text-[var(--color-text-muted)]">
+                  {rp.excerpt.slice(0, 130)}…
+                </p>
+                <div class="text-[12px] text-[var(--color-text-faint)]">
+                  {new Date(rp.date).toLocaleDateString("de-DE", {
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric",
+                  })}
+                </div>
+              </div>
+            </a>
+          ))}
+        </div>
+
+        <div class="mt-10 flex justify-center">
+          <a
+            href="/blog/"
+            class="inline-flex items-center gap-2 rounded-md bg-white px-6 py-3 text-[15px] font-medium text-black transition-all hover:bg-white/85 hover:-translate-y-px"
+          >
+            Weitere Blogbeiträge
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
+          </a>
+        </div>
+      </div>
+    </section>
+  )}
+</BaseLayout>
+
+<style is:global>
+  /* Scoped Styles für aus WordPress importierten Inhalt */
+  .post-content {
+    color: var(--color-text-muted);
+    font-size: 17px;
+    line-height: 1.75;
+  }
+  .post-content h1,
+  .post-content h2,
+  .post-content h3,
+  .post-content h4 {
+    color: var(--color-text);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin: 2em 0 0.6em;
+    line-height: 1.2;
+  }
+  .post-content h2 { font-size: 28px; }
+  .post-content h3 { font-size: 22px; }
+  .post-content h4 { font-size: 18px; }
+  .post-content p {
+    margin-bottom: 1.2em;
+  }
+  .post-content a {
+    color: var(--color-accent);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-thickness: 1px;
+  }
+  .post-content strong { color: var(--color-text); font-weight: 600; }
+  .post-content em { font-style: italic; }
+  .post-content ul, .post-content ol {
+    padding-left: 1.4em;
+    margin-bottom: 1.4em;
+  }
+  .post-content ul { list-style: disc; }
+  .post-content ol { list-style: decimal; }
+  .post-content li { margin-bottom: 0.4em; }
+  .post-content blockquote {
+    border-left: 3px solid var(--color-accent);
+    padding: 0.4em 0 0.4em 1.2em;
+    margin: 1.4em 0;
+    color: var(--color-text);
+    font-style: italic;
+  }
+  .post-content img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin: 1.6em 0;
+  }
+  .post-content figure { margin: 1.6em 0; }
+  .post-content figcaption {
+    font-size: 14px;
+    color: var(--color-text-faint);
+    margin-top: 0.4em;
+    text-align: center;
+  }
+  .post-content code {
+    background: var(--color-bg-elevated);
+    padding: 0.1em 0.4em;
+    border-radius: 4px;
+    font-family: var(--font-mono);
+    font-size: 0.92em;
+  }
+  .post-content pre {
+    background: var(--color-bg-elevated);
+    padding: 1em;
+    border-radius: 8px;
+    overflow-x: auto;
+    margin: 1.4em 0;
+    border: 1px solid var(--color-border);
+  }
+  .post-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.4em 0;
+  }
+  .post-content th, .post-content td {
+    padding: 0.6em 0.8em;
+    border-bottom: 1px solid var(--color-border);
+    text-align: left;
+  }
+  .post-content th { color: var(--color-text); font-weight: 600; }
+</style>

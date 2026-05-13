@@ -1,0 +1,238 @@
+---
+/**
+ * /blog/ — Übersicht aller Blog-Beiträge.
+ * Hero-Post + 3 Featured-Karten oben, dann alle restlichen Beiträge
+ * als kompakte Listing-Grid. Bei aktuell 125 Posts ist eine Pagination
+ * (noch) nicht nötig — die Liste lädt schnell und ist ein gutes Sitemap-Signal.
+ */
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import CTASection from "../../components/CTASection.astro";
+import { getAllPosts, getAllCategories } from "../../lib/wp";
+import { breadcrumbSchema } from "../../lib/schema";
+
+const allPosts = await getAllPosts();
+const categories = await getAllCategories();
+
+// Neueste zuerst — WP liefert das eigentlich schon so, aber sicher ist sicher
+const posts = [...allPosts].sort(
+  (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+);
+
+const heroPost = posts[0];
+const featuredPosts = posts.slice(1, 4);
+const gridPosts = posts.slice(4); // alle restlichen Posts
+
+const title = `Blog — 2FOX4 zu WordPress, SEO, KI und Webdesign (${posts.length} Beiträge)`;
+const description = `Aktuell ${posts.length} Beiträge zu WordPress, SEO, Künstlicher Intelligenz und Webdesign. Aus der Praxis einer Webagentur in Niedersachsen.`;
+
+const schema = breadcrumbSchema([
+  { name: "Start", url: "/" },
+  { name: "Blog", url: "/blog/" },
+]);
+
+const dateFmt = (d: string) =>
+  new Date(d).toLocaleDateString("de-DE", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonicalPath="/blog/"
+  noindex={false}
+  schema={schema}
+>
+  <Breadcrumb crumbs={[{ label: "Start", href: "/" }, { label: "Blog" }]} />
+
+  <section class="border-b border-[var(--color-border)] pt-16 pb-10">
+    <div class="container-content">
+      <div class="mb-4 text-xs uppercase tracking-[0.16em] text-[var(--color-accent)]">
+        Blog · {posts.length} Beiträge
+      </div>
+      <h1 class="mb-5 max-w-[820px] text-[clamp(36px,5.5vw,64px)] font-bold tracking-[-0.04em] leading-[1.05]">
+        <span class="text-gradient-light">Aus dem Maschinenraum</span>
+        <span class="text-gradient-accent">einer Webagentur.</span>
+      </h1>
+      <p class="max-w-[680px] text-lg text-[var(--color-text-muted)]">
+        Wir schreiben über WordPress, SEO, Künstliche Intelligenz und alles,
+        was uns gerade in der Praxis beschäftigt. Vieles davon ist mit Hilfe
+        unseres eigenen <a href="/wp-plugins/wp-blog-agent/" class="text-[var(--color-accent)] underline underline-offset-2">WP Blog Agents</a> entstanden — alles mit redaktionellem Schliff.
+      </p>
+    </div>
+  </section>
+
+  {/* Kategorie-Navigation */}
+  {categories.length > 0 && (
+    <section class="sticky top-16 z-40 border-b border-[var(--color-border)] bg-[rgba(10,10,10,0.85)] py-4 backdrop-blur-xl">
+      <div class="container-content">
+        <div class="flex flex-wrap gap-2">
+          <a href="/blog/" class="pill active">
+            Alle <span class="count">{posts.length}</span>
+          </a>
+          {categories
+            .filter((c) => c.count > 0)
+            .map((cat) => (
+              <a href={`/blog/kategorie/${cat.slug}/`} class="pill">
+                {cat.name} <span class="count">{cat.count}</span>
+              </a>
+            ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  {/* Hero-Post */}
+  {heroPost && (
+    <section class="py-12">
+      <div class="container-content">
+        <a
+          href={`/blog/${heroPost.slug}/`}
+          class="group grid gap-8 overflow-hidden rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg-card)] transition-all hover:border-[var(--color-border-strong)] md:grid-cols-2"
+        >
+          {heroPost.featuredImage && (
+            <div class="aspect-[16/10] overflow-hidden md:aspect-auto md:h-full">
+              <img
+                src={heroPost.featuredImage.src}
+                alt={heroPost.featuredImage.alt}
+                class="h-full w-full object-cover transition-transform group-hover:scale-[1.02]"
+                loading="eager"
+              />
+            </div>
+          )}
+          <div class="flex flex-col justify-center p-8 md:p-10">
+            {heroPost.categoryNames[0] && (
+              <div class="mb-3 text-xs uppercase tracking-[0.12em] text-[var(--color-accent)]">
+                {heroPost.categoryNames[0]}
+              </div>
+            )}
+            <h2 class="mb-3 text-[clamp(24px,3vw,34px)] font-bold tracking-[-0.02em] leading-[1.2]">
+              {heroPost.title}
+            </h2>
+            <p class="mb-5 text-[15px] leading-[1.65] text-[var(--color-text-muted)]">
+              {heroPost.excerpt}
+            </p>
+            <div class="text-[13px] text-[var(--color-text-faint)]">
+              {dateFmt(heroPost.date)}
+            </div>
+          </div>
+        </a>
+      </div>
+    </section>
+  )}
+
+  {/* 3 featured */}
+  {featuredPosts.length > 0 && (
+    <section class="pb-12">
+      <div class="container-content">
+        <div class="grid gap-6 md:grid-cols-3">
+          {featuredPosts.map((post) => (
+            <a
+              href={`/blog/${post.slug}/`}
+              class="group flex flex-col overflow-hidden rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-card)] transition-all hover:border-[var(--color-border-strong)] hover:-translate-y-0.5"
+            >
+              {post.featuredImage && (
+                <div class="aspect-[16/10] overflow-hidden">
+                  <img
+                    src={post.featuredImage.src}
+                    alt={post.featuredImage.alt}
+                    class="h-full w-full object-cover transition-transform group-hover:scale-[1.03]"
+                    loading="lazy"
+                  />
+                </div>
+              )}
+              <div class="flex flex-col p-6">
+                {post.categoryNames[0] && (
+                  <div class="mb-2 text-[11px] uppercase tracking-[0.12em] text-[var(--color-accent)]">
+                    {post.categoryNames[0]}
+                  </div>
+                )}
+                <h3 class="mb-2 text-[18px] font-semibold leading-[1.3] tracking-[-0.01em]">
+                  {post.title}
+                </h3>
+                <p class="mb-4 flex-1 text-[14px] leading-[1.6] text-[var(--color-text-muted)]">
+                  {post.excerpt.slice(0, 140)}…
+                </p>
+                <div class="text-[12px] text-[var(--color-text-faint)]">
+                  {dateFmt(post.date)}
+                </div>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  {/* Restliche Beiträge — kompaktes 3-Spalten-Listing */}
+  <section class="pb-20">
+    <div class="container-content">
+      <div class="grid gap-x-10 gap-y-3 md:grid-cols-2 lg:grid-cols-3">
+        {gridPosts.map((post) => (
+          <a
+            href={`/blog/${post.slug}/`}
+            class="group flex items-start gap-3 border-b border-[var(--color-border)] py-4 transition-colors hover:border-[var(--color-border-strong)]"
+          >
+            <div class="flex-1">
+              <h3 class="mb-1 text-[15px] font-semibold leading-[1.35] text-[var(--color-text)] transition-colors group-hover:text-[var(--color-accent)]">
+                {post.title}
+              </h3>
+              <div class="text-[12px] text-[var(--color-text-faint)]">
+                {dateFmt(post.date)}
+                {post.categoryNames[0] && (
+                  <span> · {post.categoryNames[0]}</span>
+                )}
+              </div>
+            </div>
+            <svg class="mt-1 h-4 w-4 flex-shrink-0 text-[var(--color-text-faint)] transition-all group-hover:text-[var(--color-accent)] group-hover:translate-x-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <CTASection />
+</BaseLayout>
+
+<style is:global>
+  /* Pill-Styles für die Blog-Kategorie-Navigation */
+  a.pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 14px;
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--color-text-muted);
+    background: transparent;
+    text-decoration: none;
+    transition: all 0.18s;
+  }
+  a.pill:hover {
+    border-color: var(--color-border-strong);
+    color: var(--color-text);
+  }
+  a.pill.active {
+    background: var(--color-text);
+    color: #000;
+    border-color: var(--color-text);
+  }
+  a.pill .count {
+    font-size: 11px;
+    background: rgba(255, 255, 255, 0.08);
+    padding: 1px 7px;
+    border-radius: 999px;
+    color: var(--color-text-faint);
+  }
+  a.pill.active .count {
+    background: rgba(0, 0, 0, 0.1);
+    color: rgba(0, 0, 0, 0.6);
+  }
+</style>

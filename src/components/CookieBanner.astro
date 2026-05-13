@@ -1,0 +1,442 @@
+---
+/**
+ * CookieBanner — schlanker DSGVO/TDDDG-konformer Eigenbau.
+ *
+ * Designprinzipien (Stand Mai 2026):
+ *   - Drei Buttons mit visuell gleichem Gewicht: "Alle akzeptieren",
+ *     "Auswahl speichern", "Alle ablehnen". Die viel kritisierte
+ *     Praxis, "Ablehnen" als Textlink zu verstecken, ist nach
+ *     EuGH-Rechtsprechung unzulässig.
+ *   - Notwendige Cookies werden ohne Consent gesetzt (§ 25 Abs. 2 TDDDG)
+ *     und können nicht abgewählt werden — der Toggle ist deaktiviert.
+ *   - Statistik/Marketing sind aktuell nur als Platzhalter angelegt
+ *     und initial leer (false). Sobald ein konkreter Dienst hinzu kommt
+ *     (z. B. Matomo), wird er in der `categories`-Definition ergänzt.
+ *   - Der Consent wird in localStorage gespeichert UND in einem Cookie
+ *     (`consent_v1`) — letzteres, damit Server-seitige Skripte später
+ *     auch reagieren könnten.
+ *   - Widerruf jederzeit per Footer-Link "Cookie-Einstellungen".
+ *
+ * JS-Größe: ca. 4 KB (minified, ungezippt).
+ */
+---
+
+<aside
+  id="cookie-banner"
+  class="cookie-banner"
+  hidden
+  aria-labelledby="cookie-banner-title"
+  role="region"
+>
+  <div class="cookie-banner__inner">
+    <div class="cookie-banner__intro">
+      <h2 id="cookie-banner-title" class="cookie-banner__title">
+        Cookies &amp; Datenschutz
+      </h2>
+      <p class="cookie-banner__text">
+        Wir verwenden nur technisch notwendige Cookies, damit diese Website
+        funktioniert. Optionale Statistik- oder Marketing-Cookies setzen wir
+        ausschließlich nach deiner Zustimmung. Mehr in unserer
+        <a href="/datenschutz/" data-legal="datenschutz">Datenschutzerklärung</a>.
+      </p>
+    </div>
+
+    {/* Toggle-Liste — initial collapsed, wird über "Auswahl ändern" eingeblendet */}
+    <div class="cookie-banner__categories" hidden id="cookie-categories">
+      <label class="cookie-cat">
+        <input type="checkbox" checked disabled data-cookie-cat="necessary" />
+        <div>
+          <div class="cookie-cat__title">
+            Notwendig <span class="cookie-cat__badge">Immer aktiv</span>
+          </div>
+          <div class="cookie-cat__desc">
+            Erforderlich für den Betrieb der Seite — z. B. die Speicherung
+            deiner Cookie-Auswahl selbst.
+          </div>
+        </div>
+      </label>
+
+      <label class="cookie-cat">
+        <input type="checkbox" data-cookie-cat="statistics" />
+        <div>
+          <div class="cookie-cat__title">Statistik</div>
+          <div class="cookie-cat__desc">
+            Anonymisierte Nutzungsanalyse, damit wir die Seite verbessern können.
+            Aktuell nicht im Einsatz — wird vorbereitet (z. B. Matomo
+            self-hosted).
+          </div>
+        </div>
+      </label>
+
+      <label class="cookie-cat">
+        <input type="checkbox" data-cookie-cat="marketing" />
+        <div>
+          <div class="cookie-cat__title">Marketing</div>
+          <div class="cookie-cat__desc">
+            Eingebettete Inhalte (z. B. Karten, Videos) und Tracking für
+            Werbe-Kampagnen. Aktuell nicht im Einsatz.
+          </div>
+        </div>
+      </label>
+    </div>
+
+    <div class="cookie-banner__actions">
+      <button type="button" class="cookie-btn cookie-btn--secondary" data-cookie-action="reject">
+        Alle ablehnen
+      </button>
+      <button type="button" class="cookie-btn cookie-btn--secondary" data-cookie-action="toggle-details">
+        Auswahl anpassen
+      </button>
+      <button type="button" class="cookie-btn cookie-btn--save" data-cookie-action="save" hidden>
+        Auswahl speichern
+      </button>
+      <button type="button" class="cookie-btn cookie-btn--primary" data-cookie-action="accept">
+        Alle akzeptieren
+      </button>
+    </div>
+  </div>
+</aside>
+
+<style is:global>
+  .cookie-banner {
+    position: fixed;
+    bottom: 16px;
+    left: 16px;
+    right: 16px;
+    z-index: 1000;
+    max-width: 720px;
+    margin: 0 auto;
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--color-border-strong);
+    border-radius: 14px;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);
+    animation: cookie-slide-up 0.3s ease-out;
+  }
+  @keyframes cookie-slide-up {
+    from {
+      transform: translateY(20px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  .cookie-banner__inner {
+    padding: 22px 24px;
+  }
+  .cookie-banner__title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--color-text);
+    margin-bottom: 6px;
+    letter-spacing: -0.01em;
+  }
+  .cookie-banner__text {
+    font-size: 13.5px;
+    line-height: 1.55;
+    color: var(--color-text-muted);
+    margin-bottom: 16px;
+  }
+  .cookie-banner__text a {
+    color: var(--color-accent);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .cookie-banner__categories {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 14px 0;
+    margin-bottom: 8px;
+    border-top: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-border);
+  }
+  .cookie-cat {
+    display: flex;
+    gap: 12px;
+    cursor: pointer;
+    align-items: flex-start;
+  }
+  .cookie-cat input {
+    margin-top: 4px;
+    width: 16px;
+    height: 16px;
+    accent-color: var(--color-accent);
+    cursor: pointer;
+  }
+  .cookie-cat input:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+  .cookie-cat__title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-text);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 2px;
+  }
+  .cookie-cat__badge {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    background: var(--color-accent-soft);
+    color: var(--color-accent);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: 500;
+  }
+  .cookie-cat__desc {
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--color-text-muted);
+  }
+
+  .cookie-banner__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+  }
+  .cookie-btn {
+    flex: 1;
+    min-width: 100px;
+    padding: 9px 14px;
+    border-radius: 8px;
+    font-size: 13.5px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s;
+    border: 1px solid transparent;
+  }
+  .cookie-btn--primary {
+    background: var(--color-text);
+    color: #000;
+  }
+  .cookie-btn--primary:hover {
+    transform: translateY(-1px);
+  }
+  .cookie-btn--save {
+    background: var(--color-accent);
+    color: #000;
+  }
+  .cookie-btn--save:hover {
+    transform: translateY(-1px);
+  }
+  .cookie-btn--secondary {
+    background: transparent;
+    color: var(--color-text-muted);
+    border-color: var(--color-border-strong);
+  }
+  .cookie-btn--secondary:hover {
+    color: var(--color-text);
+    background: var(--color-bg-card);
+  }
+
+  @media (max-width: 640px) {
+    .cookie-banner {
+      bottom: 0;
+      left: 0;
+      right: 0;
+      border-radius: 14px 14px 0 0;
+      border-left: none;
+      border-right: none;
+      border-bottom: none;
+    }
+    .cookie-banner__actions {
+      flex-direction: column;
+    }
+    .cookie-btn {
+      flex: none;
+      width: 100%;
+    }
+  }
+</style>
+
+<script>
+  /**
+   * Cookie-Banner-Logik.
+   * Aktuell sind keine optionalen Dienste aktiv — die Kategorien sind
+   * vorbereitet für später (Matomo, eingebettete Karten, etc.).
+   *
+   * Public API: window.cookieConsent.{open(), get(), set(), reset()}
+   * — vom Footer-Button und vom optional von Dritten-Skripten nutzbar.
+   */
+  const STORAGE_KEY = "consent_v1";
+  const COOKIE_NAME = "consent_v1";
+
+  type ConsentCategories = "necessary" | "statistics" | "marketing";
+  interface Consent {
+    necessary: true;
+    statistics: boolean;
+    marketing: boolean;
+    timestamp: string;
+  }
+
+  function readConsent(): Consent | null {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return null;
+      return JSON.parse(raw);
+    } catch {
+      return null;
+    }
+  }
+
+  function writeConsent(c: Consent) {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(c));
+    } catch {
+      /* ignoriert: z. B. Safari Private */
+    }
+    // Cookie zusätzlich setzen — 1 Jahr Laufzeit, SameSite=Lax, Secure
+    const oneYear = 60 * 60 * 24 * 365;
+    const value = encodeURIComponent(JSON.stringify(c));
+    document.cookie = `${COOKIE_NAME}=${value}; Max-Age=${oneYear}; Path=/; SameSite=Lax; Secure`;
+  }
+
+  function showBanner(forceShowDetails = false) {
+    const banner = document.getElementById("cookie-banner");
+    if (!banner) return;
+    banner.hidden = false;
+
+    if (forceShowDetails) {
+      const cats = document.getElementById("cookie-categories");
+      if (cats) cats.hidden = false;
+      const saveBtn = document.querySelector<HTMLElement>(
+        '[data-cookie-action="save"]'
+      );
+      if (saveBtn) saveBtn.hidden = false;
+
+      // Aktuellen Consent in Checkboxen reflektieren
+      const current = readConsent();
+      if (current) {
+        document
+          .querySelectorAll<HTMLInputElement>("[data-cookie-cat]")
+          .forEach((cb) => {
+            const cat = cb.dataset.cookieCat as ConsentCategories;
+            if (cat !== "necessary") {
+              cb.checked = !!current[cat];
+            }
+          });
+      }
+    }
+  }
+
+  function hideBanner() {
+    const banner = document.getElementById("cookie-banner");
+    if (banner) banner.hidden = true;
+  }
+
+  function applyConsent(c: Consent) {
+    // Custom Event feuern, sodass spätere Skripte reagieren können
+    window.dispatchEvent(new CustomEvent("consent-updated", { detail: c }));
+  }
+
+  function acceptAll() {
+    const c: Consent = {
+      necessary: true,
+      statistics: true,
+      marketing: true,
+      timestamp: new Date().toISOString(),
+    };
+    writeConsent(c);
+    applyConsent(c);
+    hideBanner();
+  }
+
+  function rejectAll() {
+    const c: Consent = {
+      necessary: true,
+      statistics: false,
+      marketing: false,
+      timestamp: new Date().toISOString(),
+    };
+    writeConsent(c);
+    applyConsent(c);
+    hideBanner();
+  }
+
+  function saveSelection() {
+    const stats = document.querySelector<HTMLInputElement>(
+      '[data-cookie-cat="statistics"]'
+    );
+    const marketing = document.querySelector<HTMLInputElement>(
+      '[data-cookie-cat="marketing"]'
+    );
+    const c: Consent = {
+      necessary: true,
+      statistics: !!stats?.checked,
+      marketing: !!marketing?.checked,
+      timestamp: new Date().toISOString(),
+    };
+    writeConsent(c);
+    applyConsent(c);
+    hideBanner();
+  }
+
+  function toggleDetails() {
+    const cats = document.getElementById("cookie-categories");
+    const saveBtn = document.querySelector<HTMLElement>(
+      '[data-cookie-action="save"]'
+    );
+    if (!cats || !saveBtn) return;
+    const willOpen = cats.hidden;
+    cats.hidden = !willOpen;
+    saveBtn.hidden = !willOpen;
+  }
+
+  // Footer-Link "Cookie-Einstellungen"
+  document.addEventListener("click", (e) => {
+    const target = e.target as HTMLElement;
+    if (target.closest("[data-open-cookie-settings]")) {
+      e.preventDefault();
+      showBanner(true);
+    }
+  });
+
+  // Aktions-Buttons im Banner
+  document.addEventListener("click", (e) => {
+    const target = e.target as HTMLElement;
+    const btn = target.closest<HTMLElement>("[data-cookie-action]");
+    if (!btn) return;
+    switch (btn.dataset.cookieAction) {
+      case "accept":
+        acceptAll();
+        break;
+      case "reject":
+        rejectAll();
+        break;
+      case "save":
+        saveSelection();
+        break;
+      case "toggle-details":
+        toggleDetails();
+        break;
+    }
+  });
+
+  // Beim Seitenaufruf: Banner zeigen, falls noch kein Consent gespeichert
+  if (!readConsent()) {
+    // Auf den nächsten Tick verschieben, damit der Banner nicht in den LCP fällt
+    setTimeout(() => showBanner(false), 600);
+  } else {
+    applyConsent(readConsent() as Consent);
+  }
+
+  // Public API
+  (window as any).cookieConsent = {
+    open: () => showBanner(true),
+    get: () => readConsent(),
+    reset: () => {
+      localStorage.removeItem(STORAGE_KEY);
+      document.cookie = `${COOKIE_NAME}=; Max-Age=0; Path=/`;
+      showBanner(false);
+    },
+  };
+</script>

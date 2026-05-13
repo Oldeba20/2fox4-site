@@ -1,0 +1,91 @@
+---
+/**
+ * CityServices — 2-spaltige kompakte Leistungs-Liste auf Stadt-Seiten.
+ * Default-Liste passt zur Region, der Stadt-Name lässt sich injizieren.
+ */
+
+interface ServiceItem {
+  iconSvg: string;
+  title: string;
+  text: string;
+}
+
+interface Props {
+  city: string;
+  eyebrow?: string;
+  title?: string;
+  sub?: string;
+  services?: ServiceItem[];
+}
+
+const {
+  city,
+  eyebrow,
+  title = "Was wir für dich tun können.",
+  sub = "Von der ersten Visitenkarten-Website bis zum komplett betreuten Onlineshop. Wir bauen, betreuen und optimieren — alles aus einer Hand.",
+} = Astro.props;
+
+const defaultServices: ServiceItem[] = [
+  {
+    iconSvg: `<rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/>`,
+    title: "WordPress-Webdesign",
+    text: "Individuelle Websites — mobil-optimiert, schnell, ohne Pagebuilder-Ballast. Volle Eigentümerschaft bleibt bei dir.",
+  },
+  {
+    iconSvg: `<circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>`,
+    title: `Lokale SEO für ${city}`,
+    text: `Google Business Profile, LocalBusiness-Schema, regionale Keywords. Damit du gefunden wirst, wenn deine ${city}er Nachbarn nach deiner Dienstleistung suchen.`,
+  },
+  {
+    iconSvg: `<circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>`,
+    title: "Onlineshops",
+    text: "WooCommerce, Shopware 6 oder Oxid 6 — je nachdem, was zu deinem Geschäftsmodell passt. Inklusive Zahlung, Versand, DSGVO und Schnittstellen.",
+  },
+  {
+    iconSvg: `<path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>`,
+    title: "WordPress-Wartung & Hosting",
+    text: "Sicherheits-Updates, Backups, Performance-Tuning. Wir kümmern uns um die Technik, du kümmerst dich um dein Geschäft.",
+  },
+  {
+    iconSvg: `<path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>`,
+    title: "Digitalisierungsberatung",
+    text: `BAFA-förderfähige Beratung für ${city}er KMU. Ehrlich, ohne KI-Hype. Wir zeigen dir, was sich wirklich lohnt.`,
+  },
+  {
+    iconSvg: `<circle cx="12" cy="12" r="10"/><path d="M9 12l2 2 4-4"/>`,
+    title: "Barrierefreie Websites",
+    text: "WCAG-konforme Umsetzung — wichtig für öffentliche Einrichtungen, Vereine und alle, die ernst genommen werden wollen.",
+  },
+];
+
+const { services = defaultServices } = Astro.props;
+const eyebrowText = eyebrow ?? `Leistungen für ${city}er Unternehmen`;
+---
+
+<section id="leistungen" class="border-y border-[var(--color-border)] bg-[var(--color-bg-elevated)] py-24">
+  <div class="container-content">
+    <div class="mb-3.5 text-xs uppercase tracking-[0.16em] text-[var(--color-accent)]">
+      {eyebrowText}
+    </div>
+    <h2 class="mb-3.5 text-[clamp(28px,3.5vw,44px)] font-bold tracking-[-0.03em] leading-[1.1]">
+      {title}
+    </h2>
+    <p class="mb-10 max-w-[640px] text-[17px] text-[var(--color-text-muted)]">
+      {sub}
+    </p>
+
+    <div class="grid gap-4 md:grid-cols-2">
+      {services.map((svc) => (
+        <div class="flex gap-4 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-card)] p-6 transition-colors hover:border-[var(--color-border-strong)]">
+          <span class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-[10px] bg-[var(--color-accent-soft)] text-[var(--color-accent)]">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-5 w-5" set:html={svc.iconSvg} />
+          </span>
+          <div>
+            <h4 class="mb-1 text-base font-semibold">{svc.title}</h4>
+            <p class="text-sm leading-[1.6] text-[var(--color-text-muted)]">{svc.text}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

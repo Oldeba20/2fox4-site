@@ -1,0 +1,42 @@
+---
+/**
+ * ServiceCard — eine Karte in der Leistungsübersicht.
+ * Icon kommt als Slot, damit beliebige SVGs übergeben werden können.
+ */
+interface Props {
+  title: string;
+  description: string;
+  href: string;
+  ctaLabel?: string;
+}
+
+const { title, description, href, ctaLabel = "Mehr erfahren" } = Astro.props;
+---
+
+<article class="group relative overflow-hidden rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-card)] p-8 transition-all hover:border-[var(--color-border-strong)] hover:-translate-y-0.5">
+  {/* Top-Glow-Linie bei Hover */}
+  <span
+    aria-hidden="true"
+    class="absolute top-0 left-0 right-0 h-px opacity-0 transition-opacity group-hover:opacity-50"
+    style="background: linear-gradient(90deg, transparent, var(--color-accent), transparent);"
+  ></span>
+
+  <div class="mb-5 flex h-10 w-10 items-center justify-center rounded-lg bg-[var(--color-accent-soft)] text-[var(--color-accent)]">
+    <slot name="icon" />
+  </div>
+
+  <h3 class="mb-2 text-lg font-semibold tracking-[-0.01em]">{title}</h3>
+  <p class="text-sm leading-relaxed text-[var(--color-text-muted)]">
+    {description}
+  </p>
+
+  <a
+    href={href}
+    class="mt-4 inline-flex items-center gap-1.5 text-[13px] text-[var(--color-accent)] transition-all hover:gap-2.5"
+  >
+    {ctaLabel}
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M5 12h14M12 5l7 7-7 7" />
+    </svg>
+  </a>
+</article>

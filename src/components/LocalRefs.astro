@@ -1,0 +1,67 @@
+---
+/**
+ * LocalRefs — Sektion mit lokalen Referenzen einer Stadt.
+ * 2-Spalten-Grid aus MonitorCards.
+ */
+import MonitorCard from "./MonitorCard.astro";
+import { references } from "../data/references";
+
+export interface LocalRef {
+  url: string;
+  image: string;
+  /** Slug der zugehörigen Referenz in references.ts. Nur wenn dort `featured: true`
+   *  gesetzt ist, wird die Karte klickbar — sonst Schaufenster-Tile. */
+  href: string;
+  tag: string; // z. B. "Vereins-Website · Stadthagen"
+  title: string;
+  description: string;
+}
+
+/** Prüft, ob der Ref-Slug eine featured Case-Study hat. */
+function isFeatured(href: string): boolean {
+  const slug = href.replace(/^\/referenzen\//, "").replace(/\/$/, "");
+  const ref = references.find((r) => r.slug === slug);
+  return !!ref?.featured;
+}
+
+interface Props {
+  city: string;
+  refs: LocalRef[];
+}
+
+const { city, refs } = Astro.props;
+---
+
+<section class="border-y border-[var(--color-border)] bg-[var(--color-bg-elevated)] py-16">
+  <div class="container-content">
+    <div class="mb-3.5 text-xs uppercase tracking-[0.16em] text-[var(--color-accent)]">
+      {city}er Referenzen
+    </div>
+    <h2 class="mb-3.5 text-[clamp(28px,3.5vw,44px)] font-bold tracking-[-0.03em] leading-[1.1]">
+      Wir kennen {city} — und {city} kennt uns.
+    </h2>
+    <p class="mb-10 max-w-[640px] text-[17px] text-[var(--color-text-muted)]">
+      Aktuelle Projekte aus {city}. So wissen wir, was hier funktioniert
+      und welche Themen lokale Unternehmen wirklich beschäftigen.
+    </p>
+
+    <div class="grid gap-6 md:grid-cols-2">
+      {refs.map((ref) => (
+        <MonitorCard
+          url={ref.url}
+          image={ref.image}
+          href={isFeatured(ref.href) ? ref.href : undefined}
+          variant="compact"
+        >
+          <div class="mb-2 text-[11px] uppercase tracking-[0.12em] text-[var(--color-accent)]">
+            {ref.tag}
+          </div>
+          <h3 class="mb-1 text-[19px] font-semibold tracking-[-0.01em]">
+            {ref.title}
+          </h3>
+          <p class="text-sm text-[var(--color-text-muted)]">{ref.description}</p>
+        </MonitorCard>
+      ))}
+    </div>
+  </div>
+</section>

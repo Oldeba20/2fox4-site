@@ -1,0 +1,132 @@
+---
+/**
+ * Dynamische Route: Leistungs-Detail-Seiten unter /leistungen/[slug]/.
+ * Erzeugt aus `services.ts` jeweils eine Seite pro Service.
+ */
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import FAQ from "../../components/FAQ.astro";
+import CTASection from "../../components/CTASection.astro";
+import { services, type Service } from "../../data/services";
+import { breadcrumbSchema, faqSchema } from "../../lib/schema";
+
+export async function getStaticPaths() {
+  return services.map((service) => ({
+    params: { slug: service.slug },
+    props: { service },
+  }));
+}
+
+interface Props {
+  service: Service;
+}
+
+const { service } = Astro.props;
+
+const schema = [
+  breadcrumbSchema([
+    { name: "Start", url: "/" },
+    { name: "Leistungen", url: "/leistungen/" },
+    { name: service.name, url: `/leistungen/${service.slug}/` },
+  ]),
+  faqSchema(service.faq),
+];
+---
+
+<BaseLayout
+  title={service.seoTitle}
+  description={service.seoDescription}
+  canonicalPath={`/leistungen/${service.slug}/`}
+  noindex={false}
+  schema={schema}
+>
+  <Breadcrumb
+    crumbs={[
+      { label: "Start", href: "/" },
+      { label: "Leistungen", href: "/leistungen/" },
+      { label: service.name },
+    ]}
+  />
+
+  {/* Hero */}
+  <section class="relative overflow-hidden border-b border-[var(--color-border)] pt-20 pb-16">
+    <div class="hero-grid-bg"></div>
+    <div class="container-content relative z-10">
+      <div class="mb-5 inline-flex items-center gap-2 rounded-md bg-[var(--color-accent-soft)] px-3 py-1.5 text-xs uppercase tracking-[0.14em] text-[var(--color-accent)]">
+        <span class="flex h-4 w-4 items-center justify-center">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-3.5 w-3.5" set:html={service.iconSvg} />
+        </span>
+        {service.kicker}
+      </div>
+      <h1 class="mb-6 max-w-[820px] text-[clamp(36px,5.5vw,64px)] font-bold tracking-[-0.04em] leading-[1.05]">
+        <span class="text-gradient-light">{service.heroTitleLine1}</span><br />
+        <span class="text-gradient-accent">{service.heroTitleLine2}</span>
+      </h1>
+      <p class="max-w-[680px] text-[19px] leading-[1.65] text-[var(--color-text-muted)]">
+        {service.heroSub}
+      </p>
+    </div>
+  </section>
+
+  {/* Sections */}
+  {service.sections.map((section, i) => (
+    <section class:list={[
+      "py-20",
+      i % 2 === 1
+        ? "bg-[var(--color-bg-elevated)] border-y border-[var(--color-border)]"
+        : "",
+    ]}>
+      <div class="container-content">
+        {section.eyebrow && (
+          <div class="mb-3.5 text-xs uppercase tracking-[0.16em] text-[var(--color-accent)]">
+            {section.eyebrow}
+          </div>
+        )}
+        <h2 class="mb-8 max-w-[760px] text-[clamp(28px,3.5vw,42px)] font-bold tracking-[-0.03em] leading-[1.1]">
+          {section.headline}
+        </h2>
+
+        {section.layout === "stacked" || !section.bullets ? (
+          <div class="prose-content max-w-[760px] text-[17px] leading-[1.7] text-[var(--color-text-muted)]" set:html={section.body} />
+        ) : (
+          <div class="grid gap-12 lg:grid-cols-[1fr_1fr] items-start">
+            <div class="prose-content text-[17px] leading-[1.7] text-[var(--color-text-muted)]" set:html={section.body} />
+            <ul class="flex flex-col gap-3">
+              {section.bullets.map((b) => (
+                <li class="flex gap-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-card)] p-4 text-[15px] text-[var(--color-text)]">
+                  <svg class="h-5 w-5 flex-shrink-0 text-[var(--color-accent)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                  <span>{b}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
+    </section>
+  ))}
+
+  <FAQ items={service.faq} title="Häufige Fragen zu dieser Leistung." />
+
+  <CTASection />
+</BaseLayout>
+
+<style is:global>
+  .prose-content p {
+    margin-bottom: 1em;
+  }
+  .prose-content p:last-child {
+    margin-bottom: 0;
+  }
+  .prose-content strong {
+    color: var(--color-text);
+    font-weight: 600;
+  }
+  .prose-content a {
+    color: var(--color-accent);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+  }
+</style>

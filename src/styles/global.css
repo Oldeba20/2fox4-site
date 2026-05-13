@@ -1,0 +1,451 @@
+@import "tailwindcss";
+
+/* ---------- Design-Tokens (verwendbar als Tailwind-Utilities) ----------
+ * Über @theme werden CSS-Variablen so registriert, dass Tailwind 4
+ * passende Utility-Klassen daraus generiert (z. B. bg-bg, text-accent).
+ * Wenn du eine Farbe änderst, ändert sie sich überall. */
+@theme {
+  --color-bg: #0a0a0a;
+  --color-bg-elevated: #111111;
+  --color-bg-card: rgba(255, 255, 255, 0.025);
+
+  --color-border: rgba(255, 255, 255, 0.08);
+  --color-border-strong: rgba(255, 255, 255, 0.14);
+
+  --color-text: #ededed;
+  --color-text-muted: #999999;
+  --color-text-faint: #666666;
+
+  --color-accent: #ff6b35;
+  --color-accent-soft: rgba(255, 107, 53, 0.12);
+  --color-teal: #2dd4bf;
+
+  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  --container-content: 1200px;
+}
+
+/* ---------- Basis-Styles ----------
+ * WICHTIG: All das gehört in @layer base, damit es eine niedrigere
+ * Priorität als Tailwind-Utility-Klassen (@layer utilities) hat.
+ * Sonst gewinnt z. B. `a { color: inherit }` gegen `text-black` —
+ * der Klassiker, der dunkle Schrift auf weißen Buttons unsichtbar macht.
+ */
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-sans);
+    font-feature-settings: "cv11", "ss01";
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.5;
+    overflow-x: hidden;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+}
+
+/* ---------- Wiederkehrende Komponenten-Klassen ----------
+ * Diese liegen in @layer components, damit sie zwischen base und
+ * utilities sitzen — von Utilities überschreibbar, aber resistenter
+ * als Base-Styles. */
+@layer components {
+  .container-content {
+    max-width: var(--container-content);
+    margin-inline: auto;
+    padding-inline: 24px;
+  }
+
+  /* Pulse-Animation für den Live-Dot im Hero-Eyebrow */
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+  .pulse-dot {
+    animation: pulse-dot 2s infinite;
+  }
+
+  /* Gradient-Text (heller Verlauf für Hero-Headline) */
+  .text-gradient-light {
+    background: linear-gradient(180deg, #ffffff 0%, #aaaaaa 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
+
+  .text-gradient-accent {
+    background: linear-gradient(180deg, var(--color-accent) 0%, #ff8c5a 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
+
+  /* Hero-Grid-Hintergrund (Linienraster mit Vignette) */
+  .hero-grid-bg {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+    background-size: 60px 60px;
+    -webkit-mask-image: radial-gradient(ellipse at 50% 30%, black 0%, transparent 70%);
+    mask-image: radial-gradient(ellipse at 50% 30%, black 0%, transparent 70%);
+    pointer-events: none;
+  }
+}
+
+/* =====================================================================
+ *  Barrierefreiheits-Modi
+ *  Werden vom AccessibilityWidget über CSS-Klassen am <html> gesetzt.
+ *  Bewusst UNlayered, damit sie auch Tailwind-Utilities schlagen
+ *  (für Hochkontrast und Hellen Modus ist das gewollt).
+ * ===================================================================== */
+
+/* ---------- Schriftgröße (Root-rem nutzt alle rem-basierten Größen) ---------- */
+html.a11y-text-large {
+  font-size: 18px;
+}
+html.a11y-text-xlarge {
+  font-size: 21px;
+}
+
+/* ---------- Animationen abschalten ---------- */
+html.a11y-no-motion,
+html.a11y-no-motion *,
+html.a11y-no-motion *::before,
+html.a11y-no-motion *::after {
+  animation-duration: 0s !important;
+  animation-delay: 0s !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0s !important;
+  transition-delay: 0s !important;
+  scroll-behavior: auto !important;
+}
+html.a11y-no-motion canvas {
+  display: none;
+}
+
+/* ---------- Links unterstreichen ---------- */
+html.a11y-underline-links a {
+  text-decoration: underline !important;
+  text-underline-offset: 3px !important;
+  text-decoration-thickness: 1px !important;
+}
+
+/* ---------- Heller Modus ---------- */
+html.a11y-light-mode {
+  --color-bg: #ffffff;
+  --color-bg-elevated: #f5f5f5;
+  --color-bg-card: rgba(0, 0, 0, 0.035);
+  --color-border: rgba(0, 0, 0, 0.12);
+  --color-border-strong: rgba(0, 0, 0, 0.24);
+  --color-text: #0a0a0a;
+  --color-text-muted: #4a4a4a;
+  --color-text-faint: #777777;
+  --color-accent: #c2410c;
+  --color-accent-soft: rgba(194, 65, 12, 0.12);
+}
+html.a11y-light-mode body {
+  background: #ffffff;
+  color: #0a0a0a;
+}
+/* Tailwind-Hartcodierungen überschreiben: weiße Buttons werden im hellen
+   Modus zu dunklen Buttons, dunkle Text-Klassen zu hellen */
+html.a11y-light-mode .bg-white {
+  background-color: #0a0a0a !important;
+  color: #ffffff !important;
+}
+html.a11y-light-mode .text-black {
+  color: #ffffff !important;
+}
+html.a11y-light-mode .hero-grid-bg {
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.04) 1px, transparent 1px);
+}
+html.a11y-light-mode .text-gradient-light {
+  background: linear-gradient(180deg, #0a0a0a 0%, #4a4a4a 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+/* Header und Filter-Bar haben hartcodierte Tailwind-Klassen wie
+   bg-[rgba(10,10,10,0.7)] — die ziehen im hellen Modus nicht mit.
+   Wir greifen sie über ihre Strukturklassen und überschreiben den
+   Hintergrund + Border, damit die Navigation lesbar bleibt. */
+html.a11y-light-mode header.sticky {
+  background-color: rgba(255, 255, 255, 0.88) !important;
+  border-bottom-color: rgba(0, 0, 0, 0.12) !important;
+}
+html.a11y-light-mode section.sticky {
+  background-color: rgba(255, 255, 255, 0.88) !important;
+  border-bottom-color: rgba(0, 0, 0, 0.12) !important;
+}
+
+/* Logo im Header soll sichtbar bleiben — Hauptteil dunkel,
+   der "4"-Akzent kann orange bleiben (war im Original schon Akzent) */
+html.a11y-light-mode header.sticky a {
+  color: #0a0a0a;
+}
+
+/* Hero-Background-Grid: im hellen Modus die ohnehin schon angepassten
+   Linien-Helligkeiten sind in der Light-Mode-Regel oben gesetzt. */
+
+/* Cookie-Banner und Modal-Inhalte sind über CSS-Variablen, ziehen
+   automatisch mit. Status-Banner haben eigene rgba-Werte mit Türkis/Orange,
+   passen auch auf hellen Hintergrund. */
+
+/* ---------- Hochkontrast ---------- */
+/* Schwarz + Weiß + Gelb (WCAG AAA-Klassiker für maximale Sichtbarkeit) */
+html.a11y-high-contrast {
+  --color-bg: #000000;
+  --color-bg-elevated: #000000;
+  --color-bg-card: #000000;
+  --color-border: #ffffff;
+  --color-border-strong: #ffffff;
+  --color-text: #ffffff;
+  --color-text-muted: #ffffff;
+  --color-text-faint: #ffff00;
+  --color-accent: #ffff00;
+  --color-accent-soft: rgba(255, 255, 0, 0.15);
+  --color-teal: #00ffff;
+}
+html.a11y-high-contrast body {
+  background: #000000;
+  color: #ffffff;
+}
+html.a11y-high-contrast a {
+  color: #ffff00 !important;
+  text-decoration: underline !important;
+}
+html.a11y-high-contrast button,
+html.a11y-high-contrast .bg-white {
+  background-color: #ffff00 !important;
+  color: #000000 !important;
+  border: 2px solid #ffffff !important;
+}
+html.a11y-high-contrast img,
+html.a11y-high-contrast canvas {
+  filter: contrast(1.15);
+}
+/* Hero-Grid und Gradient-Text im Hochkontrast deaktivieren — würden stören */
+html.a11y-high-contrast .hero-grid-bg {
+  display: none;
+}
+html.a11y-high-contrast .text-gradient-light,
+html.a11y-high-contrast .text-gradient-accent {
+  background: none !important;
+  -webkit-text-fill-color: #ffffff !important;
+  color: #ffffff !important;
+}
+html.a11y-high-contrast .text-gradient-accent {
+  -webkit-text-fill-color: #ffff00 !important;
+  color: #ffff00 !important;
+}
+/* Sichtbarer Fokus-Ring im Hochkontrast */
+html.a11y-high-contrast *:focus-visible {
+  outline: 3px solid #ffff00 !important;
+  outline-offset: 2px;
+}
+
+/* =====================================================================
+ *  MonitorCard — Browser-Mockup-Karten in Referenzen + Stadt-Seiten
+ *  Hier zentral statt im Astro-Component-Style, weil sonst der Bundler
+ *  die scoped CSS in einen Chunk auslagert, der vom Page-HTML nicht
+ *  zwingend referenziert wird.
+ * ===================================================================== */
+
+.monitor-card {
+  display: block;
+  position: relative;
+  z-index: 1;
+  transition: transform 0.3s, z-index 0s linear 0.45s;
+}
+.monitor-card:hover {
+  z-index: 30;
+  transition: transform 0.3s, z-index 0s linear 0s;
+}
+/* Statische Tiles (nicht klickbar): kein Pointer-Cursor, aber Hover-Zoom
+ * bleibt erhalten — damit Besucher Details im Screenshot erkennen können. */
+.monitor-card--static {
+  cursor: default;
+}
+
+.monitor-card .monitor {
+  position: relative;
+  background: #1c1c1e;
+  border-radius: 14px;
+  padding: 36px 8px 8px 8px;
+  border: 1px solid #2a2a2c;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4), 0 2px 6px rgba(0, 0, 0, 0.3);
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 0.35s, opacity 0.4s;
+  overflow: visible;
+}
+.monitor-card.compact .monitor {
+  padding: 30px 8px 8px 8px;
+  border-radius: 12px;
+}
+
+.monitor-card .monitor-top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  padding: 0 14px;
+  gap: 14px;
+  background: #1c1c1e;
+  transition: opacity 0.35s;
+}
+.monitor-card.compact .monitor-top {
+  height: 26px;
+  padding: 0 12px;
+  gap: 12px;
+}
+
+.monitor-card .traffic {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.monitor-card .traffic span {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 0.5px rgba(0, 0, 0, 0.3);
+}
+.monitor-card.compact .traffic span {
+  width: 10px;
+  height: 10px;
+}
+.monitor-card .traffic .red    { background: #ff5f57; }
+.monitor-card .traffic .yellow { background: #febc2e; }
+.monitor-card .traffic .green  { background: #28c840; }
+
+.monitor-card .url-bar {
+  flex: 1;
+  height: 18px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  font-size: 10px;
+  color: var(--color-text-faint);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 200px;
+  margin: 0 auto;
+}
+.monitor-card.compact .url-bar {
+  height: 16px;
+  padding: 0 8px;
+  max-width: 200px;
+}
+.monitor-card .url-bar svg {
+  width: 9px;
+  height: 9px;
+  margin-right: 6px;
+  flex-shrink: 0;
+  opacity: 0.6;
+}
+
+.monitor-card .screen {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  background-color: #050505;
+  background-size: cover;
+  background-position: top center;
+  border-radius: 4px;
+  overflow: hidden;
+  transform: scale(1) translateY(0);
+  transform-origin: 50% 50%;
+  transition: transform 0.65s cubic-bezier(0.22, 0.9, 0.28, 1),
+    border-radius 0.35s, box-shadow 0.45s, filter 0.3s;
+  will-change: transform, box-shadow;
+  z-index: 5;
+}
+
+/* Hover-Zoom — auch auf nicht-klickbaren Static-Karten */
+.monitor-card.default:hover .screen {
+  filter: brightness(1.05);
+  transform: scale(1.55) translateY(-4%);
+  border-radius: 10px;
+  box-shadow:
+    0 40px 90px rgba(0, 0, 0, 0.65),
+    0 16px 30px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(255, 255, 255, 0.06),
+    0 4px 0 rgba(255, 107, 53, 0.1);
+}
+.monitor-card.default:hover .monitor {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.22);
+}
+.monitor-card.default:hover .monitor-top {
+  opacity: 0.45;
+}
+
+.monitor-card.compact:hover .monitor {
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.5);
+}
+.monitor-card.compact:hover {
+  transform: translateY(-3px);
+}
+
+.monitor-card .screen-tint {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse at center top,
+    transparent 30%,
+    rgba(0, 0, 0, 0.15) 100%
+  );
+  pointer-events: none;
+}
+.monitor-card .screen-glare {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), transparent);
+  pointer-events: none;
+}
+
+/* Mini-Standfuß-Hint */
+.monitor-card .monitor::after {
+  content: "";
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 25%;
+  height: 8px;
+  background: linear-gradient(180deg, #1c1c1e 0%, rgba(0, 0, 0, 0) 100%);
+  border-radius: 0 0 4px 4px;
+  pointer-events: none;
+}
+
+.monitor-card .info {
+  padding: 22px 4px 0;
+}

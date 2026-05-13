@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+
+# Pfade, die wir bewusst aus dem Index lassen
+Disallow: /kontakt.php
+Disallow: /lib/
+Disallow: /_archive-
+
+Sitemap: https://www.2fox4.de/sitemap.xml

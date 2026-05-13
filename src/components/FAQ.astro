@@ -1,0 +1,78 @@
+---
+/**
+ * FAQ — Accordion mit <details>/<summary> (semantisch korrekt, kein JS nötig).
+ * Generiert auf Wunsch das passende FAQPage-Schema und übergibt es im Slot.
+ *
+ * Trick: Wir akzeptieren `q.answer` als plain text ODER als HTML (Slot-basiert).
+ * Für FAQPage-Schema brauchen wir aber strings → wir nutzen beide:
+ *   - schema.mainEntity.acceptedAnswer.text  = q.answerText (plain)
+ *   - sichtbarer Output                       = q.answerHtml (HTML erlaubt)
+ *
+ * Wenn nur eines gesetzt ist, wird das andere automatisch daraus abgeleitet.
+ */
+
+export interface FAQItem {
+  question: string;
+  /** Klartext-Antwort, wird auch fürs Schema genutzt */
+  answerText?: string;
+  /** HTML-Antwort für Anzeige (mit <strong>, <a> etc.) */
+  answerHtml?: string;
+}
+
+interface Props {
+  eyebrow?: string;
+  title?: string;
+  items: FAQItem[];
+}
+
+const {
+  eyebrow = "Häufige Fragen",
+  title = "Was wir oft gefragt werden.",
+  items,
+} = Astro.props;
+
+// Plain-Text-Antwort für Schema ableiten (HTML-Tags entfernen, falls nötig)
+const stripHtml = (html: string) =>
+  html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+
+const normalized = items.map((item) => ({
+  question: item.question,
+  answerHtml: item.answerHtml ?? item.answerText ?? "",
+  answerText:
+    item.answerText ?? (item.answerHtml ? stripHtml(item.answerHtml) : ""),
+}));
+---
+
+<section id="faq" class="py-24">
+  <div class="container-content">
+    <div class="mb-3.5 text-xs uppercase tracking-[0.16em] text-[var(--color-accent)]">
+      {eyebrow}
+    </div>
+    <h2 class="mb-10 text-[clamp(28px,3.5vw,44px)] font-bold tracking-[-0.03em] leading-[1.1]">
+      {title}
+    </h2>
+
+    <div class="flex max-w-[880px] flex-col gap-2">
+      {normalized.map((item) => (
+        <details class="faq-item rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-card)] p-5 transition-colors open:border-[var(--color-border-strong)]">
+          <summary class="flex cursor-pointer list-none items-center justify-between gap-4 text-[17px] font-medium">
+            <span>{item.question}</span>
+            <svg class="faq-icon h-[22px] w-[22px] flex-shrink-0 text-[var(--color-accent)] transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 5v14M5 12h14" />
+            </svg>
+          </summary>
+          <div class="mt-3.5 text-[15px] leading-[1.7] text-[var(--color-text-muted)]" set:html={item.answerHtml} />
+        </details>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  details > summary::-webkit-details-marker {
+    display: none;
+  }
+  details[open] .faq-icon {
+    transform: rotate(45deg);
+  }
+</style>

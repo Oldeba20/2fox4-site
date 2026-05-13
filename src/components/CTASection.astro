@@ -1,0 +1,48 @@
+---
+/**
+ * CTASection — der große Call-to-Action am Seitenende.
+ * Default-Text passt zur Startseite, kann aber pro Seite überschrieben werden.
+ */
+import { site } from "../data/site";
+
+interface Props {
+  title?: string;
+  text?: string;
+}
+
+const {
+  title = "Lass uns reden.",
+  text = "30 Minuten, kostenlos, unverbindlich. Wir schauen gemeinsam auf deine aktuelle Website und zeigen dir, wo der größte Hebel liegt.",
+} = Astro.props;
+---
+
+<section id="kontakt" class="py-32 text-center">
+  <div class="container-content">
+    <h2 class="mb-6 text-[clamp(36px,5vw,56px)] font-bold tracking-[-0.03em] leading-[1.05]">
+      {title}
+    </h2>
+    <p class="mx-auto mb-9 max-w-[540px] text-lg text-[var(--color-text-muted)]">
+      {text}
+    </p>
+    <div class="flex flex-wrap justify-center gap-3">
+      <a
+        href="/kontakt/"
+        class="inline-flex items-center gap-2 rounded-md bg-white px-6 py-3 text-[15px] font-medium text-black transition-all hover:bg-white/85 hover:-translate-y-px"
+      >
+        Zum Kontaktformular
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M5 12h14M12 5l7 7-7 7" />
+        </svg>
+      </a>
+    </div>
+    <p class="mt-5 text-sm text-[var(--color-text-faint)]">
+      Oder direkt anrufen:
+      <a
+        href={site.nap.phoneHref}
+        class="text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors"
+      >
+        {site.nap.phoneDisplay}
+      </a>
+    </p>
+  </div>
+</section>

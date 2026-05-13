@@ -1,0 +1,631 @@
+---
+/**
+ * AccessibilityWidget — schwebender Button + Panel mit Komfort-Funktionen
+ * für Sehbehinderte, Senioren und kognitiv Beeinträchtigte.
+ *
+ * Wichtige Klarstellung: Dieses Widget ist KEIN Ersatz für eine grundsätzlich
+ * barrierefreie Seite. Die WCAG-Konformität entsteht aus semantischem HTML,
+ * korrekter Heading-Hierarchie, Alt-Texten und ausreichendem Kontrast — das
+ * haben wir im Grunddesign verbaut. Dieses Widget ist ein zusätzliches
+ * Komfort-Feature, das einzelnen Besuchern erlaubt, die Darstellung
+ * spontan an ihre Bedürfnisse anzupassen.
+ *
+ * Implementiert:
+ *   - Schriftgröße: 100 / 125 / 150 %
+ *   - Hochkontrast-Modus (Schwarz + Gelb + Weiß)
+ *   - Heller Modus (statt unserer Dark-Defaults)
+ *   - Animationen pausieren (Three.js-Sphere, Pulse, alle CSS-Transitions)
+ *   - Links explizit unterstreichen
+ *   - Lesehilfe: horizontale Linie folgt dem Mauscursor
+ *   - Reset-Button
+ *
+ * Persistenz: localStorage. Beim nächsten Besuch werden die Einstellungen
+ * direkt wieder angewandt.
+ *
+ * Tastatur:
+ *   - Trigger-Button per Tab erreichbar
+ *   - ESC schließt das Panel
+ *   - Klick außerhalb schließt das Panel
+ *
+ * z-index-Stack: FAB 998, Panel 1001 (über Cookie-Banner 1000, unter native dialogs)
+ */
+---
+
+<!-- Floating Action Button -->
+<button
+  type="button"
+  class="a11y-fab"
+  data-a11y-toggle
+  aria-label="Barrierefreiheits-Einstellungen öffnen"
+  aria-expanded="false"
+  aria-controls="a11y-panel"
+>
+  <!-- Material Icons "accessibility_new" — offene Mensch-Silhouette mit ausgebreiteten Armen -->
+  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+    <circle cx="12" cy="4" r="2" />
+    <path d="M20.5 6c-2.61.7-5.67 1-8.5 1s-5.89-.3-8.5-1L3 8c1.86.5 4 .83 6 1v13h2v-6h2v6h2V9c2-.17 4.14-.5 6-1l-.5-2z" />
+  </svg>
+</button>
+
+<!-- Panel -->
+<aside
+  id="a11y-panel"
+  class="a11y-panel"
+  role="dialog"
+  aria-labelledby="a11y-panel-title"
+  hidden
+>
+  <header class="a11y-panel__header">
+    <h2 id="a11y-panel-title">Barrierefreiheit</h2>
+    <button
+      type="button"
+      class="a11y-panel__close"
+      data-a11y-close
+      aria-label="Panel schließen"
+    >
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <line x1="18" y1="6" x2="6" y2="18" />
+        <line x1="6" y1="6" x2="18" y2="18" />
+      </svg>
+    </button>
+  </header>
+
+  <div class="a11y-panel__body">
+    <!-- ============== Schriftgröße ============== -->
+    <fieldset class="a11y-group">
+      <legend>Schriftgröße</legend>
+      <div class="a11y-fontsize">
+        <button type="button" class="a11y-fontsize__btn" data-a11y-fontsize="default" aria-pressed="true">
+          <span class="a11y-fontsize__sample" style="font-size:14px">A</span>
+          <span class="a11y-fontsize__label">Standard</span>
+        </button>
+        <button type="button" class="a11y-fontsize__btn" data-a11y-fontsize="large" aria-pressed="false">
+          <span class="a11y-fontsize__sample" style="font-size:18px">A</span>
+          <span class="a11y-fontsize__label">Groß</span>
+        </button>
+        <button type="button" class="a11y-fontsize__btn" data-a11y-fontsize="xlarge" aria-pressed="false">
+          <span class="a11y-fontsize__sample" style="font-size:22px">A</span>
+          <span class="a11y-fontsize__label">Sehr groß</span>
+        </button>
+      </div>
+    </fieldset>
+
+    <!-- ============== Darstellung ============== -->
+    <fieldset class="a11y-group">
+      <legend>Darstellung</legend>
+      <label class="a11y-toggle">
+        <input type="checkbox" data-a11y-flag="high-contrast" />
+        <span class="a11y-toggle__switch"></span>
+        <span class="a11y-toggle__text">
+          <strong>Hochkontrast</strong>
+          <small>Schwarz, Weiß und Gelb für maximale Lesbarkeit</small>
+        </span>
+      </label>
+      <label class="a11y-toggle">
+        <input type="checkbox" data-a11y-flag="light-mode" />
+        <span class="a11y-toggle__switch"></span>
+        <span class="a11y-toggle__text">
+          <strong>Heller Modus</strong>
+          <small>Dunkle Schrift auf hellem Hintergrund</small>
+        </span>
+      </label>
+      <label class="a11y-toggle">
+        <input type="checkbox" data-a11y-flag="underline-links" />
+        <span class="a11y-toggle__switch"></span>
+        <span class="a11y-toggle__text">
+          <strong>Links unterstreichen</strong>
+          <small>Alle Links bekommen eine sichtbare Unterstreichung</small>
+        </span>
+      </label>
+    </fieldset>
+
+    <!-- ============== Bewegung & Lesen ============== -->
+    <fieldset class="a11y-group">
+      <legend>Bewegung &amp; Lesen</legend>
+      <label class="a11y-toggle">
+        <input type="checkbox" data-a11y-flag="no-motion" />
+        <span class="a11y-toggle__switch"></span>
+        <span class="a11y-toggle__text">
+          <strong>Animationen pausieren</strong>
+          <small>Schaltet 3D-Effekte und Bewegungs-Animationen ab</small>
+        </span>
+      </label>
+      <label class="a11y-toggle">
+        <input type="checkbox" data-a11y-flag="reading-line" />
+        <span class="a11y-toggle__switch"></span>
+        <span class="a11y-toggle__text">
+          <strong>Lesehilfe-Linie</strong>
+          <small>Eine horizontale Markierung folgt dem Mauszeiger</small>
+        </span>
+      </label>
+    </fieldset>
+
+    <div class="a11y-panel__actions">
+      <button type="button" class="a11y-reset" data-a11y-reset>
+        Alle Einstellungen zurücksetzen
+      </button>
+    </div>
+
+    <p class="a11y-panel__note">
+      Mehr Details auf unserer
+      <a href="/barrierefreiheit/">Erklärung zur Barrierefreiheit</a>.
+    </p>
+  </div>
+</aside>
+
+<!--
+  Lesehilfe-Linie — wird nur sichtbar, wenn der Modus aktiv ist.
+  WICHTIG: Eigene ID statt Klasse, sonst kollidiert der CSS-Selektor
+  `.a11y-reading-line { display: none }` mit der Modus-Klasse am <html>
+  (die ebenfalls a11y-reading-line heißt) und versteckt die ganze Seite.
+-->
+<div id="a11y-reading-line-el" aria-hidden="true"></div>
+
+<style is:global>
+  /* ============================================
+   *  Floating Action Button (FAB)
+   * ============================================ */
+  .a11y-fab {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 998;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.18);
+    background: linear-gradient(180deg, #1a8a7b 0%, #0d9488 100%);
+    color: #ffffff;
+    cursor: pointer;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: inherit;
+  }
+  .a11y-fab svg {
+    width: 28px;
+    height: 28px;
+  }
+  .a11y-fab:hover,
+  .a11y-fab:focus-visible {
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.55);
+    outline: none;
+  }
+  .a11y-fab:focus-visible {
+    box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.4),
+      0 10px 30px rgba(0, 0, 0, 0.55);
+  }
+
+  /* ============================================
+   *  Panel
+   * ============================================ */
+  .a11y-panel {
+    position: fixed;
+    bottom: 84px;
+    right: 20px;
+    z-index: 1001;
+    width: min(360px, calc(100vw - 40px));
+    max-height: calc(100vh - 110px);
+    overflow-y: auto;
+    background: #111111;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 14px;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.65);
+    color: #ededed;
+    animation: a11y-slide-in 0.2s ease-out;
+  }
+  @keyframes a11y-slide-in {
+    from { transform: translateY(8px); opacity: 0; }
+    to   { transform: translateY(0);   opacity: 1; }
+  }
+
+  .a11y-panel__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 18px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  .a11y-panel__header h2 {
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: #ededed;
+    margin: 0;
+  }
+  .a11y-panel__close {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 6px;
+    color: #999;
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: inherit;
+    transition: all 0.15s;
+  }
+  .a11y-panel__close:hover,
+  .a11y-panel__close:focus-visible {
+    color: #ededed;
+    border-color: rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.05);
+    outline: none;
+  }
+
+  .a11y-panel__body {
+    padding: 14px 18px 18px;
+  }
+
+  .a11y-group {
+    border: none;
+    padding: 0;
+    margin: 0 0 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .a11y-group legend {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #999;
+    margin-bottom: 6px;
+    padding: 0;
+  }
+
+  /* ============================================
+   *  Schriftgröße-Buttons
+   * ============================================ */
+  .a11y-fontsize {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+  }
+  .a11y-fontsize__btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 10px 6px;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    color: #999;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s;
+  }
+  .a11y-fontsize__btn:hover,
+  .a11y-fontsize__btn:focus-visible {
+    border-color: rgba(255, 255, 255, 0.24);
+    color: #ededed;
+    outline: none;
+  }
+  .a11y-fontsize__btn[aria-pressed="true"] {
+    background: rgba(45, 212, 191, 0.12);
+    border-color: rgba(45, 212, 191, 0.5);
+    color: #2dd4bf;
+  }
+  .a11y-fontsize__sample {
+    line-height: 1;
+    font-weight: 700;
+  }
+  .a11y-fontsize__label {
+    font-size: 11px;
+  }
+
+  /* ============================================
+   *  Toggle-Switches
+   * ============================================ */
+  .a11y-toggle {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 10px 12px;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: border-color 0.15s;
+  }
+  .a11y-toggle:hover {
+    border-color: rgba(255, 255, 255, 0.18);
+  }
+  .a11y-toggle input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .a11y-toggle__switch {
+    position: relative;
+    flex-shrink: 0;
+    width: 36px;
+    height: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 999px;
+    transition: background-color 0.2s;
+    margin-top: 1px;
+  }
+  .a11y-toggle__switch::before {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 16px;
+    height: 16px;
+    background: #ededed;
+    border-radius: 50%;
+    transition: transform 0.2s, background-color 0.2s;
+  }
+  .a11y-toggle input:checked + .a11y-toggle__switch {
+    background: #0d9488;
+  }
+  .a11y-toggle input:checked + .a11y-toggle__switch::before {
+    transform: translateX(16px);
+    background: #ffffff;
+  }
+  .a11y-toggle input:focus-visible + .a11y-toggle__switch {
+    box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.4);
+  }
+  .a11y-toggle__text {
+    display: flex;
+    flex-direction: column;
+    font-size: 13.5px;
+    line-height: 1.4;
+  }
+  .a11y-toggle__text strong {
+    color: #ededed;
+    font-weight: 600;
+  }
+  .a11y-toggle__text small {
+    color: #999;
+    font-size: 11.5px;
+    margin-top: 2px;
+  }
+
+  /* ============================================
+   *  Reset-Button & Hinweis
+   * ============================================ */
+  .a11y-panel__actions {
+    margin-top: 12px;
+  }
+  .a11y-reset {
+    width: 100%;
+    padding: 10px 16px;
+    background: transparent;
+    color: #999;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s;
+  }
+  .a11y-reset:hover,
+  .a11y-reset:focus-visible {
+    color: #ededed;
+    border-color: rgba(255, 255, 255, 0.32);
+    background: rgba(255, 255, 255, 0.04);
+    outline: none;
+  }
+  .a11y-panel__note {
+    margin: 14px 0 0;
+    font-size: 12px;
+    color: #666;
+    line-height: 1.5;
+  }
+  .a11y-panel__note a {
+    color: #2dd4bf;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  /* ============================================
+   *  Lesehilfe-Linie (initial unsichtbar)
+   *  Eigene ID, weil die Modus-Klasse a11y-reading-line am <html> sitzt
+   *  und ein Klassen-Selektor sonst auch das <html>-Element treffen würde.
+   * ============================================ */
+  #a11y-reading-line-el {
+    position: fixed;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: rgba(45, 212, 191, 0.55);
+    box-shadow: 0 0 8px rgba(45, 212, 191, 0.5);
+    z-index: 997;
+    pointer-events: none;
+    display: none;
+    transform: translateY(-1px);
+  }
+  html.a11y-reading-line #a11y-reading-line-el {
+    display: block;
+  }
+
+  /* ============================================
+   *  Mobile-Anpassung
+   * ============================================ */
+  @media (max-width: 480px) {
+    .a11y-panel {
+      left: 12px;
+      right: 12px;
+      width: auto;
+      bottom: 78px;
+    }
+    .a11y-fab {
+      bottom: 14px;
+      right: 14px;
+    }
+  }
+</style>
+
+<script>
+  /**
+   * A11y-Widget-Logik. Vanilla JS, kein Framework.
+   * Speichert State in localStorage, wendet CSS-Klassen am <html> an.
+   */
+  type FontSize = "default" | "large" | "xlarge";
+  type Flag = "high-contrast" | "light-mode" | "underline-links" | "no-motion" | "reading-line";
+
+  interface State {
+    fontSize: FontSize;
+    flags: Partial<Record<Flag, boolean>>;
+  }
+
+  const STORAGE_KEY = "a11y_v1";
+  const defaultState: State = {
+    fontSize: "default",
+    flags: {},
+  };
+
+  function readState(): State {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return { ...defaultState };
+      const parsed = JSON.parse(raw);
+      return { ...defaultState, ...parsed };
+    } catch {
+      return { ...defaultState };
+    }
+  }
+
+  function writeState(s: State) {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(s));
+    } catch {
+      /* Safari Private Mode etc. — silent */
+    }
+  }
+
+  /** Wendet den State auf das DOM an (CSS-Klassen am <html>). */
+  function applyState(s: State) {
+    const html = document.documentElement;
+    // Schriftgröße
+    html.classList.remove("a11y-text-large", "a11y-text-xlarge");
+    if (s.fontSize === "large") html.classList.add("a11y-text-large");
+    if (s.fontSize === "xlarge") html.classList.add("a11y-text-xlarge");
+    // Flags
+    const allFlags: Flag[] = ["high-contrast", "light-mode", "underline-links", "no-motion", "reading-line"];
+    allFlags.forEach((flag) => {
+      const klass = `a11y-${flag}`;
+      if (s.flags[flag]) html.classList.add(klass);
+      else html.classList.remove(klass);
+    });
+  }
+
+  /** Synchronisiert das Panel-UI mit dem State. */
+  function syncUI(s: State) {
+    document.querySelectorAll<HTMLButtonElement>("[data-a11y-fontsize]").forEach((btn) => {
+      const isActive = btn.dataset.a11yFontsize === s.fontSize;
+      btn.setAttribute("aria-pressed", isActive ? "true" : "false");
+    });
+    document.querySelectorAll<HTMLInputElement>("[data-a11y-flag]").forEach((input) => {
+      const flag = input.dataset.a11yFlag as Flag;
+      input.checked = !!s.flags[flag];
+    });
+  }
+
+  // ---------- Initialisierung ----------
+  const state = readState();
+  applyState(state);
+
+  function setup() {
+    syncUI(state);
+
+    const fab = document.querySelector<HTMLButtonElement>("[data-a11y-toggle]");
+    const panel = document.getElementById("a11y-panel");
+
+    if (!fab || !panel) return;
+
+    function openPanel() {
+      panel.removeAttribute("hidden");
+      fab.setAttribute("aria-expanded", "true");
+      // Fokus auf das erste Element im Panel
+      const firstFocusable = panel.querySelector<HTMLElement>("button, input");
+      firstFocusable?.focus();
+    }
+    function closePanel() {
+      panel.setAttribute("hidden", "");
+      fab.setAttribute("aria-expanded", "false");
+      fab.focus();
+    }
+    function isOpen() {
+      return !panel.hasAttribute("hidden");
+    }
+
+    fab.addEventListener("click", () => {
+      if (isOpen()) closePanel();
+      else openPanel();
+    });
+
+    // Schließen-Button
+    document.querySelectorAll<HTMLElement>("[data-a11y-close]").forEach((el) => {
+      el.addEventListener("click", () => closePanel());
+    });
+
+    // ESC schließt Panel
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && isOpen()) closePanel();
+    });
+
+    // Klick außerhalb des Panels (aber nicht auf den FAB)
+    document.addEventListener("click", (e) => {
+      const target = e.target as Node;
+      if (!isOpen()) return;
+      if (panel.contains(target) || fab.contains(target)) return;
+      closePanel();
+    });
+
+    // Schriftgröße-Buttons
+    document.querySelectorAll<HTMLButtonElement>("[data-a11y-fontsize]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const size = btn.dataset.a11yFontsize as FontSize;
+        state.fontSize = size;
+        applyState(state);
+        syncUI(state);
+        writeState(state);
+      });
+    });
+
+    // Flag-Checkboxen
+    document.querySelectorAll<HTMLInputElement>("[data-a11y-flag]").forEach((input) => {
+      input.addEventListener("change", () => {
+        const flag = input.dataset.a11yFlag as Flag;
+        state.flags[flag] = input.checked;
+        applyState(state);
+        writeState(state);
+      });
+    });
+
+    // Reset
+    document.querySelector<HTMLButtonElement>("[data-a11y-reset]")?.addEventListener("click", () => {
+      state.fontSize = "default";
+      state.flags = {};
+      applyState(state);
+      syncUI(state);
+      writeState(state);
+    });
+
+    // Lesehilfe-Linie folgt dem Mauscursor
+    const line = document.getElementById("a11y-reading-line-el");
+    if (line) {
+      document.addEventListener("mousemove", (e) => {
+        if (!document.documentElement.classList.contains("a11y-reading-line")) return;
+        line.style.top = `${e.clientY}px`;
+      });
+    }
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", setup);
+  } else {
+    setup();
+  }
+</script>

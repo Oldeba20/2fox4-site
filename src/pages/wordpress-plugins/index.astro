@@ -1,0 +1,90 @@
+---
+/**
+ * /wordpress-plugins/ — Übersicht aller 7 selbstentwickelten Plugins.
+ * Slug-Kollision: Detailseiten liegen unter /wp-plugins/[slug]/,
+ * die Übersicht unter /wordpress-plugins/ — wie in der Architektur festgelegt.
+ */
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import CTASection from "../../components/CTASection.astro";
+import { plugins } from "../../data/plugins";
+import { breadcrumbSchema } from "../../lib/schema";
+
+const title = "Unsere WordPress-Plugins — 7 Eigenentwicklungen aus Sachsenhagen";
+const description =
+  "Wir entwickeln eigene WordPress-Plugins: Accessibility Suite, WP Blog Agent, Custom Popup, Image Compressor und mehr. Alle im offiziellen wordpress.org-Repository.";
+
+const schema = breadcrumbSchema([
+  { name: "Start", url: "/" },
+  { name: "WordPress-Plugins", url: "/wordpress-plugins/" },
+]);
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonicalPath="/wordpress-plugins/"
+  noindex={false}
+  schema={schema}
+>
+  <Breadcrumb
+    crumbs={[{ label: "Start", href: "/" }, { label: "WordPress-Plugins" }]}
+  />
+
+  <section class="border-b border-[var(--color-border)] pt-20 pb-12">
+    <div class="container-content">
+      <div class="mb-4 text-xs uppercase tracking-[0.16em] text-[var(--color-accent)]">
+        Eigene Plugins · WordPress.org Repository
+      </div>
+      <h1 class="mb-5 max-w-[820px] text-[clamp(36px,5.5vw,64px)] font-bold tracking-[-0.04em] leading-[1.05]">
+        <span class="text-gradient-light">7 Plugins, die wir</span>
+        <span class="text-gradient-accent">selbst gebaut haben.</span>
+      </h1>
+      <p class="max-w-[680px] text-lg text-[var(--color-text-muted)]">
+        Wir verlassen uns nicht auf fremde Plugins für Kernfunktionen unserer
+        Kunden-Websites — wir entwickeln eigene und veröffentlichen sie
+        kostenlos im offiziellen WordPress.org-Repository.
+      </p>
+    </div>
+  </section>
+
+  <section class="py-16">
+    <div class="container-content">
+      <div class="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+        {plugins.map((plugin) => (
+          <a
+            href={`/wp-plugins/${plugin.slug}/`}
+            class="group relative flex flex-col overflow-hidden rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-card)] p-7 transition-all hover:border-[var(--color-border-strong)] hover:-translate-y-0.5"
+          >
+            <span
+              aria-hidden="true"
+              class="absolute top-0 left-0 right-0 h-px opacity-0 transition-opacity group-hover:opacity-50"
+              style="background: linear-gradient(90deg, transparent, var(--color-accent), transparent);"
+            ></span>
+
+            <div class="mb-5 flex h-11 w-11 items-center justify-center rounded-[10px] bg-[var(--color-accent-soft)] text-[var(--color-accent)]" style={plugin.accent ? `background-color: color-mix(in oklab, ${plugin.accent} 15%, transparent); color: ${plugin.accent};` : undefined}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-5 w-5" set:html={plugin.iconSvg} />
+            </div>
+            <h2 class="mb-1.5 text-[18px] font-semibold tracking-[-0.01em]">
+              {plugin.name}
+            </h2>
+            <div class="mb-3 text-[13px] text-[var(--color-accent)]">
+              {plugin.tagline}
+            </div>
+            <p class="mb-6 flex-1 text-sm leading-relaxed text-[var(--color-text-muted)]">
+              {plugin.heroSub.split(".")[0]}.
+            </p>
+            <div class="inline-flex items-center gap-1.5 text-[13px] text-[var(--color-accent)] transition-all group-hover:gap-2.5">
+              Mehr erfahren
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <CTASection />
+</BaseLayout>

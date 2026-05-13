@@ -1,0 +1,85 @@
+---
+/**
+ * Pflichtseiten unter /impressum/, /datenschutz/, /agb/.
+ *
+ * Werden aus der gleichen `legal.ts`-Quelle wie das LegalModal gespeist —
+ * so können beide Ansichten niemals auseinanderlaufen.
+ *
+ * Wichtig: Diese Seiten brauchen eine eigene URL, weil:
+ *   - Abmahner / Behörden ein Modal nicht verlinken können
+ *   - Suchmaschinen Modale nicht indexieren
+ *   - E-Mail-Signaturen oder Externe Tools direkt verlinken
+ */
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Breadcrumb from "../components/Breadcrumb.astro";
+import { legalList, legalDocs, type LegalDoc } from "../data/legal";
+import { breadcrumbSchema } from "../lib/schema";
+
+export async function getStaticPaths() {
+  return legalList.map((doc) => ({
+    params: { legal: doc.slug },
+    props: { doc },
+  }));
+}
+
+interface Props {
+  doc: LegalDoc;
+}
+
+const { doc } = Astro.props;
+
+const title = `${doc.title} — ${doc.kicker} | 2FOX4`;
+const description = `${doc.title} der 2FOX4 Websites and more aus Sachsenhagen. Stand ${doc.lastUpdated}.`;
+
+const schema = breadcrumbSchema([
+  { name: "Start", url: "/" },
+  { name: doc.title, url: `/${doc.slug}/` },
+]);
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonicalPath={`/${doc.slug}/`}
+  noindex={false}
+  schema={schema}
+>
+  <Breadcrumb
+    crumbs={[{ label: "Start", href: "/" }, { label: doc.title }]}
+  />
+
+  <article class="py-12 pb-20">
+    <div class="container-content max-w-[800px]">
+      <header class="mb-10 border-b border-[var(--color-border)] pb-8">
+        <div class="mb-3 text-xs uppercase tracking-[0.16em] text-[var(--color-accent)]">
+          {doc.kicker}
+        </div>
+        <h1 class="mb-3 text-[clamp(32px,4.5vw,52px)] font-bold tracking-[-0.03em] leading-[1.1]">
+          {doc.title}
+        </h1>
+        <p class="text-sm text-[var(--color-text-faint)]">
+          Letzte Aktualisierung: {doc.lastUpdated}
+        </p>
+      </header>
+
+      {/* Querverweise zu den anderen Pflichtseiten */}
+      <nav class="mb-10 flex flex-wrap gap-2 text-[13px]">
+        {legalList.map((other) => (
+          <a
+            href={`/${other.slug}/`}
+            class:list={[
+              "rounded-full border px-3.5 py-1.5 transition-colors",
+              other.slug === doc.slug
+                ? "border-[var(--color-text)] bg-[var(--color-text)] text-black"
+                : "border-[var(--color-border)] text-[var(--color-text-muted)] hover:border-[var(--color-border-strong)] hover:text-[var(--color-text)]",
+            ]}
+          >
+            {other.title}
+          </a>
+        ))}
+      </nav>
+
+      <div class="legal-content" set:html={doc.html} />
+    </div>
+  </article>
+</BaseLayout>

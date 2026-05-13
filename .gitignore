@@ -1,0 +1,40 @@
+# Build output
+dist/
+.astro/
+
+# Dependencies
+node_modules/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Environment
+.env
+.env.production
+.env.local
+.env.*.local
+
+# SMTP-Credentials für das Kontaktformular — lebt nur am Server
+public/kontakt.config.php
+
+# macOS / Editor
+.DS_Store
+.vscode/
+.idea/
+*.swp
+
+# WP-Archive, falls jemals reinrutschen
+_archive-*/
+
+# Temp Build-Pfad (siehe astro.config.mjs outDir)
+/tmp/
+
+# Reviews-Cache & Backups
+public/reviews/cache/
+*.bak
+
+# Pages CMS lokale Drafts (falls genutzt)
+.pages-cms/

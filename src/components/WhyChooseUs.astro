@@ -1,0 +1,73 @@
+---
+/**
+ * WhyChooseUs — 3 Argumentations-Karten ("Warum wir").
+ * Default-Karten passen zu Stadt-Seiten; pro Stadt kann der erste Punkt
+ * (Distanz/Region) personalisiert werden.
+ */
+
+interface ReasonCard {
+  iconSvg: string;
+  title: string;
+  text: string;
+}
+
+interface Props {
+  eyebrow?: string;
+  title?: string;
+  sub?: string;
+  reasons?: ReasonCard[];
+}
+
+const {
+  eyebrow = "Warum 2FOX4",
+  title = "Drei Gründe, einen Webdesigner aus der Nachbarschaft zu wählen.",
+  sub = "Anonyme Konzern-Agenturen versprechen viel und liefern Templates. Eine regionale Agentur kennt die Sprache und die Kunden deiner Stadt.",
+  reasons = [
+    {
+      iconSvg: `<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>`,
+      title: "Wir sind in der Region",
+      text: "Sitz in Sachsenhagen. Vor-Ort-Termine sind kein Problem — auch kurzfristig. Du redest mit echten Menschen, nicht mit einem Kundenservice-System.",
+    },
+    {
+      iconSvg: `<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>`,
+      title: "18 Jahre Praxis-Erfahrung",
+      text: "Seit 2008 bauen wir Websites — von WordPress-Visitenkarten über WooCommerce- und Shopware-Shops bis zu KI-Tools. Über 125 Projekte aus allen Branchen.",
+    },
+    {
+      iconSvg: `<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>`,
+      title: "Eigene WordPress-Plugins",
+      text: "Wir entwickeln selbst Plugins, die wir im offiziellen WordPress-Repository veröffentlichen. Du bekommst keine Standard-Lösung, sondern Werkzeuge, die wir selbst gebaut und verstanden haben.",
+    },
+  ],
+} = Astro.props;
+---
+
+<section class="py-24">
+  <div class="container-content">
+    <div class="mb-3.5 text-xs uppercase tracking-[0.16em] text-[var(--color-accent)]">
+      {eyebrow}
+    </div>
+    <h2 class="mb-3.5 text-[clamp(28px,3.5vw,44px)] font-bold tracking-[-0.03em] leading-[1.1]">
+      {title}
+    </h2>
+    <p class="mb-12 max-w-[640px] text-[17px] text-[var(--color-text-muted)]">
+      {sub}
+    </p>
+
+    <div class="grid gap-5 md:grid-cols-3">
+      {reasons.map((reason) => (
+        <div class="rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg-card)] p-8">
+          <div class="mb-5 flex h-11 w-11 items-center justify-center rounded-[10px] bg-[var(--color-accent-soft)] text-[var(--color-accent)]">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-[22px] w-[22px]" set:html={reason.iconSvg} />
+          </div>
+          <h3 class="mb-2 text-[19px] font-semibold tracking-[-0.01em]">
+            {reason.title}
+          </h3>
+          <p class="text-sm leading-[1.7] text-[var(--color-text-muted)]">
+            {reason.text}
+          </p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

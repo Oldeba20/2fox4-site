@@ -1,0 +1,340 @@
+---
+/**
+ * LegalModal — eine zentrale Modal-Komponente für Impressum, Datenschutz, AGB.
+ *
+ * Wird einmal pro Seite gerendert (am besten direkt vor dem Footer im BaseLayout).
+ * Enthält drei `<dialog>`-Elemente, eines pro Dokument — alle vorgerendert, kein
+ * Fetch nötig. Native `<dialog>` bringt Focus-Trap, ESC-Schließen und
+ * Backdrop-Handling out of the box.
+ *
+ * Trigger: Jeder Link mit `data-legal="impressum|datenschutz|agb"` öffnet den
+ * jeweiligen Dialog. Das wird im Footer und überall verwendet, wo ein
+ * Rechtstext-Link auftaucht. Wer JavaScript deaktiviert hat, bekommt das
+ * native href-Fallback auf die `/impressum/`-Seite usw.
+ */
+import { legalList } from "../data/legal";
+---
+
+{legalList.map((doc) => (
+  <dialog
+    id={`legal-modal-${doc.slug}`}
+    class="legal-modal"
+    aria-labelledby={`legal-modal-${doc.slug}-title`}
+  >
+    <article class="legal-modal__inner">
+      <header class="legal-modal__header">
+        <div>
+          <div class="legal-modal__kicker">{doc.kicker}</div>
+          <h2 id={`legal-modal-${doc.slug}-title`} class="legal-modal__title">
+            {doc.title}
+          </h2>
+        </div>
+        <div class="legal-modal__actions">
+          <a
+            href={`/${doc.slug}/`}
+            class="legal-modal__link"
+            aria-label="Im neuen Tab öffnen"
+            target="_blank"
+            rel="noopener"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+              <polyline points="15 3 21 3 21 9" />
+              <line x1="10" y1="14" x2="21" y2="3" />
+            </svg>
+            Eigene Seite
+          </a>
+          <button
+            type="button"
+            class="legal-modal__close"
+            data-close-modal={doc.slug}
+            aria-label="Modal schließen"
+          >
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      <div class="legal-modal__body legal-content" set:html={doc.html} />
+
+      <footer class="legal-modal__footer">
+        <div>Letzte Aktualisierung: {doc.lastUpdated}</div>
+        <button type="button" class="legal-modal__ok" data-close-modal={doc.slug}>
+          Schließen
+        </button>
+      </footer>
+    </article>
+  </dialog>
+))}
+
+<style is:global>
+  /* ---------- Dialog-Container ---------- */
+  dialog.legal-modal {
+    border: none;
+    padding: 0;
+    background: transparent;
+    max-width: min(880px, 95vw);
+    max-height: 90vh;
+    width: 100%;
+    color: var(--color-text);
+    border-radius: 16px;
+    overflow: hidden;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+  dialog.legal-modal[open] {
+    opacity: 1;
+  }
+  dialog.legal-modal::backdrop {
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(8px);
+  }
+
+  /* ---------- Innerer Rahmen ---------- */
+  .legal-modal__inner {
+    display: flex;
+    flex-direction: column;
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--color-border-strong);
+    border-radius: 16px;
+    max-height: 90vh;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.7);
+  }
+
+  /* ---------- Header ---------- */
+  .legal-modal__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 24px 28px 18px;
+    border-bottom: 1px solid var(--color-border);
+    flex-shrink: 0;
+  }
+  .legal-modal__kicker {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--color-accent);
+    margin-bottom: 4px;
+  }
+  .legal-modal__title {
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+  .legal-modal__actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+  .legal-modal__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 12px;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    font-size: 13px;
+    color: var(--color-text-muted);
+    text-decoration: none;
+    transition: all 0.15s;
+  }
+  .legal-modal__link:hover {
+    color: var(--color-text);
+    border-color: var(--color-border-strong);
+  }
+  .legal-modal__close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    background: transparent;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s;
+  }
+  .legal-modal__close:hover {
+    color: var(--color-text);
+    border-color: var(--color-border-strong);
+    background: var(--color-bg-card);
+  }
+
+  /* ---------- Body ---------- */
+  .legal-modal__body {
+    padding: 24px 28px 32px;
+    overflow-y: auto;
+    flex: 1;
+  }
+
+  /* ---------- Footer ---------- */
+  .legal-modal__footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 28px;
+    border-top: 1px solid var(--color-border);
+    background: rgba(0, 0, 0, 0.2);
+    font-size: 13px;
+    color: var(--color-text-faint);
+    flex-shrink: 0;
+  }
+  .legal-modal__ok {
+    background: var(--color-text);
+    color: #000;
+    border: none;
+    padding: 8px 18px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: inherit;
+    transition: transform 0.15s;
+  }
+  .legal-modal__ok:hover {
+    transform: translateY(-1px);
+  }
+
+  /* ---------- Legal-Content-Styling (auch auf Standalone-Seiten) ---------- */
+  .legal-content {
+    color: var(--color-text-muted);
+    font-size: 15px;
+    line-height: 1.7;
+  }
+  .legal-content section {
+    margin-bottom: 2em;
+  }
+  .legal-content section:last-child {
+    margin-bottom: 0;
+  }
+  .legal-content h2 {
+    color: var(--color-text);
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin-bottom: 0.8em;
+    margin-top: 0;
+  }
+  .legal-content p {
+    margin-bottom: 0.9em;
+  }
+  .legal-content p:last-child {
+    margin-bottom: 0;
+  }
+  .legal-content strong {
+    color: var(--color-text);
+    font-weight: 600;
+  }
+  .legal-content a {
+    color: var(--color-accent);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+  }
+  .legal-content ul,
+  .legal-content ol {
+    padding-left: 1.4em;
+    margin-bottom: 1em;
+  }
+  .legal-content ul { list-style: disc; }
+  .legal-content ol { list-style: decimal; }
+  .legal-content li {
+    margin-bottom: 0.4em;
+  }
+
+  /* ---------- Mobile-Anpassung ---------- */
+  @media (max-width: 640px) {
+    dialog.legal-modal {
+      max-width: 100vw;
+      max-height: 100vh;
+      width: 100vw;
+      height: 100vh;
+      border-radius: 0;
+    }
+    .legal-modal__inner {
+      max-height: 100vh;
+      height: 100vh;
+      border-radius: 0;
+      border-left: none;
+      border-right: none;
+    }
+    .legal-modal__header,
+    .legal-modal__body,
+    .legal-modal__footer {
+      padding-left: 20px;
+      padding-right: 20px;
+    }
+    .legal-modal__link {
+      display: none; /* Auf Mobile reicht der Cross-Button */
+    }
+  }
+</style>
+
+<script>
+  /**
+   * Globale Modal-Logik. Wird einmal pro Seite ausgeführt — egal wie viele
+   * Trigger-Links der Footer enthält.
+   */
+  function setupLegalModals() {
+    // Öffnen: alle Links mit data-legal="..."
+    document.addEventListener("click", (e) => {
+      const target = e.target as HTMLElement;
+      const trigger = target.closest<HTMLElement>("[data-legal]");
+      if (!trigger) return;
+      const slug = trigger.dataset.legal;
+      if (!slug) return;
+      const dialog = document.getElementById(
+        `legal-modal-${slug}`
+      ) as HTMLDialogElement | null;
+      if (!dialog) return;
+      e.preventDefault();
+      dialog.showModal();
+      // Scroll-Position des Body fixieren, damit der Backdrop nicht "ruckelt"
+      document.documentElement.style.overflow = "hidden";
+    });
+
+    // Schließen-Buttons innerhalb der Modale
+    document.addEventListener("click", (e) => {
+      const target = e.target as HTMLElement;
+      const closer = target.closest<HTMLElement>("[data-close-modal]");
+      if (closer) {
+        const slug = closer.dataset.closeModal;
+        const dialog = document.getElementById(
+          `legal-modal-${slug}`
+        ) as HTMLDialogElement | null;
+        dialog?.close();
+        document.documentElement.style.overflow = "";
+      }
+    });
+
+    // Klick auf Backdrop schließt
+    document.querySelectorAll<HTMLDialogElement>("dialog.legal-modal").forEach((dialog) => {
+      dialog.addEventListener("click", (e) => {
+        if (e.target === dialog) {
+          dialog.close();
+          document.documentElement.style.overflow = "";
+        }
+      });
+      // ESC oder Cancel-Event
+      dialog.addEventListener("close", () => {
+        document.documentElement.style.overflow = "";
+      });
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", setupLegalModals);
+  } else {
+    setupLegalModals();
+  }
+</script>

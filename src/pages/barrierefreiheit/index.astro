@@ -1,0 +1,218 @@
+---
+/**
+ * /barrierefreiheit/ — Erklärung zur Barrierefreiheit.
+ *
+ * Pflicht-Inhalt nach BFSG (Barrierefreiheitsstärkungsgesetz, seit 28.06.2025)
+ * für viele Anbieter — und auch für 2fox4 als Webagentur ein verlässlicher
+ * Vertrauensanker gegenüber institutionellen Kunden.
+ *
+ * Inhalt orientiert sich an der Mustererklärung des BMAS und an der
+ * EU-Direktive 2016/2102 zur Barrierefreiheit öffentlicher Stellen.
+ */
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import CTASection from "../../components/CTASection.astro";
+import { breadcrumbSchema } from "../../lib/schema";
+
+const title = "Erklärung zur Barrierefreiheit — 2FOX4 Websites and more";
+const description =
+  "Erklärung zur Barrierefreiheit von 2fox4.de nach BFSG. Wie wir Barrierefreiheit umsetzen, was bereits funktioniert, welche Komfortfunktionen es gibt und wie du Probleme melden kannst.";
+
+const schema = breadcrumbSchema([
+  { name: "Start", url: "/" },
+  { name: "Erklärung zur Barrierefreiheit", url: "/barrierefreiheit/" },
+]);
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonicalPath="/barrierefreiheit/"
+  noindex={false}
+  schema={schema}
+>
+  <Breadcrumb
+    crumbs={[
+      { label: "Start", href: "/" },
+      { label: "Erklärung zur Barrierefreiheit" },
+    ]}
+  />
+
+  {/* Hero */}
+  <section class="border-b border-[var(--color-border)] pt-16 pb-12">
+    <div class="container-content max-w-[820px]">
+      <div class="mb-3 text-xs uppercase tracking-[0.16em] text-[var(--color-accent)]">
+        Erklärung zur Barrierefreiheit
+      </div>
+      <h1 class="mb-5 text-[clamp(32px,4.5vw,52px)] font-bold tracking-[-0.04em] leading-[1.1]">
+        Diese Website ist für alle gebaut.
+      </h1>
+      <p class="text-[18px] leading-[1.65] text-[var(--color-text-muted)]">
+        Wir bemühen uns, 2fox4.de so weit wie möglich nach den Web Content
+        Accessibility Guidelines (WCAG 2.2, Level AA) und nach den Anforderungen
+        des Barrierefreiheitsstärkungsgesetzes (BFSG) zu gestalten.
+      </p>
+    </div>
+  </section>
+
+  <article class="py-14 pb-20">
+    <div class="container-content max-w-[820px] legal-content">
+      <section>
+        <h2>Komfortfunktionen — direkt auf der Seite</h2>
+        <p>
+          Unten links auf jeder Seite findest du ein
+          <strong>Barrierefreiheits-Symbol</strong> (offene Person-Silhouette in
+          türkisem Kreis). Mit einem Klick öffnet sich ein Panel mit
+          Einstellungen, die du jederzeit anpassen kannst:
+        </p>
+        <ul>
+          <li>
+            <strong>Schriftgröße</strong> — drei Stufen (Standard / Groß / Sehr groß),
+            wirkt sich auf alle Texte der Seite aus.
+          </li>
+          <li>
+            <strong>Hochkontrast-Modus</strong> — schwarzer Hintergrund, weiße
+            Schrift, gelbe Akzente. Klassiker für starke Sehbehinderungen.
+          </li>
+          <li>
+            <strong>Heller Modus</strong> — dunkle Schrift auf hellem Hintergrund,
+            falls dir unser dunkles Standarddesign zu kontrastreich ist.
+          </li>
+          <li>
+            <strong>Animationen pausieren</strong> — schaltet 3D-Effekte und
+            Bewegungs-Animationen ab. Wir respektieren zusätzlich die
+            <em>prefers-reduced-motion</em>-Einstellung deines Betriebssystems.
+          </li>
+          <li>
+            <strong>Links unterstreichen</strong> — alle Links werden zusätzlich
+            zur Farbe sichtbar unterstrichen.
+          </li>
+          <li>
+            <strong>Lesehilfe-Linie</strong> — eine waagerechte Markierung folgt
+            dem Mauszeiger und hilft bei Konzentrationsproblemen.
+          </li>
+        </ul>
+        <p>
+          Deine Einstellungen werden lokal in deinem Browser gespeichert. Beim
+          nächsten Besuch greifen sie automatisch wieder.
+        </p>
+      </section>
+
+      <section>
+        <h2>Was wir technisch bereits umgesetzt haben</h2>
+        <ul>
+          <li>
+            Semantisches HTML mit korrekter Heading-Hierarchie (H1 → H2 → H3 …)
+          </li>
+          <li>Beschreibende Alt-Texte für alle inhaltlich relevanten Bilder</li>
+          <li>
+            Tastatur-Navigation für alle interaktiven Elemente (Tab-Reihenfolge,
+            sichtbarer Fokus-Ring, ESC-Schließen für Modale)
+          </li>
+          <li>
+            Farb-Kontrast nach WCAG-AA (Mindest-Verhältnis 4,5:1 bei Fließtext)
+          </li>
+          <li>
+            Saubere Sprachauszeichnung mit <code>lang="de"</code> auf der gesamten Seite
+          </li>
+          <li>
+            ARIA-Labels für Komponenten, deren Bedeutung sich nicht aus dem Text
+            ergibt (Cookie-Banner, Modale, Filter)
+          </li>
+          <li>
+            Beachtung von <em>prefers-reduced-motion</em>: die 3D-Sphere im
+            Hero-Bereich wird nicht geladen, wenn du Bewegung reduziert hast
+          </li>
+          <li>
+            Responsive Darstellung von Mobile (320px) bis Desktop (1280px+)
+            ohne Informationsverlust
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Wo wir noch arbeiten</h2>
+        <p>
+          Wir streben Level AA der WCAG 2.2 an, sind aber ehrlich: Einige Punkte
+          sind noch in der Umsetzung oder werden mit jeder neuen Funktion neu
+          überprüft. Konkret bekannte Themen:
+        </p>
+        <ul>
+          <li>
+            Einige eingebettete Inhalte Dritter (z. B. das Plugin-Video bei
+            <a href="/wp-plugins/wp-blog-agent/">WP Blog Agent</a>) folgen den
+            Accessibility-Standards der jeweiligen Anbieter — nicht zwingend
+            unseren eigenen.
+          </li>
+          <li>
+            PDF-Dokumente sind aktuell noch nicht systematisch als barrierefreie
+            PDFs aufbereitet (Tagging, Reihenfolge). Wir konvertieren auf
+            Anfrage gerne.
+          </li>
+          <li>
+            Die Lesehilfe-Linie folgt aktuell dem Mauszeiger; für reine
+            Tastatur-Nutzer ist sie weniger hilfreich — eine Verbesserung ist
+            geplant.
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Probleme melden, Verbesserungsvorschläge</h2>
+        <p>
+          Du hast eine Stelle gefunden, an der etwas nicht funktioniert? Bitte
+          schreib uns kurz — wir reagieren in der Regel innerhalb eines
+          Werktages und veröffentlichen den Fix so schnell wie möglich.
+        </p>
+        <p>
+          <strong>Oliver Deppe — 2FOX4 Websites and more</strong><br />
+          Schaumburger Str. 21, 31553 Sachsenhagen<br />
+          Telefon: <a href="tel:+4957259890175">05725 9890175</a><br />
+          E-Mail: <a href="mailto:info@2fox4.de">info@2fox4.de</a>
+        </p>
+      </section>
+
+      <section>
+        <h2>Durchsetzungsverfahren</h2>
+        <p>
+          Sollte deine Rückmeldung aus deiner Sicht nicht zufriedenstellend
+          bearbeitet werden, kannst du dich an die Schlichtungsstelle nach dem
+          Behindertengleichstellungsgesetz wenden:
+        </p>
+        <p>
+          Schlichtungsstelle nach dem Behindertengleichstellungsgesetz<br />
+          bei dem Beauftragten der Bundesregierung für die Belange von Menschen
+          mit Behinderungen<br />
+          Mauerstraße 53, 10117 Berlin<br />
+          E-Mail: <a href="mailto:info@schlichtungsstelle-bgg.de">info@schlichtungsstelle-bgg.de</a><br />
+          Web: <a href="https://www.schlichtungsstelle-bgg.de" target="_blank" rel="noopener">www.schlichtungsstelle-bgg.de</a>
+        </p>
+      </section>
+
+      <section>
+        <h2>Auch für deine Website</h2>
+        <p>
+          Wenn du als öffentliche Einrichtung, Verein oder Unternehmen vom BFSG
+          betroffen bist, helfen wir dir gerne bei der Umsetzung. Das beinhaltet:
+          <a href="/leistungen/barrierefreie-website/">WCAG-konforme Webseiten-Entwicklung</a>,
+          unsere
+          <a href="/wp-plugins/accessibility-suite/">Accessibility Suite als WordPress-Plugin</a>
+          und auf Wunsch auch ein dokumentiertes Audit deiner bestehenden Seite.
+        </p>
+      </section>
+
+      <section>
+        <h2>Stand dieser Erklärung</h2>
+        <p>
+          Diese Erklärung wurde zuletzt am <strong>12. Mai 2026</strong>
+          aktualisiert. Sie basiert auf einer Eigenbewertung unserer Site.
+        </p>
+      </section>
+    </div>
+  </article>
+
+  <CTASection
+    title="Du bist betroffen vom BFSG?"
+    text="30 Minuten Erstgespräch, kostenlos. Wir schauen gemeinsam auf deine Seite und sagen ehrlich, was nötig ist — und was nicht."
+  />
+</BaseLayout>

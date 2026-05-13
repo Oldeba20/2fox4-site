@@ -1,0 +1,131 @@
+---
+/**
+ * BaseLayout — der HTML-Rahmen für jede Seite.
+ *
+ * Setzt:
+ *   - <head> mit SEO-Meta, OpenGraph, Twitter, kanonischer URL
+ *   - Schriftarten (Inter + JetBrains Mono via Google Fonts)
+ *   - Globales CSS (Tailwind + Design-Tokens)
+ *   - Header / Footer
+ *
+ * Jede Seite übergibt mindestens `title` und `description`.
+ * Optional kann `noindex` gesetzt werden (z. B. für /neu/-Preview).
+ */
+import "../styles/global.css";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import LegalModal from "../components/LegalModal.astro";
+import CookieBanner from "../components/CookieBanner.astro";
+import AccessibilityWidget from "../components/AccessibilityWidget.astro";
+import { site } from "../data/site";
+
+interface Props {
+  title: string;
+  description: string;
+  /** Vollständiger Pfad oder URL für canonical, z. B. "/leistungen/seo/" */
+  canonicalPath?: string;
+  /** Pfad zu einem OG-Bild; default: site.ogImage */
+  ogImage?: string;
+  /** Auf der Preview unter /neu/ gewollt true. Auf live false. */
+  noindex?: boolean;
+  /** Optionales JSON-LD Schema (z. B. LocalBusiness, FAQPage) */
+  schema?: Record<string, unknown> | Array<Record<string, unknown>>;
+}
+
+const {
+  title,
+  description,
+  canonicalPath,
+  ogImage = site.ogImage,
+  noindex = false,
+  schema,
+} = Astro.props;
+
+const canonicalUrl = canonicalPath
+  ? new URL(canonicalPath, site.url).href
+  : new URL(Astro.url.pathname, site.url).href;
+---
+
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="generator" content={Astro.generator} />
+
+    {noindex && <meta name="robots" content="noindex,nofollow" />}
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalUrl} />
+
+    {/* OpenGraph */}
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:image" content={new URL(ogImage, site.url).href} />
+    <meta property="og:locale" content="de_DE" />
+    <meta property="og:site_name" content={site.name} />
+
+    {/* Twitter */}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={new URL(ogImage, site.url).href} />
+
+    {/* Geo-Meta (lokale SEO) */}
+    <meta name="geo.region" content="DE-NI" />
+    <meta name="geo.placename" content={site.nap.city} />
+    <meta name="geo.position" content={`${site.geo.latitude};${site.geo.longitude}`} />
+    <meta name="ICBM" content={`${site.geo.latitude}, ${site.geo.longitude}`} />
+
+    {/* Schriften */}
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    {/*
+      A11y-Klassen synchron aus localStorage anwenden, BEVOR der Browser
+      die Seite rendert. Verhindert Flash-of-Unstyled-Content, wenn ein
+      Besucher z. B. Hochkontrast aktiv hat und die Seite neu lädt.
+    */}
+    <script is:inline>
+      (function () {
+        try {
+          var s = JSON.parse(localStorage.getItem("a11y_v1") || "null");
+          if (!s) return;
+          var h = document.documentElement;
+          if (s.fontSize === "large") h.classList.add("a11y-text-large");
+          if (s.fontSize === "xlarge") h.classList.add("a11y-text-xlarge");
+          var flags = s.flags || {};
+          ["high-contrast","light-mode","underline-links","no-motion","reading-line"]
+            .forEach(function (f) { if (flags[f]) h.classList.add("a11y-" + f); });
+        } catch (e) { /* nothing */ }
+      })();
+    </script>
+
+    {/* Optionales JSON-LD Schema */}
+    {schema && (
+      <script
+        type="application/ld+json"
+        set:html={JSON.stringify(schema)}
+      />
+    )}
+  </head>
+  <body>
+    <Header />
+    <main>
+      <slot />
+    </main>
+    <Footer />
+    <LegalModal />
+    <CookieBanner />
+    <AccessibilityWidget />
+  </body>
+</html>

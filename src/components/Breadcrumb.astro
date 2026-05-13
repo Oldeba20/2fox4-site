@@ -1,0 +1,36 @@
+---
+/**
+ * Breadcrumb — kleine Pfad-Anzeige unter dem Header.
+ * Erzeugt KEIN Schema (das macht `breadcrumbSchema()` in lib/schema.ts),
+ * dient nur als visuelle Komponente.
+ */
+interface Crumb {
+  label: string;
+  href?: string;
+}
+
+interface Props {
+  crumbs: Crumb[];
+}
+
+const { crumbs } = Astro.props;
+---
+
+<nav class="container-content py-4 text-[13px] text-[var(--color-text-muted)]" aria-label="Brotkrumen">
+  {crumbs.map((crumb, i) => (
+    <span>
+      {crumb.href && i < crumbs.length - 1 ? (
+        <a href={crumb.href} class="transition-colors hover:text-[var(--color-text)]">
+          {crumb.label}
+        </a>
+      ) : (
+        <span class={i === crumbs.length - 1 ? "text-[var(--color-text)]" : ""}>
+          {crumb.label}
+        </span>
+      )}
+      {i < crumbs.length - 1 && (
+        <span class="mx-2 text-[var(--color-text-faint)]">/</span>
+      )}
+    </span>
+  ))}
+</nav>

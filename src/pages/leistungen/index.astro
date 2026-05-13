@@ -1,0 +1,82 @@
+---
+/**
+ * /leistungen/ — Übersicht aller 7 Leistungsseiten.
+ */
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import CTASection from "../../components/CTASection.astro";
+import { services } from "../../data/services";
+import { breadcrumbSchema } from "../../lib/schema";
+
+const title = "Leistungen — 2FOX4 Webdesign, SEO, Wartung & Hosting";
+const description =
+  "Alle Leistungen von 2FOX4 im Überblick: Webdesign, SEO, WordPress-Wartung, Hosting, Digitalisierungsberatung, BAFA-Förderung und Barrierefreiheit.";
+
+const schema = breadcrumbSchema([
+  { name: "Start", url: "/" },
+  { name: "Leistungen", url: "/leistungen/" },
+]);
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonicalPath="/leistungen/"
+  noindex={false}
+  schema={schema}
+>
+  <Breadcrumb crumbs={[{ label: "Start", href: "/" }, { label: "Leistungen" }]} />
+
+  <section class="border-b border-[var(--color-border)] pt-20 pb-12">
+    <div class="container-content">
+      <div class="mb-4 text-xs uppercase tracking-[0.16em] text-[var(--color-accent)]">
+        Leistungen · alles aus einer Hand
+      </div>
+      <h1 class="mb-5 max-w-[820px] text-[clamp(36px,5.5vw,64px)] font-bold tracking-[-0.04em] leading-[1.05]">
+        <span class="text-gradient-light">Was wir für dich</span>
+        <span class="text-gradient-accent">tun können.</span>
+      </h1>
+      <p class="max-w-[680px] text-lg text-[var(--color-text-muted)]">
+        Sieben Leistungsbereiche, die ineinandergreifen. Du kannst sie einzeln
+        buchen oder als Paket — beide Wege funktionieren.
+      </p>
+    </div>
+  </section>
+
+  <section class="py-16">
+    <div class="container-content">
+      <div class="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+        {services.map((service) => (
+          <a
+            href={`/leistungen/${service.slug}/`}
+            class="group relative flex flex-col overflow-hidden rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-card)] p-7 transition-all hover:border-[var(--color-border-strong)] hover:-translate-y-0.5"
+          >
+            <span
+              aria-hidden="true"
+              class="absolute top-0 left-0 right-0 h-px opacity-0 transition-opacity group-hover:opacity-50"
+              style="background: linear-gradient(90deg, transparent, var(--color-accent), transparent);"
+            ></span>
+
+            <div class="mb-5 flex h-10 w-10 items-center justify-center rounded-lg bg-[var(--color-accent-soft)] text-[var(--color-accent)]">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-5 w-5" set:html={service.iconSvg} />
+            </div>
+            <h2 class="mb-2 text-[18px] font-semibold tracking-[-0.01em]">
+              {service.name}
+            </h2>
+            <p class="mb-6 flex-1 text-sm leading-relaxed text-[var(--color-text-muted)]">
+              {service.cardSummary}
+            </p>
+            <div class="inline-flex items-center gap-1.5 text-[13px] text-[var(--color-accent)] transition-all group-hover:gap-2.5">
+              Mehr erfahren
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <CTASection />
+</BaseLayout>

@@ -1,0 +1,45 @@
+---
+/**
+ * TrustBar — die Zahlenleiste direkt unter dem Hero.
+ * Standardwerte sind die aktuellen Kennzahlen.
+ */
+interface Stat {
+  num: string;
+  label: string;
+}
+
+interface Props {
+  label?: string;
+  stats?: Stat[];
+}
+
+const {
+  label = "Was Auftraggeber von uns bekommen",
+  stats = [
+    { num: "125+", label: "Gelaunchte Websites" },
+    { num: "9", label: "Städte regional vertreten" },
+    { num: "18J", label: "Erfahrung am Markt" },
+    { num: "7", label: "Eigene WP-Plugins" },
+  ],
+} = Astro.props;
+---
+
+<section class="py-12 border-y border-[var(--color-border)]">
+  <div class="container-content">
+    <div class="text-center mb-7 text-xs uppercase tracking-[0.15em] text-[var(--color-text-faint)]">
+      {label}
+    </div>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+      {stats.map((stat) => (
+        <div>
+          <div class="text-3xl font-semibold tracking-[-0.02em] mb-1">
+            {stat.num}
+          </div>
+          <div class="text-[13px] text-[var(--color-text-muted)]">
+            {stat.label}
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

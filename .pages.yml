@@ -1,0 +1,115 @@
+# Pages CMS Konfiguration für 2fox4.de
+# Doku: https://pagescms.org/docs/
+#
+# Wie es zusammenspielt:
+#   - Pages CMS (pagescms.org) zeigt dir das Admin-UI im Browser
+#   - Alle Inhalte landen als Datei in diesem Repo, NICHT in einer DB
+#   - Auf jeden Commit auf "main" baut GitHub Actions Astro und lädt
+#     das Ergebnis per SFTP zu All-Inkl hoch (siehe .github/workflows/deploy.yml)
+
+media:
+  # Wo Pages CMS hochgeladene Bilder im Repo ablegt
+  input: public/uploads
+  # Wie diese Bilder im Markdown/JSON referenziert werden (relativ zur Astro-base)
+  output: /uploads
+
+content:
+  - name: blog
+    label: Blog-Beiträge
+    type: collection
+    path: src/content/blog
+    view:
+      fields: [title, date, categories, draft]
+      primary: title
+      sort: [date]
+      default:
+        sort: date
+        order: desc
+    filename: '{slug}.md'
+    fields:
+      - name: title
+        label: Titel
+        type: string
+        required: true
+        description: Der H1-Titel des Beitrags. Wird auch im Browser-Tab und in der Google-Suche angezeigt.
+      - name: date
+        label: Veröffentlichungs-Datum
+        type: date
+        required: true
+        description: Bestimmt die Sortierung im Blog-Listing. Format YYYY-MM-DD.
+        default:
+          type: now
+      - name: description
+        label: Kurzbeschreibung
+        type: text
+        required: true
+        description: 1-3 Sätze. Wird als Auszug im Listing und als Meta-Description verwendet (für Google).
+        options:
+          rows: 3
+      - name: cover
+        label: Coverbild
+        type: object
+        description: Optional. Bild oben auf dem Beitrag und im Listing.
+        fields:
+          - name: src
+            label: Bild
+            type: image
+          - name: alt
+            label: Alt-Text (für Screenreader & SEO)
+            type: string
+      - name: categories
+        label: Kategorien (Slugs)
+        type: select
+        list: true
+        description: Tech-IDs der Kategorien. Müssen mit den vorhandenen WP-Kategorien übereinstimmen (z. B. "wordpress", "ki", "seo").
+        options:
+          values:
+            - { value: wordpress, label: WordPress }
+            - { value: ki, label: KI / AI }
+            - { value: seo, label: SEO }
+            - { value: webdesign, label: Webdesign }
+            - { value: websites, label: Websites }
+            - { value: tools, label: Tools }
+      - name: categoryNames
+        label: Kategorie-Namen (Anzeige)
+        type: select
+        list: true
+        description: Parallel zu Kategorien, in derselben Reihenfolge. Wird im UI angezeigt.
+        options:
+          values:
+            - WordPress
+            - KI / AI
+            - SEO
+            - Webdesign
+            - Websites
+            - Tools
+      - name: draft
+        label: Entwurf
+        type: boolean
+        description: Wenn aktiv, wird der Beitrag NICHT veröffentlicht.
+        default: false
+      - name: seoTitle
+        label: SEO Titel (Override)
+        type: string
+        description: Nur ausfüllen, wenn der Browser-Tab/SERP-Titel anders sein soll als der H1.
+      - name: seoDescription
+        label: SEO Description (Override)
+        type: string
+        description: Nur ausfüllen, wenn die Meta-Description anders sein soll als die Kurzbeschreibung.
+      - name: body
+        label: Inhalt
+        type: rich-text
+        description: Der Beitragsinhalt. Bilder, Links und Markdown werden unterstützt.
+
+  # Schnellzugriff auf Referenzen-Daten direkt aus dem CMS (read & edit)
+  - name: references
+    label: Referenzen
+    type: file
+    path: src/data/references.ts
+    format: code
+    description: TypeScript-Datei mit der Referenz-Liste. Pages CMS zeigt sie als Code-Editor an.
+
+  # Globale Site-Konfig — z. B. astro.config kannst du hier sehen, aber nicht
+  # ohne Sorgfalt ändern.
+settings:
+  merge: false  # Direkter Commit auf main (kein PR-Flow). Für Solo-Workflow ok.

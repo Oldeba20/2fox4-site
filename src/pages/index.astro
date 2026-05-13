@@ -1,0 +1,166 @@
+---
+/**
+ * Startseite (Homepage).
+ * Setzt sich aus den Komponenten Hero, TrustBar, Services-Grid,
+ * ProcessSection und CTASection zusammen.
+ *
+ * Schema.org LocalBusiness + WebSite werden hier mitgegeben, damit
+ * Google die Geschäftsinformationen direkt aus der Startseite zieht.
+ */
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Hero from "../components/Hero.astro";
+import TrustBar from "../components/TrustBar.astro";
+import ServiceCard from "../components/ServiceCard.astro";
+import ProcessSection from "../components/ProcessSection.astro";
+import GoogleReviews from "../components/GoogleReviews.astro";
+import CTASection from "../components/CTASection.astro";
+import { site } from "../data/site";
+import reviewsData from "../data/reviews.json";
+
+const title = "Webdesign, das auffindbar macht | 2FOX4 Sachsenhagen";
+const description =
+  "Webagentur für Stadthagen, Bückeburg, Wunstorf und Niedersachsen. WordPress, SEO, KI-Content. 125+ Websites in 18 Jahren — persönlich und ehrlich.";
+
+const services = [
+  {
+    title: "Webdesign",
+    description:
+      "Maßgeschneiderte WordPress-Websites mit modernem Stack — schnell, mobil optimiert, barrierefrei. Keine schwerfälligen Pagebuilder.",
+    href: "/leistungen/webdesign/",
+    icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-5 h-5"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>`,
+  },
+  {
+    title: "SEO & Lokale Auffindbarkeit",
+    description:
+      "Mit RankMath-Anbindung, LocalBusiness-Schema und KI-gestützter Content-Strategie. Wir machen aus deiner Website ein Verkaufsteam, das nie schläft.",
+    href: "/leistungen/seo/",
+    icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-5 h-5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>`,
+  },
+  {
+    title: "WordPress-Service",
+    description:
+      "Wartung, Sicherheit, Backups, Performance-Tuning. Wir kümmern uns um den technischen Unterbau, damit du dich aufs Geschäft konzentrieren kannst.",
+    href: "/leistungen/wartung-support/",
+    icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-5 h-5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>`,
+  },
+  {
+    title: "Digitalisierungsberatung",
+    description:
+      "Ehrlich, ohne KI-Hype. Wir zeigen dir, welche Prozesse sich automatisieren lohnen — und welche nicht. BAFA-förderfähig.",
+    href: "/leistungen/digitalisierungsberatung/",
+    icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-5 h-5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>`,
+  },
+  {
+    title: "Eigene WP-Plugins",
+    description:
+      "Accessibility Suite, KI Blog Agent, Custom Popup. Selbst entwickelt, im WordPress.org-Repository veröffentlicht — und auf deiner Site einsetzbar.",
+    href: "/wordpress-plugins/",
+    icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-5 h-5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>`,
+  },
+  {
+    title: "Hosting & Wartung",
+    description:
+      "Schnelle Server, automatische Backups, Security-Patches, Uptime-Monitoring. Damit deine Website auch nachts um drei läuft.",
+    href: "/leistungen/hosting/",
+    icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-5 h-5"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>`,
+  },
+];
+
+// JSON-LD: LocalBusiness + WebSite
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "@id": `${site.url}/#business`,
+    name: site.name,
+    url: site.url,
+    telephone: site.nap.phone,
+    email: site.nap.email,
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: site.nap.street,
+      postalCode: site.nap.zip,
+      addressLocality: site.nap.city,
+      addressCountry: site.nap.country,
+    },
+    geo: {
+      "@type": "GeoCoordinates",
+      latitude: site.geo.latitude,
+      longitude: site.geo.longitude,
+    },
+    areaServed: [
+      "Stadthagen", "Bückeburg", "Wunstorf", "Hameln",
+      "Rinteln", "Minden", "Nienburg", "Bad Münder", "Barsinghausen",
+    ],
+    aggregateRating: {
+      "@type": "AggregateRating",
+      ratingValue: reviewsData.rating.toFixed(1),
+      reviewCount: reviewsData.user_ratings_total,
+      bestRating: "5",
+      worstRating: "1",
+    },
+    review: reviewsData.reviews.slice(0, 5).map((r: any) => ({
+      "@type": "Review",
+      author: { "@type": "Person", name: r.author_name },
+      reviewRating: {
+        "@type": "Rating",
+        ratingValue: r.rating,
+        bestRating: "5",
+        worstRating: "1",
+      },
+      reviewBody: r.text,
+    })),
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "@id": `${site.url}/#website`,
+    url: site.url,
+    name: site.name,
+    inLanguage: "de-DE",
+  },
+];
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonicalPath="/"
+  noindex={false}
+  schema={schema}
+>
+  <Hero />
+  <TrustBar />
+
+  <section id="leistungen" class="py-24">
+    <div class="container-content">
+      <div class="mb-4 text-xs uppercase tracking-[0.15em] text-[var(--color-accent)]">
+        Leistungen
+      </div>
+      <h2 class="mb-4 max-w-[720px] text-[clamp(32px,4vw,48px)] font-bold tracking-[-0.03em] leading-[1.1]">
+        Alles, was deine Website braucht, um sichtbar zu werden.
+      </h2>
+      <p class="mb-14 max-w-[620px] text-lg leading-relaxed text-[var(--color-text-muted)]">
+        Webdesign ist nur der Anfang. Was Google rankt, ist die Summe aus
+        Geschwindigkeit, Struktur, Inhalt und lokaler Auffindbarkeit. Wir
+        liefern alles aus einer Hand.
+      </p>
+
+      <div class="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+        {services.map((svc) => (
+          <ServiceCard
+            title={svc.title}
+            description={svc.description}
+            href={svc.href}
+          >
+            <Fragment slot="icon" set:html={svc.icon} />
+          </ServiceCard>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <ProcessSection />
+  <GoogleReviews />
+  <CTASection />
+</BaseLayout>

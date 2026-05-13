@@ -1,0 +1,392 @@
+---
+/**
+ * Plugin-Detail-Seiten unter /wp-plugins/[slug]/.
+ */
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import FAQ from "../../components/FAQ.astro";
+import CTASection from "../../components/CTASection.astro";
+import { plugins, type Plugin } from "../../data/plugins";
+import { breadcrumbSchema, faqSchema } from "../../lib/schema";
+
+export async function getStaticPaths() {
+  return plugins.map((plugin) => ({
+    params: { slug: plugin.slug },
+    props: { plugin },
+  }));
+}
+
+interface Props {
+  plugin: Plugin;
+}
+
+const { plugin } = Astro.props;
+
+const wpOrgUrl = plugin.wpOrgSlug
+  ? `https://wordpress.org/plugins/${plugin.wpOrgSlug}/`
+  : undefined;
+
+// Primärer CTA-Button: Download hat Vorrang vor WP.org-Link
+const primaryDownload =
+  plugin.downloadUrl
+    ? { href: plugin.downloadUrl, label: "Plugin herunterladen", isDirect: true }
+    : wpOrgUrl
+      ? { href: wpOrgUrl, label: "Im WordPress.org-Repo öffnen", isDirect: false }
+      : null;
+
+const schema = [
+  breadcrumbSchema([
+    { name: "Start", url: "/" },
+    { name: "WordPress-Plugins", url: "/wordpress-plugins/" },
+    { name: plugin.name, url: `/wp-plugins/${plugin.slug}/` },
+  ]),
+  faqSchema(plugin.faq),
+  // SoftwareApplication-Schema für Google Search Result Eligibility
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    name: plugin.name,
+    applicationCategory: "WebApplication",
+    operatingSystem: "WordPress",
+    description: plugin.seoDescription,
+    offers: {
+      "@type": "Offer",
+      price: "0",
+      priceCurrency: "EUR",
+    },
+  },
+];
+---
+
+<BaseLayout
+  title={plugin.seoTitle}
+  description={plugin.seoDescription}
+  canonicalPath={`/wp-plugins/${plugin.slug}/`}
+  noindex={false}
+  schema={schema}
+>
+  <Breadcrumb
+    crumbs={[
+      { label: "Start", href: "/" },
+      { label: "WordPress-Plugins", href: "/wordpress-plugins/" },
+      { label: plugin.name },
+    ]}
+  />
+
+  {/* ====================  Hero  ==================== */}
+  <section class="relative overflow-hidden border-b border-[var(--color-border)] pt-20 pb-16">
+    <div class="hero-grid-bg"></div>
+    <div class="container-content relative z-10">
+      <div
+        class="mb-6 inline-flex h-14 w-14 items-center justify-center rounded-xl bg-[var(--color-accent-soft)] text-[var(--color-accent)]"
+        style={plugin.accent
+          ? `background-color: color-mix(in oklab, ${plugin.accent} 15%, transparent); color: ${plugin.accent};`
+          : undefined}
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-7 w-7" set:html={plugin.iconSvg} />
+      </div>
+      <div class="mb-2 text-xs uppercase tracking-[0.14em] text-[var(--color-text-faint)]">
+        WordPress-Plugin · von 2FOX4
+      </div>
+      <h1 class="mb-4 max-w-[800px] text-[clamp(36px,5.5vw,60px)] font-bold tracking-[-0.04em] leading-[1.05]">
+        <span class="text-gradient-light">{plugin.name}</span>
+      </h1>
+      <p class="mb-7 max-w-[600px] text-[19px] text-[var(--color-accent)]">
+        {plugin.tagline}
+      </p>
+      <p class="mb-9 max-w-[720px] text-[17px] leading-[1.65] text-[var(--color-text-muted)]">
+        {plugin.heroSub}
+      </p>
+
+      <div class="flex flex-wrap gap-3">
+        {primaryDownload && (
+          <a
+            href={primaryDownload.href}
+            rel={primaryDownload.isDirect ? "noopener" : "noopener external"}
+            target={primaryDownload.isDirect ? undefined : "_blank"}
+            class="inline-flex items-center gap-2 rounded-lg bg-white px-5 py-3 text-[15px] font-medium text-black transition-all hover:-translate-y-px"
+          >
+            {primaryDownload.isDirect ? (
+              <>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                  <polyline points="7 10 12 15 17 10" />
+                  <line x1="12" y1="15" x2="12" y2="3" />
+                </svg>
+                {primaryDownload.label}
+              </>
+            ) : (
+              <>
+                {primaryDownload.label}
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M7 17L17 7M17 7H8M17 7v9" />
+                </svg>
+              </>
+            )}
+          </a>
+        )}
+        {plugin.youtubeId && (
+          <a
+            href="#video"
+            class="inline-flex items-center gap-2 rounded-lg border border-[var(--color-border-strong)] bg-transparent px-5 py-3 text-[15px] font-medium text-[var(--color-text)] transition-all hover:bg-[var(--color-bg-card)]"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="5 3 19 12 5 21 5 3" />
+            </svg>
+            Video ansehen
+          </a>
+        )}
+        <a
+          href="/kontakt/"
+          class="inline-flex items-center gap-2 rounded-lg border border-[var(--color-border-strong)] bg-transparent px-5 py-3 text-[15px] font-medium text-[var(--color-text)] transition-all hover:bg-[var(--color-bg-card)]"
+        >
+          Implementierung anfragen
+        </a>
+      </div>
+    </div>
+  </section>
+
+  {/* ====================  YouTube-Video  ==================== */}
+  {plugin.youtubeId && (
+    <section id="video" class="border-b border-[var(--color-border)] bg-[var(--color-bg-elevated)] py-20">
+      <div class="container-content">
+        <div class="mb-3.5 text-xs uppercase tracking-[0.16em] text-[var(--color-accent)]">
+          {plugin.youtubeEyebrow ?? "Video"}
+        </div>
+        <h2 class="mb-3 max-w-[760px] text-[clamp(28px,3.5vw,42px)] font-bold tracking-[-0.03em] leading-[1.1]">
+          {plugin.youtubeHeadline ?? "Plugin in Aktion."}
+        </h2>
+        {plugin.youtubeSub && (
+          <p class="mb-10 max-w-[640px] text-[17px] text-[var(--color-text-muted)]">
+            {plugin.youtubeSub}
+          </p>
+        )}
+        <div class="overflow-hidden rounded-2xl border border-[var(--color-border)] bg-black" style="aspect-ratio: 16/9;">
+          <iframe
+            src={`https://www.youtube-nocookie.com/embed/${plugin.youtubeId}?rel=0&modestbranding=1`}
+            title={`${plugin.name} — Plugin-Video`}
+            loading="lazy"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerpolicy="strict-origin-when-cross-origin"
+            allowfullscreen
+            class="h-full w-full"
+          ></iframe>
+        </div>
+      </div>
+    </section>
+  )}
+
+  {/* ====================  Features  ==================== */}
+  <section class="py-20">
+    <div class="container-content">
+      <div class="mb-3.5 text-xs uppercase tracking-[0.16em] text-[var(--color-accent)]">
+        Funktionen
+      </div>
+      <h2 class="mb-12 max-w-[760px] text-[clamp(28px,3.5vw,42px)] font-bold tracking-[-0.03em] leading-[1.1]">
+        Was das Plugin kann.
+      </h2>
+
+      <div class="grid gap-5 md:grid-cols-2">
+        {plugin.features.map((feature) => (
+          <div class="flex gap-5 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-card)] p-6">
+            <span class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-[10px] bg-[var(--color-accent-soft)] text-[var(--color-accent)]">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-5 w-5" set:html={feature.iconSvg} />
+            </span>
+            <div>
+              <h3 class="mb-1.5 text-[17px] font-semibold tracking-[-0.01em]">
+                {feature.title}
+              </h3>
+              <p class="text-[14px] leading-[1.6] text-[var(--color-text-muted)]">
+                {feature.text}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  {/* ====================  Screenshot-Galerie  ==================== */}
+  {plugin.screenshots && plugin.screenshots.length > 0 && (
+    <section class="border-y border-[var(--color-border)] bg-[var(--color-bg-elevated)] py-20">
+      <div class="container-content">
+        <div class="mb-3.5 text-xs uppercase tracking-[0.16em] text-[var(--color-accent)]">
+          So sieht die Bedienung aus
+        </div>
+        <h2 class="mb-12 max-w-[760px] text-[clamp(28px,3.5vw,42px)] font-bold tracking-[-0.03em] leading-[1.1]">
+          {plugin.screenshots.length} Ansichten aus dem WordPress-Backend.
+        </h2>
+
+        <div class="flex flex-col gap-16">
+          {plugin.screenshots.map((shot, i) => (
+            <div class:list={[
+              "grid gap-10 items-center",
+              "lg:grid-cols-2",
+              i % 2 === 1 ? "lg:[&>:first-child]:order-2" : "",
+            ]}>
+              <div>
+                <div class="mb-3 text-xs uppercase tracking-[0.14em] text-[var(--color-text-faint)]">
+                  Ansicht {i + 1}
+                </div>
+                <h3 class="mb-3 text-[24px] font-bold tracking-[-0.02em] leading-[1.2]">
+                  {shot.title}
+                </h3>
+                <p class="mb-5 text-[15px] leading-[1.7] text-[var(--color-text-muted)]">
+                  {shot.description}
+                </p>
+                {shot.bullets && shot.bullets.length > 0 && (
+                  <ul class="flex flex-col gap-2.5">
+                    {shot.bullets.map((b) => (
+                      <li class="flex items-start gap-2.5 text-[14px] text-[var(--color-text)]">
+                        <svg class="mt-1 h-4 w-4 flex-shrink-0 text-[var(--color-accent)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                          <polyline points="20 6 9 17 4 12" />
+                        </svg>
+                        <span>{b}</span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+              <div class="screenshot-card">
+                <img
+                  src={shot.src}
+                  alt={shot.alt}
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  {/* ====================  Installation (3 Schritte)  ==================== */}
+  {plugin.installSteps && plugin.installSteps.length > 0 && primaryDownload && (
+    <section class="py-20">
+      <div class="container-content">
+        <div class="mb-3.5 text-xs uppercase tracking-[0.16em] text-[var(--color-accent)]">
+          Installation
+        </div>
+        <h2 class="mb-3 max-w-[760px] text-[clamp(28px,3.5vw,42px)] font-bold tracking-[-0.03em] leading-[1.1]">
+          In 3 Schritten installiert.
+        </h2>
+        <p class="mb-10 max-w-[640px] text-[17px] text-[var(--color-text-muted)]">
+          Du brauchst nur eine laufende WordPress-Seite und weniger als zwei Minuten Zeit.
+        </p>
+
+        <div class="grid gap-5 md:grid-cols-3 mb-10">
+          {plugin.installSteps.map((step, i) => (
+            <div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-card)] p-6">
+              <div class="mb-4 flex h-9 w-9 items-center justify-center rounded-full bg-[var(--color-accent-soft)] text-[15px] font-semibold text-[var(--color-accent)]">
+                {i + 1}
+              </div>
+              <h3 class="mb-2 text-[17px] font-semibold tracking-[-0.01em]">
+                {step.title}
+              </h3>
+              <p class="text-[14px] leading-[1.6] text-[var(--color-text-muted)]">
+                {step.text}
+              </p>
+            </div>
+          ))}
+        </div>
+
+        <a
+          href={primaryDownload.href}
+          class="inline-flex items-center gap-2 rounded-lg bg-[var(--color-accent)] px-6 py-3.5 text-[15px] font-medium text-black transition-all hover:-translate-y-px"
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="7 10 12 15 17 10" />
+            <line x1="12" y1="15" x2="12" y2="3" />
+          </svg>
+          {primaryDownload.label}
+        </a>
+      </div>
+    </section>
+  )}
+
+  {plugin.longDescription && (
+    <section class="border-y border-[var(--color-border)] bg-[var(--color-bg-elevated)] py-20">
+      <div class="container-content">
+        <div class="prose-content max-w-[760px] text-[17px] leading-[1.7] text-[var(--color-text-muted)]" set:html={plugin.longDescription} />
+      </div>
+    </section>
+  )}
+
+  <FAQ items={plugin.faq} title="Häufige Fragen zum Plugin." />
+
+  <CTASection
+    title="Plugin in deiner Website einsetzen?"
+    text="Wir installieren, konfigurieren und passen unsere Plugins für deine konkrete Anwendung an. Auf Wunsch auch mit individuellen Erweiterungen."
+  />
+</BaseLayout>
+
+<style is:global>
+  /**
+   * Hover-Zoom für Plugin-Screenshots.
+   *
+   * Idee: Im Ruhezustand sitzt jeder Screenshot in einem schmalen Bezel
+   * (anthrazit, leicht abgesetzt). Bei Mouse-Over skalieren wir das Bild
+   * auf 160 %, ziehen den z-index hoch (damit das vergrößerte Bild auch
+   * über das gegenüberliegende Text-Modul hinausragen darf) und blenden
+   * den Bezel-Hintergrund weicher ein.
+   *
+   * Auf Touch-Geräten (`hover: none`) wird der Effekt automatisch
+   * deaktiviert — ein "klebriges" 160 %-Bild ohne Maus wäre dort störend.
+   */
+  .screenshot-card {
+    position: relative;
+    border-radius: 12px;
+    border: 1px solid var(--color-border);
+    background: #1c1c1e;
+    padding: 8px;
+    box-shadow:
+      0 8px 30px rgba(0, 0, 0, 0.4),
+      0 2px 6px rgba(0, 0, 0, 0.3);
+    z-index: 1;
+    /* z-index erst NACH der Hover-Animation absenken, damit das Bild
+       beim Rauszoomen nicht plötzlich hinter dem Text verschwindet */
+    transition:
+      box-shadow 0.35s ease,
+      z-index 0s linear 0.45s;
+  }
+
+  .screenshot-card img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 6px;
+    transform-origin: center center;
+    transition:
+      transform 0.55s cubic-bezier(0.22, 0.9, 0.28, 1),
+      box-shadow 0.45s ease,
+      border-radius 0.35s ease,
+      filter 0.3s ease;
+    will-change: transform;
+  }
+
+  /* Hover-Zustand — nur auf echten Zeigegeräten */
+  @media (hover: hover) and (pointer: fine) {
+    .screenshot-card:hover {
+      z-index: 30;
+      /* z-index sofort hoch, beim Verlassen verzögert (Animation darf
+         erst fertig laufen) */
+      transition:
+        box-shadow 0.35s ease,
+        z-index 0s linear 0s;
+      box-shadow:
+        0 24px 60px rgba(0, 0, 0, 0.6),
+        0 8px 20px rgba(0, 0, 0, 0.4);
+    }
+    .screenshot-card:hover img {
+      transform: scale(1.6);
+      filter: brightness(1.04);
+      box-shadow:
+        0 40px 90px rgba(0, 0, 0, 0.65),
+        0 16px 30px rgba(0, 0, 0, 0.4),
+        0 0 0 1px rgba(255, 255, 255, 0.06);
+    }
+  }
+</style>

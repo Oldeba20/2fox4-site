@@ -1,0 +1,251 @@
+---
+/**
+ * GoogleReviews — eine Zeile, sanft von rechts nach links durchlaufend.
+ *
+ * - Daten aus `src/data/reviews.json` (Snapshot aus dem alten WP-Plugin)
+ * - Avatare lokal gehostet unter /public/reviews/ (Privacy-friendly, keine
+ *   Hotlinks zu googleusercontent.com)
+ * - Marquee per CSS-Animation, pausiert bei Hover (und :focus-within für
+ *   Tastatur-Nutzer)
+ * - Karten sind Links auf den Google-Maps-Eintrag → Originalbewertung
+ * - prefers-reduced-motion: keine Animation, statisch
+ */
+import reviewsData from "../data/reviews.json";
+
+interface Review {
+  author_name: string;
+  author_url: string;
+  profile_photo_url: string;
+  profile_photo_local?: string | null;
+  rating: number;
+  relative_time_description: string;
+  text: string;
+  time: number;
+}
+
+interface ReviewsCache {
+  name: string;
+  rating: number;
+  user_ratings_total: number;
+  url: string;
+  reviews: Review[];
+  fetched_at?: string;
+}
+
+const data = reviewsData as ReviewsCache;
+const reviews = data.reviews;
+
+/** Sterne-SVG (gefüllt) */
+const star = `<svg viewBox="0 0 20 20" fill="currentColor" class="w-3.5 h-3.5"><path d="M9.05 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.955a1 1 0 00.95.69h4.156c.969 0 1.371 1.24.588 1.81l-3.363 2.443a1 1 0 00-.364 1.118l1.287 3.955c.3.921-.755 1.688-1.539 1.118L10 15.347l-3.353 2.469c-.784.57-1.838-.197-1.539-1.118l1.286-3.955a1 1 0 00-.363-1.118L2.668 9.382c-.783-.57-.38-1.81.588-1.81h4.156a1 1 0 00.95-.69L9.05 2.927z"/></svg>`;
+
+/** Text auf X Zeichen kürzen, an Wortgrenze. */
+function shorten(s: string, max = 200): string {
+  // Führende Sternchen-Reihen u. Newlines entfernen
+  s = s.replace(/^[⭐️\s]+/u, "").replace(/\s+/g, " ").trim();
+  if (s.length <= max) return s;
+  const cut = s.slice(0, max);
+  const lastSpace = cut.lastIndexOf(" ");
+  return (lastSpace > 80 ? cut.slice(0, lastSpace) : cut).trimEnd() + "…";
+}
+
+// Track verdoppeln für nahtlose Schleife
+const trackItems = [...reviews, ...reviews];
+---
+
+<section class="border-y border-[var(--color-border)] bg-[var(--color-bg-elevated)] py-20">
+  <div class="container-content mb-10">
+    <div class="grid items-end gap-8 lg:grid-cols-[1.5fr_1fr]">
+      <div>
+        <div class="mb-3 text-xs uppercase tracking-[0.16em] text-[var(--color-accent)]">
+          Stimmen unserer Kunden
+        </div>
+        <h2 class="mb-5 text-[clamp(28px,3.5vw,42px)] font-bold tracking-[-0.03em] leading-[1.1]">
+          Das sagen Auftraggeber<br />
+          über die Zusammenarbeit.
+        </h2>
+        <p class="max-w-[560px] text-[17px] leading-[1.6] text-[var(--color-text-muted)]">
+          Echte Google-Bewertungen, ungefiltert. Karten zum Stoppen mit dem
+          Mauszeiger überfahren — Klick öffnet die Original­bewertung.
+        </p>
+      </div>
+
+      <div>
+        <div class="flex items-center gap-3">
+          <span class="text-[44px] font-bold leading-none tracking-[-0.03em]">{data.rating.toFixed(1)}</span>
+          <div class="flex flex-col gap-1">
+            <div class="flex gap-0.5 text-[#fbbf24]">
+              {[1,2,3,4,5].map(() => <Fragment set:html={star.replace('w-3.5 h-3.5','w-4 h-4')} />)}
+            </div>
+            <div class="text-[13px] text-[var(--color-text-muted)]">
+              {data.user_ratings_total} Bewertungen
+            </div>
+          </div>
+        </div>
+        <div class="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2">
+          <a
+            href={data.url}
+            target="_blank"
+            rel="noopener nofollow"
+            class="inline-flex items-center gap-2 text-[14px] text-[var(--color-accent)] underline underline-offset-4 transition-opacity hover:opacity-80"
+          >
+            Alle Bewertungen auf Google
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M7 17L17 7M17 7H8M17 7v9" />
+            </svg>
+          </a>
+          <a
+            href="https://search.google.com/local/writereview?placeid=ChIJ0VCNts15sEcRkdvl3hj8Mi8"
+            target="_blank"
+            rel="noopener nofollow"
+            class="inline-flex items-center gap-2 rounded-md border border-[var(--color-border-strong)] px-3 py-1.5 text-[13px] font-medium text-[var(--color-text)] transition-all hover:bg-[var(--color-bg-card)] hover:border-white/25"
+          >
+            <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">
+              <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+              <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.99.66-2.25 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+              <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+              <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+            </svg>
+            Selber bewerten
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {/* Marquee — kein container, damit es bis zum Viewport-Rand läuft */}
+  <div class="reviews-marquee" aria-label="Google-Bewertungen, automatisches Durchlaufen">
+    <div class="reviews-marquee-fade reviews-marquee-fade-left" aria-hidden="true"></div>
+    <div class="reviews-marquee-fade reviews-marquee-fade-right" aria-hidden="true"></div>
+
+    <div class="reviews-marquee-track">
+      {trackItems.map((r, i) => (
+        <a
+          href={data.url}
+          target="_blank"
+          rel="noopener nofollow"
+          aria-hidden={i >= reviews.length ? "true" : undefined}
+          aria-label={`Bewertung von ${r.author_name}: ${r.rating} Sterne. Auf Google ansehen.`}
+          class="reviews-card group"
+        >
+          <header class="flex items-center gap-3">
+            <img
+              src={r.profile_photo_local || r.profile_photo_url}
+              alt={`Profilbild von ${r.author_name}`}
+              width="40"
+              height="40"
+              loading="lazy"
+              referrerpolicy="no-referrer"
+              class="h-10 w-10 rounded-full border border-[var(--color-border)] object-cover"
+            />
+            <div class="flex-1 min-w-0">
+              <div class="truncate text-[14px] font-semibold tracking-[-0.01em] transition-colors group-hover:text-[var(--color-accent)]">
+                {r.author_name}
+              </div>
+              <div class="text-[11px] text-[var(--color-text-faint)]">
+                {r.relative_time_description}
+              </div>
+            </div>
+            <div class="flex shrink-0 gap-0.5 text-[#fbbf24]" aria-label={`${r.rating} von 5 Sternen`}>
+              {Array.from({ length: r.rating }).map(() => <Fragment set:html={star} />)}
+            </div>
+          </header>
+          <p class="reviews-text mt-3 text-[13.5px] leading-[1.55] text-[var(--color-text-muted)]">
+            {shorten(r.text, 220)}
+          </p>
+          <footer class="mt-3 flex items-center gap-1.5 text-[11px] text-[var(--color-text-faint)]">
+            <svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true">
+              <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+              <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.99.66-2.25 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+              <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+              <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+            </svg>
+            Auf Google ansehen
+          </footer>
+        </a>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style is:global>
+  .reviews-marquee {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+  }
+  .reviews-marquee-track {
+    display: flex;
+    gap: 20px;
+    width: max-content;
+    padding: 4px 0;
+    animation: reviews-marquee 55s linear infinite;
+    will-change: transform;
+  }
+  /* Hover/Focus pausiert die Animation — Klick wird möglich */
+  .reviews-marquee:hover .reviews-marquee-track,
+  .reviews-marquee:focus-within .reviews-marquee-track {
+    animation-play-state: paused;
+  }
+  @keyframes reviews-marquee {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+  /* Sanftes Ausblenden links/rechts, damit Karten am Rand nicht hart abgeschnitten wirken */
+  .reviews-marquee-fade {
+    position: absolute;
+    top: 0; bottom: 0;
+    width: 80px;
+    pointer-events: none;
+    z-index: 1;
+  }
+  .reviews-marquee-fade-left {
+    left: 0;
+    background: linear-gradient(to right, var(--color-bg-elevated), transparent);
+  }
+  .reviews-marquee-fade-right {
+    right: 0;
+    background: linear-gradient(to left, var(--color-bg-elevated), transparent);
+  }
+
+  /* Eine einzelne Karte */
+  .reviews-card {
+    flex: 0 0 360px;
+    display: flex;
+    flex-direction: column;
+    padding: 18px 20px;
+    border-radius: 12px;
+    border: 1px solid var(--color-border);
+    background: var(--color-bg-card);
+    color: inherit;
+    text-decoration: none;
+    transition: border-color 0.18s, transform 0.18s;
+  }
+  .reviews-card:hover {
+    border-color: var(--color-border-strong);
+    transform: translateY(-1px);
+  }
+  /* Text auf max 5 Zeilen begrenzen — alle Karten gleich hoch */
+  .reviews-text {
+    display: -webkit-box;
+    -webkit-line-clamp: 5;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  @media (max-width: 640px) {
+    .reviews-card { flex-basis: 290px; }
+  }
+
+  /* Barrierefreiheit: Bewegung aus, wenn der Nutzer reduce-motion will */
+  @media (prefers-reduced-motion: reduce) {
+    .reviews-marquee-track {
+      animation: none;
+      flex-wrap: wrap;
+      justify-content: center;
+      width: auto;
+      padding-left: max(24px, env(safe-area-inset-left));
+      padding-right: max(24px, env(safe-area-inset-right));
+    }
+    .reviews-marquee-fade { display: none; }
+  }
+</style>
