@@ -35,7 +35,10 @@ jobs:
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y -qq lftp sshpass
-          lftp -e "set sftp:auto-confirm yes; set sftp:connect-program 'sshpass -e ssh -a -x -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'; open -u '$U','$P' sftp://$H; mirror -R --delete -v --exclude-glob='.htaccess' --exclude-glob='kontakt.config.php' --exclude-glob='lib/' --exclude-glob='_archive-*/' --exclude-glob='dev/' --exclude-glob='akquise-system/' --exclude-glob='reviews/cache/' /tmp/astro-dist/ $R/; bye"
+          # WICHTIG: KEIN --delete. Stale Astro-Assets bleiben (hash-basiert,
+          # nehmen nur Disk-Platz, brechen aber nichts). --delete loescht
+          # auch Server-only Verzeichnisse wie /blockagent/ -- ein Disaster.
+          lftp -e "set sftp:auto-confirm yes; set sftp:connect-program 'sshpass -e ssh -a -x -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'; open -u '$U','$P' sftp://$H; mirror -R -v --only-newer --exclude-glob='.htaccess' --exclude-glob='kontakt.config.php' /tmp/astro-dist/ $R/; bye"
       - name: Smoke test
         run: |
           s=$(curl -s -o /dev/null -w '%{http_code}' https://www.2fox4.de/)
