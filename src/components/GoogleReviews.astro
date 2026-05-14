@@ -175,11 +175,16 @@ const trackItems = [...reviews, ...reviews];
   }
   .reviews-marquee-track {
     display: flex;
-    gap: 20px;
+    /* WICHTIG: Kein gap — der gap würde am Übergang von Set 1 → Set 2 fehlen
+       und die translateX(-50%)-Mathematik kippen. Stattdessen margin-right
+       auf jeder Karte (siehe .reviews-card) — so ist die halbe Track-Breite
+       exakt = Breite eines Sets und der Loop ist nahtlos. */
     width: max-content;
     padding: 4px 0;
     animation: reviews-marquee 55s linear infinite;
     will-change: transform;
+    transform: translate3d(0, 0, 0); /* eigene Compositing-Ebene, stabiler auf iOS */
+    backface-visibility: hidden;
   }
   /* Hover/Focus pausiert die Animation — Klick wird möglich */
   .reviews-marquee:hover .reviews-marquee-track,
@@ -187,8 +192,8 @@ const trackItems = [...reviews, ...reviews];
     animation-play-state: paused;
   }
   @keyframes reviews-marquee {
-    from { transform: translateX(0); }
-    to   { transform: translateX(-50%); }
+    from { transform: translate3d(0, 0, 0); }
+    to   { transform: translate3d(-50%, 0, 0); }
   }
   /* Sanftes Ausblenden links/rechts, damit Karten am Rand nicht hart abgeschnitten wirken */
   .reviews-marquee-fade {
@@ -210,6 +215,10 @@ const trackItems = [...reviews, ...reviews];
   /* Eine einzelne Karte */
   .reviews-card {
     flex: 0 0 360px;
+    /* margin-right ersetzt den track-gap — auf JEDER Karte, auch der letzten,
+       damit Set-1 → Set-2 denselben Abstand hat wie Karten innerhalb eines Sets.
+       Sonst entsteht beim Loop ein sichtbarer Sprung (auf Mobile am stärksten). */
+    margin-right: 20px;
     display: flex;
     flex-direction: column;
     padding: 18px 20px;
