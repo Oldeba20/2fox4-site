@@ -17,6 +17,7 @@ import Footer from "../components/Footer.astro";
 import LegalModal from "../components/LegalModal.astro";
 import CookieBanner from "../components/CookieBanner.astro";
 import AccessibilityWidget from "../components/AccessibilityWidget.astro";
+import Matomo from "../components/Matomo.astro";
 import { site } from "../data/site";
 
 interface Props {
@@ -117,6 +118,9 @@ const canonicalUrl = canonicalPath
         set:html={JSON.stringify(schema)}
       />
     )}
+
+    {/* Matomo Analytics — cookieless, läuft auf jeder Seite */}
+    <Matomo />
   </head>
   <body>
     <Header />

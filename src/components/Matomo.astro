@@ -1,0 +1,86 @@
+---
+/**
+ * Matomo — datenschutzfreundliches Analytics-Tracking.
+ *
+ * Konfiguration:
+ *   - Self-hosted Instanz: https://hanf-planet.de/matomo/
+ *   - Site-ID: 2 (= 2fox4.de)
+ *
+ * Modus: cookieless + IP-Anonymisierung.
+ *   Hintergrund: Nach § 25 Abs. 1 TDDDG ist ein Cookie-Consent nur nötig,
+ *   wenn beim Tracking Informationen im Endgerät gespeichert oder gelesen
+ *   werden ("Cookies oder ähnliche Technologien"). Wir rufen daher
+ *   `disableCookies` auf — Matomo verwendet dann eine reine
+ *   Heuristik-basierte Besuchererkennung (Config-Hash aus Browser-
+ *   Eigenschaften, kein Identifier auf dem Gerät). Plus IP-Anonymisierung
+ *   serverseitig in Matomo aktivieren (mindestens 2 Bytes).
+ *   So darf der Tracker auch ohne Consent geladen werden.
+ *
+ *   Wenn der Besucher die Statistik-Kategorie im Cookie-Banner aktiv
+ *   ablehnt (rejectAll), schalten wir Matomo trotzdem stumm — als
+ *   Höflichkeit und um auch DNT-bewusste Besucher zu respektieren.
+ *
+ * Page-Tracking: Astro generiert pro Route eine eigene HTML-Datei, daher
+ *   feuert `trackPageView` automatisch bei jedem Seitenaufruf — kein
+ *   SPA-Routing-Hack nötig.
+ */
+
+const MATOMO_URL = "https://hanf-planet.de/matomo/";
+const MATOMO_SITE_ID = "2";
+---
+
+{/* Matomo — cookieless, DSGVO/TDDDG-konform */}
+<script is:inline define:vars={{ MATOMO_URL, MATOMO_SITE_ID }}>
+  (function () {
+    // Kein Tracking im lokalen Dev-Modus oder auf Preview-Subdomains
+    var host = window.location.hostname;
+    if (host === "localhost" || host === "127.0.0.1" || host.endsWith(".local")) {
+      return;
+    }
+
+    // Wenn der Besucher die Statistik-Kategorie aktiv abgelehnt hat,
+    // laden wir Matomo gar nicht erst.
+    try {
+      var consentRaw = localStorage.getItem("consent_v1");
+      if (consentRaw) {
+        var consent = JSON.parse(consentRaw);
+        if (consent && consent.statistics === false) {
+          return;
+        }
+      }
+    } catch (e) {
+      /* localStorage blockiert (z.B. Safari Private) — Matomo trotzdem laden */
+    }
+
+    var _paq = (window._paq = window._paq || []);
+
+    // Konfiguration VOR trackPageView
+    _paq.push(["disableCookies"]);                 // keine Cookies, kein localStorage-ID
+    _paq.push(["setDoNotTrack", true]);            // DNT-Header respektieren
+    _paq.push(["enableHeartBeatTimer", 15]);       // realistischere Verweildauer
+    _paq.push(["trackPageView"]);
+    _paq.push(["enableLinkTracking"]);
+
+    _paq.push(["setTrackerUrl", MATOMO_URL + "matomo.php"]);
+    _paq.push(["setSiteId", MATOMO_SITE_ID]);
+
+    var d = document;
+    var g = d.createElement("script");
+    var s = d.getElementsByTagName("script")[0];
+    g.async = true;
+    g.src = MATOMO_URL + "matomo.js";
+    s.parentNode.insertBefore(g, s);
+  })();
+</script>
+
+{/* No-JS Fallback — trackt Aufrufe von Besuchern ohne JavaScript */}
+<noscript>
+  <p style="display:none">
+    <img
+      referrerpolicy="no-referrer-when-downgrade"
+      src={`${MATOMO_URL}matomo.php?idsite=${MATOMO_SITE_ID}&amp;rec=1`}
+      style="border:0"
+      alt=""
+    />
+  </p>
+</noscript>
