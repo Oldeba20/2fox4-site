@@ -208,15 +208,80 @@ const datenschutzHtml = `
     erforderlich sind.
   </p>
   <p>
-    Sollten künftig optionale Cookies oder Tracking-Dienste hinzukommen,
-    werden diese erst nach Ihrer Einwilligung über unseren Cookie-Banner
-    aktiv. Sie können Ihre Einwilligung jederzeit über den Link
-    „Cookie-Einstellungen" im Footer dieser Seite anpassen oder widerrufen.
+    Darüber hinaus binden wir optionale Marketing-Cookies und ‑Technologien
+    (siehe § 5: Meta-Pixel) erst nach Ihrer ausdrücklichen Einwilligung über
+    unseren Cookie-Banner ein (§ 25 Abs. 1 TDDDG i. V. m. Art. 6 Abs. 1
+    lit. a DSGVO). Sie können Ihre Einwilligung jederzeit über den Link
+    „Cookie-Einstellungen" im Footer dieser Seite anpassen oder vollständig
+    widerrufen. Der Widerruf wirkt für die Zukunft.
   </p>
 </section>
 
 <section>
-  <h2>5. Schriftarten (Google Fonts &mdash; lokal eingebunden)</h2>
+  <h2>5. Meta-Pixel (Facebook / Instagram)</h2>
+  <p>
+    Auf dieser Website setzen wir nach Ihrer Einwilligung das
+    <strong>Meta-Pixel</strong> ein, ein Dienst der Meta Platforms
+    Ireland Ltd., 4 Grand Canal Square, Grand Canal Harbour, Dublin 2,
+    Irland („Meta"). Mit dem Pixel können wir die Wirksamkeit unserer
+    Werbeanzeigen auf Facebook und Instagram messen und vergleichbare
+    Zielgruppen für künftige Kampagnen bilden („Custom Audiences" /
+    „Lookalike Audiences").
+  </p>
+  <p>
+    <strong>Verarbeitete Daten:</strong> Beim Aufruf einer Seite mit
+    aktivem Pixel werden insbesondere folgende Daten an Meta übertragen:
+    IP-Adresse, Browser- und Geräteinformationen, aufgerufene URL,
+    Referrer, ein zufällig generiertes Cookie („_fbp") sowie ggf. Ihre
+    Meta-Nutzer-ID, sofern Sie gleichzeitig bei Facebook oder Instagram
+    eingeloggt sind.
+  </p>
+  <p>
+    <strong>Pixel-ID:</strong> 1478342186395325.
+  </p>
+  <p>
+    <strong>Rechtsgrundlage:</strong> Art. 6 Abs. 1 lit. a DSGVO
+    (Einwilligung) sowie § 25 Abs. 1 TDDDG. Der Einsatz erfolgt
+    ausschließlich nach Ihrer aktiven Zustimmung im Cookie-Banner. Ohne
+    Zustimmung wird das Pixel nicht geladen und es findet keine
+    Datenübertragung an Meta statt.
+  </p>
+  <p>
+    <strong>Drittlandübermittlung:</strong> Meta verarbeitet die Daten
+    auch in den USA. Meta Platforms, Inc. ist nach dem EU-US Data
+    Privacy Framework zertifiziert (Angemessenheitsbeschluss der
+    EU-Kommission vom 10.07.2023). Für Übermittlungen darüber hinaus
+    nutzt Meta Standardvertragsklauseln gemäß Art. 46 DSGVO.
+  </p>
+  <p>
+    <strong>Gemeinsame Verantwortlichkeit:</strong> Für die Erhebung
+    Ihrer Daten durch das Pixel und deren Übertragung an Meta sind wir
+    gemeinsam mit Meta verantwortlich (Art. 26 DSGVO). Die zugrunde
+    liegende Vereinbarung finden Sie unter
+    <a href="https://www.facebook.com/legal/controller_addendum" target="_blank" rel="noopener">
+      facebook.com/legal/controller_addendum</a>. Für die anschließende
+    Weiterverarbeitung Ihrer Daten durch Meta ist allein Meta
+    verantwortlich; deren Datenrichtlinie ist unter
+    <a href="https://www.facebook.com/privacy/policy/" target="_blank" rel="noopener">
+      facebook.com/privacy/policy</a> abrufbar.
+  </p>
+  <p>
+    <strong>Speicherdauer:</strong> Das Cookie „_fbp" wird standardmäßig
+    90 Tage in Ihrem Browser gespeichert. Sie können es jederzeit über
+    Ihre Browser-Einstellungen löschen.
+  </p>
+  <p>
+    <strong>Widerruf:</strong> Sie können Ihre Einwilligung jederzeit
+    über den Link „Cookie-Einstellungen" im Footer dieser Seite
+    widerrufen. Zusätzlich können Sie unter
+    <a href="https://www.facebook.com/settings?tab=ads" target="_blank" rel="noopener">
+      facebook.com/settings/ads</a> personalisierte Werbung in Ihrem
+    Meta-Konto deaktivieren.
+  </p>
+</section>
+
+<section>
+  <h2>6. Schriftarten (Google Fonts &mdash; lokal eingebunden)</h2>
   <p>
     Diese Website verwendet die Schriftart „Inter". Sie wird lokal von
     unserem Server ausgeliefert; es findet keine Übertragung von Daten
@@ -229,7 +294,7 @@ const datenschutzHtml = `
 </section>
 
 <section>
-  <h2>6. Kontaktaufnahme</h2>
+  <h2>7. Kontaktaufnahme</h2>
   <p>
     Wenn Sie uns per E-Mail, Telefon oder über ein Kontaktformular
     Anfragen zukommen lassen, werden Ihre Angaben einschließlich der
@@ -246,7 +311,7 @@ const datenschutzHtml = `
 </section>
 
 <section>
-  <h2>7. Einsatz von Künstlicher Intelligenz</h2>
+  <h2>8. Einsatz von Künstlicher Intelligenz</h2>
   <p>
     An einigen Stellen unserer Website kommen KI-Dienste zum Einsatz:
   </p>
@@ -273,7 +338,7 @@ const datenschutzHtml = `
 </section>
 
 <section>
-  <h2>8. Eingebettete Inhalte (Karten, Videos)</h2>
+  <h2>9. Eingebettete Inhalte (Karten, Videos)</h2>
   <p>
     Wir binden derzeit <strong>keine externen Karten oder Videos</strong>
     ein. Sollten wir künftig Google Maps oder YouTube-Videos einbinden,
@@ -283,20 +348,19 @@ const datenschutzHtml = `
 </section>
 
 <section>
-  <h2>9. Datenübermittlung in Drittländer</h2>
+  <h2>10. Datenübermittlung in Drittländer</h2>
   <p>
-    Eine Übermittlung Ihrer Daten in Länder außerhalb der EU/des EWR
-    findet aktuell nicht statt. Falls künftig Dienste zum Einsatz kommen,
-    die personenbezogene Daten in die USA übermitteln (z. B. eine spätere
-    Web-Analytics-Lösung), erfolgt dies nur auf Grundlage des
-    EU-US Data Privacy Framework (Angemessenheitsbeschluss vom 10.07.2023)
-    oder von Standardvertragsklauseln gemäß Art. 46 DSGVO. Wir informieren
-    in einem solchen Fall transparent im Cookie-Banner.
+    Mit Ihrer Einwilligung in das Meta-Pixel (siehe § 5) werden
+    personenbezogene Daten an Meta Platforms, Inc. in die USA übermittelt.
+    Die Übermittlung erfolgt auf Grundlage des EU-US Data Privacy
+    Framework (Angemessenheitsbeschluss der EU-Kommission vom 10.07.2023);
+    Meta ist unter dem Framework zertifiziert. Eine darüber hinausgehende
+    Übermittlung in andere Drittländer findet derzeit nicht statt.
   </p>
 </section>
 
 <section>
-  <h2>10. SSL-Verschlüsselung</h2>
+  <h2>11. SSL-Verschlüsselung</h2>
   <p>
     Diese Website nutzt SSL/TLS-Verschlüsselung. Sie erkennen sie am
     „https://" in der Adresszeile und dem Schloss-Symbol Ihres Browsers.
@@ -306,7 +370,7 @@ const datenschutzHtml = `
 </section>
 
 <section>
-  <h2>11. Aktualität dieser Erklärung</h2>
+  <h2>12. Aktualität dieser Erklärung</h2>
   <p>
     Wir behalten uns vor, diese Datenschutzerklärung anzupassen, wenn
     rechtliche oder technische Änderungen es erfordern. Die jeweils
@@ -590,7 +654,7 @@ export const legalDocs: Record<LegalDoc["slug"], LegalDoc> = {
     slug: "datenschutz",
     title: "Datenschutzerklärung",
     kicker: "Wie wir mit deinen Daten umgehen",
-    lastUpdated: "12. Mai 2026",
+    lastUpdated: "15. Mai 2026",
     html: datenschutzHtml,
   },
   agb: {

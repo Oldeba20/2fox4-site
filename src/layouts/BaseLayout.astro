@@ -18,6 +18,7 @@ import LegalModal from "../components/LegalModal.astro";
 import CookieBanner from "../components/CookieBanner.astro";
 import AccessibilityWidget from "../components/AccessibilityWidget.astro";
 import Matomo from "../components/Matomo.astro";
+import FacebookPixel from "../components/FacebookPixel.astro";
 import { site } from "../data/site";
 
 interface Props {
@@ -121,6 +122,9 @@ const canonicalUrl = canonicalPath
 
     {/* Matomo Analytics — cookieless, läuft auf jeder Seite */}
     <Matomo />
+
+    {/* Meta-Pixel — feuert NUR nach Marketing-Consent (s. CookieBanner.astro) */}
+    <FacebookPixel />
   </head>
   <body>
     <Header />

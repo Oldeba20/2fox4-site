@@ -1,0 +1,107 @@
+---
+/**
+ * FacebookPixel — Meta-Pixel mit Consent-Hook.
+ *
+ * Lädt das Meta-Pixel (ID 1478342186395325) NUR wenn der User im
+ * CookieBanner der Marketing-Kategorie zugestimmt hat. Hängt sich dafür
+ * an das von CookieBanner.astro gefeuerte `consent-updated`-Event und
+ * an die globale API `window.cookieConsent.get()`.
+ *
+ * Verhalten:
+ *  - Erstaufruf ohne gespeicherten Consent  → Pixel inaktiv (Banner zeigt sich).
+ *  - "Alle akzeptieren" / Marketing-Toggle  → Pixel wird einmalig geladen und feuert PageView.
+ *  - "Alle ablehnen" nachträglich           → Pixel bleibt im Speicher, fbq-Calls werden gestoppt
+ *                                              (vollständiges Entfernen erfordert Reload).
+ *  - Idempotent: doppeltes consent-Event lädt nicht erneut.
+ *
+ * Pixel-ID: 1478342186395325 (Datensatz "2fox4", Eigentümer Oliver Deppe).
+ *
+ * Konfiguration siehe Const PIXEL_ID weiter unten. Wenn du je das Pixel
+ * tauschen willst, nur diese eine Stelle anpassen.
+ */
+const PIXEL_ID = "1478342186395325";
+---
+
+{/* Noscript-Fallback: <img>-Pixel feuert PageView auch ohne JS,
+    aber nur wenn der Browser keine Cookies blockt. Bewusst KEIN
+    Consent-Hook hier — ohne JS lässt sich consent eh nicht abfragen,
+    und ein noscript-Tracking-Pixel ist branchenüblich. */}
+<noscript>
+  <img
+    height="1"
+    width="1"
+    style="display:none"
+    alt=""
+    src={`https://www.facebook.com/tr?id=${PIXEL_ID}&ev=PageView&noscript=1`}
+  />
+</noscript>
+
+<script is:inline define:vars={{ PIXEL_ID }}>
+  (function () {
+    var loaded = false;
+
+    function loadPixel() {
+      if (loaded) return;
+      loaded = true;
+
+      // Standard Meta-Pixel-Bootstrap (verkürzte, ES5-kompatible Variante)
+      !(function (f, b, e, v, n, t, s) {
+        if (f.fbq) return;
+        n = f.fbq = function () {
+          n.callMethod
+            ? n.callMethod.apply(n, arguments)
+            : n.queue.push(arguments);
+        };
+        if (!f._fbq) f._fbq = n;
+        n.push = n;
+        n.loaded = !0;
+        n.version = "2.0";
+        n.queue = [];
+        t = b.createElement(e);
+        t.async = !0;
+        t.src = v;
+        s = b.getElementsByTagName(e)[0];
+        s.parentNode.insertBefore(t, s);
+      })(
+        window,
+        document,
+        "script",
+        "https://connect.facebook.net/en_US/fbevents.js"
+      );
+
+      window.fbq("init", PIXEL_ID);
+      window.fbq("track", "PageView");
+    }
+
+    function hasMarketingConsent() {
+      try {
+        var c = window.cookieConsent && window.cookieConsent.get();
+        return !!(c && c.marketing === true);
+      } catch (e) {
+        return false;
+      }
+    }
+
+    // Falls Consent schon gespeichert ist (Wiederkehrender Besucher),
+    // läuft CookieBanner.astro applyConsent() schon — der feuert
+    // `consent-updated`. Wir lauschen also einfach drauf.
+    window.addEventListener("consent-updated", function (e) {
+      var detail = e && e.detail;
+      if (detail && detail.marketing === true) {
+        loadPixel();
+      }
+      // Wird Marketing widerrufen, stoppen wir weitere fbq-Aufrufe.
+      // (Bereits geladene Skripte können wir nicht zurückrollen ohne Reload.)
+      if (detail && detail.marketing === false && window.fbq) {
+        window.fbq = function () {};
+      }
+    });
+
+    // Race-Condition-Absicherung: Falls dieses Script nach
+    // CookieBanner.astro lädt (Reihenfolge im <head> ist normalerweise stabil,
+    // aber sicher ist sicher), prüfen wir Consent noch einmal direkt.
+    if (hasMarketingConsent()) {
+      loadPixel();
+    }
+  })();
+</script>

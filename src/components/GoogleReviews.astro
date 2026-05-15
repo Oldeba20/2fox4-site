@@ -48,8 +48,13 @@ function shorten(s: string, max = 200): string {
   return (lastSpace > 80 ? cut.slice(0, lastSpace) : cut).trimEnd() + "…";
 }
 
-// Track verdoppeln für nahtlose Schleife
-const trackItems = [...reviews, ...reviews];
+// Track verdreifachen für nahtlose Schleife. Doppelt war auf iOS Safari
+// fragil: wenn die Animation einen Frame verpasst (Tab-Switch, Compositing-
+// Layer-Recycling), gibt's einen sichtbaren Sprung. Mit drei Sets bleibt
+// immer mindestens ein voller Set sichtbar, auch wenn die Animation kurz
+// hängt. Die Translation läuft bis -33.333% (= eine Set-Länge), die letzten
+// zwei Sets liefern den Puffer und die nahtlose Übergabe.
+const trackItems = [...reviews, ...reviews, ...reviews];
 ---
 
 <section class="border-y border-[var(--color-border)] bg-[var(--color-bg-elevated)] py-20">
@@ -175,25 +180,38 @@ const trackItems = [...reviews, ...reviews];
   }
   .reviews-marquee-track {
     display: flex;
-    /* WICHTIG: Kein gap — der gap würde am Übergang von Set 1 → Set 2 fehlen
-       und die translateX(-50%)-Mathematik kippen. Stattdessen margin-right
-       auf jeder Karte (siehe .reviews-card) — so ist die halbe Track-Breite
-       exakt = Breite eines Sets und der Loop ist nahtlos. */
+    /* WICHTIG: Kein gap — der gap würde am Übergang Set N → Set N+1 fehlen
+       und die Translation-Mathematik kippen. Stattdessen margin-right auf
+       jeder Karte (siehe .reviews-card) — so ist ein Drittel der Track-
+       Breite exakt = Breite eines Sets, und die -33.333%-Translation läuft
+       die Track um genau eine Set-Länge weiter → nahtloser Loop.
+       Track ist auf 3 Sets verdreifacht (s. trackItems oben). */
     width: max-content;
     padding: 4px 0;
-    animation: reviews-marquee 55s linear infinite;
-    will-change: transform;
-    transform: translate3d(0, 0, 0); /* eigene Compositing-Ebene, stabiler auf iOS */
+    animation: reviews-marquee 77s linear infinite;
+    /* will-change: transform absichtlich NICHT gesetzt — auf iOS Safari führte
+       das bei sehr breiten Tracks zu Compositing-Layer-Recycling und damit zu
+       eingefrorenen Animationen nach kurzer Zeit. translate3d() unten triggert
+       eh ein eigenes Compositing-Layer, das reicht. */
+    transform: translate3d(0, 0, 0);
     backface-visibility: hidden;
   }
-  /* Hover/Focus pausiert die Animation — Klick wird möglich */
-  .reviews-marquee:hover .reviews-marquee-track,
+  /* Hover pausiert NUR auf echten Pointer-Geräten (Maus/Trackpad).
+     Auf Touch (iOS/Android) würde :hover beim Antippen "kleben" und
+     die Animation dauerhaft anhalten — Klick funktioniert dort auch
+     ohne Pause. Tastatur-Fokus pausiert weiterhin (a11y). */
+  @media (hover: hover) {
+    .reviews-marquee:hover .reviews-marquee-track {
+      animation-play-state: paused;
+    }
+  }
   .reviews-marquee:focus-within .reviews-marquee-track {
     animation-play-state: paused;
   }
   @keyframes reviews-marquee {
     from { transform: translate3d(0, 0, 0); }
-    to   { transform: translate3d(-50%, 0, 0); }
+    /* -33.333% = exakt eine Set-Länge bei 3 Sets im Track → nahtloser Loop */
+    to   { transform: translate3d(-33.333%, 0, 0); }
   }
   /* Sanftes Ausblenden links/rechts, damit Karten am Rand nicht hart abgeschnitten wirken */
   .reviews-marquee-fade {
@@ -243,6 +261,11 @@ const trackItems = [...reviews, ...reviews];
 
   @media (max-width: 640px) {
     .reviews-card { flex-basis: 290px; }
+    /* 20% langsamer auf dem Handy — die kleineren Karten + schmalere
+       Viewports lassen den Marquee sonst hektisch wirken. */
+    .reviews-marquee-track {
+      animation-duration: 92s;
+    }
   }
 
   /* Barrierefreiheit: Bewegung aus, wenn der Nutzer reduce-motion will */
