@@ -1,0 +1,185 @@
+---
+/**
+ * Service × Stadt Matrix-Routes — /seo-stadthagen/, /wordpress-minden/, etc.
+ *
+ * WICHTIG: Slug-Set MUSS disjunkt sein zu [city].astro (das webdesign-*
+ * matched). Hier nur „seo-" und „wordpress-" Präfixe.
+ *
+ * Strategischer Hintergrund: Wettbewerber wie agentur-plietsch.de und
+ * senorit.de fahren genau diese Matrix erfolgreich. Wir greifen Long-Tails
+ * wie „seo stadthagen" (Pos 29 → Ziel Pos 10) und „suchmaschinenoptimierung
+ * minden" (Pos 37) an, die mit reinen Stadt-Pages nicht erreichbar sind.
+ */
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Breadcrumb from "../components/Breadcrumb.astro";
+import FAQ from "../components/FAQ.astro";
+import NAPSection from "../components/NAPSection.astro";
+import CTASection from "../components/CTASection.astro";
+import { serviceCities, type ServiceCity } from "../data/service-cities";
+import {
+  localBusinessSchema,
+  faqSchema,
+  breadcrumbSchema,
+  serviceSchema,
+} from "../lib/schema";
+
+export async function getStaticPaths() {
+  return serviceCities.map((sc) => ({
+    params: { serviceCity: sc.slug },
+    props: { sc },
+  }));
+}
+
+interface Props {
+  sc: ServiceCity;
+}
+
+const { sc } = Astro.props;
+
+const serviceTypeMap: Record<ServiceCity["service"], string> = {
+  seo: "Search Engine Optimization",
+  wordpress: "WordPress Maintenance and Development",
+};
+
+const schema = [
+  localBusinessSchema({
+    description: `${sc.serviceName}-Agentur für ${sc.city} und die Region, mit Sitz in Sachsenhagen, ${sc.distanceKm} km von ${sc.city} entfernt.`,
+    areaServed: [sc.city, "Sachsenhagen"],
+  }),
+  breadcrumbSchema([
+    { name: "Start", url: "/" },
+    { name: "Leistungen", url: "/leistungen/" },
+    { name: `${sc.serviceName} ${sc.city}`, url: `/${sc.slug}/` },
+  ]),
+  serviceSchema({
+    name: `${sc.serviceName} ${sc.city}`,
+    description: sc.seoDescription,
+    serviceType: serviceTypeMap[sc.service],
+    slug: sc.slug,
+    basePath: "/",
+    areaServed: [sc.city, "Sachsenhagen"],
+  }),
+  faqSchema(sc.faq),
+];
+---
+
+<BaseLayout
+  title={sc.seoTitle}
+  description={sc.seoDescription}
+  canonicalPath={`/${sc.slug}/`}
+  noindex={false}
+  schema={schema}
+>
+  <Breadcrumb
+    crumbs={[
+      { label: "Start", href: "/" },
+      { label: "Leistungen", href: "/leistungen/" },
+      { label: `${sc.serviceName} ${sc.city}` },
+    ]}
+  />
+
+  {/* Hero */}
+  <section class="relative overflow-hidden border-b border-[var(--color-border)] pt-20 pb-16">
+    <div class="hero-grid-bg"></div>
+    <div class="container-content relative z-10">
+      <div class="mb-5 inline-flex items-center gap-2 rounded-md bg-[var(--color-accent-soft)] px-3 py-1.5 text-xs uppercase tracking-[0.14em] text-[var(--color-accent)]">
+        {sc.heroEyebrow}
+      </div>
+      <h1 class="mb-6 max-w-[820px] text-[clamp(36px,5.5vw,64px)] font-bold tracking-[-0.04em] leading-[1.05]">
+        <span class="text-gradient-light">{sc.heroTitleLine1}</span><br />
+        <span class="text-gradient-accent">{sc.heroTitleLine2}</span>
+      </h1>
+      <p class="max-w-[700px] text-[19px] leading-[1.65] text-[var(--color-text-muted)]">
+        {sc.heroSub}
+      </p>
+
+      {/* Quick-Trust-Leiste: Distanz + USP-Punkte */}
+      <div class="mt-9 flex flex-wrap gap-3">
+        <div class="inline-flex items-center gap-2 rounded-md border border-[var(--color-border)] bg-[var(--color-bg-card)] px-3.5 py-2 text-[13px] text-[var(--color-text-muted)]">
+          <svg class="h-4 w-4 text-[var(--color-accent)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+            <circle cx="12" cy="10" r="3" />
+          </svg>
+          <strong class="text-[var(--color-text)]">{sc.distanceKm} km</strong> bis {sc.city}
+        </div>
+        <div class="inline-flex items-center gap-2 rounded-md border border-[var(--color-border)] bg-[var(--color-bg-card)] px-3.5 py-2 text-[13px] text-[var(--color-text-muted)]">
+          <svg class="h-4 w-4 text-[var(--color-accent)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="20 6 9 17 4 12" />
+          </svg>
+          <strong class="text-[var(--color-text)]">18 Jahre</strong> Erfahrung
+        </div>
+        <div class="inline-flex items-center gap-2 rounded-md border border-[var(--color-border)] bg-[var(--color-bg-card)] px-3.5 py-2 text-[13px] text-[var(--color-text-muted)]">
+          <svg class="h-4 w-4 text-[var(--color-accent)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+          </svg>
+          <strong class="text-[var(--color-text)]">5,0</strong> · 19 Google-Reviews
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* Content-Sections */}
+  {sc.sections.map((section, i) => (
+    <section
+      class:list={[
+        "py-20",
+        i % 2 === 0
+          ? "bg-[var(--color-bg-elevated)] border-y border-[var(--color-border)]"
+          : "",
+      ]}
+    >
+      <div class="container-content">
+        {section.eyebrow && (
+          <div class="mb-3.5 text-xs uppercase tracking-[0.16em] text-[var(--color-accent)]">
+            {section.eyebrow}
+          </div>
+        )}
+        <h2 class="mb-8 max-w-[760px] text-[clamp(28px,3.5vw,42px)] font-bold tracking-[-0.03em] leading-[1.1]">
+          {section.headline}
+        </h2>
+
+        {section.bullets ? (
+          <div class="grid gap-12 lg:grid-cols-[1fr_1fr] items-start">
+            <div
+              class="prose-content text-[17px] leading-[1.7] text-[var(--color-text-muted)]"
+              set:html={section.body}
+            />
+            <ul class="flex flex-col gap-3">
+              {section.bullets.map((b) => (
+                <li class="flex gap-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-card)] p-4 text-[15px] text-[var(--color-text)]">
+                  <svg class="h-5 w-5 flex-shrink-0 text-[var(--color-accent)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                  <span>{b}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : (
+          <div
+            class="prose-content max-w-[760px] text-[17px] leading-[1.7] text-[var(--color-text-muted)]"
+            set:html={section.body}
+          />
+        )}
+      </div>
+    </section>
+  ))}
+
+  <FAQ
+    items={sc.faq}
+    title={`Häufige Fragen zu ${sc.serviceName} in ${sc.city}.`}
+  />
+
+  <NAPSection
+    distance={{
+      km: sc.distanceKm,
+      note: `Anfahrt: ca. ${Math.round(sc.distanceKm * 1.3)} Minuten mit dem Auto`,
+      city: sc.city,
+    }}
+  />
+
+  <CTASection
+    title={`Bereit für ${sc.serviceName} in ${sc.city}?`}
+    text={`30 Minuten kostenloses Erstgespräch. Wir kennen ${sc.city} und können dir realistisch sagen, was ${sc.serviceName} dir hier bringt — und was nicht.`}
+  />
+</BaseLayout>

@@ -8,7 +8,7 @@ import Breadcrumb from "../../components/Breadcrumb.astro";
 import FAQ from "../../components/FAQ.astro";
 import CTASection from "../../components/CTASection.astro";
 import { services, type Service } from "../../data/services";
-import { breadcrumbSchema, faqSchema } from "../../lib/schema";
+import { breadcrumbSchema, faqSchema, serviceSchema } from "../../lib/schema";
 
 export async function getStaticPaths() {
   return services.map((service) => ({
@@ -23,12 +23,33 @@ interface Props {
 
 const { service } = Astro.props;
 
+/**
+ * Service-Type-Mapping pro Slug — wird in Schema.org als `serviceType`
+ * gerendert (Google nutzt das für Knowledge-Panel-Kategorisierung).
+ * Englische Begriffe, weil Schema.org-Vokabular fest in EN ist.
+ */
+const serviceTypeMap: Record<string, string> = {
+  webdesign: "Web Design",
+  seo: "Search Engine Optimization",
+  "wartung-support": "WordPress Maintenance",
+  digitalisierungsberatung: "Digital Transformation Consulting",
+  hosting: "Web Hosting",
+  "bafa-foerderung": "Government Funding Consulting",
+  "barrierefreie-website": "Accessibility Compliance Service",
+};
+
 const schema = [
   breadcrumbSchema([
     { name: "Start", url: "/" },
     { name: "Leistungen", url: "/leistungen/" },
     { name: service.name, url: `/leistungen/${service.slug}/` },
   ]),
+  serviceSchema({
+    name: service.name,
+    description: service.seoDescription,
+    serviceType: serviceTypeMap[service.slug] ?? service.name,
+    slug: service.slug,
+  }),
   faqSchema(service.faq),
 ];
 ---

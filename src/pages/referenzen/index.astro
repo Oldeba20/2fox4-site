@@ -72,6 +72,7 @@ const schema = breadcrumbSchema([
           <MonitorCard
             url={ref.domain}
             image={ref.image}
+            alt={`${ref.title} — ${ref.meta} (${ref.category === "onlineshops" ? "Onlineshop" : "Webseite"})`}
             href={ref.featured ? `/referenzen/${ref.slug}/` : undefined}
             variant="default"
           >

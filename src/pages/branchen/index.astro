@@ -1,0 +1,87 @@
+---
+/**
+ * /branchen/ — Hub-Übersicht aller Branchen-Landingpages.
+ * Vier Branchen-Cards verlinken auf die jeweiligen Detail-Seiten.
+ */
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import CTASection from "../../components/CTASection.astro";
+import { industries } from "../../data/industries";
+import { breadcrumbSchema } from "../../lib/schema";
+
+const title = "Webdesign nach Branche · 2FOX4";
+const description =
+  "Branchenspezifische Websites: Praxis-Sites, Handwerks-Sites, Gastro-Sites, Vereins-Sites. Jede Branche hat eigene Anforderungen — wir kennen sie.";
+
+const schema = breadcrumbSchema([
+  { name: "Start", url: "/" },
+  { name: "Branchen", url: "/branchen/" },
+]);
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonicalPath="/branchen/"
+  noindex={false}
+  schema={schema}
+>
+  <Breadcrumb
+    crumbs={[
+      { label: "Start", href: "/" },
+      { label: "Branchen" },
+    ]}
+  />
+
+  <section class="border-b border-[var(--color-border)] pt-22 pb-12">
+    <div class="container-content">
+      <div class="mb-4 text-xs uppercase tracking-[0.16em] text-[var(--color-accent)]">
+        Branchen · {industries.length} Spezialisierungen
+      </div>
+      <h1 class="mb-5 max-w-[800px] text-[clamp(36px,5.5vw,64px)] font-bold tracking-[-0.04em] leading-[1.05]">
+        <span class="text-gradient-light">Webdesign nach</span>
+        <span class="text-gradient-accent">Branche.</span>
+      </h1>
+      <p class="max-w-[680px] text-lg text-[var(--color-text-muted)]">
+        Eine Praxis-Website folgt anderen Regeln als ein Onlineshop für
+        Handwerker. Eine Vereins-Site braucht andere Pflege-Wege als eine
+        Restaurant-Site. Hier findest du, welche Anforderungen je Branche
+        wirklich zählen — und wie wir sie umsetzen.
+      </p>
+    </div>
+  </section>
+
+  <section class="py-16">
+    <div class="container-content">
+      <div class="grid gap-5 sm:grid-cols-2">
+        {industries.map((industry) => (
+          <a
+            href={`/branchen/${industry.slug}/`}
+            class="group flex flex-col rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg-card)] p-7 transition-all hover:border-[var(--color-border-strong)] hover:-translate-y-0.5"
+          >
+            <div class="mb-5 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-[var(--color-accent-soft)] text-[var(--color-accent)]">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-6 w-6" set:html={industry.iconSvg} />
+            </div>
+            <h2 class="mb-2.5 text-[22px] font-semibold tracking-[-0.01em] text-[var(--color-text)] group-hover:text-[var(--color-accent)]">
+              {industry.name}
+            </h2>
+            <p class="mb-5 text-[15px] leading-[1.55] text-[var(--color-text-muted)]">
+              {industry.cardSummary}
+            </p>
+            <span class="mt-auto inline-flex items-center gap-1.5 text-[14px] font-medium text-[var(--color-accent)]">
+              Mehr erfahren
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+            </span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <CTASection
+    title={`Deine Branche ist nicht dabei?`}
+    text={`Kein Problem — wir bauen Websites für jede Branche. Diese vier sind unsere Schwerpunkte. Im Erstgespräch klären wir, was deine konkrete Branche braucht.`}
+  />
+</BaseLayout>

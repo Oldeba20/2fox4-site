@@ -1,0 +1,376 @@
+---
+/**
+ * /preise/ — Preis-Transparenz-Seite.
+ *
+ * Strategischer SEO-Hintergrund: Wettbewerber wie senorit.de gewinnen
+ * Click-Through-Rate mit „ab 900 €“ im Title. 2fox4 nannte bisher gar
+ * keine Preise — das kostete CTR und Vertrauen. Diese Seite zeigt
+ * ehrliche Preis-Spannen, ohne festzunageln.
+ */
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import FAQ from "../../components/FAQ.astro";
+import CTASection from "../../components/CTASection.astro";
+import { breadcrumbSchema, faqSchema } from "../../lib/schema";
+
+const title = "Was kostet eine Website? · 2FOX4 Preise transparent";
+const description =
+  "Ehrliche Preis-Spannen für WordPress-Websites, Onlineshops, SEO und Wartung. Ab 500 € für Visitenkarten-Sites, 1.500–5.000 € für Unternehmens-Auftritte, ab 2.500 € für Shops.";
+
+const tiers = [
+  {
+    badge: "Starter",
+    priceFrom: "500 €",
+    priceLabel: "ab",
+    name: "Visitenkarten-Site",
+    description:
+      "Eine schlanke One-Pager- oder kleine Mehrseiten-Site für Selbstständige, Solo-Unternehmer, Vereine und kleine Praxen. Dank KI-unterstützter Umsetzung jetzt erstmals auch unter 1.000 € machbar.",
+    bestFor:
+      "Solo-Selbstständige, Freelancer, kleine Vereine, Heilpraktiker",
+    features: [
+      "1–5 Unterseiten",
+      "Mobile-First WordPress",
+      "Kontakt-Formular (DSGVO-konform)",
+      "Lokale SEO-Basis",
+      "1 Foto-Shooting-Slot",
+      "1 Stunde Schulung",
+    ],
+    notIncluded: [
+      "Eigene Bildsprache / Fotografie",
+      "Onlineshop-Funktionen",
+      "Erweiterte SEO / Content-Marketing",
+    ],
+    cta: { label: "Erstgespräch buchen", href: "/kontakt/" },
+    highlight: false,
+  },
+  {
+    badge: "Standard · empfohlen",
+    priceFrom: "1.500 – 5.000 €",
+    priceLabel: "",
+    name: "Unternehmens-Website",
+    description:
+      "Ein vollwertiger Auftritt für etablierte Unternehmen: individuelles Design, klare Inhalts-Architektur, regional optimierte SEO, technisch sauber, mit Wartungs-Strategie. Unser meistgewähltes Paket.",
+    bestFor:
+      "Mittelständler, Praxen mit Team, Handwerker, Vereine mit Veranstaltungs-Kalender, Gastronomie",
+    features: [
+      "5–25 Unterseiten",
+      "Individuelles Design (kein Theme)",
+      "Lokale SEO + Google-Business-Optimierung",
+      "Schema.org strukturierte Daten",
+      "Online-Termin / Reservierung (optional)",
+      "Performance-optimiert (PageSpeed 90+)",
+      "Foto-Session vor Ort (halber Tag)",
+      "2 Stunden Schulung + Schulungs-Video",
+      "BFSG-konforme Barrierefreiheit",
+    ],
+    notIncluded: [
+      "Onlineshop mit Bestellsystem",
+      "Buchungs-Plattformen mit Channel-Management",
+      "Eigene KI-Integration",
+    ],
+    cta: { label: "Erstgespräch buchen", href: "/kontakt/" },
+    highlight: true,
+  },
+  {
+    badge: "Onlineshop",
+    priceFrom: "2.500 €",
+    priceLabel: "ab",
+    name: "Shop & Onlineshop",
+    description:
+      "Onlineshop auf WooCommerce, Shopware oder Oxid — für Einzelhändler, Direktvermarkter, Boutiquen, B2B-Verkauf. Mit Payment, Versand-Anbindung, Lagerverwaltung.",
+    bestFor:
+      "Einzelhändler, Direktvermarkter, B2B-Großhändler, Boutiquen",
+    features: [
+      "Alle Standard-Features +",
+      "WooCommerce / Shopware / Oxid Setup",
+      "Bis 100 Produkte initial eingepflegt",
+      "Payment: PayPal, SEPA, Klarna, Kreditkarte",
+      "Versand-Anbindung (DHL, GLS, Hermes)",
+      "Lagerverwaltung-Schnittstelle (DATEV / billbee)",
+      "Onlineshop-spezifische SEO",
+    ],
+    notIncluded: [
+      "Marktplatz-Anbindungen (Amazon, Ebay) — extra",
+      "Übersetzungen für internationale Märkte",
+    ],
+    cta: { label: "Shop-Beratung anfragen", href: "/kontakt/" },
+    highlight: false,
+  },
+];
+
+const extraServices = [
+  {
+    name: "Wartung & Sicherheit",
+    price: "ab 30 €",
+    period: "/ Monat",
+    description:
+      "Sicherheits-Updates, automatische Backups, Performance-Monitoring, kleine Inhalts-Änderungen.",
+  },
+  {
+    name: "Laufende SEO-Betreuung",
+    price: "ab 200 €",
+    period: "/ Monat",
+    description:
+      "Keyword-Monitoring, Content-Strategie, Google-Business-Pflege, monatliches Reporting.",
+  },
+  {
+    name: "Hosting (alternativ zu eigenem Provider)",
+    price: "ab 15 €",
+    period: "/ Monat",
+    description:
+      "Spezialisiertes WordPress-Hosting bei All-Inkl oder ähnlichem Provider. Inkl. Domain + SSL.",
+  },
+  {
+    name: "Professionelle Foto-Session",
+    price: "500 – 900 €",
+    period: "einmalig",
+    description:
+      "Vor-Ort-Tag mit Fotograf — Räume, Team, Produkte. Bilder unbegrenzt lizenziert.",
+  },
+  {
+    name: "Texte & Content (wenn du keine Zeit hast)",
+    price: "80 – 120 €",
+    period: "/ Seite",
+    description:
+      "Wir schreiben deine Texte (KI-gestützt + redigiert). Vorab Briefing-Workshop.",
+  },
+  {
+    name: "Mehrsprachigkeit (z. B. EN, NL)",
+    price: "300 – 600 €",
+    period: "/ Sprache",
+    description:
+      "WPML- oder Polylang-Setup, professionelle Übersetzung (nicht KI-Mist).",
+  },
+];
+
+const faqItems = [
+  {
+    question: "Warum nennst du nicht einen Fixpreis pro Website?",
+    answerHtml: `Weil Website-Projekte unterschiedlich groß sind. Eine Praxis-Visitenkarte und ein 500-Produkt-Onlineshop für einen Maschinenbauer haben nicht denselben Aufwand. „Festpreis“ funktioniert nur, wenn die Anforderungen genau gleich wären — sind sie aber nie. Was du bei mir bekommst: <strong>transparente Spannen, klares Erstgespräch mit Aufwand-Schätzung, ein verbindliches Festpreis-Angebot nach diesem Gespräch</strong>. Keine Überraschungen, keine Mond-Preise.`,
+  },
+  {
+    question: "Sind das Netto- oder Brutto-Preise?",
+    answerHtml: `Netto. Wir sind ein B2B-Anbieter und arbeiten überwiegend für Unternehmen, die Vorsteuer ziehen. Auf das Netto kommen 19 % MwSt. obendrauf — also z. B. 1.500 € → 1.785 € brutto. Bei Privatpersonen und Vereinen rechnen wir gerne den Brutto-Preis direkt aus.`,
+  },
+  {
+    question: "Was kostet eine reine SEO-Beratung ohne neue Website?",
+    answerHtml: `Eine einmalige SEO-Audit-Session (4 Stunden, schriftlicher Bericht, Maßnahmenplan) liegt bei <strong>800 € netto</strong>. Wenn du danach laufende Betreuung willst, ab <strong>200 € / Monat</strong> mit Keyword-Monitoring + monatlichem Reporting. Bei BAFA-anerkannter Beratung erstattet das BAFA bis zu 80 % der Kosten.`,
+  },
+  {
+    question: "Bezahlt man alles auf einmal oder in Raten?",
+    answerHtml: `Bei Projekten über 1.500 € arbeiten wir mit 50/50: 50 % bei Auftragserteilung, 50 % bei Abnahme. Bei größeren Projekten ab 5.000 € optional 30/40/30 mit Zwischenschritt. Wartungs- und SEO-Pakete laufen als monatliche Lastschrift.`,
+  },
+  {
+    question: "Wie lange hält ein 2.500-€-Website-Projekt?",
+    answerHtml: `Technisch 4-6 Jahre, bevor ein größerer Refresh fällig wird (WordPress-Core-Updates und PHP-Versionen erzwingen irgendwann Modernisierungen). Inhaltlich kommt das auf deine Branche an — Tourismus muss saisonal aktualisiert werden, B2B-Industriewebsite kann länger statisch laufen. Mit unserem Wartungspaket sorgen wir dafür, dass die Site technisch und inhaltlich aktuell bleibt.`,
+  },
+  {
+    question: "Was sind versteckte Kosten, auf die ich achten sollte?",
+    answerHtml: `Bei seriösen Anbietern: keine. Bei manchen Wettbewerbern: <strong>Theme-Lizenz</strong> (z. B. 60–150 € / Jahr für gekaufte WordPress-Themes), <strong>Plugin-Lizenzen</strong> (z. B. ACF Pro, WPML, Yoast Premium — je 50–250 €/Jahr), <strong>Stock-Foto-Lizenzen</strong>, <strong>Cookie-Banner-Tools</strong> (Borlabs, Usercentrics — je 100–500 €/Jahr). Wir nutzen so weit wie möglich freie Tools und eigene Lösungen (z. B. unser eigenes <a href="/wordpress-plugins/" class="text-[var(--color-accent)]">Cookie-Banner-Plugin</a>) — Folgekosten so minimal wie möglich.`,
+  },
+  {
+    question: "Was passiert, wenn ich nach 6 Monaten die Agentur wechseln will?",
+    answerHtml: `Bei uns kein Problem. Alle Inhalte gehören dir, der Source-Code wird übergeben, du behältst die volle Kontrolle. Wir nutzen Standard-WordPress ohne Vendor-Lock-in. Wenn du wechselst: Datenexport, Übergabe-Termin, gute Reise — wir sind nicht beleidigt. Faire Trennung ist Teil unseres Selbstverständnisses.`,
+  },
+  {
+    question: "Gibt es eine Geld-zurück-Garantie?",
+    answerHtml: `Nicht im klassischen Sinne. Aber: bei jedem Projekt machen wir vorab ein klares Briefing mit Konzept-Phase. Bist du danach mit der Richtung nicht einverstanden, kannst du aussteigen — du zahlst dann nur die geleistete Konzept-Arbeit (typisch 200-500 €). Nach Auftragserteilung läuft das Projekt durch; ein „mittendrin Stop“ wäre für uns wirtschaftlich nicht tragbar, schadet aber auch dir, weil du dann etwas Halbfertiges hast.`,
+  },
+];
+
+const schema = [
+  breadcrumbSchema([
+    { name: "Start", url: "/" },
+    { name: "Preise", url: "/preise/" },
+  ]),
+  faqSchema(faqItems),
+];
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonicalPath="/preise/"
+  noindex={false}
+  schema={schema}
+>
+  <Breadcrumb
+    crumbs={[
+      { label: "Start", href: "/" },
+      { label: "Preise" },
+    ]}
+  />
+
+  {/* Hero */}
+  <section class="relative overflow-hidden border-b border-[var(--color-border)] pt-20 pb-12">
+    <div class="hero-grid-bg"></div>
+    <div class="container-content relative z-10">
+      <div class="mb-5 inline-flex items-center gap-2 rounded-md bg-[var(--color-accent-soft)] px-3 py-1.5 text-xs uppercase tracking-[0.14em] text-[var(--color-accent)]">
+        Preis-Transparenz
+      </div>
+      <h1 class="mb-6 max-w-[820px] text-[clamp(36px,5.5vw,64px)] font-bold tracking-[-0.04em] leading-[1.05]">
+        <span class="text-gradient-light">Was kostet eine Website</span><br />
+        <span class="text-gradient-accent">wirklich?</span>
+      </h1>
+      <p class="max-w-[700px] text-[19px] leading-[1.65] text-[var(--color-text-muted)]">
+        Ehrliche Spannen statt verschleierter „Auf-Anfrage“-Preise. Drei
+        Pakete, fünf Add-ons, klare Aussagen darüber, was drin ist und was
+        extra kostet. Im persönlichen Erstgespräch bekommst du immer ein
+        verbindliches Festpreis-Angebot.
+      </p>
+    </div>
+  </section>
+
+  {/* Drei Tier-Cards */}
+  <section class="py-16">
+    <div class="container-content">
+      <div class="grid gap-5 lg:grid-cols-3">
+        {tiers.map((tier) => (
+          <div
+            class:list={[
+              "flex flex-col rounded-2xl border p-7 transition-all",
+              tier.highlight
+                ? "border-[var(--color-accent)] bg-[var(--color-bg-card)] ring-2 ring-[var(--color-accent-soft)]"
+                : "border-[var(--color-border)] bg-[var(--color-bg-card)] hover:border-[var(--color-border-strong)]",
+            ]}
+          >
+            <div class="mb-4 inline-flex w-fit items-center gap-1.5 rounded-md bg-[var(--color-accent-soft)] px-2.5 py-1 text-[11px] uppercase tracking-[0.12em] text-[var(--color-accent)]">
+              {tier.badge}
+            </div>
+            <h2 class="mb-1.5 text-[24px] font-semibold tracking-[-0.01em]">
+              {tier.name}
+            </h2>
+            <div class="mb-4 flex items-baseline gap-1.5">
+              {tier.priceLabel && (
+                <span class="text-[14px] text-[var(--color-text-muted)]">{tier.priceLabel}</span>
+              )}
+              <span class="text-[32px] font-bold tracking-[-0.02em] text-[var(--color-text)]">
+                {tier.priceFrom}
+              </span>
+              <span class="text-[13px] text-[var(--color-text-faint)]">netto</span>
+            </div>
+            <p class="mb-5 text-[14.5px] leading-[1.6] text-[var(--color-text-muted)]">
+              {tier.description}
+            </p>
+            <div class="mb-4 text-[12px] uppercase tracking-[0.12em] text-[var(--color-text-faint)]">
+              Passt für:
+            </div>
+            <div class="mb-6 text-[14px] text-[var(--color-text)]">
+              {tier.bestFor}
+            </div>
+            <div class="mb-3 text-[12px] uppercase tracking-[0.12em] text-[var(--color-accent)]">
+              Inkl.
+            </div>
+            <ul class="mb-6 flex flex-col gap-2 text-[14px] text-[var(--color-text)]">
+              {tier.features.map((f) => (
+                <li class="flex items-start gap-2.5">
+                  <svg class="mt-0.5 h-4 w-4 flex-shrink-0 text-[var(--color-accent)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                  <span>{f}</span>
+                </li>
+              ))}
+            </ul>
+            <div class="mb-3 mt-auto text-[12px] uppercase tracking-[0.12em] text-[var(--color-text-faint)]">
+              Nicht enthalten
+            </div>
+            <ul class="mb-6 flex flex-col gap-2 text-[13px] text-[var(--color-text-muted)]">
+              {tier.notIncluded.map((n) => (
+                <li class="flex items-start gap-2.5">
+                  <svg class="mt-0.5 h-4 w-4 flex-shrink-0 text-[var(--color-text-faint)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                  </svg>
+                  <span>{n}</span>
+                </li>
+              ))}
+            </ul>
+            <a
+              href={tier.cta.href}
+              class:list={[
+                "mt-2 inline-flex items-center justify-center gap-2 rounded-md px-5 py-3 text-[15px] font-medium transition-all",
+                tier.highlight
+                  ? "bg-[var(--color-accent)] text-black hover:bg-[var(--color-accent)]/85"
+                  : "border border-[var(--color-border-strong)] bg-transparent text-[var(--color-text)] hover:bg-[var(--color-bg-elevated)]",
+              ]}
+            >
+              {tier.cta.label}
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+            </a>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  {/* Add-on-Preise */}
+  <section class="border-y border-[var(--color-border)] bg-[var(--color-bg-elevated)] py-20">
+    <div class="container-content">
+      <div class="mb-3.5 text-xs uppercase tracking-[0.16em] text-[var(--color-accent)]">
+        Was extra kostet
+      </div>
+      <h2 class="mb-3.5 max-w-[640px] text-[clamp(28px,3.5vw,42px)] font-bold tracking-[-0.03em] leading-[1.1]">
+        Add-ons, wenn du sie brauchst — nicht, wenn nicht.
+      </h2>
+      <p class="mb-10 max-w-[640px] text-[17px] text-[var(--color-text-muted)]">
+        Wir hängen dir nichts an, was du nicht brauchst. Diese Add-ons
+        kannst du zubuchen — laufend oder einmalig — wenn der Bedarf da ist.
+      </p>
+      <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {extraServices.map((svc) => (
+          <div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-card)] p-6">
+            <div class="mb-1.5 flex items-baseline gap-1.5">
+              <span class="text-[20px] font-bold tracking-[-0.01em] text-[var(--color-text)]">{svc.price}</span>
+              <span class="text-[12px] text-[var(--color-text-faint)]">{svc.period}</span>
+            </div>
+            <h3 class="mb-2 text-[15px] font-semibold text-[var(--color-text)]">
+              {svc.name}
+            </h3>
+            <p class="text-[13.5px] leading-[1.55] text-[var(--color-text-muted)]">
+              {svc.description}
+            </p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  {/* BAFA-Hinweis */}
+  <section class="py-16">
+    <div class="container-content">
+      <div class="grid gap-10 rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg-card)] p-10 lg:grid-cols-[1fr_1.4fr]">
+        <div>
+          <div class="mb-3.5 text-xs uppercase tracking-[0.16em] text-[var(--color-accent)]">
+            BAFA-Förderung
+          </div>
+          <h3 class="text-[28px] font-bold tracking-[-0.02em] leading-[1.15]">
+            Bis zu 80 % Erstattung über das BAFA — wir machen den Antrag mit.
+          </h3>
+        </div>
+        <div class="text-[16px] leading-[1.65] text-[var(--color-text-muted)]">
+          <p class="mb-4">
+            Kleine und mittlere Unternehmen können über die BAFA-Beratungsförderung
+            einen Großteil der Beratungskosten erstattet bekommen. 2FOX4 ist
+            anerkannter Berater — wir helfen beim Antrag, machen die
+            Dokumentation und rechnen direkt über den Förderbescheid ab.
+          </p>
+          <a href="/leistungen/bafa-foerderung/" class="inline-flex items-center gap-1.5 font-medium text-[var(--color-accent)]">
+            Mehr zur BAFA-Förderung
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <FAQ items={faqItems} title="Häufige Fragen zu Preisen." />
+
+  <CTASection
+    title="Wie viel würde dein Projekt kosten?"
+    text="30 Minuten kostenloses Erstgespräch. Wir hören uns an, was du brauchst, und schicken dir innerhalb von 48 Stunden ein verbindliches Festpreis-Angebot."
+  />
+</BaseLayout>

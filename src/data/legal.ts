@@ -281,16 +281,14 @@ const datenschutzHtml = `
 </section>
 
 <section>
-  <h2>6. Schriftarten (Google Fonts &mdash; lokal eingebunden)</h2>
+  <h2>6. Schriftarten (lokal eingebunden)</h2>
   <p>
-    Diese Website verwendet die Schriftart „Inter". Sie wird lokal von
-    unserem Server ausgeliefert; es findet keine Übertragung von Daten
-    an Google statt.
+    Diese Website verwendet die Schriftarten „Inter" und „JetBrains Mono".
+    Beide werden ausschließlich von unserem eigenen Server ausgeliefert
+    (via <code>@fontsource-variable</code>). Es findet <strong>keine
+    Verbindung</strong> zu Google Fonts oder anderen externen Schrift-Anbietern
+    statt — Ihre IP-Adresse wird nicht an Google übertragen.
   </p>
-  <!-- TODO Oliver: Aktuell laden wir Inter noch über Google Fonts CDN.
-       Vor dem Go-Live entweder lokal hosten oder diesen Abschnitt
-       anpassen + Consent über den Cookie-Banner einholen
-       (LG München, Urteil v. 20.01.2022, Az. 3 O 17493/20). -->
 </section>
 
 <section>

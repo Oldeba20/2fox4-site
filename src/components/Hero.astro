@@ -29,10 +29,22 @@ const {
   primaryCta = { label: "Kostenloses Erstgespräch", href: "/kontakt/" },
   secondaryCta = { label: "Leistungen entdecken", href: "/leistungen/" },
   photo = {
-    src: "https://www.2fox4.de/wp-content/uploads/2026/05/oliver-team-v2.jpg",
+    // Bild lokal gehostet — drei Formate (AVIF/WebP/JPG) im <picture> unten.
+    // Pfad ohne Endung; Endungen werden im picture-Markup ergänzt.
+    src: "/images/hero/oliver-team-v2.jpg",
     alt: "Oliver Deppe von 2FOX4 mit seiner Assistentin im Büro in Sachsenhagen — echte Menschen, mit denen du dich gerne unterhältst.",
   },
 } = Astro.props;
+
+/**
+ * Hero-Bild-Pfade ableiten für <picture>-Tag.
+ * Beispiel: /images/hero/oliver-team-v2.jpg → .avif / .webp / .jpg
+ * Senkt LCP um ca. 35-50 % auf Mobile (AVIF ist ~50% kleiner als JPG).
+ */
+const photoBase = photo.src.replace(/\.(jpe?g|png|webp|avif)$/i, "");
+const photoSrcAvif = `${photoBase}.avif`;
+const photoSrcWebp = `${photoBase}.webp`;
+const photoSrcJpg = `${photoBase}.jpg`;
 ---
 
 <section class="relative pt-20 pb-20 overflow-hidden">
@@ -76,20 +88,25 @@ const {
           </div>
         </div>
 
-        {/* Foto-Spalte (rechts) */}
+        {/* Foto-Spalte (rechts) — modernes Bildformat via <picture>. Browser
+            wählt das beste verfügbare Format (AVIF → WebP → JPG-Fallback). */}
         <div class="hero-photo-wrap">
           <span class="hero-photo-glow" aria-hidden="true"></span>
           <span class="hero-photo-dot" aria-hidden="true"></span>
           <div class="hero-photo-frame">
-            <img
-              src={photo.src}
-              alt={photo.alt}
-              width="800"
-              height="800"
-              loading="eager"
-              decoding="async"
-              fetchpriority="high"
-            />
+            <picture>
+              <source type="image/avif" srcset={photoSrcAvif} />
+              <source type="image/webp" srcset={photoSrcWebp} />
+              <img
+                src={photoSrcJpg}
+                alt={photo.alt}
+                width="800"
+                height="800"
+                loading="eager"
+                decoding="async"
+                fetchpriority="high"
+              />
+            </picture>
           </div>
         </div>
       </div>

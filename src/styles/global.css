@@ -375,8 +375,6 @@ html.a11y-high-contrast *:focus-visible {
   width: 100%;
   aspect-ratio: 16 / 10;
   background-color: #050505;
-  background-size: cover;
-  background-position: top center;
   border-radius: 4px;
   overflow: hidden;
   transform: scale(1) translateY(0);
@@ -385,6 +383,18 @@ html.a11y-high-contrast *:focus-visible {
     border-radius 0.35s, box-shadow 0.45s, filter 0.3s;
   will-change: transform, box-shadow;
   z-index: 5;
+}
+
+/* Vorschau-Image im Monitor — füllt die Screen-Fläche, Top-Crop wie
+   beim alten background-position: top center. */
+.monitor-card .screen-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  display: block;
 }
 
 /* Hover-Zoom — auch auf nicht-klickbaren Static-Karten */

@@ -49,8 +49,11 @@ export const site = {
       { label: 'Digitalisierungsberatung', href: '/leistungen/digitalisierungsberatung/' },
       { label: 'Hosting', href: '/leistungen/hosting/' },
       { label: 'BAFA-Förderung', href: '/leistungen/bafa-foerderung/' },
+      { label: 'Branchen', href: '/branchen/' },
+      { label: 'Preise', href: '/preise/' },
     ],
     regional: [
+      { label: 'Sachsenhagen', href: '/webdesign-sachsenhagen/' },
       { label: 'Stadthagen', href: '/webdesign-stadthagen/' },
       { label: 'Bückeburg', href: '/webdesign-bueckeburg/' },
       { label: 'Wunstorf', href: '/webdesign-wunstorf/' },

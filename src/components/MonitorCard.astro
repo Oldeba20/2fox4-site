@@ -6,20 +6,28 @@
  *
  * Props:
  *   url      — Anzeige in der URL-Bar (ohne Protokoll, z. B. "renaissance-stadthagen.de")
- *   image    — Hintergrund-Bild der "Screen"-Fläche
+ *   image    — Quelle des Vorschau-Bilds der "Screen"-Fläche
+ *   alt      — Alt-Text für das Vorschau-Bild (SEO + a11y). Fallback aus URL.
  *   href     — Wohin verlinkt die Karte
  *   variant  — "compact" (Stadt-Seite) oder "default" (Referenzen, mit Hover-Zoom)
+ *
+ * Wichtig (Mai 2026 Refactor): Das Vorschau-Bild wird jetzt als <img>-Tag
+ * gerendert statt als CSS background-image. Damit kommt es in die Google-
+ * Bildersuche und hat einen alt-Text für Screenreader.
  */
 interface Props {
   url: string;
   image: string;
+  alt?: string;
   /** Wenn href fehlt: Karte wird als <div> gerendert (nicht klickbar). */
   href?: string;
   variant?: "compact" | "default";
 }
 
-const { url, image, href, variant = "default" } = Astro.props;
+const { url, image, alt, href, variant = "default" } = Astro.props;
 const Tag = href ? "a" : "div";
+// Fallback-Alt aus der URL — besser als leer.
+const imageAlt = alt ?? `Vorschau der Website ${url}`;
 ---
 
 <Tag
@@ -42,7 +50,8 @@ const Tag = href ? "a" : "div";
         {url}
       </div>
     </div>
-    <div class="screen" style={`background-image: url(${image});`}>
+    <div class="screen">
+      <img src={image} alt={imageAlt} loading="lazy" decoding="async" class="screen-img" />
       <div class="screen-glare"></div>
       <div class="screen-tint"></div>
     </div>

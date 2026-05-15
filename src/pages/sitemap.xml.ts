@@ -6,6 +6,8 @@
 import type { APIRoute } from "astro";
 import { cities } from "../data/cities";
 import { services } from "../data/services";
+import { industries } from "../data/industries";
+import { serviceCities } from "../data/service-cities";
 import { plugins } from "../data/plugins";
 import { references } from "../data/references";
 import { legalList } from "../data/legal";
@@ -29,6 +31,8 @@ export const GET: APIRoute = async () => {
     { loc: "/", changefreq: "weekly", priority: 1.0, lastmod: today },
     { loc: "/leistungen/", changefreq: "monthly", priority: 0.9, lastmod: today },
     { loc: "/regional/", changefreq: "monthly", priority: 0.9, lastmod: today },
+    { loc: "/branchen/", changefreq: "monthly", priority: 0.85, lastmod: today },
+    { loc: "/preise/", changefreq: "monthly", priority: 0.85, lastmod: today },
     { loc: "/wordpress-plugins/", changefreq: "monthly", priority: 0.8, lastmod: today },
     { loc: "/referenzen/", changefreq: "monthly", priority: 0.7, lastmod: today },
     { loc: "/blog/", changefreq: "daily", priority: 0.8, lastmod: today },
@@ -52,6 +56,26 @@ export const GET: APIRoute = async () => {
       loc: `/leistungen/${svc.slug}/`,
       changefreq: "monthly",
       priority: 0.85,
+      lastmod: today,
+    });
+  }
+
+  // Branchen
+  for (const ind of industries) {
+    entries.push({
+      loc: `/branchen/${ind.slug}/`,
+      changefreq: "monthly",
+      priority: 0.8,
+      lastmod: today,
+    });
+  }
+
+  // Service × Stadt Matrix (z.B. /seo-stadthagen/, /wordpress-minden/)
+  for (const sc of serviceCities) {
+    entries.push({
+      loc: `/${sc.slug}/`,
+      changefreq: "monthly",
+      priority: 0.9,
       lastmod: today,
     });
   }

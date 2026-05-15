@@ -50,6 +50,7 @@ const { city, refs } = Astro.props;
         <MonitorCard
           url={ref.url}
           image={ref.image}
+          alt={`Website-Vorschau: ${ref.title} (${ref.tag})`}
           href={isFeatured(ref.href) ? ref.href : undefined}
           variant="compact"
         >

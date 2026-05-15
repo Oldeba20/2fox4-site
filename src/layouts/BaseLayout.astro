@@ -12,6 +12,11 @@
  * Optional kann `noindex` gesetzt werden (z. B. für /neu/-Preview).
  */
 import "../styles/global.css";
+// Variable Fonts lokal (DSGVO-konform — keine Verbindung zu Google).
+// @fontsource-variable/* liefert ein einziges WOFF2 pro Familie, das alle
+// Weights enthält, deutlich kleiner als 5+ separate Files.
+import "@fontsource-variable/inter";
+import "@fontsource-variable/jetbrains-mono";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import LegalModal from "../components/LegalModal.astro";
@@ -82,13 +87,9 @@ const canonicalUrl = canonicalPath
     <meta name="geo.position" content={`${site.geo.latitude};${site.geo.longitude}`} />
     <meta name="ICBM" content={`${site.geo.latitude}, ${site.geo.longitude}`} />
 
-    {/* Schriften */}
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
-      rel="stylesheet"
-    />
+    {/* Schriften: lokal via @fontsource-variable (s. Frontmatter-Import).
+        KEIN externes Laden von fonts.googleapis.com / fonts.gstatic.com mehr
+        — Datenschutz-konform, kein Render-Block, keine DSGVO-Lücke. */}
 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 

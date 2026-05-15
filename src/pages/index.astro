@@ -16,6 +16,7 @@ import GoogleReviews from "../components/GoogleReviews.astro";
 import CTASection from "../components/CTASection.astro";
 import { site } from "../data/site";
 import reviewsData from "../data/reviews.json";
+import { localBusinessSchema } from "../lib/schema";
 
 const title = "Webdesign, das auffindbar macht | 2FOX4 Sachsenhagen";
 const description =
@@ -66,51 +67,25 @@ const services = [
   },
 ];
 
-// JSON-LD: LocalBusiness + WebSite
-const schema = [
-  {
-    "@context": "https://schema.org",
-    "@type": "LocalBusiness",
-    "@id": `${site.url}/#business`,
-    name: site.name,
-    url: site.url,
-    telephone: site.nap.phone,
-    email: site.nap.email,
-    address: {
-      "@type": "PostalAddress",
-      streetAddress: site.nap.street,
-      postalCode: site.nap.zip,
-      addressLocality: site.nap.city,
-      addressCountry: site.nap.country,
-    },
-    geo: {
-      "@type": "GeoCoordinates",
-      latitude: site.geo.latitude,
-      longitude: site.geo.longitude,
-    },
-    areaServed: [
-      "Stadthagen", "Bückeburg", "Wunstorf", "Hameln",
-      "Rinteln", "Minden", "Nienburg", "Bad Münder", "Barsinghausen",
-    ],
-    aggregateRating: {
-      "@type": "AggregateRating",
-      ratingValue: reviewsData.rating.toFixed(1),
-      reviewCount: reviewsData.user_ratings_total,
-      bestRating: "5",
-      worstRating: "1",
-    },
-    review: reviewsData.reviews.slice(0, 5).map((r: any) => ({
-      "@type": "Review",
-      author: { "@type": "Person", name: r.author_name },
-      reviewRating: {
-        "@type": "Rating",
-        ratingValue: r.rating,
-        bestRating: "5",
-        worstRating: "1",
-      },
-      reviewBody: r.text,
-    })),
+// JSON-LD: LocalBusiness (mit AggregateRating + Reviews) + WebSite.
+// Helper-basiert, damit Service-Pages über @id-Referenz konsistent
+// auf dieselbe Entität verweisen können.
+const businessSchema = localBusinessSchema({ includeAggregateRating: true });
+// Review-Snippets unter der Business-Entität ergänzen.
+businessSchema.review = reviewsData.reviews.slice(0, 5).map((r: any) => ({
+  "@type": "Review",
+  author: { "@type": "Person", name: r.author_name },
+  reviewRating: {
+    "@type": "Rating",
+    ratingValue: r.rating,
+    bestRating: "5",
+    worstRating: "1",
   },
+  reviewBody: r.text,
+}));
+
+const schema = [
+  businessSchema,
   {
     "@context": "https://schema.org",
     "@type": "WebSite",

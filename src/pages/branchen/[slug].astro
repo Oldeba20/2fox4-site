@@ -1,0 +1,182 @@
+---
+/**
+ * Dynamische Route: /branchen/[slug]/ — Branchen-Landingpages.
+ * Strategie: Long-Tail-SEO für „Webdesign für Ärzte“, „Praxis-Website“,
+ * „Webdesign Handwerker“, etc. Bisher nicht von 2fox4 bedient.
+ */
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import FAQ from "../../components/FAQ.astro";
+import CTASection from "../../components/CTASection.astro";
+import { industries, type Industry } from "../../data/industries";
+import {
+  breadcrumbSchema,
+  faqSchema,
+  serviceSchema,
+} from "../../lib/schema";
+
+export async function getStaticPaths() {
+  return industries.map((industry) => ({
+    params: { slug: industry.slug },
+    props: { industry },
+  }));
+}
+
+interface Props {
+  industry: Industry;
+}
+
+const { industry } = Astro.props;
+
+// Service-Type-Mapping pro Branche (Schema.org-Vokabular ist englisch).
+const serviceTypeMap: Record<string, string> = {
+  aerzte: "Medical Practice Website Design",
+  handwerk: "Trades and Construction Web Design",
+  gastronomie: "Restaurant and Hospitality Web Design",
+  vereine: "Non-Profit Organization Web Design",
+};
+
+const schema = [
+  breadcrumbSchema([
+    { name: "Start", url: "/" },
+    { name: "Branchen", url: "/branchen/" },
+    { name: industry.name, url: `/branchen/${industry.slug}/` },
+  ]),
+  serviceSchema({
+    name: industry.name,
+    description: industry.seoDescription,
+    serviceType: serviceTypeMap[industry.slug] ?? industry.name,
+    slug: industry.slug,
+    basePath: "/branchen/",
+  }),
+  faqSchema(industry.faq),
+];
+---
+
+<BaseLayout
+  title={industry.seoTitle}
+  description={industry.seoDescription}
+  canonicalPath={`/branchen/${industry.slug}/`}
+  noindex={false}
+  schema={schema}
+>
+  <Breadcrumb
+    crumbs={[
+      { label: "Start", href: "/" },
+      { label: "Branchen", href: "/branchen/" },
+      { label: industry.name },
+    ]}
+  />
+
+  {/* Hero */}
+  <section class="relative overflow-hidden border-b border-[var(--color-border)] pt-20 pb-16">
+    <div class="hero-grid-bg"></div>
+    <div class="container-content relative z-10">
+      <div class="mb-5 inline-flex items-center gap-2 rounded-md bg-[var(--color-accent-soft)] px-3 py-1.5 text-xs uppercase tracking-[0.14em] text-[var(--color-accent)]">
+        <span class="flex h-4 w-4 items-center justify-center">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-3.5 w-3.5" set:html={industry.iconSvg} />
+        </span>
+        {industry.kicker}
+      </div>
+      <h1 class="mb-6 max-w-[820px] text-[clamp(36px,5.5vw,64px)] font-bold tracking-[-0.04em] leading-[1.05]">
+        <span class="text-gradient-light">{industry.heroTitleLine1}</span><br />
+        <span class="text-gradient-accent">{industry.heroTitleLine2}</span>
+      </h1>
+      <p class="max-w-[680px] text-[19px] leading-[1.65] text-[var(--color-text-muted)]">
+        {industry.heroSub}
+      </p>
+    </div>
+  </section>
+
+  {/* Sections */}
+  {industry.sections.map((section, i) => (
+    <section
+      class:list={[
+        "py-20",
+        i % 2 === 1
+          ? "bg-[var(--color-bg-elevated)] border-y border-[var(--color-border)]"
+          : "",
+      ]}
+    >
+      <div class="container-content">
+        {section.eyebrow && (
+          <div class="mb-3.5 text-xs uppercase tracking-[0.16em] text-[var(--color-accent)]">
+            {section.eyebrow}
+          </div>
+        )}
+        <h2 class="mb-8 max-w-[760px] text-[clamp(28px,3.5vw,42px)] font-bold tracking-[-0.03em] leading-[1.1]">
+          {section.headline}
+        </h2>
+
+        {section.bullets ? (
+          <div class="grid gap-12 lg:grid-cols-[1fr_1fr] items-start">
+            <div
+              class="prose-content text-[17px] leading-[1.7] text-[var(--color-text-muted)]"
+              set:html={section.body}
+            />
+            <ul class="flex flex-col gap-3">
+              {section.bullets.map((b) => (
+                <li class="flex gap-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-card)] p-4 text-[15px] text-[var(--color-text)]">
+                  <svg class="h-5 w-5 flex-shrink-0 text-[var(--color-accent)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                  <span>{b}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : (
+          <div
+            class="prose-content max-w-[760px] text-[17px] leading-[1.7] text-[var(--color-text-muted)]"
+            set:html={section.body}
+          />
+        )}
+      </div>
+    </section>
+  ))}
+
+  {/* Pain Points: Problem + Solution */}
+  <section class="py-20">
+    <div class="container-content">
+      <div class="mb-3.5 text-xs uppercase tracking-[0.16em] text-[var(--color-accent)]">
+        Typische Probleme — und wie wir sie lösen
+      </div>
+      <h2 class="mb-10 max-w-[760px] text-[clamp(28px,3.5vw,42px)] font-bold tracking-[-0.03em] leading-[1.1]">
+        Was uns Auftraggeber aus dieser Branche typischerweise sagen.
+      </h2>
+      <div class="grid gap-5 lg:grid-cols-2">
+        {industry.painPoints.map((pp) => (
+          <div class="rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg-card)] p-7">
+            <div class="mb-3 flex items-start gap-3">
+              <svg class="mt-1 h-5 w-5 flex-shrink-0 text-[var(--color-text-faint)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10" />
+                <path d="M12 8v4M12 16h.01" />
+              </svg>
+              <div class="text-[16px] font-medium leading-[1.4] text-[var(--color-text)]">
+                „{pp.problem}“
+              </div>
+            </div>
+            <div class="flex items-start gap-3 border-t border-[var(--color-border)] pt-3">
+              <svg class="mt-1 h-5 w-5 flex-shrink-0 text-[var(--color-accent)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+              <div class="text-[15px] leading-[1.55] text-[var(--color-text-muted)]">
+                {pp.solution}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <FAQ
+    items={industry.faq}
+    title={`Häufige Fragen zu ${industry.name}-Websites.`}
+  />
+
+  <CTASection
+    title={`Bereit für eine Website, die zu deiner Branche passt?`}
+    text={`30 Minuten kostenloses Erstgespräch. Wir kennen die Anforderungen deiner Branche und können dir realistisch sagen, was eine bessere Online-Präsenz dir bringt.`}
+  />
+</BaseLayout>
