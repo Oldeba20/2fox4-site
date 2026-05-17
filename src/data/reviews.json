@@ -1,9 +1,19 @@
 {
   "name": "2Fox4 Webdesign - Stadthagen",
   "rating": 5.0,
-  "user_ratings_total": 19,
+  "user_ratings_total": 20,
   "url": "https://maps.google.com/?cid=3401057852367166353",
   "reviews": [
+    {
+      "author_name": "Svenja Claußen",
+      "author_url": "https://maps.google.com/?cid=3401057852367166353",
+      "profile_photo_url": "",
+      "rating": 5,
+      "relative_time_description": "vor 1 Tag",
+      "text": "Ausgezeichnete Arbeit! Oliver hat mich sehr kompetent, ruhig und freundlich rund um die Organisation meiner Homepage beraten. Was ich sehr zu schätzen weiß, ist dass er sich viel Zeit genommen hat und auf meine individuellen Wünsche und Anregungen eingegangen ist. Ich bin sehr zufrieden - top Empfehlung! Danke von Herzen!",
+      "time": 1778955166,
+      "profile_photo_local": "/reviews/svenja-claussen.jpg"
+    },
     {
       "author_name": "Reiner Ratter",
       "author_url": "https://www.google.com/maps/contrib/104345532089570732890/reviews",
@@ -43,17 +53,7 @@
       "text": "Die von 2fox4 erstellte Website hat meine Erwartungen weit übertroffen. Sie ist nicht nur visuell ansprechend, sondern auch benutzerfreundlich, mobiloptimiert und SEO-freundlich. Dies hat deutlich zur Steigerung meiner Online-Präsenz und Geschäftserfolge beigetragen.\n\nWas mich am meisten beeindruckt hat, war die Professionalität und das Engagement von Oliver. Er ging immer die extra Meile, um sicherzustellen, dass das Endprodukt perfekt ist. Es ist offensichtlich, dass er sich leidenschaftlich für seine Arbeit und den Erfolg seiner Kunden einsetzt.",
       "time": 1706182849,
       "profile_photo_local": "/reviews/marcel-armgardt.jpg"
-    },
-    {
-      "author_name": "Sabrina Umlandt-Korsch",
-      "author_url": "https://www.google.com/maps/contrib/105235407401365962290/reviews",
-      "profile_photo_url": "https://lh3.googleusercontent.com/a/ACg8ocIoNu_fhyDe58zYoZKTzw5U43E0Mt4Reg5KVagSopbo65ctHQ=s128-c0x00000000-cc-rp-mo",
-      "rating": 5,
-      "relative_time_description": "vor 8 Monaten",
-      "text": "Schnelle Rückmeldung nach meiner Anfrage zur Übernahme meiner Webseite, Vorschlag für neues Webdesign erstellt, gute Kommunikation bei Fragen,  komplikationslose Ausführung, ging auf meine Wünsche ein, gute Beratung zum Thema Sicherheit",
-      "time": 1755797473,
-      "profile_photo_local": "/reviews/sabrina-umlandt-korsch.jpg"
     }
   ],
-  "fetched_at": "2026-05-12"
+  "fetched_at": "2026-05-17"
 }
