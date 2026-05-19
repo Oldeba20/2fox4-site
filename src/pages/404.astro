@@ -2,37 +2,34 @@
 /**
  * 404 — "Ups, verlaufen!"
  *
- * Statt einer langweiligen Fehlerseite zeigen wir ein kleines
- * Browser-Game im Vampire-Survivors-Stil: der 2fox4-Fuchs gegen
- * Wellen von Bug-Gegnern. WASD + Maus auf Desktop, virtueller
- * Joystick auf Touch-Geräten.
+ * Statt einer langweiligen Fehlerseite zeigen wir einen kleinen
+ * Pseudo-3D-Ego-Shooter im Doom/Wolfenstein-Stil. Raycasting-Renderer,
+ * Pointer-Lock-Maus, WASD-Bewegung.
  *
  * Hinweise:
  * - noindex/nofollow, damit die Seite nicht im Suchindex landet
- * - Apache (Kasserver) braucht in public/.htaccess:
- *     ErrorDocument 404 /404.html
+ * - Apache (Kasserver) liefert /404.html bei nicht gefundenen URLs aus
+ *   (ErrorDocument 404 /404.html ist bereits in der Server-.htaccess).
  */
 import BaseLayout from "../layouts/BaseLayout.astro";
 
 const title = "Ups, verlaufen! — 2fox4";
 const description =
-  "Die gesuchte Seite gibt es nicht — aber dafür ein kleines Spiel zum Zeitvertreib. Hilf dem Fuchs durch die Bug-Welle.";
+  "Die gesuchte Seite gibt es nicht — aber dafür ein kleines Spiel zum Zeitvertreib. Schieß dich raus aus der Bug-Hölle.";
 ---
 
 <BaseLayout title={title} description={description} noindex={true}>
   <section class="lost-page">
     <header class="lost-hero">
       <p class="lost-tag">Fehler 404</p>
-      <h1 class="lost-title">
-        <span aria-hidden="true">🦊</span> Ups, verlaufen!
-      </h1>
+      <h1 class="lost-title">Ups, verlaufen!</h1>
       <p class="lost-quote" id="lost-quote">
-        Diese URL existiert nicht. Aber dieser Fuchs schon.
+        Diese URL existiert nicht. Aber die Monster schon.
       </p>
       <p class="lost-hint">
-        Spielst du? <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> zum Laufen.
-        Geschossen wird automatisch. Auf dem Handy: Daumen aufs Spielfeld
-        legen und ziehen.
+        <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> zum Laufen ·
+        Maus zum Umsehen · <kbd>Klick</kbd> zum Schießen ·
+        <kbd>ESC</kbd> zum Pause-machen
       </p>
       <div class="lost-actions">
         <a class="btn btn-primary" href="/">← Zurück zur Startseite</a>
@@ -41,72 +38,91 @@ const description =
     </header>
 
     <div class="game-wrapper">
-      <div class="game-frame">
-        <canvas id="fox-game" width="900" height="560"></canvas>
+      <div class="game-frame" id="game-frame">
+        <canvas id="fps-canvas" width="480" height="300"></canvas>
 
-        <!-- HUD-Overlay (Score, Level, HP) -->
+        <!-- HUD-Overlay (HP, Ammo, Score, Welle) -->
         <div class="hud" aria-live="polite">
-          <div class="hud-row">
+          <div class="hud-row hud-top">
             <div class="hud-chip">
-              <span class="hud-label">Lvl</span>
-              <span class="hud-value" id="hud-level">1</span>
+              <span class="hud-label">Welle</span>
+              <span class="hud-value" id="hud-wave">1</span>
+            </div>
+            <div class="hud-chip">
+              <span class="hud-label">Kills</span>
+              <span class="hud-value" id="hud-kills">0</span>
             </div>
             <div class="hud-chip">
               <span class="hud-label">Zeit</span>
               <span class="hud-value" id="hud-time">0:00</span>
             </div>
-            <div class="hud-chip">
-              <span class="hud-label">Score</span>
-              <span class="hud-value" id="hud-score">0</span>
+          </div>
+          <div class="hud-bottom">
+            <div class="hud-stat hud-stat-hp">
+              <div class="hud-stat-label">HP</div>
+              <div class="hud-bar">
+                <div class="hud-bar-fill" id="hud-hp-fill"></div>
+              </div>
+              <div class="hud-stat-num" id="hud-hp">100</div>
             </div>
-            <button class="hud-pause" id="hud-pause" type="button" aria-label="Pause">⏸︎</button>
+            <div class="hud-stat hud-stat-ammo">
+              <div class="hud-stat-label">AMMO</div>
+              <div class="hud-stat-num hud-stat-num-lg" id="hud-ammo">30 / ∞</div>
+            </div>
           </div>
-          <div class="hud-bar hud-bar-hp">
-            <div class="hud-bar-fill" id="hud-hp-fill"></div>
-            <span class="hud-bar-label">HP</span>
-          </div>
-          <div class="hud-bar hud-bar-xp">
-            <div class="hud-bar-fill" id="hud-xp-fill"></div>
-            <span class="hud-bar-label">XP</span>
-          </div>
+        </div>
+
+        <!-- Crosshair -->
+        <div class="crosshair" aria-hidden="true">
+          <span></span><span></span><span></span><span></span>
         </div>
 
         <!-- Start-Overlay -->
         <div class="overlay" id="overlay-start">
           <div class="overlay-card">
-            <h2>🦊 Fox Survivor</h2>
-            <p>Überlebe die Bug-Welle so lange wie du kannst.</p>
+            <h2>🔫 Eintreten in die Bug-Hölle?</h2>
+            <p class="overlay-sub">
+              Überlebe so lange wie möglich. Die Bugs werden mehr, größer
+              und schneller. Du hast nur dich, dein Gewehr und unendlich
+              Magazine.
+            </p>
             <ul class="overlay-list">
-              <li>🐛 Käfer — klein und langsam</li>
-              <li>🐍 Schlange — flott, mehr HP</li>
-              <li>👻 Geist — schnell, taucht später auf</li>
-              <li>🤖 Bot — der dicke Brocken</li>
+              <li><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> — laufen</li>
+              <li>Maus — umsehen</li>
+              <li>Klick — schießen</li>
+              <li><kbd>R</kbd> — nachladen · <kbd>ESC</kbd> — Pause</li>
             </ul>
             <button class="btn btn-primary btn-lg" id="btn-start" type="button">
-              ▶︎ Spiel starten
+              ▶︎ Klick = Start (Pointer-Lock)
             </button>
+            <p class="overlay-note">
+              Maus wird gesperrt. Mit <kbd>ESC</kbd> wieder freigeben.
+            </p>
           </div>
         </div>
 
-        <!-- Level-Up-Overlay -->
-        <div class="overlay overlay-levelup" id="overlay-levelup" hidden>
+        <!-- Pause-Overlay -->
+        <div class="overlay overlay-pause" id="overlay-pause" hidden>
           <div class="overlay-card">
-            <h2>Level <span id="levelup-num">2</span> — wähle ein Upgrade</h2>
-            <div class="upgrade-grid" id="upgrade-grid"></div>
+            <h2>⏸ Pause</h2>
+            <p>Klick zurück ins Spielfeld, weiter geht's.</p>
+            <button class="btn btn-primary" id="btn-resume" type="button">
+              ▶︎ Weiterspielen
+            </button>
           </div>
         </div>
 
         <!-- Game-Over-Overlay -->
         <div class="overlay overlay-gameover" id="overlay-gameover" hidden>
           <div class="overlay-card">
-            <h2>🦊 Game Over</h2>
+            <h2>💀 Game Over</h2>
             <p class="overlay-stat">
-              Du hast <strong id="go-time">0:00</strong> überlebt und
-              <strong id="go-score">0</strong> Punkte gesammelt
-              (Level <strong id="go-level">1</strong>).
+              Du hast <strong id="go-time">0:00</strong> überlebt,
+              <strong id="go-kills">0</strong> Bugs erledigt
+              und Welle <strong id="go-wave">1</strong> erreicht.
             </p>
             <p class="overlay-line" id="go-line">
-              Nicht schlecht für jemanden, der die falsche URL erwischt hat.
+              Die Bugs feiern. Wahrscheinlich.
             </p>
             <div class="overlay-actions">
               <button class="btn btn-primary" id="btn-restart" type="button">
@@ -117,24 +133,16 @@ const description =
           </div>
         </div>
 
-        <!-- Pause-Overlay -->
-        <div class="overlay overlay-pause" id="overlay-pause" hidden>
-          <div class="overlay-card">
-            <h2>Pause</h2>
-            <button class="btn btn-primary" id="btn-resume" type="button">
-              ▶︎ Weiterspielen
-            </button>
-          </div>
-        </div>
-
-        <!-- Virtueller Joystick (Touch) -->
-        <div class="joystick" id="joystick" hidden>
-          <div class="joystick-knob" id="joystick-knob"></div>
+        <!-- Mobile-Hinweis -->
+        <div class="mobile-note" id="mobile-note" hidden>
+          <p>📱 Auf dem Handy nicht spielbar — komm gerne mit Maus + Tastatur wieder.</p>
+          <a href="/" class="btn btn-primary">← Zur Startseite</a>
         </div>
       </div>
 
       <p class="game-credits">
-        Tipp: viel Spaß. Falls du eigentlich ein konkretes Anliegen hast —
+        Klick rein zum Starten, <kbd>ESC</kbd> zum Pausieren. Falls du
+        eigentlich was ganz anderes wolltest —
         <a href="/kontakt/">hier geht's zum Kontakt</a>.
       </p>
     </div>
@@ -155,11 +163,10 @@ const description =
     text-align: center;
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 0.6rem;
     align-items: center;
   }
   .lost-tag {
-    display: inline-block;
     font-family: "JetBrains Mono Variable", monospace;
     font-size: 0.75rem;
     letter-spacing: 0.15em;
@@ -180,12 +187,12 @@ const description =
     max-width: 36rem;
   }
   .lost-hint {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     color: #6b7280;
     margin: 0;
-    max-width: 36rem;
+    max-width: 40rem;
   }
-  .lost-hint kbd {
+  kbd {
     font-family: "JetBrains Mono Variable", monospace;
     background: #f3f4f6;
     border: 1px solid #d1d5db;
@@ -193,7 +200,7 @@ const description =
     border-radius: 4px;
     padding: 1px 6px;
     margin: 0 2px;
-    font-size: 0.8em;
+    font-size: 0.82em;
   }
   .lost-actions {
     display: flex;
@@ -217,8 +224,8 @@ const description =
     font-family: inherit;
   }
   .btn:hover { transform: translateY(-1px); }
-  .btn-primary { background: #111827; color: #fff; }
-  .btn-primary:hover { background: #1f2937; }
+  .btn-primary { background: #b91c1c; color: #fff; }
+  .btn-primary:hover { background: #991b1b; }
   .btn-ghost {
     background: transparent;
     color: #111827;
@@ -227,111 +234,133 @@ const description =
   .btn-ghost:hover { background: #f3f4f6; }
   .btn-lg { padding: 0.85rem 1.4rem; font-size: 1.05rem; }
 
-  /* --- Game --- */
+  /* --- Game frame --- */
   .game-wrapper {
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
     align-items: center;
+    width: 100%;
   }
   .game-frame {
     position: relative;
     width: 100%;
     max-width: 900px;
-    aspect-ratio: 900 / 560;
-    background: #0b0f17;
-    border-radius: 16px;
+    aspect-ratio: 8 / 5;
+    background: #0a0a0a;
+    border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 25px 60px -20px rgba(0,0,0,0.4);
-    touch-action: none;
+    box-shadow: 0 25px 60px -20px rgba(0,0,0,0.6),
+                inset 0 0 0 1px rgba(255,255,255,0.05);
+    cursor: crosshair;
+    user-select: none;
   }
-  #fox-game {
+  #fps-canvas {
     display: block;
     width: 100%;
     height: 100%;
-    background:
-      radial-gradient(ellipse at 50% 50%, #1a2233 0%, #0b0f17 70%);
-    image-rendering: -webkit-optimize-contrast;
-    image-rendering: crisp-edges;
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    background: #000;
   }
+
+  /* Crosshair */
+  .crosshair {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 18px;
+    height: 18px;
+    margin: -9px 0 0 -9px;
+    pointer-events: none;
+    z-index: 3;
+  }
+  .crosshair span {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.7);
+    box-shadow: 0 0 4px rgba(0,0,0,0.7);
+  }
+  .crosshair span:nth-child(1) { left: 50%; top: 0;    width: 2px; height: 6px; margin-left: -1px; }
+  .crosshair span:nth-child(2) { left: 50%; bottom: 0; width: 2px; height: 6px; margin-left: -1px; }
+  .crosshair span:nth-child(3) { top: 50%; left: 0;    height: 2px; width: 6px; margin-top: -1px; }
+  .crosshair span:nth-child(4) { top: 50%; right: 0;   height: 2px; width: 6px; margin-top: -1px; }
 
   /* HUD */
   .hud {
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    padding: 0.75rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.4rem;
+    inset: 0;
     pointer-events: none;
-    color: #f9fafb;
+    color: #fef3c7;
     font-family: "JetBrains Mono Variable", monospace;
-    font-size: 0.85rem;
+    z-index: 2;
   }
   .hud-row {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    right: 12px;
     display: flex;
     gap: 0.5rem;
-    align-items: center;
     flex-wrap: wrap;
   }
   .hud-chip {
     display: inline-flex;
     align-items: baseline;
-    gap: 0.35rem;
-    background: rgba(0,0,0,0.55);
-    backdrop-filter: blur(6px);
-    border-radius: 9999px;
-    padding: 0.3rem 0.7rem;
+    gap: 0.4rem;
+    background: rgba(0,0,0,0.7);
+    border: 1px solid rgba(252, 211, 77, 0.3);
+    border-radius: 4px;
+    padding: 0.25rem 0.6rem;
+    font-size: 0.78rem;
   }
   .hud-label {
     text-transform: uppercase;
     font-size: 0.65rem;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.12em;
     opacity: 0.65;
   }
-  .hud-value { font-weight: 700; font-size: 0.95rem; }
-  .hud-pause {
-    margin-left: auto;
-    pointer-events: auto;
-    background: rgba(0,0,0,0.55);
-    border: none;
-    color: #fff;
-    border-radius: 9999px;
-    width: 32px;
-    height: 32px;
-    font-size: 0.9rem;
-    cursor: pointer;
+  .hud-value { font-weight: 700; font-size: 0.95rem; color: #fbbf24; }
+
+  .hud-bottom {
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-end;
+    justify-content: space-between;
   }
-  .hud-pause:hover { background: rgba(255,255,255,0.15); }
+  .hud-stat { display: flex; flex-direction: column; gap: 0.25rem; min-width: 140px; }
+  .hud-stat-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    opacity: 0.6;
+    text-transform: uppercase;
+  }
+  .hud-stat-num {
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: #fbbf24;
+    text-shadow: 0 0 6px rgba(251, 191, 36, 0.3);
+  }
+  .hud-stat-num-lg { font-size: 1.4rem; }
+  .hud-stat-ammo { text-align: right; }
   .hud-bar {
-    position: relative;
-    height: 10px;
+    height: 8px;
     background: rgba(255,255,255,0.1);
-    border-radius: 9999px;
+    border: 1px solid rgba(252, 211, 77, 0.25);
+    border-radius: 2px;
     overflow: hidden;
+    position: relative;
   }
   .hud-bar-fill {
     position: absolute;
     inset: 0;
     width: 100%;
     transform-origin: left center;
-    transition: transform 0.15s ease;
-  }
-  .hud-bar-hp .hud-bar-fill {
-    background: linear-gradient(90deg, #f43f5e, #fb923c);
-  }
-  .hud-bar-xp .hud-bar-fill {
-    background: linear-gradient(90deg, #22d3ee, #a78bfa);
-  }
-  .hud-bar-label {
-    position: absolute;
-    right: 8px;
-    top: -2px;
-    font-size: 0.6rem;
-    opacity: 0.5;
-    letter-spacing: 0.1em;
+    background: linear-gradient(90deg, #dc2626, #f97316, #fbbf24);
+    transition: transform 0.2s ease;
   }
 
   /* Overlays */
@@ -341,40 +370,47 @@ const description =
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(11, 15, 23, 0.78);
+    background: rgba(8, 6, 6, 0.85);
     backdrop-filter: blur(4px);
-    color: #fff;
-    z-index: 5;
+    color: #fef3c7;
+    z-index: 10;
     padding: 1rem;
   }
   .overlay[hidden] { display: none; }
   .overlay-card {
-    background: #111827;
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 14px;
-    padding: 1.5rem 1.75rem;
-    max-width: 30rem;
+    background: #1c1917;
+    border: 1px solid rgba(252, 211, 77, 0.2);
+    border-radius: 8px;
+    padding: 1.4rem 1.6rem;
+    max-width: 28rem;
     width: 100%;
     text-align: center;
-    box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+    box-shadow: 0 25px 50px -12px rgba(0,0,0,0.7);
   }
-  .overlay-card h2 {
-    margin: 0 0 0.5rem;
-    font-size: 1.4rem;
-  }
-  .overlay-card p { color: #d1d5db; margin: 0 0 0.75rem; }
+  .overlay-card h2 { margin: 0 0 0.4rem; font-size: 1.3rem; color: #fbbf24; }
+  .overlay-sub { color: #d6d3d1; margin: 0 0 0.75rem; font-size: 0.9rem; }
   .overlay-list {
     text-align: left;
     list-style: none;
     padding: 0;
     margin: 0 0 1rem;
-    color: #d1d5db;
-    font-size: 0.95rem;
+    color: #d6d3d1;
+    font-size: 0.85rem;
     display: grid;
-    gap: 0.3rem;
+    gap: 0.25rem;
+  }
+  .overlay-list kbd {
+    background: #292524;
+    border-color: #44403c;
+    color: #fef3c7;
+  }
+  .overlay-note {
+    font-size: 0.75rem;
+    color: #a8a29e;
+    margin: 0.6rem 0 0;
   }
   .overlay-stat strong { color: #fbbf24; }
-  .overlay-line { font-style: italic; color: #9ca3af; }
+  .overlay-line { font-style: italic; color: #a8a29e; }
   .overlay-actions {
     display: flex;
     gap: 0.5rem;
@@ -382,60 +418,23 @@ const description =
     flex-wrap: wrap;
     margin-top: 0.75rem;
   }
-  .upgrade-grid {
-    display: grid;
-    gap: 0.6rem;
-    grid-template-columns: 1fr;
-    margin-top: 0.75rem;
-  }
-  @media (min-width: 520px) {
-    .upgrade-grid { grid-template-columns: 1fr 1fr 1fr; }
-  }
-  .upgrade-card {
-    background: #1f2937;
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 10px;
-    padding: 0.85rem 0.75rem;
-    cursor: pointer;
-    color: #fff;
-    text-align: center;
-    font-family: inherit;
-    transition: transform 0.1s, border-color 0.15s, background 0.15s;
-  }
-  .upgrade-card:hover {
-    transform: translateY(-2px);
-    border-color: #fbbf24;
-    background: #273548;
-  }
-  .upgrade-icon { font-size: 1.6rem; display: block; margin-bottom: 0.25rem; }
-  .upgrade-title { font-weight: 700; font-size: 0.95rem; margin-bottom: 0.2rem; }
-  .upgrade-desc { font-size: 0.8rem; color: #9ca3af; }
 
-  /* Joystick */
-  .joystick {
+  .mobile-note {
     position: absolute;
-    left: 16px;
-    bottom: 16px;
-    width: 110px;
-    height: 110px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.15);
-    z-index: 4;
-    touch-action: none;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: center;
+    justify-content: center;
+    background: rgba(8, 6, 6, 0.95);
+    color: #fef3c7;
+    text-align: center;
+    padding: 1.5rem;
+    z-index: 20;
   }
-  .joystick-knob {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    width: 50px;
-    height: 50px;
-    margin: -25px 0 0 -25px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.35);
-    border: 1px solid rgba(255,255,255,0.5);
-    pointer-events: none;
-  }
+  .mobile-note[hidden] { display: none; }
+  .mobile-note p { margin: 0; max-width: 22rem; }
 
   .game-credits {
     font-size: 0.85rem;
@@ -443,12 +442,13 @@ const description =
     text-align: center;
     margin: 0;
   }
-  .game-credits a { color: #111827; }
+  .game-credits a { color: #b91c1c; font-weight: 600; }
+  .game-credits kbd { padding: 0 5px; font-size: 0.78em; }
 
   @media (max-width: 640px) {
     .lost-page { padding-top: 1.5rem; }
-    .hud { font-size: 0.75rem; padding: 0.5rem; }
-    .hud-chip { padding: 0.2rem 0.55rem; }
+    .hud-stat { min-width: 100px; }
+    .hud-stat-num-lg { font-size: 1.1rem; }
   }
 </style>
 
@@ -456,493 +456,588 @@ const description =
   (function () {
     "use strict";
 
-    // -------- Setup --------
-    const canvas = document.getElementById("fox-game");
+    const canvas = document.getElementById("fps-canvas");
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
+    ctx.imageSmoothingEnabled = false;
 
-    const W = canvas.width;   // logische Welt 900x560
-    const H = canvas.height;
+    const W = canvas.width;   // 480
+    const H = canvas.height;  // 300
+    const HALF_H = H / 2;
+    const FOV = Math.PI / 3;  // 60°
 
-    // Lustige Quotes oben — werden bei jedem Laden rotiert
+    // Quotes oben
     const quotes = [
-      "Diese URL existiert nicht. Aber dieser Fuchs schon.",
-      "Du wolltest Webdesign — bekommen hast du Endboss.",
-      "404: Seite verschollen. Fuchs einsatzbereit.",
-      "Plot Twist: diese Seite war nie geplant.",
-      "Wer suchet, der findet... einen Fuchs in der Patsche.",
-      "Eine 404 zum Spielen schlägt jede leere Seite.",
-      "Falsche Adresse — richtige Action.",
+      "Diese URL existiert nicht. Aber die Monster schon.",
+      "404: Inhalt weg. Munition voll.",
+      "Falsche Seite — richtige Höllenpforte.",
+      "Verlaufen? Schieß dich raus.",
+      "Der Backend-Pfad führt direkt in die Hölle.",
+      "Pass auf — da kommt was um die Ecke.",
+      "Eine 404 zum Schießen schlägt jede leere Seite.",
     ];
     const quoteEl = document.getElementById("lost-quote");
-    if (quoteEl) {
-      quoteEl.textContent = quotes[Math.floor(Math.random() * quotes.length)];
-    }
+    if (quoteEl) quoteEl.textContent = quotes[Math.floor(Math.random() * quotes.length)];
 
-    const gameOverLines = [
-      "Nicht schlecht für jemanden, der die falsche URL erwischt hat.",
-      "Vielleicht nochmal? Die Startseite läuft dir nicht weg.",
-      "Der Fuchs würde sagen: Übung macht den Meister.",
-      "Du hast länger gespielt als die Seite gebraucht hätte zu laden.",
-      "Bug 1, Fuchs 0. Aber nur knapp.",
+    const goLines = [
+      "Die Bugs feiern. Wahrscheinlich.",
+      "Du hast länger durchgehalten als so manche Production-Pipeline.",
+      "Mehr Welle als Production-Issues kurz vor Release.",
+      "Ein guter Lauf für jemanden, der die falsche URL erwischt hat.",
+      "Bugs 1, du 0. Aber stilvoll verloren.",
     ];
 
-    // -------- World state --------
-    const keys = {};
-    let lastT = 0, running = false, paused = false;
-    let timeElapsed = 0;
-    let score = 0;
-    let pendingLevelUp = false;
+    // Mobile-Check: Touch-only ohne Maus → Hinweis statt Spiel
+    const mqCoarse = window.matchMedia && window.matchMedia("(pointer: coarse)").matches;
+    const noPointerLock = !("pointerLockElement" in document) && !("mozPointerLockElement" in document);
+    const mobileOnly = mqCoarse && noPointerLock;
+    if (mqCoarse && "ontouchstart" in window && !window.matchMedia("(min-width: 800px)").matches) {
+      document.getElementById("mobile-note").hidden = false;
+      document.getElementById("overlay-start").hidden = true;
+      // Wir lassen den Renderer trotzdem laufen, aber ohne Interaktion.
+    }
 
+    // ---------- Map ----------
+    // 1 = Wand, 0 = Boden. 16x16 Arena mit Korridoren und Räumen.
+    const MAP = [
+      "1111111111111111",
+      "1000000000000001",
+      "1011110111111101",
+      "1010000000000101",
+      "1010111111110101",
+      "1000100000010101",
+      "1110101111010101",
+      "1000101000010101",
+      "1010111010110101",
+      "1010000010000001",
+      "1011111110111111",
+      "1000001000000001",
+      "1011101011110101",
+      "1000001000010101",
+      "1011111111110101",
+      "1111111111111111",
+    ];
+    const MAP_W = MAP[0].length;
+    const MAP_H = MAP.length;
+    function mapAt(x, y) {
+      if (x < 0 || x >= MAP_W || y < 0 || y >= MAP_H) return "1";
+      return MAP[y][x];
+    }
+    function isWall(x, y) { return mapAt(Math.floor(x), Math.floor(y)) === "1"; }
+    function isFloor(x, y) { return mapAt(Math.floor(x), Math.floor(y)) === "0"; }
+
+    // Liste aller freien Zellen für Enemy-Spawning
+    const freeCells = [];
+    for (let y = 0; y < MAP_H; y++) for (let x = 0; x < MAP_W; x++) {
+      if (MAP[y][x] === "0") freeCells.push([x + 0.5, y + 0.5]);
+    }
+
+    // ---------- State ----------
     const player = {
-      x: W / 2, y: H / 2,
-      r: 14,
-      speed: 180,           // px/s
+      x: 1.5, y: 1.5, angle: Math.PI / 4,
       hp: 100, maxHp: 100,
-      level: 1, xp: 0, xpToNext: 5,
-      fireCooldown: 0,
-      fireRate: 650,        // ms zwischen Schüssen
-      projSpeed: 380,       // px/s
-      projDamage: 10,
-      multishot: 1,
-      pickupRange: 60,
-      iFrames: 0,           // ms invuln nach Treffer
+      moveSpeed: 3.2,         // Felder/Sekunde
+      rotSpeed: 0.0026,       // rad pro Pixel Maus-Bewegung
+      kills: 0, score: 0,
+      iFrames: 0,
     };
 
-    /** @type {Array<{x:number,y:number,vx:number,vy:number,ttl:number,dmg:number}>} */
-    const projectiles = [];
-    /** @type {Array<{x:number,y:number,hp:number,speed:number,r:number,dmg:number,emoji:string,xp:number,type:string}>} */
+    const weapon = {
+      damage: 22,
+      fireRate: 180,          // ms
+      cooldown: 0,
+      magSize: 30,
+      ammo: 30,
+      reserve: Infinity,
+      reloading: false,
+      reloadTime: 900,        // ms
+      reloadTimer: 0,
+      recoil: 0,              // visuell, dezent
+    };
+
+    /** @type {Array<{x:number,y:number,hp:number,maxHp:number,type:string,speed:number,r:number,dmg:number,emoji:string,xp:number,hitFlash:number,atkCd:number}>} */
     const enemies = [];
-    /** @type {Array<{x:number,y:number,value:number,t:number}>} */
-    const gems = [];
-    /** @type {Array<{x:number,y:number,text:string,ttl:number,vy:number,color:string}>} */
-    const floaters = [];
+    /** @type {Array<{x:number,y:number,ttl:number,vx:number,vy:number,size:number,color:string}>} */
+    const particles = [];
+    let muzzleFlash = 0;
+    let damageFlash = 0;
 
     const enemyTypes = {
-      bug:   { hp: 12, speed: 55,  r: 13, dmg: 6,  emoji: "🐛", xp: 1 },
-      snake: { hp: 28, speed: 80,  r: 15, dmg: 9,  emoji: "🐍", xp: 2 },
-      ghost: { hp: 18, speed: 110, r: 14, dmg: 12, emoji: "👻", xp: 2 },
-      bot:   { hp: 110, speed: 45, r: 20, dmg: 18, emoji: "🤖", xp: 6 },
+      bug:   { hp: 28,  speed: 1.3, r: 0.3, dmg: 8,  emoji: "🐛", color:"#84cc16" },
+      snake: { hp: 55,  speed: 1.7, r: 0.32, dmg: 12, emoji: "🐍", color:"#22d3ee" },
+      skull: { hp: 70,  speed: 2.0, r: 0.3, dmg: 16, emoji: "💀", color:"#e5e5e5" },
+      demon: { hp: 95,  speed: 1.6, r: 0.36, dmg: 22, emoji: "👹", color:"#dc2626" },
+      ghost: { hp: 40,  speed: 2.4, r: 0.28, dmg: 14, emoji: "👻", color:"#a3a3a3" },
+      boss:  { hp: 350, speed: 1.2, r: 0.5, dmg: 32, emoji: "🤖", color:"#fb923c" },
     };
+
+    let wave = 1;
+    let waveTimer = 0;
+    let waveActive = false;
+    let timeElapsed = 0;
+    let running = false;
+    let paused = false;
 
     function spawnEnemy(type) {
       const t = enemyTypes[type];
-      // an einer der vier Kanten spawnen
-      const edge = Math.floor(Math.random() * 4);
-      let x, y;
-      if (edge === 0)      { x = -30;     y = Math.random() * H; }
-      else if (edge === 1) { x = W + 30;  y = Math.random() * H; }
-      else if (edge === 2) { x = Math.random() * W; y = -30; }
-      else                 { x = Math.random() * W; y = H + 30; }
+      // weit weg vom Spieler spawnen
+      let pos;
+      for (let tries = 0; tries < 80; tries++) {
+        const c = freeCells[Math.floor(Math.random() * freeCells.length)];
+        const dx = c[0] - player.x, dy = c[1] - player.y;
+        if (dx * dx + dy * dy > 16) { pos = c; break; }
+      }
+      if (!pos) pos = freeCells[Math.floor(Math.random() * freeCells.length)];
       enemies.push({
-        x, y, hp: t.hp, speed: t.speed, r: t.r,
-        dmg: t.dmg, emoji: t.emoji, xp: t.xp, type,
+        x: pos[0], y: pos[1], hp: t.hp, maxHp: t.hp,
+        type, speed: t.speed, r: t.r, dmg: t.dmg,
+        emoji: t.emoji, hitFlash: 0, atkCd: 0,
       });
     }
 
-    let spawnTimer = 0;
-    function tickSpawning(dt) {
-      spawnTimer += dt;
-      // Spawnrate wird mit Zeit schneller
-      const interval = Math.max(0.35, 1.6 - timeElapsed * 0.012);
-      while (spawnTimer >= interval) {
-        spawnTimer -= interval;
-        // Mix an Gegnern je nach verstrichener Zeit
-        const r = Math.random();
-        if (timeElapsed < 20) {
-          spawnEnemy("bug");
-        } else if (timeElapsed < 50) {
-          spawnEnemy(r < 0.65 ? "bug" : "snake");
-        } else if (timeElapsed < 90) {
-          if (r < 0.45) spawnEnemy("bug");
-          else if (r < 0.8) spawnEnemy("snake");
-          else spawnEnemy("ghost");
-        } else {
-          if (r < 0.3) spawnEnemy("bug");
-          else if (r < 0.6) spawnEnemy("snake");
-          else if (r < 0.9) spawnEnemy("ghost");
-          else spawnEnemy("bot");
-        }
+    function startWave(n) {
+      const count = 3 + Math.floor(n * 1.8);
+      for (let i = 0; i < count; i++) {
+        let pool = ["bug"];
+        if (n >= 2) pool.push("snake");
+        if (n >= 3) pool.push("ghost");
+        if (n >= 4) pool.push("skull");
+        if (n >= 5) pool.push("demon");
+        const type = pool[Math.floor(Math.random() * pool.length)];
+        setTimeout(() => spawnEnemy(type), i * 350);
       }
+      if (n >= 4 && n % 3 === 0) {
+        setTimeout(() => spawnEnemy("boss"), 800);
+      }
+      waveActive = true;
     }
 
-    // -------- Input --------
+    // ---------- Input ----------
+    const keys = {};
     window.addEventListener("keydown", (e) => {
-      if (["w","a","s","d","W","A","S","D","ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].includes(e.key)) {
-        keys[e.key.toLowerCase()] = true;
-        // Pfeile auf WASD mappen
-        if (e.key === "ArrowUp") keys.w = true;
-        if (e.key === "ArrowDown") keys.s = true;
-        if (e.key === "ArrowLeft") keys.a = true;
-        if (e.key === "ArrowRight") keys.d = true;
-        e.preventDefault();
+      if (e.key === "Escape") {
+        if (running && !paused) {
+          // Pointer-Lock-Exit triggert eh die Pause; nichts weiter
+        }
+        return;
       }
-      if (e.key === "Escape" || e.key === "p" || e.key === "P") {
-        if (running) togglePause();
-      }
+      keys[e.key.toLowerCase()] = true;
+      if (e.key === "r" || e.key === "R") tryReload();
+      if (["w","a","s","d"].includes(e.key.toLowerCase())) e.preventDefault();
     });
     window.addEventListener("keyup", (e) => {
       keys[e.key.toLowerCase()] = false;
-      if (e.key === "ArrowUp") keys.w = false;
-      if (e.key === "ArrowDown") keys.s = false;
-      if (e.key === "ArrowLeft") keys.a = false;
-      if (e.key === "ArrowRight") keys.d = false;
     });
 
-    // Touch-Joystick
-    const joystick = document.getElementById("joystick");
-    const knob = document.getElementById("joystick-knob");
-    const isTouch = "ontouchstart" in window || navigator.maxTouchPoints > 0;
-    if (isTouch) joystick.hidden = false;
-    const joy = { active: false, dx: 0, dy: 0, cx: 0, cy: 0, radius: 40 };
-
-    function setKnob(dx, dy) {
-      const mag = Math.hypot(dx, dy);
-      if (mag > joy.radius) { dx = dx / mag * joy.radius; dy = dy / mag * joy.radius; }
-      knob.style.transform = `translate(${dx}px, ${dy}px)`;
-      joy.dx = dx / joy.radius;
-      joy.dy = dy / joy.radius;
-    }
-    function resetKnob() {
-      knob.style.transform = "translate(0,0)";
-      joy.dx = 0; joy.dy = 0;
-    }
-    joystick.addEventListener("touchstart", (e) => {
-      e.preventDefault();
-      const t = e.touches[0];
-      const rect = joystick.getBoundingClientRect();
-      joy.cx = rect.left + rect.width / 2;
-      joy.cy = rect.top + rect.height / 2;
-      joy.active = true;
-      setKnob(t.clientX - joy.cx, t.clientY - joy.cy);
-    }, { passive: false });
-    joystick.addEventListener("touchmove", (e) => {
-      if (!joy.active) return;
-      e.preventDefault();
-      const t = e.touches[0];
-      setKnob(t.clientX - joy.cx, t.clientY - joy.cy);
-    }, { passive: false });
-    joystick.addEventListener("touchend", (e) => {
-      e.preventDefault();
-      joy.active = false;
-      resetKnob();
+    // Pointer-Lock
+    const frame = document.getElementById("game-frame");
+    canvas.addEventListener("click", () => {
+      if (!running) return;
+      if (document.pointerLockElement !== canvas) canvas.requestPointerLock?.();
+    });
+    document.addEventListener("pointerlockchange", () => {
+      if (!running) return;
+      if (document.pointerLockElement === canvas) {
+        paused = false;
+        document.getElementById("overlay-pause").hidden = true;
+        lastT = performance.now();
+      } else {
+        // Pointer-Lock weg → Pause
+        if (!document.getElementById("overlay-gameover").hidden) return;
+        paused = true;
+        document.getElementById("overlay-pause").hidden = false;
+      }
+    });
+    document.addEventListener("mousemove", (e) => {
+      if (document.pointerLockElement !== canvas) return;
+      player.angle += e.movementX * player.rotSpeed;
+    });
+    canvas.addEventListener("mousedown", (e) => {
+      if (!running || paused) return;
+      if (document.pointerLockElement !== canvas) return;
+      if (e.button === 0) shoot();
     });
 
-    // -------- Update --------
-    function nearestEnemy() {
-      let best = null, bestD = Infinity;
+    function tryReload() {
+      if (!running || paused) return;
+      if (weapon.reloading) return;
+      if (weapon.ammo >= weapon.magSize) return;
+      weapon.reloading = true;
+      weapon.reloadTimer = weapon.reloadTime;
+    }
+
+    // ---------- Movement ----------
+    function tryMove(dx, dy) {
+      const pad = 0.2;
+      // X-Achse separat (sliding entlang Wänden)
+      if (!isWall(player.x + dx + Math.sign(dx) * pad, player.y)) player.x += dx;
+      if (!isWall(player.x, player.y + dy + Math.sign(dy) * pad)) player.y += dy;
+    }
+
+    // ---------- Shooting ----------
+    function shoot() {
+      if (weapon.cooldown > 0 || weapon.reloading) return;
+      if (weapon.ammo <= 0) { tryReload(); return; }
+      weapon.ammo--;
+      weapon.cooldown = weapon.fireRate;
+      weapon.recoil = 1;
+      muzzleFlash = 80;
+
+      // Ray vom Spieler in Blickrichtung, prüfe Enemy-Treffer vor Wand-Hit
+      const cos = Math.cos(player.angle), sin = Math.sin(player.angle);
+      // Wand-Distanz per DDA
+      const wallDist = castWallRay(player.x, player.y, cos, sin).dist;
+      // Engste Treffer auf Gegner finden
+      let best = null, bestDist = wallDist;
+      const aimTolerance = 0.08; // Toleranz quer zur Blickrichtung pro Distanz
       for (const e of enemies) {
-        const d = (e.x - player.x) ** 2 + (e.y - player.y) ** 2;
-        if (d < bestD) { bestD = d; best = e; }
+        const dx = e.x - player.x, dy = e.y - player.y;
+        const along = dx * cos + dy * sin;    // entlang Blickrichtung
+        if (along <= 0 || along >= bestDist) continue;
+        const across = Math.abs(-dx * sin + dy * cos); // quer
+        if (across < e.r + aimTolerance * along) {
+          best = e;
+          bestDist = along;
+        }
       }
-      return best;
+      if (best) {
+        best.hp -= weapon.damage;
+        best.hitFlash = 120;
+        // Blutpartikel
+        for (let i = 0; i < 6; i++) {
+          particles.push({
+            x: best.x, y: best.y, ttl: 0.5,
+            vx: (Math.random() - 0.5) * 1.5,
+            vy: (Math.random() - 0.5) * 1.5,
+            size: 0.1 + Math.random() * 0.15,
+            color: "#ef4444",
+          });
+        }
+        if (best.hp <= 0) {
+          player.kills++;
+          player.score += 50;
+          enemies.splice(enemies.indexOf(best), 1);
+        }
+      }
     }
 
-    function fireProjectile() {
-      const target = nearestEnemy();
-      if (!target) return;
-      const baseAngle = Math.atan2(target.y - player.y, target.x - player.x);
-      const spread = 0.18; // rad zwischen Multi-Schüssen
-      const n = player.multishot;
-      const offset = (n - 1) / 2;
-      for (let i = 0; i < n; i++) {
-        const ang = baseAngle + (i - offset) * spread;
-        projectiles.push({
-          x: player.x, y: player.y,
-          vx: Math.cos(ang) * player.projSpeed,
-          vy: Math.sin(ang) * player.projSpeed,
-          ttl: 1.8,
-          dmg: player.projDamage,
-        });
+    // ---------- Wall Raycasting (DDA) ----------
+    function castWallRay(px, py, dx, dy) {
+      // Schutz vor Division durch 0
+      const eps = 1e-9;
+      const ddx = dx === 0 ? eps : dx;
+      const ddy = dy === 0 ? eps : dy;
+
+      let mapX = Math.floor(px), mapY = Math.floor(py);
+      const deltaX = Math.abs(1 / ddx), deltaY = Math.abs(1 / ddy);
+      let stepX, stepY, sideX, sideY;
+
+      if (ddx < 0) { stepX = -1; sideX = (px - mapX) * deltaX; }
+      else         { stepX = 1;  sideX = (mapX + 1 - px) * deltaX; }
+      if (ddy < 0) { stepY = -1; sideY = (py - mapY) * deltaY; }
+      else         { stepY = 1;  sideY = (mapY + 1 - py) * deltaY; }
+
+      let side, hit = 0;
+      for (let i = 0; i < 64 && !hit; i++) {
+        if (sideX < sideY) {
+          sideX += deltaX; mapX += stepX; side = 0;
+        } else {
+          sideY += deltaY; mapY += stepY; side = 1;
+        }
+        if (mapAt(mapX, mapY) === "1") hit = 1;
       }
+      const dist = side === 0 ? (sideX - deltaX) : (sideY - deltaY);
+      let wallX = side === 0 ? py + dist * ddy : px + dist * ddx;
+      wallX -= Math.floor(wallX);
+      return { dist: Math.max(0.0001, dist), side, mapX, mapY, wallX };
     }
 
-    function addFloater(x, y, text, color) {
-      floaters.push({ x, y, text, ttl: 0.7, vy: -30, color: color || "#fff" });
-    }
+    // ---------- Render ----------
+    const zBuffer = new Float32Array(W);
 
-    function update(dt) {
-      timeElapsed += dt;
-      // Movement
-      let mx = 0, my = 0;
-      if (keys.w) my -= 1;
-      if (keys.s) my += 1;
-      if (keys.a) mx -= 1;
-      if (keys.d) mx += 1;
-      if (joy.active) { mx = joy.dx; my = joy.dy; }
-      const mag = Math.hypot(mx, my);
-      if (mag > 0) {
-        mx /= mag; my /= mag;
-        player.x += mx * player.speed * dt;
-        player.y += my * player.speed * dt;
-      }
-      // Clamp
-      player.x = Math.max(player.r, Math.min(W - player.r, player.x));
-      player.y = Math.max(player.r, Math.min(H - player.r, player.y));
+    function render() {
+      // Boden + Decke (einfacher Gradient — kein Floorcasting für Performance)
+      ctx.fillStyle = "#1a0f0a";
+      ctx.fillRect(0, 0, W, HALF_H);
+      ctx.fillStyle = "#2a1c11";
+      ctx.fillRect(0, HALF_H, W, HALF_H);
 
-      if (player.iFrames > 0) player.iFrames -= dt * 1000;
-
-      // Schießen
-      player.fireCooldown -= dt * 1000;
-      if (player.fireCooldown <= 0) {
-        fireProjectile();
-        player.fireCooldown = player.fireRate;
+      // Subtile Bodenstreifen für Tiefenwirkung
+      ctx.fillStyle = "rgba(0,0,0,0.18)";
+      for (let i = 0; i < 10; i++) {
+        const y = HALF_H + (i * i) * 1.2;
+        if (y > H) break;
+        ctx.fillRect(0, y, W, 1);
       }
 
-      // Projektile bewegen
-      for (let i = projectiles.length - 1; i >= 0; i--) {
-        const p = projectiles[i];
-        p.x += p.vx * dt;
-        p.y += p.vy * dt;
-        p.ttl -= dt;
-        if (p.ttl <= 0 || p.x < -20 || p.x > W + 20 || p.y < -20 || p.y > H + 20) {
-          projectiles.splice(i, 1);
+      // Wände: 1 Ray pro Spalte
+      for (let x = 0; x < W; x++) {
+        const cameraX = 2 * x / W - 1;        // -1 bis +1
+        const rayAngle = player.angle + cameraX * (FOV / 2);
+        const cos = Math.cos(rayAngle), sin = Math.sin(rayAngle);
+        const hit = castWallRay(player.x, player.y, cos, sin);
+        // Fisheye-Korrektur
+        const perpDist = hit.dist * Math.cos(rayAngle - player.angle);
+        zBuffer[x] = perpDist;
+
+        const lineHeight = Math.min(H * 3, H / perpDist);
+        const drawStart = Math.max(0, Math.floor(HALF_H - lineHeight / 2));
+        const drawEnd = Math.min(H, Math.floor(HALF_H + lineHeight / 2));
+
+        // Wandfarbe: Schachbrett-Stripes für Textur-Feeling
+        const stripe = (Math.floor(hit.wallX * 8) + (hit.side === 0 ? 0 : 1)) & 1;
+        let base = hit.side === 1 ? 0xa64a1a : 0xc7591f;
+        if (stripe) base = hit.side === 1 ? 0x873a14 : 0xa3471a;
+        // Fog mit Distanz
+        const fog = Math.max(0, Math.min(1, 1 - perpDist / 12));
+        const r = ((base >> 16) & 0xff) * fog;
+        const g = ((base >> 8) & 0xff) * fog;
+        const b = (base & 0xff) * fog;
+        ctx.fillStyle = "rgb(" + (r|0) + "," + (g|0) + "," + (b|0) + ")";
+        ctx.fillRect(x, drawStart, 1, drawEnd - drawStart);
+      }
+
+      // Enemies & Partikel als Sprites (Z-Buffer-getestet)
+      const sprites = enemies.map((e) => ({ kind: "enemy", ref: e, dx: e.x - player.x, dy: e.y - player.y }))
+        .concat(particles.map((p) => ({ kind: "particle", ref: p, dx: p.x - player.x, dy: p.y - player.y })));
+
+      // Transform & sort by depth (weit zuerst)
+      for (const s of sprites) {
+        const cos = Math.cos(player.angle), sin = Math.sin(player.angle);
+        s.depth = s.dx * cos + s.dy * sin;
+        s.transX = -s.dx * sin + s.dy * cos;
+      }
+      sprites.sort((a, b) => b.depth - a.depth);
+
+      const projectionPlaneDist = (W / 2) / Math.tan(FOV / 2);
+
+      for (const s of sprites) {
+        if (s.depth <= 0.1) continue;
+        const screenX = (W / 2) + (s.transX / s.depth) * projectionPlaneDist;
+        const baseSize = s.kind === "enemy" ? 1.0 : (s.ref.size || 0.15);
+        const size = (baseSize * H) / s.depth;
+        const sx = Math.floor(screenX - size / 2);
+        const sw = Math.floor(size);
+        const sy = Math.floor(HALF_H - size / 2);
+
+        if (sx + sw < 0 || sx > W) continue;
+
+        if (s.kind === "particle") {
+          // Partikel als kleiner gefärbter Punkt
+          ctx.fillStyle = s.ref.color;
+          ctx.globalAlpha = Math.max(0, s.ref.ttl / 0.5);
+          ctx.fillRect(sx, sy, Math.max(2, sw), Math.max(2, sw));
+          ctx.globalAlpha = 1;
+          continue;
+        }
+
+        const e = s.ref;
+        // Z-Buffer-getestet Stripe für Stripe rendern: nur Spalten zeichnen, die nicht hinter Wand sind
+        // Aber Emoji als Bitmap zu rendern und dann zu maskieren ist teuer. Wir machen es so:
+        //  -> Wenn die Sprite-Mitte hinter einer Wand ist, skip
+        //  -> Sonst: Sprite zeichnen, aber pro Spalte clippen
+        const centerCol = Math.floor(screenX);
+        if (centerCol >= 0 && centerCol < W && zBuffer[centerCol] < s.depth) {
+          // Mitte ist hinter Wand → komplett überspringen (vereinfacht, vermeidet teures Per-Pixel-Masking)
+          continue;
+        }
+        // Emoji rendern
+        ctx.save();
+        const fontSize = Math.max(8, Math.floor(size * 0.92));
+        ctx.font = fontSize + "px system-ui, 'Apple Color Emoji', 'Segoe UI Emoji', sans-serif";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        const cx = screenX, cy = HALF_H;
+        if (e.hitFlash > 0) {
+          ctx.shadowColor = "#fef9c3";
+          ctx.shadowBlur = 12;
+        }
+        // Fog
+        const fog = Math.max(0.3, Math.min(1, 1 - s.depth / 12));
+        ctx.globalAlpha = fog;
+        ctx.fillText(e.emoji, cx, cy);
+        ctx.restore();
+
+        // HP-Bar darüber, wenn angekratzt
+        if (e.hp < e.maxHp) {
+          const barW = Math.max(16, size * 0.7);
+          const barX = screenX - barW / 2;
+          const barY = HALF_H - size / 2 - 6;
+          ctx.fillStyle = "rgba(0,0,0,0.6)";
+          ctx.fillRect(barX, barY, barW, 3);
+          ctx.fillStyle = "#f87171";
+          ctx.fillRect(barX, barY, barW * (e.hp / e.maxHp), 3);
         }
       }
 
-      // Spawning
-      tickSpawning(dt);
+      // Mündungsfeuer und Waffe
+      drawWeapon();
 
-      // Gegner bewegen sich zum Spieler
-      for (const e of enemies) {
-        const dx = player.x - e.x;
-        const dy = player.y - e.y;
-        const d = Math.hypot(dx, dy) || 1;
-        e.x += (dx / d) * e.speed * dt;
-        e.y += (dy / d) * e.speed * dt;
+      // Damage-Flash overlay
+      if (damageFlash > 0) {
+        ctx.fillStyle = "rgba(220, 38, 38, " + (damageFlash / 300) + ")";
+        ctx.fillRect(0, 0, W, H);
+      }
+    }
+
+    function drawWeapon() {
+      // Einfache Pixelart-Knarre unten mittig
+      const cx = W / 2;
+      const recoilY = weapon.recoil * 8;
+      const baseY = H - 8 + recoilY;
+      ctx.save();
+      ctx.translate(cx, baseY);
+
+      // Lauf
+      ctx.fillStyle = "#3f3f46";
+      ctx.fillRect(-3, -55, 6, 50);
+      // Gehäuse
+      ctx.fillStyle = "#52525b";
+      ctx.fillRect(-12, -18, 24, 18);
+      // Griff
+      ctx.fillStyle = "#27272a";
+      ctx.fillRect(-8, 0, 16, 12);
+      // Highlight
+      ctx.fillStyle = "#71717a";
+      ctx.fillRect(-12, -18, 24, 2);
+      ctx.fillRect(-3, -55, 1, 50);
+
+      // Mündungsfeuer
+      if (muzzleFlash > 0) {
+        const a = muzzleFlash / 80;
+        ctx.globalAlpha = a;
+        ctx.fillStyle = "#fde047";
+        ctx.beginPath();
+        ctx.moveTo(0, -60);
+        ctx.lineTo(-8, -55);
+        ctx.lineTo(-3, -50);
+        ctx.lineTo(-6, -45);
+        ctx.lineTo(0, -50);
+        ctx.lineTo(6, -45);
+        ctx.lineTo(3, -50);
+        ctx.lineTo(8, -55);
+        ctx.closePath();
+        ctx.fill();
+        ctx.fillStyle = "#fef9c3";
+        ctx.fillRect(-2, -62, 4, 4);
+        ctx.globalAlpha = 1;
+      }
+      ctx.restore();
+    }
+
+    // ---------- Update ----------
+    function update(dt) {
+      timeElapsed += dt;
+
+      // Bewegung
+      let mx = 0, my = 0;
+      if (keys.w) my += 1;
+      if (keys.s) my -= 1;
+      if (keys.a) mx -= 1;
+      if (keys.d) mx += 1;
+      const mag = Math.hypot(mx, my);
+      if (mag > 0) {
+        mx /= mag; my /= mag;
+        const cos = Math.cos(player.angle), sin = Math.sin(player.angle);
+        const dx = (cos * my + (-sin) * mx) * player.moveSpeed * dt;
+        const dy = (sin * my + (cos) * mx) * player.moveSpeed * dt;
+        tryMove(dx, dy);
       }
 
-      // Gegner gegen einander leicht entstacken
+      // Cooldowns
+      weapon.cooldown = Math.max(0, weapon.cooldown - dt * 1000);
+      if (weapon.recoil > 0) weapon.recoil = Math.max(0, weapon.recoil - dt * 6);
+      if (muzzleFlash > 0) muzzleFlash = Math.max(0, muzzleFlash - dt * 1000);
+      if (damageFlash > 0) damageFlash = Math.max(0, damageFlash - dt * 1000);
+      if (player.iFrames > 0) player.iFrames = Math.max(0, player.iFrames - dt * 1000);
+
+      // Reload
+      if (weapon.reloading) {
+        weapon.reloadTimer -= dt * 1000;
+        if (weapon.reloadTimer <= 0) {
+          weapon.ammo = weapon.magSize;
+          weapon.reloading = false;
+        }
+      }
+
+      // Welle
+      if (!waveActive && enemies.length === 0) {
+        waveTimer += dt;
+        if (waveTimer > 2.5) {
+          waveTimer = 0;
+          wave++;
+          startWave(wave);
+          document.getElementById("hud-wave").textContent = String(wave);
+        }
+      } else if (enemies.length === 0) {
+        waveActive = false;
+      }
+
+      // Auto-Reload bei leerem Mag, wenn Spieler nicht schießt
+      if (weapon.ammo === 0 && !weapon.reloading) tryReload();
+
+      // Gegner bewegen / angreifen
+      for (let i = enemies.length - 1; i >= 0; i--) {
+        const e = enemies[i];
+        if (e.hitFlash > 0) e.hitFlash = Math.max(0, e.hitFlash - dt * 1000);
+        if (e.atkCd > 0) e.atkCd = Math.max(0, e.atkCd - dt * 1000);
+
+        const dx = player.x - e.x, dy = player.y - e.y;
+        const d = Math.hypot(dx, dy);
+        if (d > 0.001) {
+          const nx = dx / d, ny = dy / d;
+          // Move-with-collision
+          const step = e.speed * dt;
+          const newX = e.x + nx * step;
+          const newY = e.y + ny * step;
+          if (!isWall(newX, e.y)) e.x = newX;
+          if (!isWall(e.x, newY)) e.y = newY;
+        }
+        // Angriff bei Kontakt
+        if (d < e.r + 0.4 && e.atkCd <= 0 && player.iFrames <= 0) {
+          player.hp -= e.dmg;
+          e.atkCd = 800;
+          player.iFrames = 400;
+          damageFlash = 280;
+          if (player.hp <= 0) { player.hp = 0; endGame(); return; }
+        }
+      }
+      // Enemies entstacken
       for (let i = 0; i < enemies.length; i++) {
         for (let j = i + 1; j < enemies.length; j++) {
           const a = enemies[i], b = enemies[j];
           const dx = b.x - a.x, dy = b.y - a.y;
           const d = Math.hypot(dx, dy);
-          const minD = a.r + b.r;
-          if (d > 0 && d < minD) {
-            const push = (minD - d) / 2;
+          const min = a.r + b.r;
+          if (d > 0 && d < min) {
+            const push = (min - d) / 2;
             const nx = dx / d, ny = dy / d;
-            a.x -= nx * push * 0.5;
-            a.y -= ny * push * 0.5;
-            b.x += nx * push * 0.5;
-            b.y += ny * push * 0.5;
-          }
-        }
-      }
-
-      // Projektil-Treffer
-      for (let i = projectiles.length - 1; i >= 0; i--) {
-        const p = projectiles[i];
-        for (let j = enemies.length - 1; j >= 0; j--) {
-          const e = enemies[j];
-          const d2 = (p.x - e.x) ** 2 + (p.y - e.y) ** 2;
-          if (d2 < (e.r + 4) ** 2) {
-            e.hp -= p.dmg;
-            addFloater(e.x, e.y - e.r, String(p.dmg), "#fbbf24");
-            projectiles.splice(i, 1);
-            if (e.hp <= 0) {
-              score += 10 * e.xp;
-              gems.push({ x: e.x, y: e.y, value: e.xp, t: 0 });
-              enemies.splice(j, 1);
+            if (!isWall(a.x - nx * push * 0.4, a.y - ny * push * 0.4)) {
+              a.x -= nx * push * 0.4; a.y -= ny * push * 0.4;
             }
-            break;
+            if (!isWall(b.x + nx * push * 0.4, b.y + ny * push * 0.4)) {
+              b.x += nx * push * 0.4; b.y += ny * push * 0.4;
+            }
           }
         }
       }
 
-      // Gegner trifft Spieler
-      for (const e of enemies) {
-        const d2 = (e.x - player.x) ** 2 + (e.y - player.y) ** 2;
-        if (d2 < (e.r + player.r) ** 2) {
-          if (player.iFrames <= 0) {
-            player.hp -= e.dmg;
-            player.iFrames = 600;
-            addFloater(player.x, player.y - 24, "-" + e.dmg, "#f87171");
-            if (player.hp <= 0) { player.hp = 0; endGame(); return; }
-          }
-        }
-      }
-
-      // Gems anziehen / einsammeln
-      for (let i = gems.length - 1; i >= 0; i--) {
-        const g = gems[i];
-        g.t += dt;
-        const dx = player.x - g.x, dy = player.y - g.y;
-        const d = Math.hypot(dx, dy) || 1;
-        if (d < player.pickupRange) {
-          // anziehen
-          g.x += (dx / d) * 220 * dt;
-          g.y += (dy / d) * 220 * dt;
-        }
-        if (d < player.r + 6) {
-          player.xp += g.value;
-          gems.splice(i, 1);
-          while (player.xp >= player.xpToNext) {
-            player.xp -= player.xpToNext;
-            player.level++;
-            player.xpToNext = Math.floor(player.xpToNext * 1.45 + 1);
-            triggerLevelUp();
-          }
-        }
-      }
-
-      // Floater
-      for (let i = floaters.length - 1; i >= 0; i--) {
-        const f = floaters[i];
-        f.ttl -= dt;
-        f.y += f.vy * dt;
-        if (f.ttl <= 0) floaters.splice(i, 1);
+      // Partikel
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.x += p.vx * dt; p.y += p.vy * dt;
+        p.ttl -= dt;
+        if (p.ttl <= 0) particles.splice(i, 1);
       }
     }
 
-    // -------- Level-Up --------
-    const upgradesPool = [
-      { id: "dmg", icon: "💥", title: "Bissschaden", desc: "+25% Schaden",
-        apply: () => { player.projDamage = Math.round(player.projDamage * 1.25); } },
-      { id: "rate", icon: "⚡", title: "Reflexe", desc: "+18% Feuerrate",
-        apply: () => { player.fireRate = Math.max(120, player.fireRate * 0.82); } },
-      { id: "speed", icon: "🏃", title: "Pfoten", desc: "+12% Tempo",
-        apply: () => { player.speed *= 1.12; } },
-      { id: "multi", icon: "🎯", title: "Triple-Shot", desc: "+1 Projektil",
-        apply: () => { player.multishot = Math.min(5, player.multishot + 1); } },
-      { id: "hp", icon: "❤️", title: "Robust", desc: "+25 max HP & heilen",
-        apply: () => { player.maxHp += 25; player.hp = Math.min(player.maxHp, player.hp + 25); } },
-      { id: "pickup", icon: "🧲", title: "Magnet", desc: "+25 Pickup-Range",
-        apply: () => { player.pickupRange += 25; } },
-      { id: "proj", icon: "💨", title: "Windhose", desc: "+25% Projektil-Tempo",
-        apply: () => { player.projSpeed *= 1.25; } },
-      { id: "heal", icon: "🩹", title: "Sofortheilung", desc: "+40 HP jetzt",
-        apply: () => { player.hp = Math.min(player.maxHp, player.hp + 40); } },
-    ];
-
-    function triggerLevelUp() {
-      pendingLevelUp = true;
-      paused = true;
-      const grid = document.getElementById("upgrade-grid");
-      grid.innerHTML = "";
-      // 3 zufällige Upgrades
-      const pool = upgradesPool.slice().sort(() => Math.random() - 0.5).slice(0, 3);
-      pool.forEach((u) => {
-        const btn = document.createElement("button");
-        btn.type = "button";
-        btn.className = "upgrade-card";
-        btn.innerHTML =
-          '<span class="upgrade-icon">' + u.icon + '</span>' +
-          '<div class="upgrade-title">' + u.title + '</div>' +
-          '<div class="upgrade-desc">' + u.desc + '</div>';
-        btn.addEventListener("click", () => {
-          u.apply();
-          document.getElementById("overlay-levelup").hidden = true;
-          pendingLevelUp = false;
-          paused = false;
-          lastT = performance.now();
-        });
-        grid.appendChild(btn);
-      });
-      document.getElementById("levelup-num").textContent = String(player.level);
-      document.getElementById("overlay-levelup").hidden = false;
-    }
-
-    // -------- Render --------
-    function draw() {
-      ctx.clearRect(0, 0, W, H);
-
-      // Hintergrund-Raster
-      ctx.save();
-      ctx.strokeStyle = "rgba(255,255,255,0.04)";
-      ctx.lineWidth = 1;
-      const grid = 40;
-      for (let x = 0; x < W; x += grid) {
-        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
-      }
-      for (let y = 0; y < H; y += grid) {
-        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
-      }
-      ctx.restore();
-
-      // Pickup-Range (dezent)
-      ctx.save();
-      ctx.strokeStyle = "rgba(167, 139, 250, 0.15)";
-      ctx.setLineDash([4, 6]);
-      ctx.beginPath();
-      ctx.arc(player.x, player.y, player.pickupRange, 0, Math.PI * 2);
-      ctx.stroke();
-      ctx.restore();
-
-      // Gems
-      ctx.save();
-      for (const g of gems) {
-        const pulse = 1 + Math.sin(g.t * 6) * 0.15;
-        ctx.fillStyle = "#a78bfa";
-        ctx.shadowColor = "#a78bfa";
-        ctx.shadowBlur = 8;
-        ctx.beginPath();
-        ctx.arc(g.x, g.y, 4 * pulse, 0, Math.PI * 2);
-        ctx.fill();
-      }
-      ctx.restore();
-
-      // Projektile
-      ctx.save();
-      ctx.fillStyle = "#fbbf24";
-      ctx.shadowColor = "#fbbf24";
-      ctx.shadowBlur = 6;
-      for (const p of projectiles) {
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
-        ctx.fill();
-      }
-      ctx.restore();
-
-      // Gegner
-      ctx.save();
-      ctx.font = "26px system-ui, sans-serif";
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      for (const e of enemies) {
-        ctx.fillText(e.emoji, e.x, e.y);
-        // HP-Streifen für angekratzte Gegner
-        const t = enemyTypes[e.type];
-        if (e.hp < t.hp) {
-          const w = 24;
-          const ratio = e.hp / t.hp;
-          ctx.fillStyle = "rgba(0,0,0,0.5)";
-          ctx.fillRect(e.x - w/2, e.y + e.r + 4, w, 3);
-          ctx.fillStyle = "#f87171";
-          ctx.fillRect(e.x - w/2, e.y + e.r + 4, w * ratio, 3);
-        }
-      }
-      ctx.restore();
-
-      // Spieler
-      ctx.save();
-      ctx.font = "28px system-ui, sans-serif";
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      if (player.iFrames > 0 && Math.floor(player.iFrames / 80) % 2 === 0) {
-        ctx.globalAlpha = 0.4;
-      }
-      ctx.fillText("🦊", player.x, player.y);
-      ctx.restore();
-
-      // Floater
-      ctx.save();
-      ctx.textAlign = "center";
-      ctx.font = "bold 14px system-ui, sans-serif";
-      for (const f of floaters) {
-        ctx.globalAlpha = Math.max(0, f.ttl / 0.7);
-        ctx.fillStyle = f.color;
-        ctx.fillText(f.text, f.x, f.y);
-      }
-      ctx.restore();
-    }
-
-    // -------- HUD --------
-    const elLevel = document.getElementById("hud-level");
+    // ---------- HUD ----------
+    const elWave = document.getElementById("hud-wave");
+    const elKills = document.getElementById("hud-kills");
     const elTime = document.getElementById("hud-time");
-    const elScore = document.getElementById("hud-score");
-    const elHp = document.getElementById("hud-hp-fill");
-    const elXp = document.getElementById("hud-xp-fill");
+    const elHp = document.getElementById("hud-hp");
+    const elHpFill = document.getElementById("hud-hp-fill");
+    const elAmmo = document.getElementById("hud-ammo");
 
     function fmtTime(s) {
       const m = Math.floor(s / 60);
@@ -950,77 +1045,75 @@ const description =
       return m + ":" + String(r).padStart(2, "0");
     }
     function syncHud() {
-      elLevel.textContent = String(player.level);
+      elWave.textContent = String(wave);
+      elKills.textContent = String(player.kills);
       elTime.textContent = fmtTime(timeElapsed);
-      elScore.textContent = String(score);
-      elHp.style.transform = "scaleX(" + (player.hp / player.maxHp) + ")";
-      elXp.style.transform = "scaleX(" + (player.xp / player.xpToNext) + ")";
+      elHp.textContent = String(Math.ceil(player.hp));
+      elHpFill.style.transform = "scaleX(" + (player.hp / player.maxHp) + ")";
+      const ammoText = weapon.reloading
+        ? "RELOAD..."
+        : (weapon.ammo + " / ∞");
+      elAmmo.textContent = ammoText;
     }
 
-    // -------- Loop --------
+    // ---------- Loop ----------
+    let lastT = 0;
     function loop(t) {
       if (!running) return;
       const dt = Math.min(0.05, (t - lastT) / 1000);
       lastT = t;
       if (!paused) {
         update(dt);
-        if (!running) return; // endGame() ggf. ausgelöst
+        if (!running) return;
       }
-      draw();
+      render();
       syncHud();
       requestAnimationFrame(loop);
     }
 
-    // -------- Game lifecycle --------
+    // ---------- Lifecycle ----------
     function reset() {
-      projectiles.length = 0;
       enemies.length = 0;
-      gems.length = 0;
-      floaters.length = 0;
-      player.x = W / 2; player.y = H / 2;
+      particles.length = 0;
+      player.x = 1.5; player.y = 1.5; player.angle = Math.PI / 4;
       player.hp = 100; player.maxHp = 100;
-      player.level = 1; player.xp = 0; player.xpToNext = 5;
-      player.speed = 180;
-      player.fireRate = 650; player.fireCooldown = 0;
-      player.projDamage = 10; player.projSpeed = 380;
-      player.multishot = 1;
-      player.pickupRange = 60;
-      player.iFrames = 0;
-      timeElapsed = 0; score = 0; spawnTimer = 0;
+      player.kills = 0; player.score = 0; player.iFrames = 0;
+      weapon.ammo = weapon.magSize;
+      weapon.reloading = false; weapon.cooldown = 0; weapon.recoil = 0;
+      wave = 0; waveTimer = 2.5; waveActive = false;
+      timeElapsed = 0;
+      muzzleFlash = 0; damageFlash = 0;
     }
     function startGame() {
       reset();
       document.getElementById("overlay-start").hidden = true;
       document.getElementById("overlay-gameover").hidden = true;
-      document.getElementById("overlay-levelup").hidden = true;
       document.getElementById("overlay-pause").hidden = true;
       running = true;
       paused = false;
       lastT = performance.now();
       requestAnimationFrame(loop);
+      // Pointer-Lock anfordern
+      setTimeout(() => canvas.requestPointerLock?.(), 50);
     }
     function endGame() {
       running = false;
+      document.exitPointerLock?.();
       document.getElementById("go-time").textContent = fmtTime(timeElapsed);
-      document.getElementById("go-score").textContent = String(score);
-      document.getElementById("go-level").textContent = String(player.level);
+      document.getElementById("go-kills").textContent = String(player.kills);
+      document.getElementById("go-wave").textContent = String(wave);
       document.getElementById("go-line").textContent =
-        gameOverLines[Math.floor(Math.random() * gameOverLines.length)];
+        goLines[Math.floor(Math.random() * goLines.length)];
       document.getElementById("overlay-gameover").hidden = false;
-    }
-    function togglePause() {
-      if (pendingLevelUp) return; // Level-Up zählt nicht als normale Pause
-      paused = !paused;
-      document.getElementById("overlay-pause").hidden = !paused;
-      if (!paused) { lastT = performance.now(); }
     }
 
     document.getElementById("btn-start").addEventListener("click", startGame);
     document.getElementById("btn-restart").addEventListener("click", startGame);
-    document.getElementById("btn-resume").addEventListener("click", togglePause);
-    document.getElementById("hud-pause").addEventListener("click", togglePause);
+    document.getElementById("btn-resume").addEventListener("click", () => {
+      canvas.requestPointerLock?.();
+    });
 
-    // Initiale Zeichnung damit Hintergrund schon hübsch aussieht
-    draw();
+    // Initiales Bild zeichnen, damit Frame nicht leer ist
+    render();
   })();
 </script>
