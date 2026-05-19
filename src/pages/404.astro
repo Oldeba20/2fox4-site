@@ -23,7 +23,12 @@ const description =
       <p class="lost-hint">
         <kbd>WASD</kbd> laufen · Maus umsehen · <kbd>Klick</kbd> Feuer
       </p>
-      <a class="btn btn-primary btn-sm" href="/">← Zurück zur Startseite</a>
+      <div class="hero-actions">
+        <a class="btn btn-primary btn-sm" href="/">← Zurück zur Startseite</a>
+        <button class="btn btn-ghost btn-sm" id="hud-sound" type="button" aria-label="Sound an/aus">
+          <span id="sound-icon">🔇</span>&nbsp;Sound:&nbsp;<span id="sound-state">aus</span>
+        </button>
+      </div>
     </header>
 
     <div class="game-wrapper">
@@ -45,7 +50,6 @@ const description =
               <span class="hud-label">Zeit</span>
               <span class="hud-value" id="hud-time">0:00</span>
             </div>
-            <button class="hud-sound" id="hud-sound" type="button" aria-label="Sound an/aus">🔇</button>
           </div>
           <div class="hud-bottom">
             <div class="hud-stat hud-stat-hp">
@@ -70,10 +74,10 @@ const description =
         <!-- Start-Overlay -->
         <div class="overlay" id="overlay-start">
           <div class="overlay-card">
-            <h2>🩸 Eintreten in die Bug-Hölle?</h2>
+            <h2>🧟 Eintreten in die Zombie-Welle?</h2>
             <p class="overlay-sub">
-              Doppelläufige raus, Magazine voll. Überlebe so viele Wellen
-              wie du kannst.
+              Doppelläufige raus, jeder Treffer killt. Überlebe so viele
+              Wellen wie du kannst.
             </p>
             <ul class="overlay-list">
               <li><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> — laufen / strafen</li>
@@ -106,11 +110,11 @@ const description =
             <h2>💀 Game Over</h2>
             <p class="overlay-stat">
               Du hast <strong id="go-time">0:00</strong> überlebt,
-              <strong id="go-kills">0</strong> Bugs erledigt
+              <strong id="go-kills">0</strong> Zombies erledigt
               und Welle <strong id="go-wave">1</strong> erreicht.
             </p>
             <p class="overlay-line" id="go-line">
-              Die Bugs feiern. Wahrscheinlich.
+              Die Zombies feiern. Wahrscheinlich.
             </p>
             <div class="overlay-actions">
               <button class="btn btn-primary" id="btn-restart" type="button">
@@ -285,21 +289,17 @@ const description =
     opacity: 0.65;
   }
   .hud-value { font-weight: 700; font-size: 0.9rem; color: #fbbf24; }
-  .hud-sound {
-    pointer-events: auto;
-    margin-left: auto;
-    background: rgba(0,0,0,0.7);
-    border: 1px solid rgba(252, 211, 77, 0.3);
-    border-radius: 3px;
-    color: #fef3c7;
-    width: 32px;
-    height: 26px;
-    font-size: 0.9rem;
-    cursor: pointer;
-    line-height: 1;
-    padding: 0;
+
+  .hero-actions {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    margin-top: 0.15rem;
   }
-  .hud-sound:hover { background: rgba(252, 211, 77, 0.15); }
+  #hud-sound { cursor: pointer; }
+  #hud-sound:hover { background: #f3f4f6; }
   .hud-bottom {
     position: absolute;
     left: 10px;
@@ -497,13 +497,13 @@ const description =
     let muzzleFlash = 0;
     let damageFlash = 0;
 
+    // Alle Gegner sterben in einem Treffer (hp = 1). Variieren in Speed,
+    // Schaden und Aussehen. Alle humanoid / zombieartig.
     const enemyTypes = {
-      bug:   { hp: 40,  speed: 1.4, r: 0.34, dmg: 8,  emoji: "🐛" },
-      snake: { hp: 75,  speed: 1.7, r: 0.36, dmg: 12, emoji: "🐍" },
-      ghost: { hp: 55,  speed: 2.3, r: 0.32, dmg: 14, emoji: "👻" },
-      skull: { hp: 95,  speed: 1.9, r: 0.34, dmg: 16, emoji: "💀" },
-      demon: { hp: 130, speed: 1.5, r: 0.4,  dmg: 22, emoji: "👹" },
-      boss:  { hp: 450, speed: 1.1, r: 0.55, dmg: 30, emoji: "🤖" },
+      zombie:  { hp: 1, speed: 1.1, r: 0.34, dmg: 18, emoji: "🧟" },
+      vampire: { hp: 1, speed: 1.5, r: 0.34, dmg: 16, emoji: "🧛" },
+      troll:   { hp: 1, speed: 0.9, r: 0.44, dmg: 26, emoji: "🧌" },
+      brute:   { hp: 1, speed: 1.3, r: 0.40, dmg: 24, emoji: "👹" },
     };
 
     let wave = 0;
@@ -530,18 +530,15 @@ const description =
     }
 
     function startWave(n) {
-      const count = 6 + Math.floor(n * 2.4);
+      // Wave 1 = 3, Wave 2 = 4, Wave 5 = 7 — etwa ein Drittel der vorigen Werte.
+      const count = 2 + Math.floor(n * 1.0);
       for (let i = 0; i < count; i++) {
-        let pool = ["bug"];
-        if (n >= 2) pool.push("snake");
-        if (n >= 2) pool.push("ghost");
-        if (n >= 3) pool.push("skull");
-        if (n >= 4) pool.push("demon");
+        let pool = ["zombie"];
+        if (n >= 2) pool.push("vampire");
+        if (n >= 3) pool.push("troll");
+        if (n >= 4) pool.push("brute");
         const type = pool[Math.floor(Math.random() * pool.length)];
-        setTimeout(() => { if (running) spawnEnemy(type); }, i * 200);
-      }
-      if (n >= 3 && n % 2 === 1) {
-        setTimeout(() => { if (running) spawnEnemy("boss"); }, 600);
+        setTimeout(() => { if (running) spawnEnemy(type); }, i * 280);
       }
       waveActive = true;
       playWaveStart();
@@ -552,7 +549,12 @@ const description =
     let soundOn = false;
     try { soundOn = localStorage.getItem("fps_sound_v1") === "1"; } catch (e) {}
     const soundBtn = document.getElementById("hud-sound");
-    function updateSoundIcon() { soundBtn.textContent = soundOn ? "🔊" : "🔇"; }
+    const soundIconEl = document.getElementById("sound-icon");
+    const soundStateEl = document.getElementById("sound-state");
+    function updateSoundIcon() {
+      soundIconEl.textContent = soundOn ? "🔊" : "🔇";
+      soundStateEl.textContent = soundOn ? "an" : "aus";
+    }
     function ensureAudio() {
       if (!audioCtx) {
         const AC = window.AudioContext || window.webkitAudioContext;
@@ -883,17 +885,22 @@ const description =
       for (const s of sprites) {
         if (s.depth <= 0.1) continue;
         const screenX = (W / 2) + (s.transX / s.depth) * projDist;
-        const baseSize = s.kind === "enemy" ? 1.55 : (s.ref.size || 0.18);
+        // Zombies sind etwas größer als Wandhöhe (1.0) damit sie imposant wirken
+        const baseSize = s.kind === "enemy" ? 1.15 : (s.ref.size || 0.18);
         const size = (baseSize * H) / s.depth;
         const sx = Math.floor(screenX - size / 2);
         const sw = Math.floor(size);
         if (sx + sw < 0 || sx > W) continue;
 
+        // Bodenprojektion bei dieser Tiefe: hier steht der Gegner
+        const floorY = horizon + HALF_H / s.depth;
+
         if (s.kind === "particle") {
-          const screenY = horizon;
+          // Partikel etwas oberhalb des Bodens (~Körpermitte des Zombies)
+          const py = floorY - (HALF_H / s.depth) * 0.5;
           ctx.fillStyle = s.ref.color;
           ctx.globalAlpha = Math.max(0, s.ref.ttl / 0.5);
-          ctx.fillRect(sx, Math.floor(screenY - sw / 2), Math.max(2, sw), Math.max(2, sw));
+          ctx.fillRect(sx, Math.floor(py - sw / 2), Math.max(2, sw), Math.max(2, sw));
           ctx.globalAlpha = 1;
           continue;
         }
@@ -908,8 +915,9 @@ const description =
         }
         if (!anyVisible) continue;
 
-        // Sprite rendern (Emoji). Wir clippen am rechten Rand der Wand wenn Sichtbarkeit endet.
-        // Vereinfachung: ganzes Sprite zeichnen wenn irgendeine Spalte sichtbar (visuell OK genug).
+        // Zentrieren so dass Sprite-Unterkante auf dem Boden steht
+        const centerY = floorY - size / 2;
+
         ctx.save();
         const fontSize = Math.max(10, Math.floor(size * 0.95));
         ctx.font = fontSize + "px system-ui, 'Apple Color Emoji', 'Segoe UI Emoji', sans-serif";
@@ -919,22 +927,11 @@ const description =
           ctx.shadowColor = "#fef9c3";
           ctx.shadowBlur = 14;
         }
-        // dezente Distanz-Abdunkelung statt Transparenz (bleibt gut sichtbar)
-        const shade = Math.max(0.7, Math.min(1, 1 - s.depth / 22));
+        const shade = Math.max(0.75, Math.min(1, 1 - s.depth / 24));
         ctx.globalAlpha = shade;
-        ctx.fillText(e.emoji, screenX, horizon);
+        ctx.fillText(e.emoji, screenX, centerY);
         ctx.restore();
-
-        // HP-Bar darüber
-        if (e.hp < e.maxHp) {
-          const barW = Math.max(20, size * 0.7);
-          const barX = screenX - barW / 2;
-          const barY = horizon - size / 2 - 6;
-          ctx.fillStyle = "rgba(0,0,0,0.6)";
-          ctx.fillRect(barX, barY, barW, 3);
-          ctx.fillStyle = "#f87171";
-          ctx.fillRect(barX, barY, barW * (e.hp / e.maxHp), 3);
-        }
+        // HP-Bar weggelassen — alle Gegner sterben in einem Treffer
       }
 
       // Waffe + Hände
@@ -1275,11 +1272,11 @@ const description =
       document.getElementById("go-kills").textContent = String(player.kills);
       document.getElementById("go-wave").textContent = String(wave);
       const lines = [
-        "Die Bugs feiern. Wahrscheinlich.",
+        "Die Zombies feiern. Wahrscheinlich.",
         "Länger durchgehalten als so manche Production-Pipeline.",
         "Mehr Welle als Tickets am Sprint-Ende.",
         "Ein guter Lauf für jemanden, der die falsche URL erwischt hat.",
-        "Bugs 1, du 0. Aber stilvoll verloren.",
+        "Zombies 1, du 0. Aber stilvoll verloren.",
       ];
       document.getElementById("go-line").textContent = lines[Math.floor(Math.random() * lines.length)];
       document.getElementById("overlay-gameover").hidden = false;
