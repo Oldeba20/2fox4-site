@@ -89,14 +89,18 @@ const schema = breadcrumbSchema([
           <span class="regional-photo-glow" aria-hidden="true"></span>
           <span class="regional-photo-dot" aria-hidden="true"></span>
           <div class="regional-photo-frame">
-            <img
-              src="https://www.2fox4.de/wp-content/uploads/2026/05/oliver-beratung.jpg"
-              alt="Oliver Deppe von 2FOX4 berät eine Kundin und einen Kunden am Laptop — persönlich, vor Ort, mit echtem Blick auf die Zahlen."
-              width="1376"
-              height="768"
-              loading="lazy"
-              decoding="async"
-            />
+            <picture>
+              <source type="image/avif" srcset="/images/regional/oliver-deppe-beratung.avif" />
+              <source type="image/webp" srcset="/images/regional/oliver-deppe-beratung.webp" />
+              <img
+                src="/images/regional/oliver-deppe-beratung.jpg"
+                alt="Oliver Deppe von 2FOX4 berät eine Kundin und einen Kunden am Laptop — persönlich, vor Ort, mit echtem Blick auf die Zahlen."
+                width="1200"
+                height="900"
+                loading="lazy"
+                decoding="async"
+              />
+            </picture>
           </div>
         </div>
 
