@@ -298,8 +298,20 @@ const description =
     align-items: center;
     margin-top: 0.15rem;
   }
-  #hud-sound { cursor: pointer; }
-  #hud-sound:hover { background: #f3f4f6; }
+  #hud-sound {
+    cursor: pointer;
+    background: #fbbf24;
+    color: #111827;
+    border-color: #d97706;
+    font-weight: 700;
+  }
+  #hud-sound:hover { background: #f59e0b; }
+  #hud-sound.sound-off {
+    background: #e5e7eb;
+    border-color: #9ca3af;
+    color: #374151;
+  }
+  #hud-sound.sound-off:hover { background: #d1d5db; }
   .hud-bottom {
     position: absolute;
     left: 10px;
@@ -526,6 +538,8 @@ const description =
         x: pos[0], y: pos[1], hp: t.hp, maxHp: t.hp,
         type, speed: t.speed, r: t.r, dmg: t.dmg,
         emoji: t.emoji, hitFlash: 0, atkCd: 0,
+        // Erstes Stöhnen nach 0.4–2.0 Sek; spätere Intervalle skalieren mit Distanz
+        groanTimer: 0.4 + Math.random() * 1.6,
       });
     }
 
@@ -554,6 +568,7 @@ const description =
     function updateSoundIcon() {
       soundIconEl.textContent = soundOn ? "🔊" : "🔇";
       soundStateEl.textContent = soundOn ? "an" : "aus";
+      soundBtn.classList.toggle("sound-off", !soundOn);
     }
     function ensureAudio() {
       if (!audioCtx) {
@@ -686,6 +701,56 @@ const description =
       g.gain.exponentialRampToValueAtTime(0.001, t + 0.05);
       noise.connect(g).connect(audioCtx.destination);
       noise.start(t);
+    }
+    // Zombie-Stöhnen mit Lautstärke nach Distanz und Pan nach Winkel
+    function playGroan(dist, pan) {
+      if (!soundOn || !ensureAudio()) return;
+      const vol = Math.max(0, Math.min(0.55, 0.65 - dist / 15));
+      if (vol < 0.04) return;
+      const t = audioCtx.currentTime;
+
+      // Zwei Oszillatoren für vokalen Charakter
+      const f1 = 80 + Math.random() * 50;
+      const f2 = f1 * (2.3 + Math.random() * 0.4);
+
+      const osc1 = audioCtx.createOscillator();
+      osc1.type = "sawtooth";
+      osc1.frequency.setValueAtTime(f1, t);
+      osc1.frequency.linearRampToValueAtTime(f1 * 0.78, t + 0.45);
+      osc1.frequency.linearRampToValueAtTime(f1 * 0.95, t + 0.75);
+
+      const osc2 = audioCtx.createOscillator();
+      osc2.type = "square";
+      osc2.frequency.setValueAtTime(f2, t);
+      osc2.frequency.linearRampToValueAtTime(f2 * 0.85, t + 0.5);
+
+      const g1 = audioCtx.createGain(); g1.gain.value = 0.45;
+      const g2 = audioCtx.createGain(); g2.gain.value = 0.18;
+
+      const filter = audioCtx.createBiquadFilter();
+      filter.type = "lowpass";
+      filter.frequency.value = 700;
+      filter.Q.value = 4;
+
+      const master = audioCtx.createGain();
+      master.gain.setValueAtTime(0.001, t);
+      master.gain.exponentialRampToValueAtTime(vol, t + 0.08);
+      master.gain.linearRampToValueAtTime(vol * 0.6, t + 0.55);
+      master.gain.exponentialRampToValueAtTime(0.001, t + 0.85);
+
+      osc1.connect(g1).connect(filter);
+      osc2.connect(g2).connect(filter);
+      filter.connect(master);
+
+      if (audioCtx.createStereoPanner) {
+        const panner = audioCtx.createStereoPanner();
+        panner.pan.value = Math.max(-1, Math.min(1, pan));
+        master.connect(panner).connect(audioCtx.destination);
+      } else {
+        master.connect(audioCtx.destination);
+      }
+      osc1.start(t); osc1.stop(t + 0.9);
+      osc2.start(t); osc2.stop(t + 0.9);
     }
 
     // ---------- Input ----------
@@ -844,7 +909,14 @@ const description =
         ctx.fillRect(0, y, W, 1);
       }
 
-      // Wände
+      // Wände (Ziegelstein-Pattern, gestaffelte Reihen mit Mörtel)
+      const BRICK_ROWS = 5;        // 5 Ziegelreihen pro Wand-Höhe
+      const BRICKS_PER_ROW = 3;    // 3 Ziegel pro Welt-Einheit Wandbreite
+      // Farbpalette (alle als 0xRRGGBB)
+      const palBrickA_x = 0xc7591f, palBrickB_x = 0xa64a1a; // X-Seiten (hell)
+      const palBrickA_y = 0x9c4d20, palBrickB_y = 0x7a3a16; // Y-Seiten (dunkler)
+      const palMortar_x = 0x4a2d12, palMortar_y = 0x33200d;
+
       for (let x = 0; x < W; x++) {
         const cameraX = 2 * x / W - 1;
         const rayAngle = player.angle + cameraX * (FOV / 2);
@@ -854,18 +926,50 @@ const description =
         zBuffer[x] = perpDist;
 
         const lineHeight = Math.min(H * 3, H / perpDist);
-        const drawStart = Math.max(0, Math.floor(horizon - lineHeight / 2));
-        const drawEnd = Math.min(H, Math.floor(horizon + lineHeight / 2));
-
-        const stripe = (Math.floor(hit.wallX * 8) + (hit.side === 0 ? 0 : 1)) & 1;
-        let base = hit.side === 1 ? 0xa64a1a : 0xc7591f;
-        if (stripe) base = hit.side === 1 ? 0x873a14 : 0xa3471a;
+        const fullStart = horizon - lineHeight / 2;
         const fog = Math.max(0, Math.min(1, 1 - perpDist / 16));
-        const r = ((base >> 16) & 0xff) * fog;
-        const g = ((base >> 8) & 0xff) * fog;
-        const b = (base & 0xff) * fog;
-        ctx.fillStyle = "rgb(" + (r|0) + "," + (g|0) + "," + (b|0) + ")";
-        ctx.fillRect(x, drawStart, 1, drawEnd - drawStart);
+
+        const isYSide = hit.side === 1;
+        const palBrickA = isYSide ? palBrickA_y : palBrickA_x;
+        const palBrickB = isYSide ? palBrickB_y : palBrickB_x;
+        const palMortar = isYSide ? palMortar_y : palMortar_x;
+
+        for (let row = 0; row < BRICK_ROWS; row++) {
+          const rowTopF = fullStart + (row / BRICK_ROWS) * lineHeight;
+          const rowBotF = fullStart + ((row + 1) / BRICK_ROWS) * lineHeight;
+
+          // Gestaffelt: jede zweite Reihe um halbe Ziegelbreite versetzt
+          const xOff = (row & 1) * (0.5 / BRICKS_PER_ROW);
+          const bp = (hit.wallX + xOff) * BRICKS_PER_ROW;
+          const bFrac = bp - Math.floor(bp);
+          const bIdx = Math.floor(bp);
+          const mortarThresh = 0.06;
+          const isVertMortar = bFrac < mortarThresh || bFrac > 1 - mortarThresh;
+
+          let base = ((bIdx + row) & 1) ? palBrickA : palBrickB;
+          if (isVertMortar) base = palMortar;
+
+          const r = ((base >> 16) & 0xff) * fog;
+          const g = ((base >> 8) & 0xff) * fog;
+          const b = (base & 0xff) * fog;
+          ctx.fillStyle = "rgb(" + (r|0) + "," + (g|0) + "," + (b|0) + ")";
+
+          // Brick-Segment (oberer Teil), letzter 1px Reserve für Mörtel
+          const segTop = Math.max(0, Math.floor(rowTopF));
+          const segBot = Math.min(H, Math.floor(rowBotF) - 1);
+          if (segBot > segTop) ctx.fillRect(x, segTop, 1, segBot - segTop);
+
+          // Horizontale Mörtelfuge unter dem Brick
+          const mortarY = Math.floor(rowBotF) - 1;
+          if (mortarY >= 0 && mortarY < H) {
+            const mb = palMortar;
+            const mr = ((mb >> 16) & 0xff) * fog;
+            const mg = ((mb >> 8) & 0xff) * fog;
+            const mbb = (mb & 0xff) * fog;
+            ctx.fillStyle = "rgb(" + (mr|0) + "," + (mg|0) + "," + (mbb|0) + ")";
+            ctx.fillRect(x, mortarY, 1, 1);
+          }
+        }
       }
 
       // Sprites
@@ -944,162 +1048,211 @@ const description =
       }
     }
 
-    // ---------- Doppelläufige + Hände (Pixel-Art) ----------
+    // ---------- Doppelläufige + Hände (Pixel-Art, FORWARD-Pointing) ----------
+    // Die Schrotflinte wird so dargestellt, als würde der Spieler "den Lauf
+    // entlang nach vorne" schauen: die Mündungen sind als deutlich sichtbare
+    // dunkle Kreise mit Metallring ganz oben im Sprite, die Läufe sind nur
+    // kurze foreshortened Tubes, darunter Receiver, Stock und beide Hände.
     function drawWeapon() {
       const cx = W / 2;
-      const recoilY = weapon.recoil * 14;
-      const swayX = Math.sin(timeElapsed * 4) * (keys.w || keys.a || keys.s || keys.d ? 2 : 0.4);
-      const swayY = Math.abs(Math.sin(timeElapsed * 4)) * (keys.w || keys.a || keys.s || keys.d ? 2 : 0.4);
+      const recoilY = weapon.recoil * 12;
+      const moving = keys.w || keys.a || keys.s || keys.d;
+      const swayX = Math.sin(timeElapsed * 4) * (moving ? 2 : 0.4);
+      const swayY = Math.abs(Math.sin(timeElapsed * 4)) * (moving ? 2 : 0.4);
 
       ctx.save();
       ctx.translate(cx + swayX, H + recoilY + swayY);
 
-      // Farben
       const skin = "#d4a574";
       const skinShade = "#a67c52";
       const skinDark = "#6b4423";
       const wood = "#6b3a1a";
       const woodLite = "#8b5a2b";
-      const metal = "#3f3f46";
-      const metalLite = "#71717a";
-      const metalDark = "#18181b";
+      const woodDark = "#3d1f0c";
+      const metal = "#52525b";
+      const metalLite = "#a1a1aa";
+      const metalDark = "#27272a";
 
-      // ---- Zwei Läufe (parallel, Doppellauf) ----
-      // Lauf-Geometrie: links bei x=-9..-3, rechts bei x=3..9, top y=-110, bottom y=-32
-      for (const bx of [-6, 6]) {
-        // Hauptlauf
+      // ===== Stock (unten, läuft ins Bild raus) =====
+      ctx.fillStyle = wood;
+      ctx.beginPath();
+      ctx.moveTo(-32, -12);
+      ctx.lineTo(32, -12);
+      ctx.lineTo(40, 50);
+      ctx.lineTo(-12, 50);
+      ctx.closePath();
+      ctx.fill();
+      ctx.fillStyle = woodLite;
+      ctx.beginPath();
+      ctx.moveTo(-32, -12);
+      ctx.lineTo(32, -12);
+      ctx.lineTo(30, -8);
+      ctx.lineTo(-30, -8);
+      ctx.closePath();
+      ctx.fill();
+      ctx.fillStyle = woodDark;
+      ctx.fillRect(-12, 38, 52, 12);
+
+      // ===== Receiver / Verschluss (Metallblock zwischen Stock und Läufen) =====
+      ctx.fillStyle = metalDark;
+      ctx.fillRect(-26, -38, 52, 26);
+      ctx.fillStyle = metal;
+      ctx.fillRect(-24, -36, 48, 22);
+      ctx.fillStyle = metalLite;
+      ctx.fillRect(-24, -36, 48, 2);
+      ctx.fillRect(-24, -36, 2, 22);
+      // Bruchstellen-Linie (zeigt die Doppelläufige)
+      ctx.fillStyle = metalDark;
+      ctx.fillRect(-24, -22, 48, 2);
+      // Sicherungs-Hebel oben mittig
+      ctx.fillStyle = metalLite;
+      ctx.fillRect(-2, -36, 4, 4);
+
+      // ===== Vorderschaft (Holzgriff über dem Receiver) =====
+      ctx.fillStyle = wood;
+      ctx.fillRect(-18, -58, 36, 20);
+      ctx.fillStyle = woodLite;
+      ctx.fillRect(-18, -58, 36, 2);
+      ctx.fillRect(-18, -58, 2, 20);
+      ctx.fillStyle = woodDark;
+      ctx.fillRect(-18, -42, 36, 4);
+      // Riffelung im Holz (für Grip)
+      ctx.fillStyle = woodDark;
+      for (let i = 0; i < 5; i++) {
+        ctx.fillRect(-14 + i * 6, -54, 1, 14);
+      }
+
+      // ===== Läufe — KURZ, foreshortened (zeigen nach vorne, weg von der Kamera) =====
+      // Pro Lauf nur ~22px sichtbar, oben Mündungs-Öffnungen
+      for (const bx of [-11, 11]) {
+        // Lauf-Tube
         ctx.fillStyle = metal;
-        ctx.fillRect(bx - 4, -110, 8, 78);
+        ctx.fillRect(bx - 6, -82, 12, 24);
         // Highlight links
         ctx.fillStyle = metalLite;
-        ctx.fillRect(bx - 4, -110, 1, 78);
-        // Mündung
+        ctx.fillRect(bx - 6, -82, 1, 24);
+        // Schatten rechts
         ctx.fillStyle = metalDark;
-        ctx.fillRect(bx - 5, -114, 10, 5);
-        ctx.fillStyle = "#0a0a0a";
-        ctx.fillRect(bx - 3, -112, 6, 3);
+        ctx.fillRect(bx + 5, -82, 1, 24);
       }
-      // Verbindungsschiene zwischen den Läufen (oben)
+      // Brücke zwischen den Läufen
       ctx.fillStyle = metalDark;
-      ctx.fillRect(-2, -110, 4, 78);
-      // Korn vorne
+      ctx.fillRect(-5, -82, 10, 24);
+      ctx.fillStyle = metal;
+      ctx.fillRect(-4, -80, 8, 20);
+
+      // ===== Mündungs-Öffnungen — DEUTLICH SICHTBAR (zwei dunkle Löcher) =====
+      for (const bx of [-11, 11]) {
+        // Äußerer Metallring (heller)
+        ctx.fillStyle = metalLite;
+        ctx.beginPath();
+        ctx.ellipse(bx, -84, 7, 5, 0, 0, Math.PI * 2);
+        ctx.fill();
+        // Innerer Ring (mittel)
+        ctx.fillStyle = metal;
+        ctx.beginPath();
+        ctx.ellipse(bx, -84, 5.5, 4, 0, 0, Math.PI * 2);
+        ctx.fill();
+        // Schwarzes Loch (Mündung) — DAS macht klar dass man rein-guckt
+        ctx.fillStyle = "#000";
+        ctx.beginPath();
+        ctx.ellipse(bx, -84, 4, 2.8, 0, 0, Math.PI * 2);
+        ctx.fill();
+        // Glanz-Highlight oben am Ring
+        ctx.fillStyle = "#e4e4e7";
+        ctx.fillRect(bx - 3, -89, 6, 1);
+      }
+
+      // ===== Visier / Korn vorne mittig zwischen den Läufen =====
       ctx.fillStyle = metalLite;
-      ctx.fillRect(-1, -116, 2, 4);
-      // Visier hinten
+      ctx.fillRect(-1, -91, 2, 4);
       ctx.fillStyle = metalDark;
-      ctx.fillRect(-3, -42, 6, 3);
+      ctx.fillRect(-1, -88, 2, 1);
 
-      // ---- Receiver / Bruchstelle (zwischen Läufen und Stock) ----
-      ctx.fillStyle = wood;
-      ctx.fillRect(-18, -32, 36, 14);
-      // Wood highlight
-      ctx.fillStyle = woodLite;
-      ctx.fillRect(-18, -32, 36, 2);
-      ctx.fillRect(-18, -32, 2, 14);
-      // Metall-Bruchgelenk
-      ctx.fillStyle = metal;
-      ctx.fillRect(-19, -28, 4, 8);
-      ctx.fillStyle = metalLite;
-      ctx.fillRect(-19, -28, 1, 8);
-
-      // ---- Stock (Holzgriff, läuft nach unten weg) ----
-      ctx.fillStyle = wood;
-      ctx.beginPath();
-      ctx.moveTo(-16, -18);
-      ctx.lineTo(18, -18);
-      ctx.lineTo(14, 28);
-      ctx.lineTo(-6, 28);
-      ctx.closePath();
-      ctx.fill();
-      // Stock-Highlight
-      ctx.fillStyle = woodLite;
-      ctx.beginPath();
-      ctx.moveTo(-16, -18);
-      ctx.lineTo(18, -18);
-      ctx.lineTo(17, -15);
-      ctx.lineTo(-15, -15);
-      ctx.closePath();
-      ctx.fill();
-      // Stock-Schatten unten
-      ctx.fillStyle = "#3d1f0c";
-      ctx.fillRect(-6, 22, 20, 6);
-
-      // ---- Abzugbügel + Abzug ----
-      ctx.fillStyle = metal;
-      ctx.beginPath();
-      ctx.arc(0, -10, 7, 0, Math.PI, false);
-      ctx.lineTo(-6, -3);
-      ctx.lineTo(6, -3);
-      ctx.closePath();
-      ctx.fill();
-      // Trigger
-      ctx.fillStyle = metalLite;
-      ctx.fillRect(-1, -10, 2, 5);
-
-      // ---- Rechte Hand (am Stock/Griff) ----
-      // Fleischton, gripping the stock
+      // ===== Linke Hand (am Vorderschaft) =====
       ctx.fillStyle = skinShade;
-      ctx.fillRect(4, -8, 18, 22);
+      ctx.fillRect(-34, -56, 16, 22);
       ctx.fillStyle = skin;
-      ctx.fillRect(4, -8, 18, 4);     // Oberseite hellt auf
-      ctx.fillRect(4, -8, 3, 22);     // Innenseite hell
+      ctx.fillRect(-34, -56, 16, 4);
+      ctx.fillRect(-34, -56, 4, 22);
+      // Finger
+      ctx.fillStyle = skinDark;
+      for (let i = 0; i < 4; i++) {
+        ctx.fillRect(-30 + i * 3, -52, 1, 16);
+      }
+      // Daumen
+      ctx.fillStyle = skin;
+      ctx.fillRect(-26, -58, 8, 4);
+      ctx.fillStyle = skinShade;
+      ctx.fillRect(-20, -58, 2, 4);
+
+      // ===== Rechte Hand (am Stock/Griff, unten rechts) =====
+      ctx.fillStyle = skinShade;
+      ctx.fillRect(18, -10, 22, 26);
+      ctx.fillStyle = skin;
+      ctx.fillRect(18, -10, 22, 5);
+      ctx.fillRect(18, -10, 5, 26);
       // Finger-Trennungen
       ctx.fillStyle = skinDark;
       for (let i = 0; i < 4; i++) {
-        ctx.fillRect(7 + i * 3, -6, 1, 18);
+        ctx.fillRect(23 + i * 4, -6, 1, 20);
       }
-      // Daumen oben
+      // Daumen oben über Receiver
       ctx.fillStyle = skin;
-      ctx.fillRect(4, -10, 8, 4);
+      ctx.fillRect(18, -14, 10, 5);
       ctx.fillStyle = skinShade;
-      ctx.fillRect(10, -10, 2, 4);
+      ctx.fillRect(26, -14, 2, 5);
 
-      // ---- Linke Hand (am Vorderschaft, unter den Läufen) ----
-      ctx.fillStyle = skinShade;
-      ctx.fillRect(-22, -32, 18, 14);
-      ctx.fillStyle = skin;
-      ctx.fillRect(-22, -32, 18, 3);   // hell oben
-      ctx.fillRect(-22, -32, 3, 14);   // hell links
-      ctx.fillStyle = skinDark;
-      for (let i = 0; i < 4; i++) {
-        ctx.fillRect(-19 + i * 3, -30, 1, 10);
-      }
-      // Daumen über Lauf
-      ctx.fillStyle = skin;
-      ctx.fillRect(-12, -34, 7, 4);
-      ctx.fillStyle = skinShade;
-      ctx.fillRect(-7, -34, 2, 4);
+      // ===== Abzugbügel + Abzug =====
+      ctx.fillStyle = metalDark;
+      ctx.beginPath();
+      ctx.ellipse(2, -8, 8, 9, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = wood;
+      ctx.beginPath();
+      ctx.ellipse(2, -7, 5, 6, 0, 0, Math.PI * 2);
+      ctx.fill();
+      // Trigger
+      ctx.fillStyle = metalLite;
+      ctx.fillRect(1, -10, 2, 5);
 
-      // ---- Mündungsfeuer aus beiden Läufen ----
+      // ===== Mündungsfeuer — kommt AUS den Mündungs-Öffnungen =====
       if (muzzleFlash > 0) {
         const a = Math.min(1, muzzleFlash / 90);
         ctx.globalAlpha = a;
-        for (const bx of [-6, 6]) {
-          // Heißes Zentrum
-          ctx.fillStyle = "#fef9c3";
-          ctx.fillRect(bx - 3, -126, 6, 10);
-          // Flammenkrone
-          ctx.fillStyle = "#fbbf24";
-          ctx.beginPath();
-          ctx.moveTo(bx, -134);
-          ctx.lineTo(bx - 10, -120);
-          ctx.lineTo(bx - 5, -118);
-          ctx.lineTo(bx - 8, -110);
-          ctx.lineTo(bx - 2, -116);
-          ctx.lineTo(bx, -108);
-          ctx.lineTo(bx + 2, -116);
-          ctx.lineTo(bx + 8, -110);
-          ctx.lineTo(bx + 5, -118);
-          ctx.lineTo(bx + 10, -120);
-          ctx.closePath();
-          ctx.fill();
-          // Orange Außenring
+        for (const bx of [-11, 11]) {
+          // Großer orange Glow drumherum
+          ctx.globalAlpha = a * 0.5;
           ctx.fillStyle = "#fb923c";
-          ctx.globalAlpha = a * 0.7;
           ctx.beginPath();
-          ctx.arc(bx, -118, 14, 0, Math.PI * 2);
+          ctx.arc(bx, -95, 20, 0, Math.PI * 2);
           ctx.fill();
           ctx.globalAlpha = a;
+          // Gelbe Stichflamme
+          ctx.fillStyle = "#fbbf24";
+          ctx.beginPath();
+          ctx.moveTo(bx, -118);
+          ctx.lineTo(bx - 11, -100);
+          ctx.lineTo(bx - 6, -95);
+          ctx.lineTo(bx - 9, -88);
+          ctx.lineTo(bx - 3, -92);
+          ctx.lineTo(bx, -84);
+          ctx.lineTo(bx + 3, -92);
+          ctx.lineTo(bx + 9, -88);
+          ctx.lineTo(bx + 6, -95);
+          ctx.lineTo(bx + 11, -100);
+          ctx.closePath();
+          ctx.fill();
+          // Weißglühender Kern direkt an der Mündung
+          ctx.fillStyle = "#fef9c3";
+          ctx.beginPath();
+          ctx.ellipse(bx, -92, 5, 7, 0, 0, Math.PI * 2);
+          ctx.fill();
+          // Hot spot direkt im Lauf-Loch
+          ctx.fillStyle = "#fff";
+          ctx.beginPath();
+          ctx.ellipse(bx, -84, 3, 2, 0, 0, Math.PI * 2);
+          ctx.fill();
         }
         ctx.globalAlpha = 1;
       }
@@ -1161,6 +1314,23 @@ const description =
 
         const dx = player.x - e.x, dy = player.y - e.y;
         const d = Math.hypot(dx, dy);
+
+        // Stöhnen — Lautstärke nach Distanz, Pan nach Richtung relativ zum Spieler
+        e.groanTimer -= dt;
+        if (e.groanTimer <= 0) {
+          if (d < 15) {
+            const cosP = Math.cos(player.angle), sinP = Math.sin(player.angle);
+            // negativer dx/dy weil wir vom Spieler zum Gegner schauen
+            const dxe = e.x - player.x, dye = e.y - player.y;
+            const pan = Math.max(-1, Math.min(1, (-dxe * sinP + dye * cosP) / Math.max(1, d) * 0.85));
+            playGroan(d, pan);
+          }
+          // Nächstes Stöhnen — näher = häufiger
+          const proximityBonus = Math.max(0, 1 - d / 9); // 1.0 wenn direkt dran, 0 bei >=9 Feldern
+          const base = 2.2 + Math.random() * 3.0; // 2.2–5.2 Sek
+          e.groanTimer = base * (1 - proximityBonus * 0.55);
+        }
+
         if (d > 0.001) {
           const nx = dx / d, ny = dy / d;
           const step = e.speed * dt;
