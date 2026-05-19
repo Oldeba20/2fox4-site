@@ -147,7 +147,7 @@ export const references: Reference[] = [
     slug: "renaissance-stadthagen",
     category: "websites",
     domain: "renaissance-stadthagen.de",
-    image: "https://www.2fox4.de/wp-content/uploads/2024/01/Stadthagen-renaissance.jpg",
+    image: "/images/referenzen/renaissance-stadthagen.jpg",
     date: "August 2025",
     title: "Renaissanceverein Stadthagen",
     meta: "WordPress · Vereins-Website",

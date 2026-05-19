@@ -131,8 +131,7 @@ export const cities: City[] = [
     localRefs: [
       {
         url: "renaissance-stadthagen.de",
-        image:
-          "https://www.2fox4.de/wp-content/uploads/2024/01/Stadthagen-renaissance.jpg",
+        image: "/images/referenzen/renaissance-stadthagen.jpg",
         href: "/referenzen/renaissance-stadthagen/",
         tag: "Vereins-Website · Stadthagen",
         title: "Renaissanceverein Stadthagen",
@@ -148,6 +147,16 @@ export const cities: City[] = [
         title: "Tattoo- & Piercing Studio Stadthagen",
         description:
           "WordPress-Website mit lokaler SEO-Optimierung, Google-Business-Eintrag und Buchungs-Hinweisen.",
+      },
+      {
+        url: "sad-sicherheit.de",
+        image:
+          "https://www.2fox4.de/wp-content/uploads/2025/08/Website-SAD-Sicherheit-Referenz.png",
+        href: "/referenzen/schule-fuer-sicherheitsmitarbeiter/",
+        tag: "Bildungs-Website · Stadthagen",
+        title: "Schule für Sicherheitsmitarbeiter",
+        description:
+          "WordPress-Auftritt für die Stadthagener Schule, die Sicherheitsmitarbeiter ausbildet — mit Kursübersicht und Anmelde-Funnel.",
       },
     ],
     faq: [
@@ -165,7 +174,7 @@ export const cities: City[] = [
       },
       {
         question: "Habt ihr Referenzen aus Stadthagen?",
-        answerHtml: `Ja: unter anderem die Website des Renaissancevereins Stadthagen und ein Tattoo- und Piercing-Studio in Stadthagen. Beide findest du weiter oben auf dieser Seite oder in unserer kompletten <a href="/referenzen/" class="text-[var(--color-accent)]">Referenzübersicht</a>.`,
+        answerHtml: `Ja: unter anderem die Website des Renaissancevereins Stadthagen, ein Tattoo- und Piercing-Studio in Stadthagen sowie die Schule für Sicherheitsmitarbeiter (sad-sicherheit.de). Alle drei findest du weiter oben auf dieser Seite oder in unserer kompletten <a href="/referenzen/" class="text-[var(--color-accent)]">Referenzübersicht</a>.`,
       },
       {
         question: "Bietet ihr auch SEO und laufende Betreuung?",
