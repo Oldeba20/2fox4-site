@@ -1,0 +1,1026 @@
+---
+/**
+ * 404 — "Ups, verlaufen!"
+ *
+ * Statt einer langweiligen Fehlerseite zeigen wir ein kleines
+ * Browser-Game im Vampire-Survivors-Stil: der 2fox4-Fuchs gegen
+ * Wellen von Bug-Gegnern. WASD + Maus auf Desktop, virtueller
+ * Joystick auf Touch-Geräten.
+ *
+ * Hinweise:
+ * - noindex/nofollow, damit die Seite nicht im Suchindex landet
+ * - Apache (Kasserver) braucht in public/.htaccess:
+ *     ErrorDocument 404 /404.html
+ */
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const title = "Ups, verlaufen! — 2fox4";
+const description =
+  "Die gesuchte Seite gibt es nicht — aber dafür ein kleines Spiel zum Zeitvertreib. Hilf dem Fuchs durch die Bug-Welle.";
+---
+
+<BaseLayout title={title} description={description} noindex={true}>
+  <section class="lost-page">
+    <header class="lost-hero">
+      <p class="lost-tag">Fehler 404</p>
+      <h1 class="lost-title">
+        <span aria-hidden="true">🦊</span> Ups, verlaufen!
+      </h1>
+      <p class="lost-quote" id="lost-quote">
+        Diese URL existiert nicht. Aber dieser Fuchs schon.
+      </p>
+      <p class="lost-hint">
+        Spielst du? <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> zum Laufen.
+        Geschossen wird automatisch. Auf dem Handy: Daumen aufs Spielfeld
+        legen und ziehen.
+      </p>
+      <div class="lost-actions">
+        <a class="btn btn-primary" href="/">← Zurück zur Startseite</a>
+        <a class="btn btn-ghost" href="/kontakt/">Lieber direkt schreiben</a>
+      </div>
+    </header>
+
+    <div class="game-wrapper">
+      <div class="game-frame">
+        <canvas id="fox-game" width="900" height="560"></canvas>
+
+        <!-- HUD-Overlay (Score, Level, HP) -->
+        <div class="hud" aria-live="polite">
+          <div class="hud-row">
+            <div class="hud-chip">
+              <span class="hud-label">Lvl</span>
+              <span class="hud-value" id="hud-level">1</span>
+            </div>
+            <div class="hud-chip">
+              <span class="hud-label">Zeit</span>
+              <span class="hud-value" id="hud-time">0:00</span>
+            </div>
+            <div class="hud-chip">
+              <span class="hud-label">Score</span>
+              <span class="hud-value" id="hud-score">0</span>
+            </div>
+            <button class="hud-pause" id="hud-pause" type="button" aria-label="Pause">⏸︎</button>
+          </div>
+          <div class="hud-bar hud-bar-hp">
+            <div class="hud-bar-fill" id="hud-hp-fill"></div>
+            <span class="hud-bar-label">HP</span>
+          </div>
+          <div class="hud-bar hud-bar-xp">
+            <div class="hud-bar-fill" id="hud-xp-fill"></div>
+            <span class="hud-bar-label">XP</span>
+          </div>
+        </div>
+
+        <!-- Start-Overlay -->
+        <div class="overlay" id="overlay-start">
+          <div class="overlay-card">
+            <h2>🦊 Fox Survivor</h2>
+            <p>Überlebe die Bug-Welle so lange wie du kannst.</p>
+            <ul class="overlay-list">
+              <li>🐛 Käfer — klein und langsam</li>
+              <li>🐍 Schlange — flott, mehr HP</li>
+              <li>👻 Geist — schnell, taucht später auf</li>
+              <li>🤖 Bot — der dicke Brocken</li>
+            </ul>
+            <button class="btn btn-primary btn-lg" id="btn-start" type="button">
+              ▶︎ Spiel starten
+            </button>
+          </div>
+        </div>
+
+        <!-- Level-Up-Overlay -->
+        <div class="overlay overlay-levelup" id="overlay-levelup" hidden>
+          <div class="overlay-card">
+            <h2>Level <span id="levelup-num">2</span> — wähle ein Upgrade</h2>
+            <div class="upgrade-grid" id="upgrade-grid"></div>
+          </div>
+        </div>
+
+        <!-- Game-Over-Overlay -->
+        <div class="overlay overlay-gameover" id="overlay-gameover" hidden>
+          <div class="overlay-card">
+            <h2>🦊 Game Over</h2>
+            <p class="overlay-stat">
+              Du hast <strong id="go-time">0:00</strong> überlebt und
+              <strong id="go-score">0</strong> Punkte gesammelt
+              (Level <strong id="go-level">1</strong>).
+            </p>
+            <p class="overlay-line" id="go-line">
+              Nicht schlecht für jemanden, der die falsche URL erwischt hat.
+            </p>
+            <div class="overlay-actions">
+              <button class="btn btn-primary" id="btn-restart" type="button">
+                ↻ Nochmal
+              </button>
+              <a class="btn btn-ghost" href="/">Zurück zur Startseite</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pause-Overlay -->
+        <div class="overlay overlay-pause" id="overlay-pause" hidden>
+          <div class="overlay-card">
+            <h2>Pause</h2>
+            <button class="btn btn-primary" id="btn-resume" type="button">
+              ▶︎ Weiterspielen
+            </button>
+          </div>
+        </div>
+
+        <!-- Virtueller Joystick (Touch) -->
+        <div class="joystick" id="joystick" hidden>
+          <div class="joystick-knob" id="joystick-knob"></div>
+        </div>
+      </div>
+
+      <p class="game-credits">
+        Tipp: viel Spaß. Falls du eigentlich ein konkretes Anliegen hast —
+        <a href="/kontakt/">hier geht's zum Kontakt</a>.
+      </p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .lost-page {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 2.5rem 1.25rem 4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .lost-hero {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: center;
+  }
+  .lost-tag {
+    display: inline-block;
+    font-family: "JetBrains Mono Variable", monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #9ca3af;
+    margin: 0;
+  }
+  .lost-title {
+    font-size: clamp(2rem, 4.5vw, 3rem);
+    margin: 0;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+  .lost-quote {
+    font-size: 1.1rem;
+    color: #6b7280;
+    margin: 0;
+    max-width: 36rem;
+  }
+  .lost-hint {
+    font-size: 0.9rem;
+    color: #6b7280;
+    margin: 0;
+    max-width: 36rem;
+  }
+  .lost-hint kbd {
+    font-family: "JetBrains Mono Variable", monospace;
+    background: #f3f4f6;
+    border: 1px solid #d1d5db;
+    border-bottom-width: 2px;
+    border-radius: 4px;
+    padding: 1px 6px;
+    margin: 0 2px;
+    font-size: 0.8em;
+  }
+  .lost-actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 0.5rem;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.65rem 1.1rem;
+    border-radius: 9999px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    border: 1px solid transparent;
+    text-decoration: none;
+    transition: transform 0.1s ease, background 0.15s ease;
+    font-family: inherit;
+  }
+  .btn:hover { transform: translateY(-1px); }
+  .btn-primary { background: #111827; color: #fff; }
+  .btn-primary:hover { background: #1f2937; }
+  .btn-ghost {
+    background: transparent;
+    color: #111827;
+    border-color: #d1d5db;
+  }
+  .btn-ghost:hover { background: #f3f4f6; }
+  .btn-lg { padding: 0.85rem 1.4rem; font-size: 1.05rem; }
+
+  /* --- Game --- */
+  .game-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: center;
+  }
+  .game-frame {
+    position: relative;
+    width: 100%;
+    max-width: 900px;
+    aspect-ratio: 900 / 560;
+    background: #0b0f17;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 25px 60px -20px rgba(0,0,0,0.4);
+    touch-action: none;
+  }
+  #fox-game {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background:
+      radial-gradient(ellipse at 50% 50%, #1a2233 0%, #0b0f17 70%);
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+
+  /* HUD */
+  .hud {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    padding: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    pointer-events: none;
+    color: #f9fafb;
+    font-family: "JetBrains Mono Variable", monospace;
+    font-size: 0.85rem;
+  }
+  .hud-row {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .hud-chip {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.35rem;
+    background: rgba(0,0,0,0.55);
+    backdrop-filter: blur(6px);
+    border-radius: 9999px;
+    padding: 0.3rem 0.7rem;
+  }
+  .hud-label {
+    text-transform: uppercase;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    opacity: 0.65;
+  }
+  .hud-value { font-weight: 700; font-size: 0.95rem; }
+  .hud-pause {
+    margin-left: auto;
+    pointer-events: auto;
+    background: rgba(0,0,0,0.55);
+    border: none;
+    color: #fff;
+    border-radius: 9999px;
+    width: 32px;
+    height: 32px;
+    font-size: 0.9rem;
+    cursor: pointer;
+  }
+  .hud-pause:hover { background: rgba(255,255,255,0.15); }
+  .hud-bar {
+    position: relative;
+    height: 10px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 9999px;
+    overflow: hidden;
+  }
+  .hud-bar-fill {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    transform-origin: left center;
+    transition: transform 0.15s ease;
+  }
+  .hud-bar-hp .hud-bar-fill {
+    background: linear-gradient(90deg, #f43f5e, #fb923c);
+  }
+  .hud-bar-xp .hud-bar-fill {
+    background: linear-gradient(90deg, #22d3ee, #a78bfa);
+  }
+  .hud-bar-label {
+    position: absolute;
+    right: 8px;
+    top: -2px;
+    font-size: 0.6rem;
+    opacity: 0.5;
+    letter-spacing: 0.1em;
+  }
+
+  /* Overlays */
+  .overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(11, 15, 23, 0.78);
+    backdrop-filter: blur(4px);
+    color: #fff;
+    z-index: 5;
+    padding: 1rem;
+  }
+  .overlay[hidden] { display: none; }
+  .overlay-card {
+    background: #111827;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 14px;
+    padding: 1.5rem 1.75rem;
+    max-width: 30rem;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+  }
+  .overlay-card h2 {
+    margin: 0 0 0.5rem;
+    font-size: 1.4rem;
+  }
+  .overlay-card p { color: #d1d5db; margin: 0 0 0.75rem; }
+  .overlay-list {
+    text-align: left;
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1rem;
+    color: #d1d5db;
+    font-size: 0.95rem;
+    display: grid;
+    gap: 0.3rem;
+  }
+  .overlay-stat strong { color: #fbbf24; }
+  .overlay-line { font-style: italic; color: #9ca3af; }
+  .overlay-actions {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 0.75rem;
+  }
+  .upgrade-grid {
+    display: grid;
+    gap: 0.6rem;
+    grid-template-columns: 1fr;
+    margin-top: 0.75rem;
+  }
+  @media (min-width: 520px) {
+    .upgrade-grid { grid-template-columns: 1fr 1fr 1fr; }
+  }
+  .upgrade-card {
+    background: #1f2937;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    padding: 0.85rem 0.75rem;
+    cursor: pointer;
+    color: #fff;
+    text-align: center;
+    font-family: inherit;
+    transition: transform 0.1s, border-color 0.15s, background 0.15s;
+  }
+  .upgrade-card:hover {
+    transform: translateY(-2px);
+    border-color: #fbbf24;
+    background: #273548;
+  }
+  .upgrade-icon { font-size: 1.6rem; display: block; margin-bottom: 0.25rem; }
+  .upgrade-title { font-weight: 700; font-size: 0.95rem; margin-bottom: 0.2rem; }
+  .upgrade-desc { font-size: 0.8rem; color: #9ca3af; }
+
+  /* Joystick */
+  .joystick {
+    position: absolute;
+    left: 16px;
+    bottom: 16px;
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.15);
+    z-index: 4;
+    touch-action: none;
+  }
+  .joystick-knob {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 50px;
+    height: 50px;
+    margin: -25px 0 0 -25px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.35);
+    border: 1px solid rgba(255,255,255,0.5);
+    pointer-events: none;
+  }
+
+  .game-credits {
+    font-size: 0.85rem;
+    color: #6b7280;
+    text-align: center;
+    margin: 0;
+  }
+  .game-credits a { color: #111827; }
+
+  @media (max-width: 640px) {
+    .lost-page { padding-top: 1.5rem; }
+    .hud { font-size: 0.75rem; padding: 0.5rem; }
+    .hud-chip { padding: 0.2rem 0.55rem; }
+  }
+</style>
+
+<script is:inline>
+  (function () {
+    "use strict";
+
+    // -------- Setup --------
+    const canvas = document.getElementById("fox-game");
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+
+    const W = canvas.width;   // logische Welt 900x560
+    const H = canvas.height;
+
+    // Lustige Quotes oben — werden bei jedem Laden rotiert
+    const quotes = [
+      "Diese URL existiert nicht. Aber dieser Fuchs schon.",
+      "Du wolltest Webdesign — bekommen hast du Endboss.",
+      "404: Seite verschollen. Fuchs einsatzbereit.",
+      "Plot Twist: diese Seite war nie geplant.",
+      "Wer suchet, der findet... einen Fuchs in der Patsche.",
+      "Eine 404 zum Spielen schlägt jede leere Seite.",
+      "Falsche Adresse — richtige Action.",
+    ];
+    const quoteEl = document.getElementById("lost-quote");
+    if (quoteEl) {
+      quoteEl.textContent = quotes[Math.floor(Math.random() * quotes.length)];
+    }
+
+    const gameOverLines = [
+      "Nicht schlecht für jemanden, der die falsche URL erwischt hat.",
+      "Vielleicht nochmal? Die Startseite läuft dir nicht weg.",
+      "Der Fuchs würde sagen: Übung macht den Meister.",
+      "Du hast länger gespielt als die Seite gebraucht hätte zu laden.",
+      "Bug 1, Fuchs 0. Aber nur knapp.",
+    ];
+
+    // -------- World state --------
+    const keys = {};
+    let lastT = 0, running = false, paused = false;
+    let timeElapsed = 0;
+    let score = 0;
+    let pendingLevelUp = false;
+
+    const player = {
+      x: W / 2, y: H / 2,
+      r: 14,
+      speed: 180,           // px/s
+      hp: 100, maxHp: 100,
+      level: 1, xp: 0, xpToNext: 5,
+      fireCooldown: 0,
+      fireRate: 650,        // ms zwischen Schüssen
+      projSpeed: 380,       // px/s
+      projDamage: 10,
+      multishot: 1,
+      pickupRange: 60,
+      iFrames: 0,           // ms invuln nach Treffer
+    };
+
+    /** @type {Array<{x:number,y:number,vx:number,vy:number,ttl:number,dmg:number}>} */
+    const projectiles = [];
+    /** @type {Array<{x:number,y:number,hp:number,speed:number,r:number,dmg:number,emoji:string,xp:number,type:string}>} */
+    const enemies = [];
+    /** @type {Array<{x:number,y:number,value:number,t:number}>} */
+    const gems = [];
+    /** @type {Array<{x:number,y:number,text:string,ttl:number,vy:number,color:string}>} */
+    const floaters = [];
+
+    const enemyTypes = {
+      bug:   { hp: 12, speed: 55,  r: 13, dmg: 6,  emoji: "🐛", xp: 1 },
+      snake: { hp: 28, speed: 80,  r: 15, dmg: 9,  emoji: "🐍", xp: 2 },
+      ghost: { hp: 18, speed: 110, r: 14, dmg: 12, emoji: "👻", xp: 2 },
+      bot:   { hp: 110, speed: 45, r: 20, dmg: 18, emoji: "🤖", xp: 6 },
+    };
+
+    function spawnEnemy(type) {
+      const t = enemyTypes[type];
+      // an einer der vier Kanten spawnen
+      const edge = Math.floor(Math.random() * 4);
+      let x, y;
+      if (edge === 0)      { x = -30;     y = Math.random() * H; }
+      else if (edge === 1) { x = W + 30;  y = Math.random() * H; }
+      else if (edge === 2) { x = Math.random() * W; y = -30; }
+      else                 { x = Math.random() * W; y = H + 30; }
+      enemies.push({
+        x, y, hp: t.hp, speed: t.speed, r: t.r,
+        dmg: t.dmg, emoji: t.emoji, xp: t.xp, type,
+      });
+    }
+
+    let spawnTimer = 0;
+    function tickSpawning(dt) {
+      spawnTimer += dt;
+      // Spawnrate wird mit Zeit schneller
+      const interval = Math.max(0.35, 1.6 - timeElapsed * 0.012);
+      while (spawnTimer >= interval) {
+        spawnTimer -= interval;
+        // Mix an Gegnern je nach verstrichener Zeit
+        const r = Math.random();
+        if (timeElapsed < 20) {
+          spawnEnemy("bug");
+        } else if (timeElapsed < 50) {
+          spawnEnemy(r < 0.65 ? "bug" : "snake");
+        } else if (timeElapsed < 90) {
+          if (r < 0.45) spawnEnemy("bug");
+          else if (r < 0.8) spawnEnemy("snake");
+          else spawnEnemy("ghost");
+        } else {
+          if (r < 0.3) spawnEnemy("bug");
+          else if (r < 0.6) spawnEnemy("snake");
+          else if (r < 0.9) spawnEnemy("ghost");
+          else spawnEnemy("bot");
+        }
+      }
+    }
+
+    // -------- Input --------
+    window.addEventListener("keydown", (e) => {
+      if (["w","a","s","d","W","A","S","D","ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].includes(e.key)) {
+        keys[e.key.toLowerCase()] = true;
+        // Pfeile auf WASD mappen
+        if (e.key === "ArrowUp") keys.w = true;
+        if (e.key === "ArrowDown") keys.s = true;
+        if (e.key === "ArrowLeft") keys.a = true;
+        if (e.key === "ArrowRight") keys.d = true;
+        e.preventDefault();
+      }
+      if (e.key === "Escape" || e.key === "p" || e.key === "P") {
+        if (running) togglePause();
+      }
+    });
+    window.addEventListener("keyup", (e) => {
+      keys[e.key.toLowerCase()] = false;
+      if (e.key === "ArrowUp") keys.w = false;
+      if (e.key === "ArrowDown") keys.s = false;
+      if (e.key === "ArrowLeft") keys.a = false;
+      if (e.key === "ArrowRight") keys.d = false;
+    });
+
+    // Touch-Joystick
+    const joystick = document.getElementById("joystick");
+    const knob = document.getElementById("joystick-knob");
+    const isTouch = "ontouchstart" in window || navigator.maxTouchPoints > 0;
+    if (isTouch) joystick.hidden = false;
+    const joy = { active: false, dx: 0, dy: 0, cx: 0, cy: 0, radius: 40 };
+
+    function setKnob(dx, dy) {
+      const mag = Math.hypot(dx, dy);
+      if (mag > joy.radius) { dx = dx / mag * joy.radius; dy = dy / mag * joy.radius; }
+      knob.style.transform = `translate(${dx}px, ${dy}px)`;
+      joy.dx = dx / joy.radius;
+      joy.dy = dy / joy.radius;
+    }
+    function resetKnob() {
+      knob.style.transform = "translate(0,0)";
+      joy.dx = 0; joy.dy = 0;
+    }
+    joystick.addEventListener("touchstart", (e) => {
+      e.preventDefault();
+      const t = e.touches[0];
+      const rect = joystick.getBoundingClientRect();
+      joy.cx = rect.left + rect.width / 2;
+      joy.cy = rect.top + rect.height / 2;
+      joy.active = true;
+      setKnob(t.clientX - joy.cx, t.clientY - joy.cy);
+    }, { passive: false });
+    joystick.addEventListener("touchmove", (e) => {
+      if (!joy.active) return;
+      e.preventDefault();
+      const t = e.touches[0];
+      setKnob(t.clientX - joy.cx, t.clientY - joy.cy);
+    }, { passive: false });
+    joystick.addEventListener("touchend", (e) => {
+      e.preventDefault();
+      joy.active = false;
+      resetKnob();
+    });
+
+    // -------- Update --------
+    function nearestEnemy() {
+      let best = null, bestD = Infinity;
+      for (const e of enemies) {
+        const d = (e.x - player.x) ** 2 + (e.y - player.y) ** 2;
+        if (d < bestD) { bestD = d; best = e; }
+      }
+      return best;
+    }
+
+    function fireProjectile() {
+      const target = nearestEnemy();
+      if (!target) return;
+      const baseAngle = Math.atan2(target.y - player.y, target.x - player.x);
+      const spread = 0.18; // rad zwischen Multi-Schüssen
+      const n = player.multishot;
+      const offset = (n - 1) / 2;
+      for (let i = 0; i < n; i++) {
+        const ang = baseAngle + (i - offset) * spread;
+        projectiles.push({
+          x: player.x, y: player.y,
+          vx: Math.cos(ang) * player.projSpeed,
+          vy: Math.sin(ang) * player.projSpeed,
+          ttl: 1.8,
+          dmg: player.projDamage,
+        });
+      }
+    }
+
+    function addFloater(x, y, text, color) {
+      floaters.push({ x, y, text, ttl: 0.7, vy: -30, color: color || "#fff" });
+    }
+
+    function update(dt) {
+      timeElapsed += dt;
+      // Movement
+      let mx = 0, my = 0;
+      if (keys.w) my -= 1;
+      if (keys.s) my += 1;
+      if (keys.a) mx -= 1;
+      if (keys.d) mx += 1;
+      if (joy.active) { mx = joy.dx; my = joy.dy; }
+      const mag = Math.hypot(mx, my);
+      if (mag > 0) {
+        mx /= mag; my /= mag;
+        player.x += mx * player.speed * dt;
+        player.y += my * player.speed * dt;
+      }
+      // Clamp
+      player.x = Math.max(player.r, Math.min(W - player.r, player.x));
+      player.y = Math.max(player.r, Math.min(H - player.r, player.y));
+
+      if (player.iFrames > 0) player.iFrames -= dt * 1000;
+
+      // Schießen
+      player.fireCooldown -= dt * 1000;
+      if (player.fireCooldown <= 0) {
+        fireProjectile();
+        player.fireCooldown = player.fireRate;
+      }
+
+      // Projektile bewegen
+      for (let i = projectiles.length - 1; i >= 0; i--) {
+        const p = projectiles[i];
+        p.x += p.vx * dt;
+        p.y += p.vy * dt;
+        p.ttl -= dt;
+        if (p.ttl <= 0 || p.x < -20 || p.x > W + 20 || p.y < -20 || p.y > H + 20) {
+          projectiles.splice(i, 1);
+        }
+      }
+
+      // Spawning
+      tickSpawning(dt);
+
+      // Gegner bewegen sich zum Spieler
+      for (const e of enemies) {
+        const dx = player.x - e.x;
+        const dy = player.y - e.y;
+        const d = Math.hypot(dx, dy) || 1;
+        e.x += (dx / d) * e.speed * dt;
+        e.y += (dy / d) * e.speed * dt;
+      }
+
+      // Gegner gegen einander leicht entstacken
+      for (let i = 0; i < enemies.length; i++) {
+        for (let j = i + 1; j < enemies.length; j++) {
+          const a = enemies[i], b = enemies[j];
+          const dx = b.x - a.x, dy = b.y - a.y;
+          const d = Math.hypot(dx, dy);
+          const minD = a.r + b.r;
+          if (d > 0 && d < minD) {
+            const push = (minD - d) / 2;
+            const nx = dx / d, ny = dy / d;
+            a.x -= nx * push * 0.5;
+            a.y -= ny * push * 0.5;
+            b.x += nx * push * 0.5;
+            b.y += ny * push * 0.5;
+          }
+        }
+      }
+
+      // Projektil-Treffer
+      for (let i = projectiles.length - 1; i >= 0; i--) {
+        const p = projectiles[i];
+        for (let j = enemies.length - 1; j >= 0; j--) {
+          const e = enemies[j];
+          const d2 = (p.x - e.x) ** 2 + (p.y - e.y) ** 2;
+          if (d2 < (e.r + 4) ** 2) {
+            e.hp -= p.dmg;
+            addFloater(e.x, e.y - e.r, String(p.dmg), "#fbbf24");
+            projectiles.splice(i, 1);
+            if (e.hp <= 0) {
+              score += 10 * e.xp;
+              gems.push({ x: e.x, y: e.y, value: e.xp, t: 0 });
+              enemies.splice(j, 1);
+            }
+            break;
+          }
+        }
+      }
+
+      // Gegner trifft Spieler
+      for (const e of enemies) {
+        const d2 = (e.x - player.x) ** 2 + (e.y - player.y) ** 2;
+        if (d2 < (e.r + player.r) ** 2) {
+          if (player.iFrames <= 0) {
+            player.hp -= e.dmg;
+            player.iFrames = 600;
+            addFloater(player.x, player.y - 24, "-" + e.dmg, "#f87171");
+            if (player.hp <= 0) { player.hp = 0; endGame(); return; }
+          }
+        }
+      }
+
+      // Gems anziehen / einsammeln
+      for (let i = gems.length - 1; i >= 0; i--) {
+        const g = gems[i];
+        g.t += dt;
+        const dx = player.x - g.x, dy = player.y - g.y;
+        const d = Math.hypot(dx, dy) || 1;
+        if (d < player.pickupRange) {
+          // anziehen
+          g.x += (dx / d) * 220 * dt;
+          g.y += (dy / d) * 220 * dt;
+        }
+        if (d < player.r + 6) {
+          player.xp += g.value;
+          gems.splice(i, 1);
+          while (player.xp >= player.xpToNext) {
+            player.xp -= player.xpToNext;
+            player.level++;
+            player.xpToNext = Math.floor(player.xpToNext * 1.45 + 1);
+            triggerLevelUp();
+          }
+        }
+      }
+
+      // Floater
+      for (let i = floaters.length - 1; i >= 0; i--) {
+        const f = floaters[i];
+        f.ttl -= dt;
+        f.y += f.vy * dt;
+        if (f.ttl <= 0) floaters.splice(i, 1);
+      }
+    }
+
+    // -------- Level-Up --------
+    const upgradesPool = [
+      { id: "dmg", icon: "💥", title: "Bissschaden", desc: "+25% Schaden",
+        apply: () => { player.projDamage = Math.round(player.projDamage * 1.25); } },
+      { id: "rate", icon: "⚡", title: "Reflexe", desc: "+18% Feuerrate",
+        apply: () => { player.fireRate = Math.max(120, player.fireRate * 0.82); } },
+      { id: "speed", icon: "🏃", title: "Pfoten", desc: "+12% Tempo",
+        apply: () => { player.speed *= 1.12; } },
+      { id: "multi", icon: "🎯", title: "Triple-Shot", desc: "+1 Projektil",
+        apply: () => { player.multishot = Math.min(5, player.multishot + 1); } },
+      { id: "hp", icon: "❤️", title: "Robust", desc: "+25 max HP & heilen",
+        apply: () => { player.maxHp += 25; player.hp = Math.min(player.maxHp, player.hp + 25); } },
+      { id: "pickup", icon: "🧲", title: "Magnet", desc: "+25 Pickup-Range",
+        apply: () => { player.pickupRange += 25; } },
+      { id: "proj", icon: "💨", title: "Windhose", desc: "+25% Projektil-Tempo",
+        apply: () => { player.projSpeed *= 1.25; } },
+      { id: "heal", icon: "🩹", title: "Sofortheilung", desc: "+40 HP jetzt",
+        apply: () => { player.hp = Math.min(player.maxHp, player.hp + 40); } },
+    ];
+
+    function triggerLevelUp() {
+      pendingLevelUp = true;
+      paused = true;
+      const grid = document.getElementById("upgrade-grid");
+      grid.innerHTML = "";
+      // 3 zufällige Upgrades
+      const pool = upgradesPool.slice().sort(() => Math.random() - 0.5).slice(0, 3);
+      pool.forEach((u) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "upgrade-card";
+        btn.innerHTML =
+          '<span class="upgrade-icon">' + u.icon + '</span>' +
+          '<div class="upgrade-title">' + u.title + '</div>' +
+          '<div class="upgrade-desc">' + u.desc + '</div>';
+        btn.addEventListener("click", () => {
+          u.apply();
+          document.getElementById("overlay-levelup").hidden = true;
+          pendingLevelUp = false;
+          paused = false;
+          lastT = performance.now();
+        });
+        grid.appendChild(btn);
+      });
+      document.getElementById("levelup-num").textContent = String(player.level);
+      document.getElementById("overlay-levelup").hidden = false;
+    }
+
+    // -------- Render --------
+    function draw() {
+      ctx.clearRect(0, 0, W, H);
+
+      // Hintergrund-Raster
+      ctx.save();
+      ctx.strokeStyle = "rgba(255,255,255,0.04)";
+      ctx.lineWidth = 1;
+      const grid = 40;
+      for (let x = 0; x < W; x += grid) {
+        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
+      }
+      for (let y = 0; y < H; y += grid) {
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+      }
+      ctx.restore();
+
+      // Pickup-Range (dezent)
+      ctx.save();
+      ctx.strokeStyle = "rgba(167, 139, 250, 0.15)";
+      ctx.setLineDash([4, 6]);
+      ctx.beginPath();
+      ctx.arc(player.x, player.y, player.pickupRange, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.restore();
+
+      // Gems
+      ctx.save();
+      for (const g of gems) {
+        const pulse = 1 + Math.sin(g.t * 6) * 0.15;
+        ctx.fillStyle = "#a78bfa";
+        ctx.shadowColor = "#a78bfa";
+        ctx.shadowBlur = 8;
+        ctx.beginPath();
+        ctx.arc(g.x, g.y, 4 * pulse, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.restore();
+
+      // Projektile
+      ctx.save();
+      ctx.fillStyle = "#fbbf24";
+      ctx.shadowColor = "#fbbf24";
+      ctx.shadowBlur = 6;
+      for (const p of projectiles) {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.restore();
+
+      // Gegner
+      ctx.save();
+      ctx.font = "26px system-ui, sans-serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      for (const e of enemies) {
+        ctx.fillText(e.emoji, e.x, e.y);
+        // HP-Streifen für angekratzte Gegner
+        const t = enemyTypes[e.type];
+        if (e.hp < t.hp) {
+          const w = 24;
+          const ratio = e.hp / t.hp;
+          ctx.fillStyle = "rgba(0,0,0,0.5)";
+          ctx.fillRect(e.x - w/2, e.y + e.r + 4, w, 3);
+          ctx.fillStyle = "#f87171";
+          ctx.fillRect(e.x - w/2, e.y + e.r + 4, w * ratio, 3);
+        }
+      }
+      ctx.restore();
+
+      // Spieler
+      ctx.save();
+      ctx.font = "28px system-ui, sans-serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      if (player.iFrames > 0 && Math.floor(player.iFrames / 80) % 2 === 0) {
+        ctx.globalAlpha = 0.4;
+      }
+      ctx.fillText("🦊", player.x, player.y);
+      ctx.restore();
+
+      // Floater
+      ctx.save();
+      ctx.textAlign = "center";
+      ctx.font = "bold 14px system-ui, sans-serif";
+      for (const f of floaters) {
+        ctx.globalAlpha = Math.max(0, f.ttl / 0.7);
+        ctx.fillStyle = f.color;
+        ctx.fillText(f.text, f.x, f.y);
+      }
+      ctx.restore();
+    }
+
+    // -------- HUD --------
+    const elLevel = document.getElementById("hud-level");
+    const elTime = document.getElementById("hud-time");
+    const elScore = document.getElementById("hud-score");
+    const elHp = document.getElementById("hud-hp-fill");
+    const elXp = document.getElementById("hud-xp-fill");
+
+    function fmtTime(s) {
+      const m = Math.floor(s / 60);
+      const r = Math.floor(s % 60);
+      return m + ":" + String(r).padStart(2, "0");
+    }
+    function syncHud() {
+      elLevel.textContent = String(player.level);
+      elTime.textContent = fmtTime(timeElapsed);
+      elScore.textContent = String(score);
+      elHp.style.transform = "scaleX(" + (player.hp / player.maxHp) + ")";
+      elXp.style.transform = "scaleX(" + (player.xp / player.xpToNext) + ")";
+    }
+
+    // -------- Loop --------
+    function loop(t) {
+      if (!running) return;
+      const dt = Math.min(0.05, (t - lastT) / 1000);
+      lastT = t;
+      if (!paused) {
+        update(dt);
+        if (!running) return; // endGame() ggf. ausgelöst
+      }
+      draw();
+      syncHud();
+      requestAnimationFrame(loop);
+    }
+
+    // -------- Game lifecycle --------
+    function reset() {
+      projectiles.length = 0;
+      enemies.length = 0;
+      gems.length = 0;
+      floaters.length = 0;
+      player.x = W / 2; player.y = H / 2;
+      player.hp = 100; player.maxHp = 100;
+      player.level = 1; player.xp = 0; player.xpToNext = 5;
+      player.speed = 180;
+      player.fireRate = 650; player.fireCooldown = 0;
+      player.projDamage = 10; player.projSpeed = 380;
+      player.multishot = 1;
+      player.pickupRange = 60;
+      player.iFrames = 0;
+      timeElapsed = 0; score = 0; spawnTimer = 0;
+    }
+    function startGame() {
+      reset();
+      document.getElementById("overlay-start").hidden = true;
+      document.getElementById("overlay-gameover").hidden = true;
+      document.getElementById("overlay-levelup").hidden = true;
+      document.getElementById("overlay-pause").hidden = true;
+      running = true;
+      paused = false;
+      lastT = performance.now();
+      requestAnimationFrame(loop);
+    }
+    function endGame() {
+      running = false;
+      document.getElementById("go-time").textContent = fmtTime(timeElapsed);
+      document.getElementById("go-score").textContent = String(score);
+      document.getElementById("go-level").textContent = String(player.level);
+      document.getElementById("go-line").textContent =
+        gameOverLines[Math.floor(Math.random() * gameOverLines.length)];
+      document.getElementById("overlay-gameover").hidden = false;
+    }
+    function togglePause() {
+      if (pendingLevelUp) return; // Level-Up zählt nicht als normale Pause
+      paused = !paused;
+      document.getElementById("overlay-pause").hidden = !paused;
+      if (!paused) { lastT = performance.now(); }
+    }
+
+    document.getElementById("btn-start").addEventListener("click", startGame);
+    document.getElementById("btn-restart").addEventListener("click", startGame);
+    document.getElementById("btn-resume").addEventListener("click", togglePause);
+    document.getElementById("hud-pause").addEventListener("click", togglePause);
+
+    // Initiale Zeichnung damit Hintergrund schon hübsch aussieht
+    draw();
+  })();
+</script>
