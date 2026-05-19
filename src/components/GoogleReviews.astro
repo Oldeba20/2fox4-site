@@ -69,8 +69,9 @@ const trackItems = [...reviews, ...reviews, ...reviews];
           über die Zusammenarbeit.
         </h2>
         <p class="max-w-[560px] text-[17px] leading-[1.6] text-[var(--color-text-muted)]">
-          Echte Google-Bewertungen, ungefiltert. Karten zum Stoppen mit dem
-          Mauszeiger überfahren — Klick öffnet die Original­bewertung.
+          Echte Google-Bewertungen, ungefiltert. Zum Stoppen kurz mit dem
+          Mauszeiger überfahren oder mit dem Finger antippen — Klick öffnet
+          die Original­bewertung.
         </p>
       </div>
 
@@ -197,15 +198,17 @@ const trackItems = [...reviews, ...reviews, ...reviews];
     backface-visibility: hidden;
   }
   /* Hover pausiert NUR auf echten Pointer-Geräten (Maus/Trackpad).
-     Auf Touch (iOS/Android) würde :hover beim Antippen "kleben" und
-     die Animation dauerhaft anhalten — Klick funktioniert dort auch
-     ohne Pause. Tastatur-Fokus pausiert weiterhin (a11y). */
+     Auf Touch (iOS/Android) wird die Pause stattdessen per JS gesetzt
+     (Klasse `is-touch-paused`), damit der User mit dem Finger anhalten
+     kann, um eine Bewertung in Ruhe zu lesen — ohne das "Hover-klebt"-
+     Problem. Tastatur-Fokus pausiert weiterhin (a11y). */
   @media (hover: hover) {
     .reviews-marquee:hover .reviews-marquee-track {
       animation-play-state: paused;
     }
   }
-  .reviews-marquee:focus-within .reviews-marquee-track {
+  .reviews-marquee:focus-within .reviews-marquee-track,
+  .reviews-marquee.is-touch-paused .reviews-marquee-track {
     animation-play-state: paused;
   }
   @keyframes reviews-marquee {
@@ -281,3 +284,40 @@ const trackItems = [...reviews, ...reviews, ...reviews];
     .reviews-marquee-fade { display: none; }
   }
 </style>
+
+<script>
+  /**
+   * Touch-Pause für die Reviews-Marquee.
+   * Auf Touch-Geräten lässt sich :hover nicht zuverlässig nutzen
+   * (würde beim Antippen "kleben"). Stattdessen setzen wir per
+   * touchstart die Klasse `is-touch-paused` und entfernen sie bei
+   * touchend / touchcancel. Pointer-Events decken Stift- und Hybrid-
+   * Geräte mit ab, ohne die Maus-Hover-CSS-Regel zu duplizieren.
+   */
+  (function initReviewsTouchPause() {
+    const marquee = document.querySelector<HTMLElement>(".reviews-marquee");
+    if (!marquee) return;
+
+    const pause = () => marquee.classList.add("is-touch-paused");
+    const resume = () => marquee.classList.remove("is-touch-paused");
+
+    // Touch — Finger pausiert, Loslassen resumiert.
+    marquee.addEventListener("touchstart", pause, { passive: true });
+    marquee.addEventListener("touchend", resume, { passive: true });
+    marquee.addEventListener("touchcancel", resume, { passive: true });
+
+    // Pointer Events: deckt Stift + Hybrid-Geräte (Surface, iPad mit Pen)
+    // ab. Wir reagieren NUR auf "touch"- und "pen"-Pointer, damit die
+    // bestehende Maus-Hover-CSS-Regel weiterhin greift und sich nicht
+    // mit dieser JS-Pause überlagert.
+    marquee.addEventListener("pointerdown", (e) => {
+      if (e.pointerType === "touch" || e.pointerType === "pen") pause();
+    });
+    const pointerEnd = (e: PointerEvent) => {
+      if (e.pointerType === "touch" || e.pointerType === "pen") resume();
+    };
+    marquee.addEventListener("pointerup", pointerEnd);
+    marquee.addEventListener("pointercancel", pointerEnd);
+    marquee.addEventListener("pointerleave", pointerEnd);
+  })();
+</script>
