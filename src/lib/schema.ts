@@ -99,6 +99,8 @@ export function localBusinessSchema(opts?: {
       "Nienburg",
       "Bad Münder",
       "Barsinghausen",
+      "Gehrden",
+      "Garbsen",
     ]).map((name) => ({ "@type": "City", name })),
     openingHoursSpecification: {
       "@type": "OpeningHoursSpecification",

@@ -382,6 +382,74 @@ export const cities: City[] = [
       },
     ],
   },
+  {
+    slug: "webdesign-gehrden",
+    name: "Gehrden",
+    inhabitantAdjective: "Gehrdener",
+    distance: { km: 32, note: "ca. 30 Minuten mit dem Auto über die A2" },
+    geo: { latitude: 52.3019, longitude: 9.6019 },
+    heroEyebrow: "Webagentur für Gehrden · seit 2008",
+    heroTitleLine1: "Webdesigner für",
+    heroTitleLine2: "Gehrden am Gehrdener Berg.",
+    heroSub:
+      "Websites, Onlineshops und lokale SEO für Unternehmen aus Gehrden und dem Calenberger Land. Unser Büro liegt in Sachsenhagen, etwa 32 km von der Innenstadt entfernt — Vor-Ort-Termine sind selbstverständlich möglich. Persönliche Beratung statt Konzern-Agentur.",
+    localContext:
+      "Gehrden ist mit rund 15.000 Einwohnern eine charakteristische Calenberger Stadt am Fuß des Gehrdener Bergs — kurz hinter dem Stadtrand Hannovers, aber mit eigenem Stadtbild, Wochenmarkt und gewachsener Vereinsstruktur. Die Wirtschaft prägen klassischer Mittelstand, Handwerk, Gesundheitsdienstleister (das Klinikum Robert Koch ist einer der größten Arbeitgeber) und ein wachsender Pendler-Anteil nach Hannover. Für Gehrdener Unternehmen heißt das: ihr konkurriert in Google nicht nur mit Mitbewerbern in Gehrden, sondern auch mit Hannover-Anbietern — gepflegtes Google-Business-Profil, schnelle Mobile-Performance und sauberes LocalBusiness-Markup sind hier kein Nice-to-have, sondern Pflicht.",
+    localFAQs: [
+      {
+        question: "Habt ihr Erfahrung mit Gehrdener Mittelständlern und Handwerksbetrieben?",
+        answerHtml: `Ja — der Calenberger Mittelstand ist seit Jahren eines unserer Kerngebiete. Typische Gehrdener Aufträge sind Handwerksbetriebe (Heizung-Sanitär, Elektro, Tischlerei), Gesundheitsdienstleister im Umfeld des Klinikums sowie inhabergeführte Einzelhändler in der Burgstraße und am Markt. Wir bauen Websites, die Anfragen generieren — keine Marketing-Show — und kennen die Auftraggeber-Mentalität: bodenständig, ergebnisorientiert, ohne Buzzword-Geduld.`,
+      },
+      {
+        question: "Wie wichtig ist lokale SEO speziell für Gehrden, wenn Hannover gleich nebenan ist?",
+        answerHtml: `Sehr wichtig — und genau deshalb gewinnen Gehrdener Betriebe häufig <strong>gegen</strong> Hannoveraner Mitbewerber, wenn sie es richtig anstellen. Wer in Gehrden „Friseur in der Nähe“ oder „Steuerberater Gehrden“ googelt, will keinen Hannover-Anbieter — Google weiß das und zeigt im Local Pack bevorzugt Treffer aus dem direkten Umkreis. Mit sauberem Google-Business-Profil, konsistenten NAP-Daten und Schema.org-LocalBusiness-Markup lassen sich diese Local-Pack-Plätze sehr gezielt gewinnen.`,
+      },
+      {
+        question: "Bedient ihr auch Gesundheits- und Klinik-bezogene Anbieter in Gehrden?",
+        answerHtml: `Ja. Rund um das Klinikum Robert Koch sitzen viele Fachärzte, Physiotherapie-Praxen, Pflegedienste und Reha-Anbieter. Diese Branche hat besondere Anforderungen: DSGVO-konforme Patientenformulare, klare Trennung zwischen Werbung und medizinischer Information (Heilmittelwerbegesetz), Trust-Signale wie Zertifizierungen und Bewertungen. Wir bauen Websites, die diesen rechtlichen Rahmen einhalten und trotzdem ansprechend aussehen — und SEO-technisch sauber funktionieren.`,
+      },
+      {
+        question: "Wie ist die Anfahrt von Sachsenhagen nach Gehrden und kommt ihr regelmäßig?",
+        answerHtml: `Aus Sachsenhagen sind wir in rund 30 Minuten bei dir — über die A2, Abfahrt Hannover-Herrenhausen oder Bad Nenndorf je nach Tageszeit. Bei laufenden Projekten in Gehrden planen wir typischerweise alle 4-6 Wochen einen halben Tag vor Ort, oder bündeln Termine mit Bookings in Barsinghausen oder Hannover-West zu einer effizienten Tagestour.`,
+      },
+    ],
+  },
+  {
+    slug: "webdesign-garbsen",
+    name: "Garbsen",
+    inhabitantAdjective: "Garbsener",
+    distance: { km: 22, note: "ca. 25 Minuten mit dem Auto über die A2" },
+    geo: { latitude: 52.4263, longitude: 9.6011 },
+    heroEyebrow: "Webagentur für Garbsen · seit 2008",
+    heroTitleLine1: "Webdesigner für",
+    heroTitleLine2: "Garbsen & die Region Hannover.",
+    heroSub:
+      "Websites, Onlineshops und SEO-Strategien für Garbsener Unternehmen — vom Maschinenbau am Campus bis zum Handwerksbetrieb in Berenbostel. Unser Büro in Sachsenhagen liegt nur 22 km von Garbsen entfernt, A2-direkt. Persönlich, regional, mit langjähriger B2B-Erfahrung.",
+    localContext:
+      "Garbsen ist mit rund 62.000 Einwohnern die größte Stadt in unserem Einzugsgebiet nach Minden und gleichzeitig eine der dynamischsten Wirtschaftsregionen rund um Hannover. Der Maschinenbau-Campus der Leibniz Universität (Produktionstechnisches Zentrum, PZH) macht Garbsen zu einem Hightech-Standort mit über 20 Forschungsinstituten und etlichen Spin-offs. Daneben prägen Logistik (Mittellandkanal-Anbindung, Nähe Hannover-Hafen), Maschinenbau-Mittelstand und ein starker Einzelhandel rund um den Garbsen-Center und Berenbostel das Stadtbild. Für Unternehmen heißt das: B2B-Webdesign mit klarem Kompetenzbeweis, Karriere-Seiten für Fachkräfte-Rekrutierung und SEO, das gegen Hannover-Wettbewerber besteht.",
+    localFAQs: [
+      {
+        question: "Habt ihr Erfahrung mit B2B-Mittelständlern und Maschinenbau-Unternehmen aus Garbsen?",
+        answerHtml: `Ja — Garbsener B2B-Mittelstand bedeutet meistens: technische Produkte, lange Vertriebszyklen, Fachkräfte-Rekrutierung als zweite Säule. Hier zählt eine Website, die Vertrieb aktiv unterstützt — Produkt-Datenblätter, Case-Studies, Whitepaper-Downloads, klare Kontakt-Funnel und eine starke Karriere-Sektion. Reines „schicke Website“ greift in diesem Umfeld zu kurz. Wir bauen für Maschinenbau, Logistik und technische Dienstleister regelmäßig.`,
+      },
+      {
+        question: "Bedient ihr auch Spin-offs und Forschungs-Unternehmen vom PZH-Campus?",
+        answerHtml: `Ja. Junge Tech-Unternehmen aus dem Umfeld des Produktionstechnischen Zentrums haben spezifische Anforderungen: schneller Launch eines glaubwürdigen Auftritts, Wissenschafts-zu-Sales-Übersetzung des Angebots, Investoren- und Partner-Seiten. Wir liefern hier oft eine kompakte WordPress-Visitenkartenseite zum Start, die später um Produkt-Sections und Fallstudien wachsen kann — ohne komplettes Redesign.`,
+      },
+      {
+        question: "Wie weit ist Garbsen von eurem Büro entfernt und kommt ihr regelmäßig vor Ort?",
+        answerHtml: `Aus Sachsenhagen sind wir in rund 25 Minuten in Garbsen — über die A2 direkt zur Abfahrt Garbsen oder Herrenhausen. Bei laufenden Projekten planen wir monatliche Strategie-Termine vor Ort, oder kommen für Workshop-Tage in dein Büro. Garbsen liegt für uns auf der direkten Achse Sachsenhagen-Hannover, das macht Vor-Ort-Termine sehr unkompliziert.`,
+      },
+      {
+        question: "Macht ihr lokale SEO für Garbsener Einzelhändler und Handwerker?",
+        answerHtml: `Klar — und gerade in Garbsen ist das besonders spannend, weil die Stadt aus mehreren historisch gewachsenen Ortsteilen besteht (Garbsen-Mitte, Berenbostel, Altgarbsen, Havelse, Schloß Ricklingen, Frielingen, Stelingen, Heitlingen, Horst, Meyenfeld, Osterwald). Wer „Friseur Berenbostel“ oder „Handwerker Altgarbsen“ googelt, sucht hyper-lokal — und genau für diese Stadtteil-Suchen optimieren wir mit Schema.org-LocalBusiness, sauberen Google-Business-Profilen und stadtteilspezifischen Landingpages.`,
+      },
+      {
+        question: "Konkurriert Garbsen mit Hannover bei Online-Suchen — und wenn ja, wie helft ihr?",
+        answerHtml: `Definitiv. Wer in Garbsen sucht, bekommt häufig Hannover-Mitbewerber angezeigt, weil die Stadt direkt an Hannover grenzt. Unsere Antwort: konsequent lokale Signale stärken — Garbsener Adresse prominent platzieren, Stadtteil-Bezüge in Texten, lokale Backlinks (Stadtportal Garbsen, Vereins-Sponsoring, regionale Verzeichnisse) und ein gepflegter Google-Business-Eintrag mit aktuellen Fotos und Bewertungen. Das schlägt einen anonymen Hannover-Anbieter regelmäßig.`,
+      },
+    ],
+  },
 ];
 
 /** Hole eine Stadt per Slug; wirft, wenn nicht gefunden. */

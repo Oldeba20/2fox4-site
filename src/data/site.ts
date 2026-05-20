@@ -61,6 +61,10 @@ export const site = {
       { label: 'Rinteln', href: '/webdesign-rinteln/' },
       { label: 'Minden', href: '/webdesign-minden/' },
       { label: 'Nienburg', href: '/webdesign-nienburg/' },
+      { label: 'Bad Münder', href: '/webdesign-bad-muender/' },
+      { label: 'Barsinghausen', href: '/webdesign-barsinghausen/' },
+      { label: 'Gehrden', href: '/webdesign-gehrden/' },
+      { label: 'Garbsen', href: '/webdesign-garbsen/' },
     ],
     pflicht: [
       { label: 'Impressum', href: '/impressum/' },
