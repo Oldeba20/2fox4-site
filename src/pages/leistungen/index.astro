@@ -1,6 +1,6 @@
 ---
 /**
- * /leistungen/ — Übersicht aller 7 Leistungsseiten.
+ * /leistungen/ — Übersicht aller 8 Leistungsseiten.
  */
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import Breadcrumb from "../../components/Breadcrumb.astro";
@@ -8,9 +8,9 @@ import CTASection from "../../components/CTASection.astro";
 import { services } from "../../data/services";
 import { breadcrumbSchema } from "../../lib/schema";
 
-const title = "Leistungen — 2FOX4 Webdesign, SEO, Wartung & Hosting";
+const title = "Leistungen — 2FOX4 Webdesign, SEO, Wartung, Hosting & Print";
 const description =
-  "Alle Leistungen von 2FOX4 im Überblick: Webdesign, SEO, WordPress-Wartung, Hosting, Digitalisierungsberatung, BAFA-Förderung und Barrierefreiheit.";
+  "Alle Leistungen von 2FOX4 im Überblick: Webdesign, SEO, WordPress-Wartung, Hosting, Digitalisierungsberatung, BAFA-Förderung, Barrierefreiheit sowie Print- und Messedesign.";
 
 const schema = breadcrumbSchema([
   { name: "Start", url: "/" },
@@ -37,8 +37,9 @@ const schema = breadcrumbSchema([
         <span class="text-gradient-accent">tun können.</span>
       </h1>
       <p class="max-w-[680px] text-lg text-[var(--color-text-muted)]">
-        Sieben Leistungsbereiche, die ineinandergreifen. Du kannst sie einzeln
-        buchen oder als Paket — beide Wege funktionieren.
+        Acht Leistungsbereiche, die ineinandergreifen. Vom digitalen Auftritt
+        bis zum gedruckten Messestand — du kannst sie einzeln buchen oder als
+        Paket.
       </p>
     </div>
   </section>

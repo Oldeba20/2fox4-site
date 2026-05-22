@@ -36,6 +36,7 @@ const serviceTypeMap: Record<string, string> = {
   hosting: "Web Hosting",
   "bafa-foerderung": "Government Funding Consulting",
   "barrierefreie-website": "Accessibility Compliance Service",
+  "print-design": "Graphic Design Service",
 };
 
 const schema = [
@@ -123,6 +124,18 @@ const schema = [
               ))}
             </ul>
           </div>
+        )}
+
+        {section.image && (
+          <figure class="mt-12 overflow-hidden rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg-card)]">
+            <img
+              src={section.image.src}
+              alt={section.image.alt}
+              loading="lazy"
+              decoding="async"
+              class="block w-full h-auto"
+            />
+          </figure>
         )}
       </div>
     </section>

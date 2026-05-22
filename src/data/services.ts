@@ -1,5 +1,5 @@
 /**
- * Daten für die 7 Leistungsseiten unter /leistungen/.
+ * Daten für die 8 Leistungsseiten unter /leistungen/.
  *
  * Struktur pro Service:
  *   - slug, title, kicker (Eyebrow)
@@ -20,6 +20,15 @@ export interface ServiceSection {
   bullets?: string[];
   /** Alternativer Layout-Modus: "split" zeigt Body links + Bullets rechts; "stacked" alles untereinander */
   layout?: "split" | "stacked";
+  /** Optionales Bild, das innerhalb der Section angezeigt wird */
+  image?: {
+    /** Pfad relativ zur Site-Root, z. B. "/images/leistungen/print-design/flyer.svg" */
+    src: string;
+    /** Beschreibender Alt-Text für SEO und Screenreader */
+    alt: string;
+    /** Position: "right" (neben Bullets/Body) oder "below" (volle Breite unter Headline) */
+    position?: "right" | "below";
+  };
 }
 
 export interface Service {
@@ -388,6 +397,98 @@ export const services: Service[] = [
       {
         question: "Was kostet ein Barrierefreiheits-Audit?",
         answerHtml: `Ein erster Audit mit Maßnahmen-Liste ab <strong>490 €</strong>. Umsetzung je nach Aufwand. Bei neu gebauten Websites ist Barrierefreiheit im Preis enthalten.`,
+      },
+    ],
+  },
+  {
+    slug: "print-design",
+    name: "Print- & Messedesign",
+    kicker: "Leistung · Print & Messe",
+    seoTitle: "Print-Design & Messebau aus Sachsenhagen — Flyer, Plakate, Prospekte, Messestand",
+    seoDescription:
+      "Wir gestalten Flyer, Prospekte, Plakate und ganze Messestände — vom Reinzeichnungs-PDF bis zum aufgebauten Stand. Druckfertig, markenkonsistent, regional aus Niedersachsen.",
+    heroTitleLine1: "Print, der nicht",
+    heroTitleLine2: "im Papierkorb landet.",
+    heroSub:
+      "Visitenkarte, Imageprospekt, A0-Plakat oder kompletter Messestand — wir denken Druck und Raum von der Marke her, nicht von der Vorlage im Online-Shop. Reinzeichnungssicher, drucklos abnehmbar, mit Druckerei deiner Wahl oder unserer.",
+    cardSummary:
+      "Flyer, Prospekte, Plakate und Messestände — markenkonsistent gestaltet, druckfertig geliefert. Regional aus Sachsenhagen.",
+    iconSvg: `<path d="M6 2h9l5 5v15a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1z"/><path d="M14 2v6h6"/><path d="M9 13h6M9 17h6M9 9h2"/>`,
+    sections: [
+      {
+        eyebrow: "Was wir gestalten",
+        headline: "Vom Visitenkarten-Stapel bis zum 24 m² Messestand.",
+        body: `<p>Wir bauen nicht nur Websites — wir gestalten die komplette visuelle Identität, mit der dein Unternehmen am Markt auftritt. Ob du gerade einen Imageprospekt für die nächste Akquise brauchst, ein A0-Plakat für die regionale Veranstaltung oder einen Messestand, der auf der nächsten Hannover Messe Aufmerksamkeit zieht: wir liefern Konzept, Layout und druckfertige Reinzeichnung aus einer Hand.</p><p>Alle Druck-Materialien werden im selben visuellen System wie deine Website gestaltet — Farbe, Typografie, Bildsprache bleiben konsistent. Das spart dir auf Dauer Geld, weil du kein zweites Mal „Corporate Design" einkaufen musst.</p>`,
+        bullets: [
+          "Flyer & Folder (DIN lang, A6, A5, Wickelfalz)",
+          "Imageprospekte & Kataloge (8 bis 64 Seiten)",
+          "Plakate (A3 bis A0, City-Light, Bauzaun)",
+          "Visitenkarten, Briefpapier, Rechnungsvorlagen",
+          "Rollups, Banner, Beachflags",
+          "Messestände (Modul bis individueller Standbau)",
+        ],
+        layout: "split",
+        image: {
+          src: "/images/leistungen/print-design/flyer-mockup.svg",
+          alt: "Drei aufgefächerte Flyer im 2fox4-Designsystem mit schwarzem Hintergrund und orangenem Akzent",
+          position: "below",
+        },
+      },
+      {
+        eyebrow: "Wie wir arbeiten",
+        headline: "Briefing, Konzept, Reinzeichnung — und dann ab in den Druck.",
+        body: `<p>Der Ablauf für ein Print-Projekt ist immer derselbe, egal ob Flyer oder Messestand: wir starten mit einem <strong>Briefing-Gespräch</strong> (Zielgruppe, Botschaft, Distributionsweg). Daraus entstehen 1-2 Layout-Konzepte, die wir gemeinsam an deinen Texten und Bildern entlang verfeinern. Erst wenn alles passt, geht's in die <strong>Reinzeichnung</strong> — also das druckfertige PDF mit Beschnitt, Passmarken und richtigem Farbprofil (CMYK Fogra39 in der Regel).</p><p>Den Druck selbst übernehmen wir bei Bedarf über unsere Partner-Druckereien in der Region (kurze Wege, faire Preise), oder du lieferst die Dateien bei deiner Hausdruckerei ab. Bei Messeständen koordinieren wir den Aufbau direkt mit dem Standbauer.</p>`,
+        layout: "stacked",
+        image: {
+          src: "/images/leistungen/print-design/plakat-mockup.svg",
+          alt: "A1-Plakat-Mockup an einer Litfaßsäule mit Beispiel-Layout in 2fox4-Schwarz-Orange",
+          position: "below",
+        },
+      },
+      {
+        eyebrow: "Messestände",
+        headline: "Wir denken den Stand vom ersten Eindruck bis zum Gesprächsplatz.",
+        body: `<p>Ein guter Messestand ist mehr als eine bedruckte Rückwand mit Logo. Wir planen Stände von <strong>9 m² bis 60 m²</strong> — mit klarer Besucherführung, Blickfang-Element auf 8 Meter Sichtweite, Gesprächs- und Rückzugszonen sowie Lager- und Cateringbereich. Auf Wunsch komplett mit 3D-Visualisierung vor der Buchung, damit du dem Vorstand zeigen kannst, was am Standort ankommt.</p><p>Typische Stationen, die wir abdecken: <strong>Hannover Messe, Domotex, IAA, IDS, lokale Gewerbeschauen</strong> in Stadthagen, Minden und Hannover. Wir arbeiten mit zwei festen Standbau-Partnern aus der Region zusammen, kennen die Hallen und die Logistik.</p>`,
+        bullets: [
+          "Standkonzept mit Grundriss und 3D-Visualisierung",
+          "Grafiken für Rückwand, Theken, Counter, Stelen",
+          "Druckdaten in Standbauer-Spezifikation",
+          "Mietsysteme oder individueller Standbau",
+          "Koordination Aufbau & Abbau vor Ort",
+          "Erweiterbar um Giveaways, Roll-ups, Lanyards",
+        ],
+        layout: "split",
+        image: {
+          src: "/images/leistungen/print-design/messestand-mockup.svg",
+          alt: "3D-Visualisierung eines modularen Messestands mit Theke, Rückwand und Roll-up im 2fox4-Designsystem",
+          position: "below",
+        },
+      },
+    ],
+    faq: [
+      {
+        question: "Was kostet ein Flyer oder Prospekt?",
+        answerHtml: `Ein klassischer DIN-lang-Flyer (4-seitig, Wickelfalz) startet bei <strong>250 € Gestaltung</strong> plus Druck. Ein Imageprospekt mit 8-12 Seiten typischerweise zwischen <strong>800 € und 1.800 €</strong>. Druckpreise hängen vom Papier und der Auflage ab — wir holen die Angebote für dich ein.`,
+      },
+      {
+        question: "Und ein Messestand?",
+        answerHtml: `Grafische Gestaltung eines 12-m²-Stands (Rückwand, Theke, Roll-ups, Beschilderung) ab <strong>1.500 €</strong>. Inklusive 3D-Vorschau ab <strong>2.200 €</strong>. Der eigentliche Standbau (Material, Aufbau, Logistik) wird separat vom Standbauer abgerechnet — typischerweise 3.000 € bis 12.000 € je nach Größe und Mietsystem vs. Eigenbau.`,
+      },
+      {
+        question: "Liefert ihr auch druckfertige Daten an meine Druckerei?",
+        answerHtml: `Selbstverständlich. Du bekommst von uns das fertige <strong>Druck-PDF nach PDF/X-4-Standard</strong>: mit 3 mm Beschnitt, Passmarken, CMYK-Farbprofil und allen Schriften eingebettet. Jede seriöse Druckerei (online oder lokal) verarbeitet das ohne Rückfragen.`,
+      },
+      {
+        question: "Könnt ihr meine alten Vorlagen weiterverwenden?",
+        answerHtml: `Wenn dein bisheriger Designer InDesign- oder Illustrator-Daten geliefert hat, ja. Bei reinen PDF-Dateien (ohne offene Layout-Daten) ist es oft sinnvoller, das Layout neu aufzubauen — die Stunden für das Auseinandernehmen eines fremden PDFs sind meist teurer als ein sauberes Neu-Layout.`,
+      },
+      {
+        question: "Macht ihr auch Logos und Corporate Design?",
+        answerHtml: `Ja. Wir entwickeln Logos und komplette Corporate-Design-Manuals (Farben, Typografie, Bildwelten, Anwendungsregeln) als Grundlage für alle weiteren Print- und Web-Auftritte. Ein kompaktes CD-Paket startet bei <strong>1.200 €</strong>.`,
+      },
+      {
+        question: "Bis wann muss ich für eine Messe buchen?",
+        answerHtml: `Für regionale Gewerbeschauen reichen <strong>4-6 Wochen Vorlauf</strong>. Für größere Messen (Hannover Messe, Domotex) planen wir mindestens <strong>8-12 Wochen</strong> ein — sonst wird's beim Standbauer und bei der Hallen-Logistik eng. Je früher du uns ansprichst, desto entspannter wird's für alle.`,
       },
     ],
   },
