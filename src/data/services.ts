@@ -429,8 +429,8 @@ export const services: Service[] = [
         ],
         layout: "split",
         image: {
-          src: "/images/leistungen/print-design/flyer-mockup.svg",
-          alt: "Drei aufgefächerte Flyer im 2fox4-Designsystem mit schwarzem Hintergrund und orangenem Akzent",
+          src: "/images/leistungen/print-design/flyer-mockup.webp",
+          alt: "Drei DIN-lang-Flyer von 2fox4 auf schwarzem Designer-Schreibtisch — schwarze Cover mit orangenem Akzentstreifen, geöffneter Mittelflyer mit Layout und Call-to-Action",
           position: "below",
         },
       },
@@ -440,8 +440,8 @@ export const services: Service[] = [
         body: `<p>Der Ablauf für ein Print-Projekt ist immer derselbe, egal ob Flyer oder Messestand: wir starten mit einem <strong>Briefing-Gespräch</strong> (Zielgruppe, Botschaft, Distributionsweg). Daraus entstehen 1-2 Layout-Konzepte, die wir gemeinsam an deinen Texten und Bildern entlang verfeinern. Erst wenn alles passt, geht's in die <strong>Reinzeichnung</strong> — also das druckfertige PDF mit Beschnitt, Passmarken und richtigem Farbprofil (CMYK Fogra39 in der Regel).</p><p>Den Druck selbst übernehmen wir bei Bedarf über unsere Partner-Druckereien in der Region (kurze Wege, faire Preise), oder du lieferst die Dateien bei deiner Hausdruckerei ab. Bei Messeständen koordinieren wir den Aufbau direkt mit dem Standbauer.</p>`,
         layout: "stacked",
         image: {
-          src: "/images/leistungen/print-design/plakat-mockup.svg",
-          alt: "A1-Plakat-Mockup an einer Litfaßsäule mit Beispiel-Layout in 2fox4-Schwarz-Orange",
+          src: "/images/leistungen/print-design/plakat-mockup.webp",
+          alt: "A1-Plakat von 2fox4 mit Headline „DRUCK, DER WIRKT.\" auf Betonwand im urbanen Umfeld — schwarzer Hintergrund, orangener Akzent, im goldenen Abendlicht",
           position: "below",
         },
       },
@@ -459,8 +459,8 @@ export const services: Service[] = [
         ],
         layout: "split",
         image: {
-          src: "/images/leistungen/print-design/messestand-mockup.svg",
-          alt: "3D-Visualisierung eines modularen Messestands mit Theke, Rückwand und Roll-up im 2fox4-Designsystem",
+          src: "/images/leistungen/print-design/messestand-mockup.webp",
+          alt: "Messestand von 2fox4 in einer modernen Messehalle — schwarze Rückwand mit Headline „WIR BAUEN AUFTRITTE.\", orangener Diagonalstreifen, Theke, zwei Roll-ups und Mitarbeitende im Gespräch",
           position: "below",
         },
       },
