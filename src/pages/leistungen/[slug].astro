@@ -127,7 +127,7 @@ const schema = [
         )}
 
         {section.image && (
-          <figure class="mt-12 overflow-hidden rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg-card)]">
+          <figure class="group mt-12 overflow-hidden rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg-card)]">
             {section.image.src.endsWith(".webp") ? (
               <picture>
                 <source srcset={section.image.src} type="image/webp" />
@@ -138,7 +138,7 @@ const schema = [
                   decoding="async"
                   width="1920"
                   height="1080"
-                  class="block w-full h-auto"
+                  class="block w-full h-auto scale-105 transition-transform duration-700 ease-out group-hover:scale-110 motion-reduce:transition-none motion-reduce:scale-105 motion-reduce:group-hover:scale-105"
                 />
               </picture>
             ) : (
@@ -147,7 +147,7 @@ const schema = [
                 alt={section.image.alt}
                 loading="lazy"
                 decoding="async"
-                class="block w-full h-auto"
+                class="block w-full h-auto scale-105 transition-transform duration-700 ease-out group-hover:scale-110 motion-reduce:transition-none motion-reduce:scale-105 motion-reduce:group-hover:scale-105"
               />
             )}
           </figure>
