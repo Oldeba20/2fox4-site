@@ -10,8 +10,14 @@
  *   - SMTP-Settings werden aus kontakt.config.php geladen (NICHT im Repo).
  *   - Vorlage liegt unter kontakt.config.example.php.
  *
- * Spam-Schutz:
- *   - Honeypot-Feld "website" (für Bots sichtbar, für Menschen via CSS unsichtbar).
+ * Spam-Schutz (alles "silent drop" — Bot sieht eine status=ok-Seite,
+ * tatsächlich wird keine Mail verschickt; echte User merken davon nichts):
+ *   - Zwei Honeypot-Felder ("fax_number", "company_url") — für Bots sichtbar,
+ *     für Menschen via CSS unsichtbar.
+ *   - Time-Trap: Submit unter 3 Sekunden nach Page-Load → Bot.
+ *   - Content-Filter: kyrillisch/CJK-Zeichen, >2 URLs in der Nachricht,
+ *     typische SEO/Spam-Keywords ("backlinks", "guest post" usw.).
+ *   - Rate-Limit: max. 3 Submits pro IP pro Stunde.
  *   - Server-seitige Pflichtfeld-Validierung.
  *   - DSGVO-Checkbox als Pflicht-Bestätigung.
  *
@@ -90,10 +96,88 @@ $webPresence = field('web_presence', 200);
 $message     = field('message', 5000);
 $consent     = isset($_POST['consent']) && $_POST['consent'] !== '';
 
-// Honeypot
-$honeypot = field('website', 100);
-if ($honeypot !== '') {
+// Honeypot — zwei Felder, beide MÜSSEN leer sein
+$hp1 = field('fax_number', 100);
+$hp2 = field('company_url', 100);
+$hpLegacy = field('website', 100); // legacy, falls alte Form-Versionen noch live sind
+if ($hp1 !== '' || $hp2 !== '' || $hpLegacy !== '') {
     redirect($SPAM_REDIRECT);
+}
+
+// Time-Trap — Submit darf nicht <3 s nach Page-Load passieren
+$loadedAt = field('form_loaded_at', 20);
+if ($loadedAt !== '' && ctype_digit($loadedAt)) {
+    $nowMs    = (int) round(microtime(true) * 1000);
+    $elapsed  = $nowMs - (int) $loadedAt;
+    if ($elapsed >= 0 && $elapsed < 3000) {
+        redirect($SPAM_REDIRECT);
+    }
+}
+
+// Content-Filter — Nachricht auf typische Spam-Muster prüfen
+$msgLower = mb_strtolower($message, 'UTF-8');
+
+// Kyrillisch / CJK (Chinesisch, Japanisch, Koreanisch) — Geschäftskontakt
+// aus dem Schaumburger Land hat das im Klartext praktisch nie.
+$nonLatinScripts = '/[\x{0400}-\x{04FF}\x{4E00}-\x{9FFF}\x{3040}-\x{30FF}\x{3400}-\x{4DBF}\x{AC00}-\x{D7AF}]/u';
+if (preg_match_all($nonLatinScripts, $message) > 4) {
+    redirect($SPAM_REDIRECT);
+}
+
+// Mehr als 2 URLs in der Nachricht → praktisch immer Linkspam
+if (preg_match_all('~(?:https?://|www\.)~i', $message) > 2) {
+    redirect($SPAM_REDIRECT);
+}
+
+// Typische SEO/Service-Spam-Phrasen
+$spamKeywords = [
+    '/\bback\s*-?\s*links?\b/i',
+    '/\blink\s*-?\s*building\b/i',
+    '/\bseo\s+services?\b/i',
+    '/\bguest\s+post(s|ing)?\b/i',
+    '/\bguest\s+blog/i',
+    '/\bdofollow\b/i',
+    '/\bdomain\s+rating\b/i',
+    '/\bcasino\b/i',
+    '/\bviagra\b/i',
+    '/\bcialis\b/i',
+    '/\bbitcoin\s+(invest|trading|profit)/i',
+    '/\bcrypto\s+(invest|trading|profit)/i',
+    '/\bforex\b/i',
+    '/\bpayday\s+loan/i',
+    '/\besports?\s+betting\b/i',
+    '/\bweb\s*-?\s*scraping\b/i',
+    '/\brank\s+(higher|first|#1)\b/i',
+    '/\bincrease\s+(your\s+)?(traffic|ranking|sales)\b/i',
+    '/\bget\s+more\s+(traffic|customers|leads)\b/i',
+];
+foreach ($spamKeywords as $pattern) {
+    if (preg_match($pattern, $msgLower)) {
+        redirect($SPAM_REDIRECT);
+    }
+}
+
+// Rate-Limit — max. 3 Submits pro IP pro Stunde
+$rawIp = $_SERVER['REMOTE_ADDR'] ?? '';
+if ($rawIp !== '') {
+    $rateFile = sys_get_temp_dir() . '/2fox4_rate_' . hash('sha256', $rawIp) . '.txt';
+    $now      = time();
+    $cutoff   = $now - 3600; // 1 Stunde
+    $stamps   = [];
+    if (is_readable($rateFile)) {
+        $lines = @file($rateFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) ?: [];
+        foreach ($lines as $line) {
+            $ts = (int) $line;
+            if ($ts > $cutoff) {
+                $stamps[] = $ts;
+            }
+        }
+    }
+    if (count($stamps) >= 3) {
+        redirect($SPAM_REDIRECT);
+    }
+    $stamps[] = $now;
+    @file_put_contents($rateFile, implode("\n", $stamps), LOCK_EX);
 }
 
 /* ------------------------------------------------------------------ */

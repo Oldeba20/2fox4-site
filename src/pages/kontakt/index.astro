@@ -203,17 +203,31 @@ const schema = [
               nächsten Werktag.
             </p>
 
-            {/* Honeypot — visuell unsichtbar, für Bots sichtbar */}
+            {/*
+              Anti-Spam-Felder — alle visuell ausgeblendet, aber für Bots
+              befüllbar. Server prüft im kontakt.php und verwirft die Mail
+              still, wenn eines befüllt ist oder die Submit-Zeit zu schnell.
+            */}
             <div aria-hidden="true" class="honeypot">
-              <label for="contact-website">Website (bitte leer lassen)</label>
+              <label for="contact-fax">Fax-Nummer (bitte leer lassen)</label>
               <input
                 type="text"
-                id="contact-website"
-                name="website"
+                id="contact-fax"
+                name="fax_number"
+                tabindex="-1"
+                autocomplete="off"
+              />
+              <label for="contact-url">URL (bitte leer lassen)</label>
+              <input
+                type="text"
+                id="contact-url"
+                name="company_url"
                 tabindex="-1"
                 autocomplete="off"
               />
             </div>
+            {/* Time-Trap: per JS beim Mount auf Date.now() gesetzt */}
+            <input type="hidden" name="form_loaded_at" value="" data-form-loaded-at />
 
             <div class="form-grid">
               <div class="form-field">
@@ -520,7 +534,17 @@ const schema = [
       ?.scrollIntoView({ behavior: "smooth", block: "center" });
   }
 
-  // ---------- 2) Client-seitige Validation VOR dem Submit ----------
+  // ---------- 2) Time-Trap: Page-Load-Zeitpunkt ins Hidden-Feld ----------
+  // Server lehnt das Formular ab, wenn der Submit unter 3 Sekunden nach
+  // dem Page-Load passiert (= klassisches Bot-Muster).
+  const loadedAtField = document.querySelector<HTMLInputElement>(
+    '[data-form-loaded-at]'
+  );
+  if (loadedAtField) {
+    loadedAtField.value = String(Date.now());
+  }
+
+  // ---------- 3) Client-seitige Validation VOR dem Submit ----------
   // Damit das Formular bei Fehler NICHT geschickt wird (und kein Reload
   // alle Felder leert). Der Server prüft trotzdem nochmal — Defense in depth.
   const form = document.querySelector<HTMLFormElement>('form[action$="kontakt.php"]');
