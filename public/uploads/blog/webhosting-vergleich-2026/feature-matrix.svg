@@ -1,0 +1,131 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 620" role="img" aria-label="Feature-Matrix Webhosting-Vergleich 2026 — 8 Anbieter mit Features im Vergleich">
+  <rect width="1200" height="620" fill="#ffffff"/>
+  <text x="40" y="42" font-family="-apple-system, sans-serif" font-size="24" font-weight="700" fill="#0d1117">Feature-Matrix — 8 Anbieter im Direktvergleich</text>
+  <text x="40" y="68" font-family="-apple-system, sans-serif" font-size="13" fill="#6b7280">Stand Juni 2026, Einstiegs- bzw. Mittelklasse-Tarif. ✓ = inkl. · ○ = optional/Aufpreis · — = nicht im Angebot</text>
+
+  <!-- Header row -->
+  <g font-family="-apple-system, sans-serif" font-size="13" font-weight="600">
+    <rect x="40" y="95" width="220" height="44" fill="#0d1117"/>
+    <text x="56" y="123" fill="#ffffff">Anbieter / Feature</text>
+    <rect x="260" y="95" width="100" height="44" fill="#1a2230"/>
+    <text x="310" y="123" fill="#ffffff" text-anchor="middle">Einstieg</text>
+    <rect x="360" y="95" width="100" height="44" fill="#1a2230"/>
+    <text x="410" y="123" fill="#ffffff" text-anchor="middle">SSL inkl.</text>
+    <rect x="460" y="95" width="100" height="44" fill="#1a2230"/>
+    <text x="510" y="123" fill="#ffffff" text-anchor="middle">NVMe</text>
+    <rect x="560" y="95" width="100" height="44" fill="#1a2230"/>
+    <text x="610" y="123" fill="#ffffff" text-anchor="middle">Staging</text>
+    <rect x="660" y="95" width="120" height="44" fill="#1a2230"/>
+    <text x="720" y="123" fill="#ffffff" text-anchor="middle">Managed WP</text>
+    <rect x="780" y="95" width="120" height="44" fill="#1a2230"/>
+    <text x="840" y="123" fill="#ffffff" text-anchor="middle">DE-Telefon</text>
+    <rect x="900" y="95" width="120" height="44" fill="#1a2230"/>
+    <text x="960" y="123" fill="#ffffff" text-anchor="middle">Lockvogel</text>
+    <rect x="1020" y="95" width="140" height="44" fill="#1a2230"/>
+    <text x="1090" y="123" fill="#ffffff" text-anchor="middle">Mo-Kündigung</text>
+  </g>
+
+  <!-- 8 Provider rows -->
+  <g font-family="-apple-system, sans-serif" font-size="14">
+    <!-- all-inkl -->
+    <rect x="40" y="139" width="1120" height="44" fill="#f9fafb"/>
+    <text x="56" y="167" font-weight="600" fill="#0d1117">all-inkl.com</text>
+    <text x="310" y="167" fill="#0d1117" text-anchor="middle">4,95 €</text>
+    <text x="410" y="167" fill="#dc2626" text-anchor="middle">○</text>
+    <text x="510" y="167" fill="#dc2626" text-anchor="middle">—</text>
+    <text x="610" y="167" fill="#dc2626" text-anchor="middle">—</text>
+    <text x="720" y="167" fill="#dc2626" text-anchor="middle">—</text>
+    <text x="840" y="167" fill="#16a34a" text-anchor="middle">✓</text>
+    <text x="960" y="167" fill="#16a34a" text-anchor="middle">nein</text>
+    <text x="1090" y="167" fill="#16a34a" text-anchor="middle">monatlich</text>
+
+    <!-- Strato -->
+    <rect x="40" y="183" width="1120" height="44" fill="#ffffff"/>
+    <text x="56" y="211" font-weight="600" fill="#0d1117">Strato</text>
+    <text x="310" y="211" fill="#0d1117" text-anchor="middle">5,00 €</text>
+    <text x="410" y="211" fill="#16a34a" text-anchor="middle">✓</text>
+    <text x="510" y="211" fill="#dc2626" text-anchor="middle">—</text>
+    <text x="610" y="211" fill="#dc2626" text-anchor="middle">—</text>
+    <text x="720" y="211" fill="#16a34a" text-anchor="middle">✓</text>
+    <text x="840" y="211" fill="#16a34a" text-anchor="middle">✓</text>
+    <text x="960" y="211" fill="#dc2626" text-anchor="middle">JA</text>
+    <text x="1090" y="211" fill="#dc2626" text-anchor="middle">jährlich</text>
+
+    <!-- IONOS -->
+    <rect x="40" y="227" width="1120" height="44" fill="#f9fafb"/>
+    <text x="56" y="255" font-weight="600" fill="#0d1117">IONOS</text>
+    <text x="310" y="255" fill="#0d1117" text-anchor="middle">6,00 €</text>
+    <text x="410" y="255" fill="#16a34a" text-anchor="middle">✓</text>
+    <text x="510" y="255" fill="#16a34a" text-anchor="middle">✓</text>
+    <text x="610" y="255" fill="#0d1117" text-anchor="middle">○</text>
+    <text x="720" y="255" fill="#16a34a" text-anchor="middle">✓</text>
+    <text x="840" y="255" fill="#16a34a" text-anchor="middle">✓</text>
+    <text x="960" y="255" fill="#dc2626" text-anchor="middle">JA</text>
+    <text x="1090" y="255" fill="#dc2626" text-anchor="middle">jährlich</text>
+
+    <!-- Host Europe -->
+    <rect x="40" y="271" width="1120" height="44" fill="#ffffff"/>
+    <text x="56" y="299" font-weight="600" fill="#0d1117">Host Europe</text>
+    <text x="310" y="299" fill="#0d1117" text-anchor="middle">6,99 €</text>
+    <text x="410" y="299" fill="#16a34a" text-anchor="middle">✓</text>
+    <text x="510" y="299" fill="#dc2626" text-anchor="middle">—</text>
+    <text x="610" y="299" fill="#16a34a" text-anchor="middle">✓</text>
+    <text x="720" y="299" fill="#16a34a" text-anchor="middle">✓</text>
+    <text x="840" y="299" fill="#16a34a" text-anchor="middle">✓</text>
+    <text x="960" y="299" fill="#16a34a" text-anchor="middle">leicht</text>
+    <text x="1090" y="299" fill="#dc2626" text-anchor="middle">jährlich</text>
+
+    <!-- Hetzner -->
+    <rect x="40" y="315" width="1120" height="44" fill="#f9fafb"/>
+    <text x="56" y="343" font-weight="600" fill="#0d1117">Hetzner</text>
+    <text x="310" y="343" fill="#0d1117" text-anchor="middle">1,90 €</text>
+    <text x="410" y="343" fill="#16a34a" text-anchor="middle">✓</text>
+    <text x="510" y="343" fill="#16a34a" text-anchor="middle">✓</text>
+    <text x="610" y="343" fill="#dc2626" text-anchor="middle">—</text>
+    <text x="720" y="343" fill="#dc2626" text-anchor="middle">—</text>
+    <text x="840" y="343" fill="#dc2626" text-anchor="middle">—</text>
+    <text x="960" y="343" fill="#16a34a" text-anchor="middle">nein</text>
+    <text x="1090" y="343" fill="#16a34a" text-anchor="middle">monatlich</text>
+
+    <!-- Netcup -->
+    <rect x="40" y="359" width="1120" height="44" fill="#ffffff"/>
+    <text x="56" y="387" font-weight="600" fill="#0d1117">Netcup</text>
+    <text x="310" y="387" fill="#0d1117" text-anchor="middle">6,14 €</text>
+    <text x="410" y="387" fill="#16a34a" text-anchor="middle">✓</text>
+    <text x="510" y="387" fill="#dc2626" text-anchor="middle">—</text>
+    <text x="610" y="387" fill="#dc2626" text-anchor="middle">—</text>
+    <text x="720" y="387" fill="#0d1117" text-anchor="middle">○</text>
+    <text x="840" y="387" fill="#dc2626" text-anchor="middle">—</text>
+    <text x="960" y="387" fill="#16a34a" text-anchor="middle">leicht</text>
+    <text x="1090" y="387" fill="#dc2626" text-anchor="middle">jährlich</text>
+
+    <!-- Mittwald -->
+    <rect x="40" y="403" width="1120" height="44" fill="#f9fafb"/>
+    <text x="56" y="431" font-weight="600" fill="#0d1117">Mittwald</text>
+    <text x="310" y="431" fill="#0d1117" text-anchor="middle">9,00 €*</text>
+    <text x="410" y="431" fill="#16a34a" text-anchor="middle">✓</text>
+    <text x="510" y="431" fill="#16a34a" text-anchor="middle">✓</text>
+    <text x="610" y="431" fill="#16a34a" text-anchor="middle">✓</text>
+    <text x="720" y="431" fill="#16a34a" text-anchor="middle">✓</text>
+    <text x="840" y="431" fill="#16a34a" text-anchor="middle">✓</text>
+    <text x="960" y="431" fill="#16a34a" text-anchor="middle">nein</text>
+    <text x="1090" y="431" fill="#dc2626" text-anchor="middle">jährlich</text>
+
+    <!-- dogado -->
+    <rect x="40" y="447" width="1120" height="44" fill="#ffffff"/>
+    <text x="56" y="475" font-weight="600" fill="#0d1117">dogado</text>
+    <text x="310" y="475" fill="#0d1117" text-anchor="middle">5,99 €</text>
+    <text x="410" y="475" fill="#16a34a" text-anchor="middle">✓</text>
+    <text x="510" y="475" fill="#dc2626" text-anchor="middle">—</text>
+    <text x="610" y="475" fill="#dc2626" text-anchor="middle">—</text>
+    <text x="720" y="475" fill="#0d1117" text-anchor="middle">○</text>
+    <text x="840" y="475" fill="#16a34a" text-anchor="middle">✓</text>
+    <text x="960" y="475" fill="#16a34a" text-anchor="middle">leicht</text>
+    <text x="1090" y="475" fill="#dc2626" text-anchor="middle">jährlich</text>
+  </g>
+
+  <!-- Footer note -->
+  <text x="40" y="540" font-family="-apple-system, sans-serif" font-size="12" fill="#9ca3af">Alle Preise inkl. MwSt., * = Mittwald rechnet netto ab.</text>
+  <text x="40" y="558" font-family="-apple-system, sans-serif" font-size="12" fill="#9ca3af">„Lockvogel" = Preis im 1. Jahr deutlich unter Folgepreis. „Mo-Kündigung" = ohne Mindestvertragslaufzeit über 1 Jahr verfügbar.</text>
+  <text x="40" y="576" font-family="-apple-system, sans-serif" font-size="12" fill="#9ca3af">Quelle: Recherche 2FOX4 auf Basis der offiziellen Tarifseiten der Anbieter (Stand Juni 2026).</text>
+</svg>

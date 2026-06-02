@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" role="img" aria-label="Preisvergleich Webhosting Einstiegstarife 2026 — 8 Anbieter im Balkendiagramm">
+  <rect width="1200" height="700" fill="#ffffff"/>
+  <text x="60" y="60" font-family="-apple-system, system-ui, sans-serif" font-size="32" font-weight="700" fill="#0d1117">Einstiegstarife im Vergleich — Juni 2026</text>
+  <text x="60" y="92" font-family="-apple-system, system-ui, sans-serif" font-size="16" fill="#6b7280">Regulärer Monatspreis nach Lockvogel-Phase, brutto in € (Privatkunden, ohne Setup-Gebühren)</text>
+
+  <!-- Y-Achse Linien -->
+  <g stroke="#e5e7eb" stroke-width="1">
+    <line x1="240" y1="130" x2="1140" y2="130"/>
+    <line x1="240" y1="200" x2="1140" y2="200"/>
+    <line x1="240" y1="270" x2="1140" y2="270"/>
+    <line x1="240" y1="340" x2="1140" y2="340"/>
+    <line x1="240" y1="410" x2="1140" y2="410"/>
+    <line x1="240" y1="480" x2="1140" y2="480"/>
+    <line x1="240" y1="550" x2="1140" y2="550"/>
+    <line x1="240" y1="620" x2="1140" y2="620"/>
+  </g>
+
+  <!-- Scale-Labels (0 bis 10 €) -->
+  <g font-family="-apple-system, sans-serif" font-size="12" fill="#9ca3af" text-anchor="end">
+    <text x="230" y="624">0 €</text>
+    <text x="230" y="554">2 €</text>
+    <text x="230" y="484">4 €</text>
+    <text x="230" y="414">6 €</text>
+    <text x="230" y="344">8 €</text>
+    <text x="230" y="274">10 €</text>
+  </g>
+
+  <!-- Bars: 8 Anbieter, je 90px breit + 20px Abstand -->
+  <!-- Skala: 35px = 1 € -->
+  <!-- Hetzner S: 1,90 € → Höhe 66,5 -->
+  <g>
+    <rect x="270" y="553.5" width="90" height="66.5" fill="#ff7a18" rx="4"/>
+    <text x="315" y="538" font-family="-apple-system, sans-serif" font-size="20" font-weight="700" fill="#0d1117" text-anchor="middle">1,90 €</text>
+    <text x="315" y="650" font-family="-apple-system, sans-serif" font-size="14" font-weight="600" fill="#0d1117" text-anchor="middle">Hetzner</text>
+    <text x="315" y="670" font-family="-apple-system, sans-serif" font-size="11" fill="#6b7280" text-anchor="middle">Level S</text>
+  </g>
+  <!-- all-inkl PRIVAT: 4,95 → 173 -->
+  <g>
+    <rect x="380" y="446.75" width="90" height="173.25" fill="#3b82f6" rx="4"/>
+    <text x="425" y="431" font-family="-apple-system, sans-serif" font-size="20" font-weight="700" fill="#0d1117" text-anchor="middle">4,95 €</text>
+    <text x="425" y="650" font-family="-apple-system, sans-serif" font-size="14" font-weight="600" fill="#0d1117" text-anchor="middle">all-inkl</text>
+    <text x="425" y="670" font-family="-apple-system, sans-serif" font-size="11" fill="#6b7280" text-anchor="middle">PRIVAT</text>
+  </g>
+  <!-- Strato Starter: 5,00 → 175 -->
+  <g>
+    <rect x="490" y="445" width="90" height="175" fill="#3b82f6" rx="4"/>
+    <text x="535" y="429" font-family="-apple-system, sans-serif" font-size="20" font-weight="700" fill="#0d1117" text-anchor="middle">5,00 €</text>
+    <text x="535" y="650" font-family="-apple-system, sans-serif" font-size="14" font-weight="600" fill="#0d1117" text-anchor="middle">Strato</text>
+    <text x="535" y="670" font-family="-apple-system, sans-serif" font-size="11" fill="#6b7280" text-anchor="middle">Hosting S</text>
+  </g>
+  <!-- dogado Web S: 5,99 → 209,65 -->
+  <g>
+    <rect x="600" y="410.35" width="90" height="209.65" fill="#3b82f6" rx="4"/>
+    <text x="645" y="394" font-family="-apple-system, sans-serif" font-size="20" font-weight="700" fill="#0d1117" text-anchor="middle">5,99 €</text>
+    <text x="645" y="650" font-family="-apple-system, sans-serif" font-size="14" font-weight="600" fill="#0d1117" text-anchor="middle">dogado</text>
+    <text x="645" y="670" font-family="-apple-system, sans-serif" font-size="11" fill="#6b7280" text-anchor="middle">Web S</text>
+  </g>
+  <!-- IONOS Starter: 6,00 → 210 -->
+  <g>
+    <rect x="710" y="410" width="90" height="210" fill="#3b82f6" rx="4"/>
+    <text x="755" y="394" font-family="-apple-system, sans-serif" font-size="20" font-weight="700" fill="#0d1117" text-anchor="middle">6,00 €</text>
+    <text x="755" y="650" font-family="-apple-system, sans-serif" font-size="14" font-weight="600" fill="#0d1117" text-anchor="middle">IONOS</text>
+    <text x="755" y="670" font-family="-apple-system, sans-serif" font-size="11" fill="#6b7280" text-anchor="middle">Starter</text>
+  </g>
+  <!-- Netcup EiWoMiSau: 6,14 → 214,9 -->
+  <g>
+    <rect x="820" y="405.1" width="90" height="214.9" fill="#3b82f6" rx="4"/>
+    <text x="865" y="389" font-family="-apple-system, sans-serif" font-size="20" font-weight="700" fill="#0d1117" text-anchor="middle">6,14 €</text>
+    <text x="865" y="650" font-family="-apple-system, sans-serif" font-size="14" font-weight="600" fill="#0d1117" text-anchor="middle">Netcup</text>
+    <text x="865" y="670" font-family="-apple-system, sans-serif" font-size="11" fill="#6b7280" text-anchor="middle">EiWoMiSau</text>
+  </g>
+  <!-- Host Europe Basic: 6,99 → 244,65 -->
+  <g>
+    <rect x="930" y="375.35" width="90" height="244.65" fill="#3b82f6" rx="4"/>
+    <text x="975" y="359" font-family="-apple-system, sans-serif" font-size="20" font-weight="700" fill="#0d1117" text-anchor="middle">6,99 €</text>
+    <text x="975" y="650" font-family="-apple-system, sans-serif" font-size="14" font-weight="600" fill="#0d1117" text-anchor="middle">Host Europe</text>
+    <text x="975" y="670" font-family="-apple-system, sans-serif" font-size="11" fill="#6b7280" text-anchor="middle">Basic</text>
+  </g>
+  <!-- Mittwald PrivateProject: 9,00 → 315 (zzgl. USt., das markieren wir) -->
+  <g>
+    <rect x="1040" y="305" width="90" height="315" fill="#9333ea" rx="4"/>
+    <text x="1085" y="289" font-family="-apple-system, sans-serif" font-size="20" font-weight="700" fill="#0d1117" text-anchor="middle">9,00 €*</text>
+    <text x="1085" y="650" font-family="-apple-system, sans-serif" font-size="14" font-weight="600" fill="#0d1117" text-anchor="middle">Mittwald</text>
+    <text x="1085" y="670" font-family="-apple-system, sans-serif" font-size="11" fill="#6b7280" text-anchor="middle">PrivateProject</text>
+  </g>
+
+  <!-- Legend -->
+  <g transform="translate(60, 130)">
+    <rect x="0" y="0" width="14" height="14" fill="#ff7a18" rx="2"/>
+    <text x="22" y="12" font-family="-apple-system, sans-serif" font-size="13" fill="#374151">Preis-Leader</text>
+    <rect x="0" y="24" width="14" height="14" fill="#3b82f6" rx="2"/>
+    <text x="22" y="36" font-family="-apple-system, sans-serif" font-size="13" fill="#374151">Standard</text>
+    <rect x="0" y="48" width="14" height="14" fill="#9333ea" rx="2"/>
+    <text x="22" y="60" font-family="-apple-system, sans-serif" font-size="13" fill="#374151">Premium / Managed</text>
+  </g>
+  <text x="60" y="690" font-family="-apple-system, sans-serif" font-size="11" fill="#9ca3af">* zzgl. USt. — Mittwald rechnet B2B-typisch netto ab. Andere Preise inkl. MwSt. für Privatkunden.</text>
+</svg>

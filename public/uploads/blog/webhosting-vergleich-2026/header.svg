@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" role="img" aria-label="Webhosting Vergleich Deutschland 2026 — 8 Anbieter im Test">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0d1117"/>
+      <stop offset="100%" stop-color="#1a2230"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#ff7a18"/>
+      <stop offset="100%" stop-color="#ffb259"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <!-- dezente Server-Grafik rechts -->
+  <g opacity="0.13" stroke="#ff7a18" stroke-width="2" fill="none">
+    <rect x="820" y="120" width="280" height="40" rx="4"/>
+    <rect x="820" y="170" width="280" height="40" rx="4"/>
+    <rect x="820" y="220" width="280" height="40" rx="4"/>
+    <rect x="820" y="270" width="280" height="40" rx="4"/>
+    <rect x="820" y="320" width="280" height="40" rx="4"/>
+    <rect x="820" y="370" width="280" height="40" rx="4"/>
+    <circle cx="850" cy="140" r="5" fill="#ff7a18"/>
+    <circle cx="850" cy="190" r="5" fill="#ff7a18"/>
+    <circle cx="850" cy="240" r="5" fill="#ff7a18"/>
+    <circle cx="850" cy="290" r="5" fill="#ff7a18"/>
+    <circle cx="850" cy="340" r="5" fill="#ff7a18"/>
+    <circle cx="850" cy="390" r="5" fill="#ff7a18"/>
+  </g>
+  <text x="80" y="170" font-family="-apple-system, system-ui, sans-serif" font-size="22" font-weight="500" letter-spacing="2" fill="#ff7a18">WEBHOSTING DEUTSCHLAND · STAND JUNI 2026</text>
+  <text x="80" y="260" font-family="-apple-system, system-ui, sans-serif" font-size="68" font-weight="800" fill="#ffffff">Der ehrliche Hoster-</text>
+  <text x="80" y="335" font-family="-apple-system, system-ui, sans-serif" font-size="68" font-weight="800" fill="url(#accent)">Vergleich 2026.</text>
+  <text x="80" y="410" font-family="-apple-system, system-ui, sans-serif" font-size="26" fill="#9ca3af">8 Anbieter im Test · Preise nach Lockvogel-Phase ·</text>
+  <text x="80" y="445" font-family="-apple-system, system-ui, sans-serif" font-size="26" fill="#9ca3af">Schwächen, die kaum jemand offen ausspricht.</text>
+  <line x1="80" y1="500" x2="240" y2="500" stroke="#ff7a18" stroke-width="3"/>
+  <text x="80" y="555" font-family="-apple-system, system-ui, sans-serif" font-size="20" fill="#cccccc">2FOX4 · 18 Jahre Hosting-Erfahrung aus Sachsenhagen</text>
+</svg>

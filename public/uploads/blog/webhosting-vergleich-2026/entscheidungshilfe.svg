@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 750" role="img" aria-label="Entscheidungshilfe Webhosting 2026 — welcher Anbieter für welchen Use Case">
+  <rect width="1200" height="750" fill="#ffffff"/>
+  <text x="60" y="50" font-family="-apple-system, sans-serif" font-size="28" font-weight="700" fill="#0d1117">Welcher Hoster für welchen Use Case?</text>
+  <text x="60" y="80" font-family="-apple-system, sans-serif" font-size="14" fill="#6b7280">Eine Entscheidung in 6 Fragen — anhand von Profil und Anspruch.</text>
+
+  <!-- 6 use case cards, 2x3 grid -->
+  <!-- Card 1: Einstieg / Solo -->
+  <g transform="translate(60, 120)">
+    <rect width="350" height="180" rx="12" fill="#f9fafb" stroke="#e5e7eb"/>
+    <rect x="0" y="0" width="6" height="180" rx="3" fill="#ff7a18"/>
+    <text x="24" y="36" font-family="-apple-system, sans-serif" font-size="13" font-weight="600" fill="#ff7a18" letter-spacing="1.5">EINSTEIGER · SOLO</text>
+    <text x="24" y="68" font-family="-apple-system, sans-serif" font-size="22" font-weight="700" fill="#0d1117">Erste Visitenkarten-Website</text>
+    <text x="24" y="100" font-family="-apple-system, sans-serif" font-size="14" fill="#374151">Wenig Traffic, eine Domain, gelegentliche Updates,</text>
+    <text x="24" y="120" font-family="-apple-system, sans-serif" font-size="14" fill="#374151">deutscher Telefon-Support muss sein.</text>
+    <text x="24" y="158" font-family="-apple-system, sans-serif" font-size="16" font-weight="700" fill="#0d1117">→ all-inkl PRIVAT (4,95 €)</text>
+  </g>
+  <!-- Card 2: Preis-Leader -->
+  <g transform="translate(440, 120)">
+    <rect width="350" height="180" rx="12" fill="#f9fafb" stroke="#e5e7eb"/>
+    <rect x="0" y="0" width="6" height="180" rx="3" fill="#10b981"/>
+    <text x="24" y="36" font-family="-apple-system, sans-serif" font-size="13" font-weight="600" fill="#10b981" letter-spacing="1.5">PREIS-LEADER</text>
+    <text x="24" y="68" font-family="-apple-system, sans-serif" font-size="22" font-weight="700" fill="#0d1117">Power-User & Entwickler</text>
+    <text x="24" y="100" font-family="-apple-system, sans-serif" font-size="14" fill="#374151">SSH, NVMe, Redis, mehrere Domains, faires Pricing</text>
+    <text x="24" y="120" font-family="-apple-system, sans-serif" font-size="14" fill="#374151">— Support wird selten gebraucht.</text>
+    <text x="24" y="158" font-family="-apple-system, sans-serif" font-size="16" font-weight="700" fill="#0d1117">→ Hetzner Webhosting L (9,90 €)</text>
+  </g>
+  <!-- Card 3: Managed WordPress -->
+  <g transform="translate(820, 120)">
+    <rect width="320" height="180" rx="12" fill="#f9fafb" stroke="#e5e7eb"/>
+    <rect x="0" y="0" width="6" height="180" rx="3" fill="#9333ea"/>
+    <text x="24" y="36" font-family="-apple-system, sans-serif" font-size="13" font-weight="600" fill="#9333ea" letter-spacing="1.5">MANAGED WORDPRESS</text>
+    <text x="24" y="68" font-family="-apple-system, sans-serif" font-size="22" font-weight="700" fill="#0d1117">Geschäftskritische Seite</text>
+    <text x="24" y="100" font-family="-apple-system, sans-serif" font-size="14" fill="#374151">Staging, Auto-Updates, Backups, deutsche RZ —</text>
+    <text x="24" y="120" font-family="-apple-system, sans-serif" font-size="14" fill="#374151">man will sich um nichts kümmern.</text>
+    <text x="24" y="158" font-family="-apple-system, sans-serif" font-size="16" font-weight="700" fill="#0d1117">→ Mittwald CMS Starter (9 €*)</text>
+  </g>
+
+  <!-- Card 4: Onlineshop / WooCommerce -->
+  <g transform="translate(60, 320)">
+    <rect width="350" height="180" rx="12" fill="#f9fafb" stroke="#e5e7eb"/>
+    <rect x="0" y="0" width="6" height="180" rx="3" fill="#3b82f6"/>
+    <text x="24" y="36" font-family="-apple-system, sans-serif" font-size="13" font-weight="600" fill="#3b82f6" letter-spacing="1.5">ONLINESHOP · TRAFFIC</text>
+    <text x="24" y="68" font-family="-apple-system, sans-serif" font-size="22" font-weight="700" fill="#0d1117">WooCommerce, mehrere DBs</text>
+    <text x="24" y="100" font-family="-apple-system, sans-serif" font-size="14" fill="#374151">Performance-orientiert, CDN von Vorteil,</text>
+    <text x="24" y="120" font-family="-apple-system, sans-serif" font-size="14" fill="#374151">Telefon-Support gewünscht.</text>
+    <text x="24" y="158" font-family="-apple-system, sans-serif" font-size="16" font-weight="700" fill="#0d1117">→ Host Europe Plus (8,99 €)</text>
+  </g>
+  <!-- Card 5: Multi-Domain -->
+  <g transform="translate(440, 320)">
+    <rect width="350" height="180" rx="12" fill="#f9fafb" stroke="#e5e7eb"/>
+    <rect x="0" y="0" width="6" height="180" rx="3" fill="#0ea5e9"/>
+    <text x="24" y="36" font-family="-apple-system, sans-serif" font-size="13" font-weight="600" fill="#0ea5e9" letter-spacing="1.5">MULTI-DOMAIN</text>
+    <text x="24" y="68" font-family="-apple-system, sans-serif" font-size="22" font-weight="700" fill="#0d1117">10+ Domains, mehrere Sites</text>
+    <text x="24" y="100" font-family="-apple-system, sans-serif" font-size="14" fill="#374151">Mehrere kleine Projekte unter einem Vertrag,</text>
+    <text x="24" y="120" font-family="-apple-system, sans-serif" font-size="14" fill="#374151">jährliche Zahlung kein Problem.</text>
+    <text x="24" y="158" font-family="-apple-system, sans-serif" font-size="16" font-weight="700" fill="#0d1117">→ Netcup Webhosting 4000</text>
+  </g>
+  <!-- Card 6: Vorsicht Lockvogel -->
+  <g transform="translate(820, 320)">
+    <rect width="320" height="180" rx="12" fill="#fef3c7" stroke="#fbbf24"/>
+    <rect x="0" y="0" width="6" height="180" rx="3" fill="#f59e0b"/>
+    <text x="24" y="36" font-family="-apple-system, sans-serif" font-size="13" font-weight="600" fill="#92400e" letter-spacing="1.5">⚠ NUR MIT VORSICHT</text>
+    <text x="24" y="68" font-family="-apple-system, sans-serif" font-size="22" font-weight="700" fill="#0d1117">Lockvogel-Anbieter</text>
+    <text x="24" y="100" font-family="-apple-system, sans-serif" font-size="14" fill="#374151">Strato und IONOS: Tarife im 1. Jahr ab 1 €,</text>
+    <text x="24" y="120" font-family="-apple-system, sans-serif" font-size="14" fill="#374151">danach Faktor 5–10 mehr. Kündigungsfrist beachten.</text>
+    <text x="24" y="158" font-family="-apple-system, sans-serif" font-size="14" font-weight="600" fill="#92400e">→ Erst Folgekosten prüfen!</text>
+  </g>
+
+  <!-- Big trust panel at bottom -->
+  <g transform="translate(60, 540)">
+    <rect width="1080" height="160" rx="12" fill="#0d1117"/>
+    <text x="40" y="50" font-family="-apple-system, sans-serif" font-size="14" font-weight="600" fill="#ff7a18" letter-spacing="1.5">UNSERE EHRLICHE EMPFEHLUNG</text>
+    <text x="40" y="92" font-family="-apple-system, sans-serif" font-size="24" font-weight="700" fill="#ffffff">Für 80 % unserer Mandanten: all-inkl PRIVAT+ (7,95 €/Mo)</text>
+    <text x="40" y="124" font-family="-apple-system, sans-serif" font-size="16" fill="#9ca3af">Faires Pricing ohne Lockvogel-Sprung, deutscher Telefon-Support, ausreichende Power für WordPress + WooCommerce,</text>
+    <text x="40" y="146" font-family="-apple-system, sans-serif" font-size="16" fill="#9ca3af">und in 18 Jahren kaum nennenswerte Ausfälle. Wir hosten unsere eigene Site dort.</text>
+  </g>
+</svg>
