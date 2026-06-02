@@ -82,13 +82,16 @@ const reasons = [
   },
 ];
 
-// SEO Meta — bei Heimsitz andere Formulierung, weil "0 km entfernt" absurd wäre.
+// SEO Meta — stadt-fokussiert, keine konkurrierenden Städtenamen im Title.
+// Vorher: "Webdesigner X — 2FOX4 aus Sachsenhagen, N km entfernt" verwässerte
+// die lokale Relevanz, weil Google zwei City-Signale im Title sah. Geändert
+// 2026-06-02 nach GSC-Analyse: Stadthagen Pos 15, Minden Pos 23, etc.
 const title = isHomeBase
-  ? `Webdesigner Sachsenhagen — 2FOX4 hier vor Ort, seit 2008`
-  : `Webdesigner ${city.name} — 2FOX4 aus Sachsenhagen, ${city.distance.km} km entfernt`;
+  ? `Webdesign Sachsenhagen: WordPress-Agentur vor Ort seit 2008`
+  : `Webdesign ${city.name}: WordPress-Agentur aus der Region`;
 const description = isHomeBase
-  ? `Webagentur direkt in Sachsenhagen: WordPress, SEO, Onlineshops. Persönlich, vor Ort in der Schaumburger Str. 21. Seit 2008.`
-  : `Webdesign für ${city.name}: WordPress, SEO, Onlineshops. 2FOX4 aus Sachsenhagen ist Ihre Webagentur in der Region. Persönlich, regional, seit 2008.`;
+  ? `Webdesign-Agentur direkt in Sachsenhagen: WordPress, SEO, Onlineshops. Persönlich, vor Ort, seit 2008. Über 125 Projekte. Jetzt Erstgespräch sichern.`
+  : `Webdesign in ${city.name}: WordPress, SEO, Onlineshops. Lokale Agentur, persönlich, faire Preise. Seit 2008 mit über 125 Projekten. Jetzt anfragen.`;
 
 // JSON-LD Bundle: LocalBusiness + Breadcrumb + FAQPage
 const schema = [

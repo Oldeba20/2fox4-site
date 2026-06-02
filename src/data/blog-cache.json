@@ -1764,7 +1764,10 @@
       "categoryNames": [
         "Beiträge"
       ],
-      "rankMath": null
+      "rankMath": {
+        "title": "Hosterwechsel 2026: Anleitung + Checkliste (ohne Ausfall)",
+        "description": "Webhosting wechseln in 2026: Schritt-für-Schritt-Anleitung mit Downtime-vermeiden-Checkliste. Inklusive konkreter Tipps für den Wechsel zu All-Inkl."
+      }
     },
     {
       "id": 2812,
@@ -2560,8 +2563,8 @@
         "Beiträge"
       ],
       "rankMath": {
-        "title": "Günstiger Webhosting Vergleich Deutschland: Top-Anbieter bis 10€",
-        "description": "Unser aktueller Webhosting Vergleich Deutschland analysiert die besten Anbieter unter 10€. Finden Sie den idealen Hoster für Ihre Website."
+        "title": "Webhosting Vergleich 2026: Die besten Anbieter unter 10 €",
+        "description": "Webhosting Deutschland 2026 im Test: All-Inkl, Strato, IONOS, Host Europe & Co. — echte Preise, ehrliche Schwächen, klare Empfehlung pro Use Case."
       }
     },
     {

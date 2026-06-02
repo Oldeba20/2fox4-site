@@ -66,9 +66,9 @@ export const serviceCities: ServiceCity[] = [
     heroTitleLine2: "— gefunden, wo Kunden suchen.",
     heroSub:
       "Wir machen Stadthagener Unternehmen bei Google sichtbar — lokal, regional, technisch und inhaltlich. Aus Sachsenhagen, 9 km von der Stadthagener Innenstadt entfernt. Konkrete Stadt-Suchen wie „Maler Stadthagen“, „Steuerberater Stadthagen“, „Restaurant Stadthagen“ haben hochkonzentrierte Käufer-Intention — wir holen dich genau dort in die Top 3.",
-    seoTitle: "SEO Stadthagen — Agentur für lokale Suchmaschinen-Optimierung",
+    seoTitle: "SEO Stadthagen 2026: Lokale Suchmaschinen-Optimierung",
     seoDescription:
-      "SEO-Agentur für Stadthagen aus Sachsenhagen. Lokale Auffindbarkeit, Google Business Profile, Schema.org, technische SEO. BAFA-gefördert ab 800 € netto.",
+      "SEO für Stadthagen: lokale Top-Rankings, Google Business Profile, Schema.org, technische Optimierung. BAFA-gefördert ab 800 € netto. Jetzt Audit anfragen.",
     sections: [
       {
         eyebrow: "Was Local SEO in Stadthagen konkret bringt",
@@ -136,9 +136,9 @@ export const serviceCities: ServiceCity[] = [
     heroTitleLine2: "und Ostwestfalen-Lippe.",
     heroSub:
       "Mindener Unternehmen suchen lokale SEO-Partner — die meisten OWL-Agenturen sitzen in Bielefeld oder Paderborn und kennen die Mindener Wirtschaft kaum. Wir sind 38 km entfernt in Sachsenhagen, betreuen seit Jahren Mindener Mittelstand und Industrie und kennen die regionalen Suchbedingungen.",
-    seoTitle: "SEO Minden — Suchmaschinen-Optimierung für OWL-Mittelstand",
+    seoTitle: "SEO Minden 2026: Suchmaschinen-Optimierung für OWL",
     seoDescription:
-      "SEO-Agentur für Minden + Ostwestfalen-Lippe. Lokale Auffindbarkeit, Google Business, Wasserstraßenkreuz-Mittelstand. BAFA-gefördert ab 800 € netto.",
+      "SEO für Minden + Ostwestfalen-Lippe: lokale Rankings, Google Business, technische Optimierung. Spezialist für Mittelstand. BAFA-gefördert ab 800 € netto.",
     sections: [
       {
         eyebrow: "Mindener SEO-Marktlage",
@@ -200,9 +200,9 @@ export const serviceCities: ServiceCity[] = [
     heroTitleLine2: "— Tourismus, Hofstaat und KMU.",
     heroSub:
       "Bückeburger Unternehmen leben in einem besonderen Markt: Schloss-Tourismus auf der einen Seite, Mittelstand und Handwerk auf der anderen. Beide brauchen SEO — aber sehr unterschiedlich gewichtet. Wir bauen für jede Bückeburger Branche die passende lokale Suchmaschinen-Strategie, aus Sachsenhagen, 18 km entfernt.",
-    seoTitle: "SEO Bückeburg — Suchmaschinen-Optimierung Schaumburg",
+    seoTitle: "SEO Bückeburg 2026: Lokal sichtbar im Schaumburger Land",
     seoDescription:
-      "SEO-Agentur für Bückeburg aus Sachsenhagen. Local-Pack-Top-3 für Tourismus, Mittelstand, Handwerk. Hofstaat-Region & Schaumburg. Ab 800 € netto.",
+      "SEO für Bückeburg: Local-Pack-Top-3 für Tourismus, Mittelstand, Handwerk. Hofstaat-Region und Schaumburg. BAFA-gefördert ab 800 € netto. Jetzt anfragen.",
     sections: [
       {
         eyebrow: "Bückeburger SEO-Lage",
@@ -263,9 +263,9 @@ export const serviceCities: ServiceCity[] = [
     heroTitleLine2: "— ohne Pagebuilder-Ballast.",
     heroSub:
       "WordPress betreiben heißt: jeden Monat Sicherheits-Updates, regelmäßige Backups, gepflegte Plugins, performante Themes. Wir übernehmen das für Stadthagener Unternehmen — entweder als laufende Wartung oder als Komplett-Neubau einer schlanken WordPress-Site ohne Pagebuilder-Spaghetti. Aus Sachsenhagen, 9 km entfernt, persönlich erreichbar.",
-    seoTitle: "WordPress Stadthagen — Wartung, Entwicklung, SEO-Service",
+    seoTitle: "WordPress Stadthagen: Wartung, Entwicklung & SEO 2026",
     seoDescription:
-      "WordPress-Agentur für Stadthagen aus Sachsenhagen. Wartung, Sicherheit, Performance, Hosting, eigene Plugins. Persönlich, regional, seit 2008.",
+      "WordPress in Stadthagen: Wartung, Sicherheit, Performance, Hosting, eigene Plugins. Persönlich, faire Preise, seit 2008. Jetzt unverbindlich anfragen.",
     sections: [
       {
         eyebrow: "Was Stadthagener WordPress-Nutzer typischerweise brauchen",
@@ -335,9 +335,9 @@ export const serviceCities: ServiceCity[] = [
     heroTitleLine2: "— OWL-Mittelstand zuverlässig betreut.",
     heroSub:
       "Mindener Unternehmen brauchen einen WordPress-Partner, der nicht in der nächsten OWL-Großstadt sitzt und nur per Ticket-System reagiert. Wir betreuen Mindener Mittelstand und Industrie aus Sachsenhagen, 38 km entfernt — persönlich erreichbar, mit klaren Service-Wegen und ohne Großagentur-Hierarchien.",
-    seoTitle: "WordPress Minden — Entwicklung + Wartung für OWL-Mittelstand",
+    seoTitle: "WordPress Minden 2026: Wartung & Entwicklung für OWL",
     seoDescription:
-      "WordPress-Agentur für Minden + OWL aus Sachsenhagen. Sicherheits-Updates, Backups, Performance, Custom-Entwicklung. Persönlich, seit 2008.",
+      "WordPress in Minden + OWL: Sicherheits-Updates, Backups, Performance, Custom-Entwicklung. Persönlicher Ansprechpartner, seit 2008. Jetzt anfragen.",
     sections: [
       {
         eyebrow: "Mindener WordPress-Marktlage",
@@ -393,9 +393,9 @@ export const serviceCities: ServiceCity[] = [
     heroTitleLine2: "— Tourismus, Mittelstand, Vereine.",
     heroSub:
       "Bückeburger Unternehmen brauchen WordPress-Sites, die zu ihrem Markt passen: Tourismus-Auftritte mit klarer Buchungs-Logik, mittelständische Firmen-Sites mit professionellem Auftritt, Vereins-Sites, die ehrenamtlich pflegbar sind. Wir bauen alle drei — aus Sachsenhagen, 18 km entfernt, persönlich erreichbar.",
-    seoTitle: "WordPress Bückeburg — Webdesign + Wartung Schaumburg",
+    seoTitle: "WordPress Bückeburg 2026: Wartung, Entwicklung, Hosting",
     seoDescription:
-      "WordPress-Agentur für Bückeburg aus Sachsenhagen. Sicherheits-Wartung, Performance, eigene Plugins. Tourismus, Mittelstand, Vereine — seit 2008.",
+      "WordPress in Bückeburg: Wartung, Performance, eigene Plugins. Spezialist für Tourismus, Mittelstand und Vereine im Schaumburger Land. Seit 2008.",
     sections: [
       {
         eyebrow: "Bückeburger WordPress-Mix",
