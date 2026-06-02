@@ -73,6 +73,15 @@ export const references: Reference[] = [
     meta: "WordPress · Yoga & Coaching",
   },
   {
+    slug: "events-stadthagen",
+    category: "websites",
+    domain: "events-stadthagen.de",
+    image: "/images/referenzen/events-stadthagen.jpg",
+    date: "2026",
+    title: "Events Stadthagen",
+    meta: "Astro · Veranstaltungs-Portal Schaumburg",
+  },
+  {
     slug: "systemische-beratung",
     category: "websites",
     domain: "systemische-beratung.de",
