@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" role="img" aria-label="KI revolutioniert Webdesign 2026 — Trends, Tools und Praxis-Tipps">
+  <defs>
+    <linearGradient id="bg3" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0d1117"/>
+      <stop offset="100%" stop-color="#1a2230"/>
+    </linearGradient>
+    <linearGradient id="ac3" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#ff6b35"/>
+      <stop offset="100%" stop-color="#ffb259"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%" stop-color="#ff6b35" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#ff6b35" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg3)"/>
+
+  <!-- Glow rechts -->
+  <circle cx="950" cy="315" r="280" fill="url(#glow)"/>
+
+  <!-- Neural-Netz / Knoten-Visualisierung rechts -->
+  <g stroke="#ff6b35" stroke-width="1.5" opacity="0.7">
+    <line x1="800" y1="180" x2="940" y2="240"/>
+    <line x1="800" y1="180" x2="940" y2="320"/>
+    <line x1="800" y1="280" x2="940" y2="240"/>
+    <line x1="800" y1="280" x2="940" y2="320"/>
+    <line x1="800" y1="280" x2="940" y2="400"/>
+    <line x1="800" y1="380" x2="940" y2="320"/>
+    <line x1="800" y1="380" x2="940" y2="400"/>
+    <line x1="800" y1="480" x2="940" y2="400"/>
+    <line x1="940" y1="240" x2="1080" y2="240"/>
+    <line x1="940" y1="240" x2="1080" y2="320"/>
+    <line x1="940" y1="320" x2="1080" y2="240"/>
+    <line x1="940" y1="320" x2="1080" y2="320"/>
+    <line x1="940" y1="320" x2="1080" y2="400"/>
+    <line x1="940" y1="400" x2="1080" y2="320"/>
+    <line x1="940" y1="400" x2="1080" y2="400"/>
+  </g>
+  <g fill="#ff6b35">
+    <circle cx="800" cy="180" r="9"/>
+    <circle cx="800" cy="280" r="9"/>
+    <circle cx="800" cy="380" r="9"/>
+    <circle cx="800" cy="480" r="9"/>
+  </g>
+  <g fill="#ffb259">
+    <circle cx="940" cy="240" r="11"/>
+    <circle cx="940" cy="320" r="13"/>
+    <circle cx="940" cy="400" r="11"/>
+  </g>
+  <g fill="#ededed">
+    <circle cx="1080" cy="240" r="9"/>
+    <circle cx="1080" cy="320" r="11"/>
+    <circle cx="1080" cy="400" r="9"/>
+  </g>
+
+  <!-- Headline -->
+  <text x="80" y="170" font-family="-apple-system, sans-serif" font-size="20" font-weight="600" letter-spacing="2" fill="#ff6b35">KI · WEBDESIGN · 2026</text>
+  <text x="80" y="260" font-family="-apple-system, sans-serif" font-size="60" font-weight="800" fill="#ffffff">KI revolutioniert</text>
+  <text x="80" y="330" font-family="-apple-system, sans-serif" font-size="60" font-weight="800" fill="url(#ac3)">Webdesign.</text>
+  <text x="80" y="400" font-family="-apple-system, sans-serif" font-size="22" fill="#9ca3af">Welche Tools wirklich liefern.</text>
+  <text x="80" y="430" font-family="-apple-system, sans-serif" font-size="22" fill="#9ca3af">Welche Versprechen platzen.</text>
+  <line x1="80" y1="485" x2="240" y2="485" stroke="#ff6b35" stroke-width="3"/>
+  <text x="80" y="540" font-family="-apple-system, sans-serif" font-size="18" fill="#cccccc">2FOX4 · Trends, Tools, Praxis-Tipps</text>
+</svg>

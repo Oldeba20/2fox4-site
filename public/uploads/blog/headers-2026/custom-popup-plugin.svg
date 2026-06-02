@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" role="img" aria-label="Custom Popup Plugin von 2fox4 — Maßgeschneiderte WordPress-Lösungen">
+  <defs>
+    <linearGradient id="bg1" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0d1117"/>
+      <stop offset="100%" stop-color="#1a2230"/>
+    </linearGradient>
+    <linearGradient id="ac1" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#ff6b35"/>
+      <stop offset="100%" stop-color="#ffb259"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg1)"/>
+
+  <!-- Browser-Fenster Mockup mit Popup -->
+  <g opacity="0.95">
+    <!-- Browser-Fenster -->
+    <rect x="720" y="130" width="400" height="320" rx="10" fill="#1f2937" stroke="#374151" stroke-width="2"/>
+    <rect x="720" y="130" width="400" height="36" rx="10" fill="#374151"/>
+    <circle cx="744" cy="148" r="6" fill="#ef4444"/>
+    <circle cx="766" cy="148" r="6" fill="#f59e0b"/>
+    <circle cx="788" cy="148" r="6" fill="#10b981"/>
+    <!-- Content-Linien im Hintergrund -->
+    <rect x="740" y="190" width="240" height="6" rx="3" fill="#4b5563" opacity="0.5"/>
+    <rect x="740" y="208" width="320" height="6" rx="3" fill="#4b5563" opacity="0.5"/>
+    <rect x="740" y="226" width="180" height="6" rx="3" fill="#4b5563" opacity="0.5"/>
+    <rect x="740" y="290" width="280" height="6" rx="3" fill="#4b5563" opacity="0.3"/>
+    <rect x="740" y="308" width="220" height="6" rx="3" fill="#4b5563" opacity="0.3"/>
+
+    <!-- Popup darüber -->
+    <rect x="800" y="225" width="280" height="170" rx="10" fill="#ffffff" filter="brightness(1)"/>
+    <rect x="800" y="225" width="280" height="6" rx="3" fill="#ff6b35"/>
+    <text x="820" y="270" font-family="-apple-system, sans-serif" font-size="16" font-weight="700" fill="#0d1117">Jetzt sichern!</text>
+    <text x="820" y="300" font-family="-apple-system, sans-serif" font-size="12" fill="#6b7280">Maßgeschneiderter Popup</text>
+    <text x="820" y="318" font-family="-apple-system, sans-serif" font-size="12" fill="#6b7280">für deine WordPress-Site</text>
+    <rect x="820" y="340" width="120" height="32" rx="6" fill="#ff6b35"/>
+    <text x="880" y="361" font-family="-apple-system, sans-serif" font-size="13" font-weight="600" fill="#ffffff" text-anchor="middle">Anfordern →</text>
+    <circle cx="1062" cy="245" r="10" fill="#f3f4f6"/>
+    <text x="1062" y="250" font-family="-apple-system, sans-serif" font-size="14" fill="#6b7280" text-anchor="middle">×</text>
+  </g>
+
+  <!-- Text-Spalte links -->
+  <text x="80" y="170" font-family="-apple-system, sans-serif" font-size="20" font-weight="600" letter-spacing="2" fill="#ff6b35">WORDPRESS · MASSGESCHNEIDERT</text>
+  <text x="80" y="250" font-family="-apple-system, sans-serif" font-size="56" font-weight="800" fill="#ffffff">Custom Popup-</text>
+  <text x="80" y="318" font-family="-apple-system, sans-serif" font-size="56" font-weight="800" fill="url(#ac1)">Plugin von 2FOX4</text>
+  <text x="80" y="395" font-family="-apple-system, sans-serif" font-size="22" fill="#9ca3af">Eigene Lösungen statt Standard-Plugin —</text>
+  <text x="80" y="425" font-family="-apple-system, sans-serif" font-size="22" fill="#9ca3af">flexibel, schnell, ohne Plugin-Wildwuchs.</text>
+  <line x1="80" y1="480" x2="240" y2="480" stroke="#ff6b35" stroke-width="3"/>
+  <text x="80" y="535" font-family="-apple-system, sans-serif" font-size="18" fill="#cccccc">2FOX4 · WordPress-Entwicklung aus Sachsenhagen</text>
+</svg>
