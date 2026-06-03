@@ -174,6 +174,91 @@ export const services: Service[] = [
     ],
   },
   {
+    slug: "digitale-stadtrallyes",
+    name: "Digitale Stadtrallyes",
+    kicker: "Leistung · Digitale Stadtrallyes",
+    seoTitle: "Digitale Stadtrallye entwickeln lassen — KI-Stadtführung fürs Handy | 2FOX4",
+    seoDescription:
+      "Digitale Stadtrallye als ortsbezogene Schnitzeljagd im Browser — ohne App-Store, DSGVO-konform, mit KI-Avatar. Referenz: entdecke-stadthagen.de. Aus Sachsenhagen für Tourismus & Stadtmarketing.",
+    heroTitleLine1: "Eine Stadt voller",
+    heroTitleLine2: "Geschichten — wir machen sie hörbar.",
+    heroSub:
+      "Eine ortsbezogene Schnitzeljagd direkt im Browser: Touristen und Einheimische lösen Rätsel an echten Orten, geführt von einem digitalen Charakter. GPS, Audio, Video, Karte — alles auf dem Handy, ohne App-Store-Installation. Referenzprojekt: entdecke-stadthagen.de, geführt von Fürst Ernst von Holstein-Schaumburg als KI-Avatar.",
+    cardSummary:
+      "Ortsbezogene Schnitzeljagd im Browser — geführt von einem KI-Avatar, ohne App-Store, DSGVO-konform. Stadtgeschichte zum Erleben.",
+    iconSvg: `<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>`,
+    sections: [
+      {
+        eyebrow: "Worum es geht",
+        headline: "Stadtführung, die im Browser stattfindet — und Spaß macht.",
+        body: `<p>Eine digitale Stadtrallye ist eine ortsbezogene Schnitzeljagd: Spieler lösen Rätsel an echten Orten in der Stadt, geführt von einem digitalen Charakter — einer historischen Persönlichkeit, einem Maskottchen oder einem Reiseleiter. GPS-Karte, Audio und Avatar-Video laufen direkt im Handy-Browser, <strong>ohne Installation aus dem App-Store</strong>. Wer mag, pinnt die Rallye als App-ähnliche Kachel auf den Home-Bildschirm.</p><p>Unser produktives Referenzprojekt <strong><a href="https://entdecke-stadthagen.de" rel="noopener" target="_blank">entdecke-stadthagen.de</a></strong> führt in drei Stationen durch die Stadthäger Altstadt — geführt von Fürst Ernst von Holstein-Schaumburg, dessen Wikipedia-Porträt per KI zum sprechenden Avatar wird. Konzeptionell skaliert das Format auf 10–12 Stationen und mehrere Themenrouten.</p>`,
+        bullets: [
+          "Ohne App-Store — direkt im Browser spielbar, Installation optional als PWA",
+          "Historisch authentisch — Wikipedia-Gemälde wird per KI zum sprechenden Avatar",
+          "DSGVO-konform by Design — Standort bleibt auf dem Gerät, kein Tracking, deutsches Hosting",
+          "Förderfähig — als digitales Tourismus-Projekt über NBank, Digitalbonus & Co.",
+          "Skalierbar — eine Engine, mehrere Städte unter eigener Domain",
+          "Lokal verankert — entwickelt in Sachsenhagen, Referenz in Stadthagen",
+        ],
+        layout: "split",
+      },
+      {
+        eyebrow: "Live ausprobieren",
+        headline: "Schauen Sie sich die Stadthagen-Rallye direkt an.",
+        body: `<p>Die beste Erklärung ist der Selbstversuch: Öffnen Sie <strong><a href="https://entdecke-stadthagen.de" rel="noopener" target="_blank">entdecke-stadthagen.de</a></strong> auf dem Handy und laufen Sie die ersten Stationen durch. Sie erleben Karte, GPS-Auto-Follow, Avatar-Video mit Lipsync und die Rätsel-Mechanik genau so, wie sie auch in Ihrer Stadt funktionieren würde. Im Erstgespräch gehen wir die Demo gemeinsam durch und skizzieren eine erste Route für Ihre Kommune.</p>`,
+        layout: "stacked",
+      },
+      {
+        eyebrow: "Was die Leistung umfasst",
+        headline: "Von der Storyline bis zum laufenden Betrieb — alles aus einer Hand.",
+        body: `<p>Wir übernehmen den kompletten Weg: <strong>Konzeption</strong> der Storyline mit historischer Bezugsfigur oder Maskottchen, Stationsauswahl gemeinsam mit Tourist-Info und Heimatpflegern, Rätsel-Mechanik (Beobachtung, Logik, Zahlen-Eingabe, Multiple Choice) und Drehbuch pro Station inklusive Audio-Texten.</p><p>Die <strong>Inhalte-Produktion</strong> umfasst Voiceover per Voice Cloning oder lokalem Sprecher (mehrsprachig möglich) sowie Lipsync-Videos, die ein historisches Porträt zum sprechenden Avatar machen. Beim <strong>Branding</strong> bekommt jede Stadt ihre eigene Domain, ihr Logo, ihre Farbpalette und ihr App-Icon. Für den laufenden <strong>Betrieb</strong> sorgen Hosting bei deutschem Provider und ein Wartungsvertrag für Updates und Content-Erweiterung.</p>`,
+        bullets: [
+          "Konzeption: Storyline, Stationsauswahl, Rätsel-Mechanik, Drehbücher",
+          "Audio: Voice Cloning oder lokaler Sprecher via ElevenLabs",
+          "Video: Lipsync-Avatar aus historischem Porträt via D-ID",
+          "Branding: eigene Domain, Logo, Farben, App-Icon",
+          "Offline-fähig durch Service Worker",
+          "Betrieb: deutsches Hosting + Wartungsvertrag",
+        ],
+        layout: "split",
+      },
+      {
+        eyebrow: "Technologie-Stack",
+        headline: "Schlank gebaut, langzeitwartbar, ohne Framework-Lock-in.",
+        body: `<p>Die Engine läuft in <strong>Vanilla HTML/CSS/JS</strong> mit Leaflet für die Karte — keine Framework-Abhängigkeit, die in drei Jahren neu gebaut werden muss. Kartenmaterial kommt von OpenStreetMap (frei, DSGVO-freundlich, keine Google-Maps-Kosten). Audio entsteht mit ElevenLabs Multilingual v2 für saubere deutsche Aussprache und Mehrsprachigkeit, die Avatar-Videos mit D-ID Studio. Als Progressive Web App ist die Rallye über Service Worker und Manifest offline-fähig und installierbar. Gehostet wird auf deutschen Servern (KAS / ALL-INKL) — DSGVO-konform, schnell, ohne US-CDN.</p>`,
+        layout: "stacked",
+      },
+      {
+        eyebrow: "Für wen es sich lohnt",
+        headline: "Tourismus, Stadtmarketing, Wirtschaftsförderung, Vereine.",
+        body: `<p><strong>Tourist-Information &amp; Stadtmarketing</strong> halten Besucher länger in der Stadt und binden sie tiefer ein — ein Erlebnis-Format jenseits der Print-Broschüre, das junge Familien und digitalaffine Touristen gleichermaßen abholt.</p><p><strong>Wirtschaftsförderungen und Regionen</strong> machen mehrere Städte unter einer regionalen Klammer sichtbar: einzelne Rallyes mit eigener Markenidentität, optional gebündelt unter einem Regional-Portal. Und <strong>Vereine, Initiativen und Heimatpflege</strong> bekommen einen kostengünstigen Weg, ihr Wissen in ein Erlebnis zu verwandeln, das auch ohne Stadtführer funktioniert — bis hin zum Edutainment-Format für Schulklassen und Familien.</p>`,
+        layout: "stacked",
+      },
+    ],
+    faq: [
+      {
+        question: "Müssen Nutzer eine App installieren?",
+        answerHtml: `Nein. Die Rallye läuft komplett im Handy-Browser — einfach Link öffnen und loslegen. Wer mag, kann sie als <strong>Progressive Web App</strong> auf den Home-Bildschirm pinnen, dann verhält sie sich wie eine installierte App (eigenes Icon, Vollbild, offline-fähig). Der Umweg über App Store oder Play Store entfällt komplett — das senkt die Einstiegshürde drastisch.`,
+      },
+      {
+        question: "Ist das datenschutzkonform?",
+        answerHtml: `Ja, DSGVO-konform by Design. Die <strong>Standortdaten verlassen nie das Gerät</strong> — GPS wird nur lokal im Browser ausgewertet, um die Karte mitzuführen und Stationen freizuschalten. Wir setzen keine externen Tracker ein und hosten auf deutschen Servern. Kein Google Maps, kein US-CDN ohne Auftragsverarbeitungsvertrag.`,
+      },
+      {
+        question: "Wie wird daraus ein sprechender historischer Avatar?",
+        answerHtml: `Wir nehmen ein gemeinfreies Porträt (z. B. ein Wikipedia-Gemälde) und animieren es per <strong>D-ID</strong> mit Lipsync zum passenden Audio. Die Stimme entsteht über ElevenLabs — wahlweise als Voice Cloning oder mit einem lokalen Sprecher. Ergebnis: Die historische Figur erzählt ihre Geschichte selbst, statt dass man sie auf einer Tafel nachliest.`,
+      },
+      {
+        question: "Kann ich das fördern lassen?",
+        answerHtml: `Häufig ja. Als digitales Tourismus- und Digitalisierungsprojekt ist eine Stadtrallye potenziell über Programme wie <strong>NBank Tourismus, Digitalbonus</strong> oder weitere Förderungen anschlagbar. Oliver ist BAFA-Berater — die Förderberatung läuft direkt über 2fox4 mit. Welche Töpfe konkret passen, klären wir im Erstgespräch.`,
+      },
+      {
+        question: "Lässt sich das auf mehrere Städte einer Region ausweiten?",
+        answerHtml: `Genau dafür ist die Architektur gebaut. Eine geteilte Engine bedient mehrere Städte, jede mit <strong>eigener Domain und eigenem Branding</strong>. Sobald der politische Rückhalt da ist, lässt sich ein übergeordnetes Regional-Portal darüberlegen, das alle Rallyes bündelt. So tritt die Region gemeinsam auf, ohne dass eine Stadt ihre eigene Identität verliert.`,
+      },
+    ],
+  },
+  {
     slug: "wartung-support",
     name: "WordPress-Wartung & Support",
     kicker: "Leistung · Wartung & Support",
