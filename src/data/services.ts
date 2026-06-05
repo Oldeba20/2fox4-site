@@ -179,11 +179,11 @@ export const services: Service[] = [
     kicker: "Leistung · Digitale Stadtrallyes",
     seoTitle: "Digitale Stadtrallye entwickeln lassen — KI-Stadtführung fürs Handy | 2FOX4",
     seoDescription:
-      "Digitale Stadtrallye als ortsbezogene Schnitzeljagd im Browser — ohne App-Store, DSGVO-konform, mit KI-Avatar. Referenz: entdecke-stadthagen.de. Aus Sachsenhagen für Tourismus & Stadtmarketing.",
+      "Digitale Stadtrallye als ortsbezogene Schnitzeljagd im Browser — ohne App-Store, DSGVO-konform, mit KI-Avatar. Aus Sachsenhagen für Tourismus & Stadtmarketing.",
     heroTitleLine1: "Eine Stadt voller",
     heroTitleLine2: "Geschichten — wir machen sie hörbar.",
     heroSub:
-      "Eine ortsbezogene Schnitzeljagd direkt im Browser: Touristen und Einheimische lösen Rätsel an echten Orten, geführt von einem digitalen Charakter. GPS, Audio, Video, Karte — alles auf dem Handy, ohne App-Store-Installation. Referenzprojekt: entdecke-stadthagen.de, geführt von Fürst Ernst von Holstein-Schaumburg als KI-Avatar.",
+      "Eine ortsbezogene Schnitzeljagd direkt im Browser: Touristen und Einheimische lösen Rätsel an echten Orten, geführt von einem digitalen Charakter — etwa einer historischen Persönlichkeit, deren Porträt per KI zum sprechenden Avatar wird. GPS, Audio, Video, Karte — alles auf dem Handy, ohne App-Store-Installation.",
     cardSummary:
       "Ortsbezogene Schnitzeljagd im Browser — geführt von einem KI-Avatar, ohne App-Store, DSGVO-konform. Stadtgeschichte zum Erleben.",
     iconSvg: `<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>`,
@@ -191,22 +191,16 @@ export const services: Service[] = [
       {
         eyebrow: "Worum es geht",
         headline: "Stadtführung, die im Browser stattfindet — und Spaß macht.",
-        body: `<p>Eine digitale Stadtrallye ist eine ortsbezogene Schnitzeljagd: Spieler lösen Rätsel an echten Orten in der Stadt, geführt von einem digitalen Charakter — einer historischen Persönlichkeit, einem Maskottchen oder einem Reiseleiter. GPS-Karte, Audio und Avatar-Video laufen direkt im Handy-Browser, <strong>ohne Installation aus dem App-Store</strong>. Wer mag, pinnt die Rallye als App-ähnliche Kachel auf den Home-Bildschirm.</p><p>Unser produktives Referenzprojekt <strong><a href="https://entdecke-stadthagen.de" rel="noopener" target="_blank">entdecke-stadthagen.de</a></strong> führt in drei Stationen durch die Stadthäger Altstadt — geführt von Fürst Ernst von Holstein-Schaumburg, dessen Wikipedia-Porträt per KI zum sprechenden Avatar wird. Konzeptionell skaliert das Format auf 10–12 Stationen und mehrere Themenrouten.</p>`,
+        body: `<p>Eine digitale Stadtrallye ist eine ortsbezogene Schnitzeljagd: Spieler lösen Rätsel an echten Orten in der Stadt, geführt von einem digitalen Charakter — einer historischen Persönlichkeit, einem Maskottchen oder einem Reiseleiter. GPS-Karte, Audio und Avatar-Video laufen direkt im Handy-Browser, <strong>ohne Installation aus dem App-Store</strong>. Wer mag, pinnt die Rallye als App-ähnliche Kachel auf den Home-Bildschirm.</p><p>So führt eine Route zum Beispiel in mehreren Stationen durch eine Altstadt — geführt von einer historischen Persönlichkeit, deren gemeinfreies Porträt per KI zum sprechenden Avatar wird. Konzeptionell skaliert das Format auf 10–12 Stationen und mehrere Themenrouten.</p>`,
         bullets: [
           "Ohne App-Store — direkt im Browser spielbar, Installation optional als PWA",
           "Historisch authentisch — Wikipedia-Gemälde wird per KI zum sprechenden Avatar",
           "DSGVO-konform by Design — Standort bleibt auf dem Gerät, kein Tracking, deutsches Hosting",
           "Förderfähig — als digitales Tourismus-Projekt über NBank, Digitalbonus & Co.",
           "Skalierbar — eine Engine, mehrere Städte unter eigener Domain",
-          "Lokal verankert — entwickelt in Sachsenhagen, Referenz in Stadthagen",
+          "Lokal verankert — entwickelt in Sachsenhagen, für Kommunen in der Region",
         ],
         layout: "split",
-      },
-      {
-        eyebrow: "Live ausprobieren",
-        headline: "Schauen Sie sich die Stadthagen-Rallye direkt an.",
-        body: `<p>Die beste Erklärung ist der Selbstversuch: Öffnen Sie <strong><a href="https://entdecke-stadthagen.de" rel="noopener" target="_blank">entdecke-stadthagen.de</a></strong> auf dem Handy und laufen Sie die ersten Stationen durch. Sie erleben Karte, GPS-Auto-Follow, Avatar-Video mit Lipsync und die Rätsel-Mechanik genau so, wie sie auch in Ihrer Stadt funktionieren würde. Im Erstgespräch gehen wir die Demo gemeinsam durch und skizzieren eine erste Route für Ihre Kommune.</p>`,
-        layout: "stacked",
       },
       {
         eyebrow: "Was die Leistung umfasst",
