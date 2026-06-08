@@ -2,6 +2,9 @@
 title: "Checkliste: 12 Dinge, die deine WordPress-Website vor dem Launch 2026 erledigt haben muss"
 date: 2026-05-15
 description: "Deine WordPress Website Launch Checkliste für 2026: 12 wichtige Punkte zu Recht, SEO & Performance – bevor du live gehst. Jetzt prüfen!"
+cover:
+  src: "/uploads/blog/checkliste-wordpress-website-vor-launch-2026/cover.webp"
+  alt: "12-Punkte-Checkliste für den WordPress-Launch 2026 – 2fox4-Grafik mit SSL, BFSG, Core Web Vitals und SEO"
 categories:
   - wordpress
 categoryNames:
