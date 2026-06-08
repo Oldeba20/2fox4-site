@@ -12,6 +12,7 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import Breadcrumb from "../../components/Breadcrumb.astro";
 import { getAllPosts, type WPPost } from "../../lib/wp";
 import { breadcrumbSchema } from "../../lib/schema";
+import { site } from "../../data/site";
 
 export async function getStaticPaths() {
   const posts = await getAllPosts();
@@ -78,6 +79,52 @@ const seoTitle = post.rankMath?.title || `${post.title} — 2FOX4 Blog`;
 const seoDescription =
   post.rankMath?.description || post.excerpt || `Blogbeitrag von 2FOX4: ${post.title}`;
 
+// OG-/Social-Bild: Facebook, LinkedIn & WhatsApp rendern kein WebP/SVG/AVIF.
+// Native Cover (.webp) haben einen .jpg-Zwilling; bei SVG/AVIF aufs Default-OG-Bild
+// zurückfallen, sonst Original (png/jpg/jpeg) verwenden.
+function ogImageFor(src?: string): string {
+  if (!src) return site.ogImage;
+  if (/\.webp$/i.test(src)) return src.replace(/\.webp$/i, ".jpg");
+  if (/\.(svg|avif)$/i.test(src)) return site.ogImage;
+  return src;
+}
+const ogImage = ogImageFor(post.featuredImage?.src);
+
+// GEO/SEO: FAQPage-Strukturdaten aus den FAQ-Akkordeons (<details>) erzeugen,
+// damit Suchmaschinen UND KI-Systeme die Fragen/Antworten maschinenlesbar erfassen.
+function decodeEntities(s: string): string {
+  return s
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&nbsp;/g, " ");
+}
+function extractFaq(html: string) {
+  const items: { q: string; a: string }[] = [];
+  const re = /<details>\s*<summary>([\s\S]*?)<\/summary>([\s\S]*?)<\/details>/gi;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(html)) !== null) {
+    const q = decodeEntities(m[1].replace(/<[^>]+>/g, "")).replace(/\s+/g, " ").trim();
+    const a = decodeEntities(m[2].replace(/<[^>]+>/g, " ")).replace(/\s+/g, " ").trim();
+    if (q && a) items.push({ q, a });
+  }
+  return items;
+}
+const faqItems = extractFaq(post.contentHtml);
+const faqSchema = faqItems.length
+  ? {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      mainEntity: faqItems.map((it) => ({
+        "@type": "Question",
+        name: it.q,
+        acceptedAnswer: { "@type": "Answer", text: it.a },
+      })),
+    }
+  : null;
+
 const schema = [
   breadcrumbSchema([
     { name: "Start", url: "/" },
@@ -101,6 +148,7 @@ const schema = [
       name: "2FOX4 Websites and more",
     },
   },
+  ...(faqSchema ? [faqSchema] : []),
 ];
 ---
 
@@ -108,7 +156,7 @@ const schema = [
   title={seoTitle}
   description={seoDescription}
   canonicalPath={`/blog/${post.slug}/`}
-  ogImage={post.featuredImage?.src}
+  ogImage={ogImage}
   noindex={false}
   schema={schema}
 >
