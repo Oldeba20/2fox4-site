@@ -68,8 +68,9 @@ content:
             - { value: ki, label: KI / AI }
             - { value: seo, label: SEO }
             - { value: webdesign, label: Webdesign }
-            - { value: websites, label: Websites }
+            - { value: ecommerce, label: E-Commerce }
             - { value: tools, label: Tools }
+            - { value: digitalisierung, label: Digitalisierung }
       - name: categoryNames
         label: Kategorie-Namen (Anzeige)
         type: select
@@ -81,8 +82,9 @@ content:
             - KI / AI
             - SEO
             - Webdesign
-            - Websites
+            - E-Commerce
             - Tools
+            - Digitalisierung
       - name: draft
         label: Entwurf
         type: boolean

@@ -6,9 +6,9 @@ cover:
   src: "/uploads/blog/woocommerce-umsatz-ki-agenten-automatisierungen-shop-optimierung-2026/cover.webp"
   alt: "WooCommerce-Umsatz mit KI-Agenten – 2fox4-Grafik: dynamische Preise, Produkttexte und smarte Upsells"
 categories:
-  - ki
+  - ecommerce
 categoryNames:
-  - "KI / AI"
+  - "E-Commerce"
 draft: false
 seoTitle: "WooCommerce KI Automatisierung: 3 Workflows 2026"
 seoDescription: "WooCommerce KI Automatisierung: 3 KI-Agenten optimieren Preise, Produkttexte & Upsells automatisch. Steigere deinen Shop-Umsatz 2026 ohne Mehraufwand."

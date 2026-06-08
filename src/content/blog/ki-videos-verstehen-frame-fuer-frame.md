@@ -7,10 +7,8 @@ cover:
   alt: "KI Videos verstehen – Filmstreifen-Grafik im 2fox4-Stil: KI sieht Videos Frame für Frame"
 categories:
   - ki
-  - tools
 categoryNames:
   - "KI / AI"
-  - "Tools"
 draft: false
 seoTitle: "KI Videos verstehen: Frame für Frame auswerten (2026)"
 seoDescription: "KI Videos verstehen: Ein KI-Assistent wertet Videos jetzt Bild für Bild aus – nicht nur das Transkript. Workflow, Tools & 4 Praxis-Einsätze für dein Business."
