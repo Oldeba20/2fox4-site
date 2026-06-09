@@ -73,6 +73,7 @@ export const services: Service[] = [
     cardSummary:
       "Maßgeschneiderte WordPress-Websites — schnell, mobil optimiert, barrierefrei. Keine schwerfälligen Pagebuilder.",
     iconSvg: `<rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/>`,
+    tldr: `<strong>Kurz gesagt:</strong> Wir bauen individuelle <strong>WordPress-Websites ohne Pagebuilder-Ballast</strong> — schnell (PageSpeed 90+), mobil optimiert, barrierefrei und SEO-fertig ab Tag 1. Für maximale Performance auf Wunsch als Astro + Headless-WordPress. Preise: schlanke Visitenkartenseite ab rund <strong>500 €</strong>, vollwertiger Auftritt meist <strong>1.500–5.000 €</strong>. Umsetzung in 3–4 Wochen (größere Projekte 6–10).`,
     sections: [
       {
         eyebrow: "Was du bekommst",
@@ -128,6 +129,7 @@ export const services: Service[] = [
     cardSummary:
       "Lokales SEO, On-Page, technische Hygiene und KI-gestützte Content-Strategie. Mit RankMath und Schema.org.",
     iconSvg: `<circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>`,
+    tldr: `<strong>Kurz gesagt:</strong> Wir verbessern deine Auffindbarkeit an drei Achsen gleichzeitig: <strong>lokales SEO</strong> (Google Business Profile, NAP-Konsistenz, Stadt-Landingpages), <strong>technisches SEO</strong> (Core Web Vitals, sauberer Code, strukturierte Daten) und <strong>Content-SEO</strong>. Monitoring über RankMath Pro und Google Search Console, KI als Beschleuniger mit menschlicher Endredaktion. Technische Fixes wirken in 2–4 Wochen, Content-SEO meist nach 4–6 Monaten.`,
     sections: [
       {
         eyebrow: "Drei Säulen",
@@ -189,6 +191,7 @@ export const services: Service[] = [
     cardSummary:
       "Ortsbezogene Schnitzeljagd im Browser — geführt von einem KI-Avatar, ohne App-Store, DSGVO-konform. Stadtgeschichte zum Erleben.",
     iconSvg: `<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>`,
+    tldr: `<strong>Kurz gesagt:</strong> Wir entwickeln <strong>digitale Stadtrallyes</strong> — ortsbezogene Schnitzeljagden, die direkt im Handy-Browser laufen, <strong>ohne App-Store-Installation</strong>. Geführt von einem KI-Avatar (etwa einer historischen Persönlichkeit, deren Porträt zum sprechenden Avatar wird), mit GPS-Karte, Audio und Rätseln an echten Orten. DSGVO-konform by Design (Standort bleibt auf dem Gerät), als Tourismus-Projekt häufig förderfähig und skalierbar auf mehrere Städte einer Region.`,
     sections: [
       {
         eyebrow: "Worum es geht",
@@ -268,6 +271,7 @@ export const services: Service[] = [
     cardSummary:
       "Sicherheits-Updates, Backups, Performance-Tuning, Uptime-Monitoring — mit fairer Pauschale oder auf Aufruf.",
     iconSvg: `<path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>`,
+    tldr: `<strong>Kurz gesagt:</strong> Wir übernehmen alle <strong>WordPress-Routinearbeiten</strong>, die sonst liegenbleiben: wöchentliche Updates (Core, Plugins, Themes), tägliche externe Backups, Security-Monitoring mit Notfall-Wiederherstellung, PageSpeed-Checks und 24/7-Uptime-Monitoring. Als faire Pauschale ab <strong>49 €/Monat</strong> (umfangreiche Sites ab 129 €) oder flexibel auf Aufruf.`,
     sections: [
       {
         eyebrow: "Was drin ist",
@@ -313,6 +317,7 @@ export const services: Service[] = [
     cardSummary:
       "Schnelles WordPress-Hosting aus Deutschland mit Backups, Monitoring und auf Wunsch komplett verwaltet.",
     iconSvg: `<circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>`,
+    tldr: `<strong>Kurz gesagt:</strong> Wir hosten WordPress, Shopware und Astro auf ausgewählten Servern in <strong>deutschen Rechenzentren</strong> (Frankfurt/München) — DSGVO-konform, mit PHP 8.3, HTTP/3, täglichen Backups und Let&apos;s-Encrypt-SSL. Pakete ab <strong>9 €/Monat</strong>, der Umzug deiner bestehenden Website ist inklusive, auf Wunsch komplett mit Wartung verwaltet.`,
     sections: [
       {
         eyebrow: "Was drin ist",
@@ -436,6 +441,7 @@ export const services: Service[] = [
     cardSummary:
       "Bis zu 50 % staatlicher Zuschuss für Digitalisierungsberatung. Wir unterstützen beim Antrag.",
     iconSvg: `<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>`,
+    tldr: `<strong>Kurz gesagt:</strong> Das BAFA-Programm „Förderung von Unternehmensberatungen für KMU" bezuschusst <strong>Digitalisierungs- und KI-Beratung mit bis zu 50 %</strong> der Kosten. <strong>Wichtig:</strong> Der Antrag muss <strong>vor</strong> Beratungsbeginn gestellt werden. Ablauf: Antrag → Bewilligung (~4 Wochen) → Beratung → Verwendungsnachweis → Auszahlung. Wir sind im BAFA-Beraterverzeichnis gelistet und unterstützen beim Antrag.`,
     sections: [
       {
         eyebrow: "So funktioniert es",
@@ -485,6 +491,7 @@ export const services: Service[] = [
     cardSummary:
       "WCAG 2.2-konforme WordPress-Websites. Wichtig für öffentliche Einrichtungen, Vereine und BFSG-Betroffene.",
     iconSvg: `<circle cx="12" cy="12" r="10"/><path d="M9 12l2 2 4-4"/>`,
+    tldr: `<strong>Kurz gesagt:</strong> Wir bauen <strong>WCAG 2.2-konforme WordPress-Websites</strong> — relevant seit dem Barrierefreiheitsstärkungsgesetz (BFSG, gilt seit 28.06.2025, v. a. für E-Commerce, Banking und öffentliche Einrichtungen). Grundlage ist sauberes semantisches HTML, Tastatur-Navigation, AA-Kontraste und Alt-Texte, ergänzt um unsere <a href="/wp-plugins/accessibility-suite/">2fox4 Accessibility Suite</a>. Erst-Audit mit Maßnahmenliste ab <strong>490 €</strong>; bei Neubau ist Barrierefreiheit im Preis enthalten.`,
     sections: [
       {
         eyebrow: "Unser eigenes Plugin",
@@ -532,6 +539,7 @@ export const services: Service[] = [
     cardSummary:
       "Flyer, Prospekte, Plakate und Messestände — markenkonsistent gestaltet, druckfertig geliefert. Regional aus Sachsenhagen.",
     iconSvg: `<path d="M6 2h9l5 5v15a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1z"/><path d="M14 2v6h6"/><path d="M9 13h6M9 17h6M9 9h2"/>`,
+    tldr: `<strong>Kurz gesagt:</strong> Wir gestalten <strong>Print- &amp; Messeauftritte</strong> markenkonsistent zur Website: Flyer, Prospekte, Plakate, Visitenkarten sowie komplette Messestände von 9–60 m². Von Briefing über Layout bis zur druckfertigen Reinzeichnung (PDF/X-4, CMYK) aus einer Hand — Druck über regionale Partner oder deine Hausdruckerei. Flyer-Gestaltung ab <strong>250 €</strong>, Messestand-Gestaltung ab <strong>1.500 €</strong>.`,
     sections: [
       {
         eyebrow: "Was wir gestalten",
