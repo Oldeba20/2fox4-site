@@ -91,6 +91,15 @@ const schema = [
     </div>
   </section>
 
+  {/* TL;DR / „Kurz gesagt" — GEO-optimierte Kurzfassung direkt unter dem Hero */}
+  {service.tldr && (
+    <section class="py-8">
+      <div class="container-content">
+        <div class="max-w-[820px] rounded-2xl border-l-4 border-[var(--color-accent)] bg-[var(--color-bg-card)] p-6 text-[17px] leading-[1.7] text-[var(--color-text-muted)] tldr-box" set:html={service.tldr} />
+      </div>
+    </section>
+  )}
+
   {/* Sections */}
   {service.sections.map((section, i) => (
     <section class:list={[
@@ -174,6 +183,16 @@ const schema = [
     font-weight: 600;
   }
   .prose-content a {
+    color: var(--color-accent);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+  }
+  .tldr-box strong {
+    color: var(--color-text);
+    font-weight: 600;
+  }
+  .tldr-box a {
     color: var(--color-accent);
     text-decoration: underline;
     text-decoration-thickness: 1px;

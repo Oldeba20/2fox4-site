@@ -78,7 +78,34 @@ Technisch stecken hinter der Funktion nur drei Bausteine: ein Tool zum Herunterl
 
 Hinter all dem steckt ein größeres Muster, das sich 2026 immer deutlicher zeigt: **KI übernimmt nicht nur Text, sondern zunehmend visuelle Arbeit.** Für kleine und mittlere Unternehmen bedeutet das einen handfesten Zeitgewinn. Recherche, Dokumentation, Support, Wettbewerbsanalyse – Aufgaben, die früher stundenlanges Anschauen und Mitschreiben erforderten, lassen sich an die KI delegieren.
 
-Der entscheidende Punkt ist nicht die Technik an sich, sondern wie du sie in deine Abläufe einbaust. Genau hier setzen wir bei 2fox4 an: Wir helfen dir, KI- und Automatisierungs-Werkzeuge so in deinen Arbeitsalltag zu integrieren, dass sie wirklich Zeit sparen – von der ersten Idee bis zum fertigen Workflow. Wenn du wissen möchtest, wo in deinem Unternehmen die größten Automatisierungs-Potenziale schlummern, [sprich uns einfach an](https://www.2fox4.de/kontakt/).
+Der entscheidende Punkt ist nicht die Technik an sich, sondern wie du sie in deine Abläufe einbaust. Genau hier setzen wir mit unserer [KI- & Digitalisierungsberatung für den Mittelstand](/leistungen/digitalisierungsberatung/) an: Wir helfen dir, KI- und Automatisierungs-Werkzeuge so in deinen Arbeitsalltag zu integrieren, dass sie wirklich Zeit sparen – von der ersten Idee bis zum fertigen Workflow. Wenn du wissen möchtest, wo in deinem Unternehmen die größten Automatisierungs-Potenziale schlummern, [sprich uns einfach an](https://www.2fox4.de/kontakt/).
+
+## Häufige Fragen (FAQ)
+
+<details>
+<summary>Kann eine KI wirklich Videos sehen oder nur das Transkript lesen?</summary>
+<p>Mit dem richtigen Werkzeug sieht die KI das Video tatsächlich Bild für Bild: Sie extrahiert in regelmäßigen Abständen einzelne Frames und wertet sie zusätzlich zum Transkript aus. So erfasst sie auch das, was gezeigt – aber nicht gesagt – wird, etwa Diagramme, Tabellen oder Klickwege.</p>
+</details>
+
+<details>
+<summary>Welche Videos lassen sich damit auswerten?</summary>
+<p>Nicht nur YouTube-Videos, sondern auch Social-Media-Clips, Bildschirmaufnahmen, Loom-Videos und sogar Aufnahmen ohne Ton – zum Beispiel Urlaubs- oder Überwachungsvideos. Überall, wo das Bild entscheidend ist, spielt die frame-genaue Auswertung ihre Stärke aus.</p>
+</details>
+
+<details>
+<summary>Was kostet die Video-Auswertung mit KI?</summary>
+<p>Die drei nötigen Bausteine – Download-Tool, Frame-Extraktion und Spracherkennung – sind frei verfügbar. Für die Transkription genügt ein gängiges Speech-to-Text-Modell, das mehrere Anbieter sehr günstig oder im Rahmen eines Gratis-Kontingents bereitstellen. Für die meisten Anwendungsfälle entstehen also kaum laufende Kosten.</p>
+</details>
+
+<details>
+<summary>Wie lange dauert die Auswertung eines langen Videos?</summary>
+<p>Je nach Länge und gewünschter Tiefe meist nur wenige Minuten. Da die KI nicht jeden einzelnen Frame, sondern gezielt Stichproben (mit einer Obergrenze von rund 100 Frames pro Video) auswertet, lassen sich auch mehrstündige Vorträge effizient zu einer durchsuchbaren Zusammenfassung verarbeiten.</p>
+</details>
+
+<details>
+<summary>Eignet sich das auch für Support und Fehleranalyse?</summary>
+<p>Ja. Statt vieler Screenshots schickst du eine kurze Bildschirmaufnahme. Die KI sieht nicht nur die Fehlermeldung, sondern die gesamte Oberfläche mit allen Optionen – ideal, um Bugs zu beschreiben oder Klickwege in einer Software zu erklären.</p>
+</details>
 
 ## Fazit
 

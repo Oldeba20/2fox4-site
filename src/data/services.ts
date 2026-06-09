@@ -50,6 +50,8 @@ export interface Service {
   cardSummary: string;
   /** Inline-SVG-Path für das Icon */
   iconSvg: string;
+  /** Optionale TL;DR-/„Kurz gesagt"-Box (HTML erlaubt) — wird direkt unter dem Hero gerendert, GEO-optimiert für KI-Suchmaschinen. */
+  tldr?: string;
   /** Sections mit Inhalt */
   sections: ServiceSection[];
   /** Themen-spezifische FAQs */
@@ -344,42 +346,79 @@ export const services: Service[] = [
   },
   {
     slug: "digitalisierungsberatung",
-    name: "Digitalisierungsberatung",
-    kicker: "Leistung · Digitalisierung",
-    seoTitle: "Digitalisierungsberatung für KMU — ehrlich, ohne KI-Hype, BAFA-förderfähig",
+    name: "KI- & Digitalisierungsberatung",
+    kicker: "Leistung · KI-Beratung für den Mittelstand",
+    seoTitle: "KI-Beratung für den Mittelstand — ehrlich, ohne Hype, BAFA-förderfähig | 2FOX4",
     seoDescription:
-      "Wir zeigen dir, welche Prozesse sich automatisieren lohnen und welche nicht. BAFA-förderfähige Beratung für KMU in Niedersachsen.",
-    heroTitleLine1: "Beratung ohne",
-    heroTitleLine2: "Buzzword-Bingo.",
+      "KI-Beratung für KMU: Use-Case-Analyse, Prozessautomatisierung mit KI-Agenten, Tool-Auswahl und Schulungen. Ehrlich, ohne Hype, BAFA-förderfähig — aus Niedersachsen.",
+    heroTitleLine1: "KI im Mittelstand,",
+    heroTitleLine2: "ohne Buzzword-Bingo.",
     heroSub:
-      "Wir kommen nicht mit einer KI-Slides-Show und reden 90 Minuten darüber, wie disruptiv alles ist. Wir setzen uns mit dir 2 Stunden hin, schauen uns deine Prozesse an — und sagen ehrlich, was sich lohnt zu automatisieren und was nicht.",
+      "Wir kommen nicht mit einer 90-Minuten-Slideshow über disruptive Zukunftsvisionen. Wir setzen uns mit dir hin, schauen uns deine Prozesse an — und sagen ehrlich, wo dir KI heute schon Zeit und Geld spart und wo sie überflüssig ist. Von der Use-Case-Analyse über Automatisierung mit KI-Agenten bis zur Schulung deines Teams.",
     cardSummary:
-      "Ehrliche Beratung für KMU: welche Prozesse sich automatisieren lohnen, welche nicht. BAFA-förderfähig.",
+      "KI-Beratung für KMU: welche KI-Use-Cases sich wirklich lohnen, welche nicht. Automatisierung, Tool-Auswahl, Schulungen — BAFA-förderfähig.",
     iconSvg: `<path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>`,
+    tldr: `<strong>Kurz gesagt:</strong> Wir beraten kleine und mittlere Unternehmen dabei, Künstliche Intelligenz praktisch einzusetzen — in vier Schritten: <strong>(1) KI-Strategie &amp; Use-Case-Analyse</strong> (wo lohnt sich KI überhaupt?), <strong>(2) Prozessautomatisierung mit KI-Agenten</strong>, <strong>(3) Auswahl &amp; Einführung passender KI-Tools</strong> und <strong>(4) Schulungen für dein Team</strong>. Ehrlich statt Hype, mit ROI-Blick und in vielen Fällen <strong>BAFA-förderfähig</strong> (bis zu 50 % Zuschuss).`,
     sections: [
       {
-        eyebrow: "Was du bekommst",
-        headline: "Eine Außensicht auf deine digitalen Werkzeuge.",
-        body: `<p>Wir starten mit einem <strong>Bestands-Audit</strong>: welche Tools nutzt du, welche Schritte machst du noch manuell, welche Übergaben sind brüchig? Daraus entsteht eine Liste an Optimierungs-Ideen, priorisiert nach <strong>Wirkung vs. Aufwand</strong>. Du entscheidest dann, was du selbst umsetzt und was wir übernehmen.</p>`,
+        eyebrow: "Schritt 1 · Strategie",
+        headline: "KI-Strategie & Use-Case-Analyse: Wo lohnt sich KI wirklich?",
+        body: `<p>Bevor irgendein Tool eingeführt wird, klären wir die wichtigste Frage: <strong>Wo spart dir KI im Tagesgeschäft echtes Geld und Zeit — und wo ist sie nur teure Spielerei?</strong> Wir starten mit einem Bestands-Audit deiner Prozesse, identifizieren konkrete KI-Use-Cases und priorisieren sie nach <strong>Wirkung gegen Aufwand</strong>. Heraus kommt eine klare Roadmap: was zuerst, was später, was gar nicht.</p>`,
         bullets: [
-          "2-Stunden Bestands-Audit vor Ort oder per Video",
-          "Schriftliche Empfehlung mit Quick-Wins",
-          "Tool-Stack-Vorschlag (mit konkreten Produkten)",
+          "2-Stunden Prozess-Audit vor Ort oder per Video",
+          "Konkrete KI-Use-Cases statt Buzzwords",
+          "Priorisierung nach Wirkung vs. Aufwand",
           "ROI-Schätzung pro Maßnahme",
-          "Optional: gemeinsame Umsetzung",
+          "Schriftliche Roadmap mit Quick-Wins",
           "Förderfähig nach BAFA-Richtlinien für KMU",
+        ],
+        layout: "split",
+      },
+      {
+        eyebrow: "Schritt 2 · Automatisierung",
+        headline: "Prozessautomatisierung mit KI-Agenten.",
+        body: `<p>Repetitive Fleißarbeit — Angebote schreiben, Daten übertragen, recherchieren, dokumentieren — lässt sich heute zu großen Teilen an KI-Agenten delegieren. Wir bauen die passenden Automatisierungen und binden sie an deine bestehenden Werkzeuge (E-Mail, CRM, Website, Shop) an, sodass deine Mitarbeiter von der Routine entlastet werden und sich auf das konzentrieren, wofür man wirklich Menschen braucht.</p><p>Wie ein ganzer Schwarm aus KI-Agenten eine große Aufgabe selbstständig plant, abarbeitet und prüft, zeigen wir am Beispiel im Beitrag <a href="/blog/ultracode-ki-agenten-schwarm-mittelstand/">KI-Agenten-Schwarm für den Mittelstand</a>.</p>`,
+        layout: "stacked",
+      },
+      {
+        eyebrow: "Schritt 3 · Tools",
+        headline: "Auswahl & Einführung der richtigen KI-Tools.",
+        body: `<p>Der Markt ist unübersichtlich und ändert sich wöchentlich. Wir kennen die Werkzeuge aus dem täglichen Einsatz in Kundenprojekten und wählen mit dir die aus, die zu <strong>deinem</strong> Betrieb passen — datenschutzkonform, bezahlbar und ohne dich in einen Anbieter zu sperren. Anschließend führen wir sie sauber ein, statt dich mit einem Login allein zu lassen.</p><p>Worauf es bei der Tool-Wahl ankommt, vertiefen wir im Beitrag <a href="/blog/kostenlose-vs-bezahlte-ki-tools-2026/">Kostenlose vs. bezahlte KI-Tools</a>.</p>`,
+        layout: "stacked",
+      },
+      {
+        eyebrow: "Schritt 4 · Befähigung",
+        headline: "Schulungen & Workshops für dein Team.",
+        body: `<p>Die beste KI nützt nichts, wenn sie niemand bedient. Deshalb befähigen wir dein Team in praxisnahen Workshops: <strong>KI-Grundlagen, sinnvolles Prompting, sichere und datenschutzkonforme Nutzung</strong> im Arbeitsalltag. Kein theoretischer Frontalunterricht, sondern an euren echten Aufgaben.</p>`,
+        bullets: [
+          "Praxis-Workshops an euren echten Aufgaben",
+          "KI-Grundlagen & Prompting verständlich erklärt",
+          "Datenschutz & sichere Nutzung im Team",
+          "Auf Wunsch laufende Begleitung statt Einmal-Termin",
         ],
         layout: "split",
       },
     ],
     faq: [
       {
-        question: "Was kostet eine Beratung?",
-        answerHtml: `Ein Bestands-Audit inkl. schriftlicher Empfehlung kostet ab <strong>1.200 €</strong>. Bei BAFA-Förderfähigkeit übernimmt der Staat bis zu 50 % der Kosten — siehe unsere <a href="/leistungen/bafa-foerderung/" class="text-[var(--color-accent)]">BAFA-Seite</a>.`,
+        question: "Für wen lohnt sich eine KI-Beratung?",
+        answerHtml: `Für kleine und mittlere Unternehmen, die ahnen, dass KI ihnen helfen könnte, aber nicht wissen, wo sie anfangen sollen. Du brauchst kein Vorwissen und keine eigene IT-Abteilung — wir holen dich dort ab, wo du stehst, und übersetzen KI in konkrete, bezahlbare Schritte für deinen Betrieb.`,
       },
       {
-        question: "Bekomme ich auch Hilfe bei der Förderung?",
-        answerHtml: `Ja, wir unterstützen beim Antrag (BAFA "Förderung von Unternehmensberatungen für KMU"). Den eigentlichen Antrag stellt dein Steuerberater oder du selbst — wir liefern alle nötigen Unterlagen.`,
+        question: "Was kostet eine KI-Beratung?",
+        answerHtml: `Ein Prozess-Audit inkl. schriftlicher Roadmap kostet ab <strong>1.200 €</strong>. Bei BAFA-Förderfähigkeit übernimmt der Staat bis zu 50 % der Kosten — siehe unsere <a href="/leistungen/bafa-foerderung/" class="text-[var(--color-accent)]">BAFA-Seite</a>. Umsetzung und Schulungen kalkulieren wir transparent nach Aufwand.`,
+      },
+      {
+        question: "Ersetzt KI dann meine Mitarbeiter?",
+        answerHtml: `Nein. Unser Ansatz entlastet Menschen von Routine- und Fleißarbeit, damit sie sich auf die Aufgaben konzentrieren können, für die man wirklich Menschen braucht. KI ist bei uns ein Beschleuniger, kein Ersatz für Qualität und Urteilsvermögen.`,
+      },
+      {
+        question: "Ist die KI-Beratung BAFA-förderfähig?",
+        answerHtml: `In vielen Fällen ja. Die Beratung kann über das BAFA-Programm „Förderung von Unternehmensberatungen für KMU" bezuschusst werden. Wir unterstützen beim Antrag und liefern alle nötigen Unterlagen — den Antrag selbst stellst du oder dein Steuerberater. Details auf unserer <a href="/leistungen/bafa-foerderung/" class="text-[var(--color-accent)]">BAFA-Seite</a>.`,
+      },
+      {
+        question: "Wie stellt ihr sicher, dass KI datenschutzkonform eingesetzt wird?",
+        answerHtml: `Wir wählen Tools und Hosting-Varianten so aus, dass sie DSGVO-konform betrieben werden können (z. B. EU-Hosting), und schulen dein Team im sicheren Umgang mit Unternehmensdaten. Datenschutz ist Teil jeder Use-Case-Bewertung — nicht ein nachträglicher Anbau.`,
       },
     ],
   },

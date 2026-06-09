@@ -137,29 +137,35 @@ Wer diese Begriffe kennt, erkennt schnell, warum eine simple Gratis-Demo und ein
 
 ## Häufige Fragen (FAQ)
 
-### Lohnt sich ein bezahltes KI-Abo für 20 € im Monat?
+<details>
+<summary>Lohnt sich ein bezahltes KI-Abo für 20 € im Monat?</summary>
+<p>Für alle, die regelmäßig und ernsthaft mit KI arbeiten, in der Regel ja. Man erhält Zugang zu den stärksten Modellen, deutlich höhere Limits, Reasoning, Deep Research und Agentenfunktionen. Wer KI nur sehr selten und für triviale Fragen nutzt, kommt mit der Gratis-Version aus – sollte daraus aber kein Urteil über die gesamte Technologie ableiten.</p>
+</details>
 
-Für alle, die regelmäßig und ernsthaft mit KI arbeiten, in der Regel ja. Man erhält Zugang zu den stärksten Modellen, deutlich höhere Limits, Reasoning, Deep Research und Agentenfunktionen. Wer KI nur sehr selten und für triviale Fragen nutzt, kommt mit der Gratis-Version aus – sollte daraus aber kein Urteil über die gesamte Technologie ableiten.
+<details>
+<summary>Warum ist die kostenlose KI-Version so viel schlechter?</summary>
+<p>Weil sie bewusst limitiert ist: kleineres Modell, strenge Nachrichten-Limits und fehlende Premium-Funktionen wie Reasoning, Deep Research oder Agenten. Sie ist als Demo gedacht, nicht als vollwertiges Arbeitswerkzeug.</p>
+</details>
 
-### Warum ist die kostenlose KI-Version so viel schlechter?
+<details>
+<summary>Ist ein lokales Open-Source-Modell eine echte Alternative zum Abo?</summary>
+<p>Für Privatpersonen und kleine Teams aktuell meist nicht: Leistungsfähige Modelle brauchen teure Hardware (oft 35–40 GB Grafikspeicher, 3.000 €+) und technisches Know-how. Für Unternehmen mit eigener IT und strengen Datenschutzanforderungen kann Open Source dagegen die bessere Wahl sein – wegen Kontrolle und Datenhoheit, nicht wegen des Preises.</p>
+</details>
 
-Weil sie bewusst limitiert ist: kleineres Modell, strenge Nachrichten-Limits und fehlende Premium-Funktionen wie Reasoning, Deep Research oder Agenten. Sie ist als Demo gedacht, nicht als vollwertiges Arbeitswerkzeug.
+<details>
+<summary>Welche Hardware braucht man für ein leistungsfähiges lokales KI-Modell?</summary>
+<p>Für ein großes Modell (z. B. 70 Milliarden Parameter) mit brauchbarer Geschwindigkeit braucht man selbst mit Quantisierung rund 35–40 GB Videospeicher – also eine High-End-Grafikkarte oder ein Multi-GPU-Setup. Kleinere Modelle (8–14 Mrd. Parameter) laufen dagegen schon auf modernen Laptops.</p>
+</details>
 
-### Ist ein lokales Open-Source-Modell eine echte Alternative zum Abo?
+<details>
+<summary>Wie sollten Unternehmen mit der Gratis-vs.-Bezahl-Frage umgehen?</summary>
+<p>Strategische Entscheidungen über KI sollten niemals auf Basis der Gratis-Version getroffen werden. Wer das Potenzial realistisch einschätzen will, testet mit den Premium-Modellen oder lässt sich beraten – sonst droht die Fehleinschätzung „KI ist noch nicht reif", während der Wettbewerb bereits produktiv damit arbeitet.</p>
+</details>
 
-Für Privatpersonen und kleine Teams aktuell meist nicht: Leistungsfähige Modelle brauchen teure Hardware (oft 35–40 GB Grafikspeicher, 3.000 €+) und technisches Know-how. Für Unternehmen mit eigener IT und strengen Datenschutzanforderungen kann Open Source dagegen die bessere Wahl sein – wegen Kontrolle und Datenhoheit, nicht wegen des Preises.
-
-### Welche Hardware braucht man für ein leistungsfähiges lokales KI-Modell?
-
-Für ein großes Modell (z. B. 70 Milliarden Parameter) mit brauchbarer Geschwindigkeit braucht man selbst mit Quantisierung rund 35–40 GB Videospeicher – also eine High-End-Grafikkarte oder ein Multi-GPU-Setup. Kleinere Modelle (8–14 Mrd. Parameter) laufen dagegen schon auf modernen Laptops.
-
-### Wie sollten Unternehmen mit der Gratis-vs.-Bezahl-Frage umgehen?
-
-Strategische Entscheidungen über KI sollten niemals auf Basis der Gratis-Version getroffen werden. Wer das Potenzial realistisch einschätzen will, testet mit den Premium-Modellen oder lässt sich beraten – sonst droht die Fehleinschätzung „KI ist noch nicht reif", während der Wettbewerb bereits produktiv damit arbeitet.
-
-### Werden die Gratis-Versionen mit der Zeit besser?
-
-Ja, aber langsam und mit Verzögerung. Verbesserungen erreichen zuerst die Premium-Modelle und sickern erst Monate oder Jahre später in die Gratis-Tarife – wenn überhaupt. Gleichzeitig werden kleine, lokal lauffähige Open-Source-Modelle spürbar besser. Die Lücke zur Spitze bleibt aber bestehen, weil sich auch die Top-Modelle ständig weiterentwickeln.
+<details>
+<summary>Werden die Gratis-Versionen mit der Zeit besser?</summary>
+<p>Ja, aber langsam und mit Verzögerung. Verbesserungen erreichen zuerst die Premium-Modelle und sickern erst Monate oder Jahre später in die Gratis-Tarife – wenn überhaupt. Gleichzeitig werden kleine, lokal lauffähige Open-Source-Modelle spürbar besser. Die Lücke zur Spitze bleibt aber bestehen, weil sich auch die Top-Modelle ständig weiterentwickeln.</p>
+</details>
 
 ## Fazit
 

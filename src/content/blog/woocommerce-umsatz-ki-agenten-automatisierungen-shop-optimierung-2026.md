@@ -89,6 +89,8 @@ Wichtig: Beginne niemals mit vollautomatischen Deployments ohne menschliche Kont
 
 WooCommerce KI Automatisierung ist kein abstraktes Zukunftsprojekt – es sind konkrete Workflows, die du mit verfügbaren Tools heute aufsetzen kannst. Die drei vorgestellten Automatisierungen – dynamische Preisanpassung, Produkttext-Updating und intelligentes Upselling – decken die drei größten Umsatzhebel im E-Commerce ab. Der entscheidende Vorteil: Dein Shop optimiert sich selbst, während du an der nächsten Wachstumsstrategie arbeitest.
 
+Du willst diese Automatisierungen nicht allein aufsetzen? In unserer [KI- & Digitalisierungsberatung](/leistungen/digitalisierungsberatung/) identifizieren wir die lohnendsten KI-Use-Cases für deinen Shop und richten die passenden KI-Agenten gemeinsam mit dir ein.
+
 ---
 
 ## Häufig gestellte Fragen (FAQ)

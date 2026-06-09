@@ -74,6 +74,8 @@ Google Analytics 4 (oder ein datenschutzfreundliches Alternativsystem wie Matomo
 
 Eine strukturierte **WordPress Website Launch Checkliste** ist keine bürokratische Pflichtübung – sie ist dein Sicherheitsnetz. Gerade 2026, mit BFSG-Pflichten, KI-Suchmaschinen und neuen Performance-Standards, ist gründliche Vorbereitung der Unterschied zwischen einem starken Start und einem teuren Nacharbeiten. Geh die 12 Punkte einmal durch, hake ab, was erledigt ist, und launch dann mit echtem Vertrauen.
 
+Du willst den Launch lieber in erfahrene Hände geben? Dann schau dir unser [WordPress-Webdesign](/leistungen/webdesign/) an – wir bauen schnelle, SEO-fertige Websites, die alle Punkte dieser Checkliste schon ab Tag 1 erfüllen.
+
 ## Häufige Fragen
 
 <details><summary>Was ist das BFSG und wen betrifft es?</summary>
@@ -124,4 +126,4 @@ Eine strukturierte **WordPress Website Launch Checkliste** ist keine bürokratis
 
 ## Bereit für deinen Launch?
 
-Lade dir diese **WordPress Website Launch Checkliste** als PDF herunter und hake jeden Punkt systematisch ab – so kannst du deinen Launch mit einem guten Gefühl angehen. Hast du Fragen zu einem der Punkte oder brauchst du Unterstützung bei der Umsetzung? Schreib mir gerne in den Kommentaren oder [kontaktiere mich direkt](#) – ich helfe dir, deine Website sauber und zukunftssicher an den Start zu bringen.
+Lade dir diese **WordPress Website Launch Checkliste** als PDF herunter und hake jeden Punkt systematisch ab – so kannst du deinen Launch mit einem guten Gefühl angehen. Hast du Fragen zu einem der Punkte oder brauchst du Unterstützung bei der Umsetzung? Schreib mir gerne in den Kommentaren oder [kontaktiere mich direkt](https://www.2fox4.de/kontakt/) – ich helfe dir, deine Website sauber und zukunftssicher an den Start zu bringen.

@@ -167,33 +167,40 @@ Wenn du 2026 ernsthaft **mit KI Geld verdienen** willst, lautet das Muster einde
 
 ## Häufige Fragen (FAQ)
 
-### Kann man als Anfänger 2026 wirklich mit KI Geld verdienen?
+<details>
+<summary>Kann man als Anfänger 2026 wirklich mit KI Geld verdienen?</summary>
+<p>Ja – aber nicht mit „Passiv-Einkommen"-Versprechen. Realistisch sind dienstleistungsbasierte B2B-Modelle wie KI-Beratung, Wissensmanagement oder Workflow-Automatisierung, bei denen du ein konkretes Unternehmensproblem löst. Viele dieser Wege sind auch als Quereinsteiger erlernbar.</p>
+</details>
 
-Ja – aber nicht mit „Passiv-Einkommen"-Versprechen. Realistisch sind dienstleistungsbasierte B2B-Modelle wie KI-Beratung, Wissensmanagement oder Workflow-Automatisierung, bei denen du ein konkretes Unternehmensproblem löst. Viele dieser Wege sind auch als Quereinsteiger erlernbar.
+<details>
+<summary>Welches KI-Geschäftsmodell ist am profitabelsten?</summary>
+<p>Am profitabelsten sind KI-App-Entwicklung, KI-Beratung, Corporate-LLM-Setups, professionelle KI-Videoproduktion und Personal-AI-Assistenten – Modelle im mittleren bis oberen fünfstelligen Projektbereich mit geringer Konkurrenz.</p>
+</details>
 
-### Welches KI-Geschäftsmodell ist am profitabelsten?
+<details>
+<summary>Welche KI-Geschäftsmodelle sollte man meiden?</summary>
+<p>Faceless-Content-Kanäle, KI-Trading-Bots, reine KI-E-Commerce-Shops und Standard-Website-Chatbots. Sie haben geringe Margen, hohe Konkurrenz und kurze Halbwertszeit.</p>
+</details>
 
-Am profitabelsten sind KI-App-Entwicklung, KI-Beratung, Corporate-LLM-Setups, professionelle KI-Videoproduktion und Personal-AI-Assistenten – Modelle im mittleren bis oberen fünfstelligen Projektbereich mit geringer Konkurrenz.
+<details>
+<summary>Warum sind B2B-Modelle besser als Endkunden-Modelle?</summary>
+<p>Weil Unternehmen für echten Mehrwert deutlich höhere Preise zahlen und seltener vom Markt ersetzt werden. Endkunden- und Plattform-Modelle stehen dagegen in direktem Wettbewerb mit globalen Anbietern und automatisierter Massenkonkurrenz.</p>
+</details>
 
-### Welche KI-Geschäftsmodelle sollte man meiden?
+<details>
+<summary>Wie wichtig ist Spezialisierung auf eine Nische?</summary>
+<p>Sehr wichtig. Eine klare Nische senkt die Konkurrenz drastisch, erhöht deine Preise und macht deine Lösungen replizierbar – egal ob bei Voice-Agents, Beratung oder Automatisierung.</p>
+</details>
 
-Faceless-Content-Kanäle, KI-Trading-Bots, reine KI-E-Commerce-Shops und Standard-Website-Chatbots. Sie haben geringe Margen, hohe Konkurrenz und kurze Halbwertszeit.
+<details>
+<summary>Wie viel Startkapital braucht man für ein KI-Geschäftsmodell?</summary>
+<p>Deutlich weniger als in klassischen Branchen. Bei dienstleistungsbasierten Modellen wie Beratung, Automatisierung oder Wissensmanagement bestehen die Hauptkosten aus Tool-Abos und deiner Zeit – oft genügen wenige Hundert Euro im Monat. Teurer wird es erst, wenn du Mitarbeitende oder Freelancer brauchst, etwa bei größeren App-Projekten.</p>
+</details>
 
-### Warum sind B2B-Modelle besser als Endkunden-Modelle?
-
-Weil Unternehmen für echten Mehrwert deutlich höhere Preise zahlen und seltener vom Markt ersetzt werden. Endkunden- und Plattform-Modelle stehen dagegen in direktem Wettbewerb mit globalen Anbietern und automatisierter Massenkonkurrenz.
-
-### Wie wichtig ist Spezialisierung auf eine Nische?
-
-Sehr wichtig. Eine klare Nische senkt die Konkurrenz drastisch, erhöht deine Preise und macht deine Lösungen replizierbar – egal ob bei Voice-Agents, Beratung oder Automatisierung.
-
-### Wie viel Startkapital braucht man für ein KI-Geschäftsmodell?
-
-Deutlich weniger als in klassischen Branchen. Bei dienstleistungsbasierten Modellen wie Beratung, Automatisierung oder Wissensmanagement bestehen die Hauptkosten aus Tool-Abos und deiner Zeit – oft genügen wenige Hundert Euro im Monat. Teurer wird es erst, wenn du Mitarbeitende oder Freelancer brauchst, etwa bei größeren App-Projekten.
-
-### Wie schnell kann man mit KI das erste Geld verdienen?
-
-Bei dienstleistungsbasierten Modellen oft innerhalb weniger Wochen – sobald du den ersten Kunden gewinnst. Entscheidend ist nicht das perfekte Angebot, sondern dass du in einer klaren Nische ein konkretes Problem löst und sauber lieferst. Reichweiten- oder Plattform-Modelle brauchen dagegen Monate bis Jahre und zahlen sich meist nicht aus.
+<details>
+<summary>Wie schnell kann man mit KI das erste Geld verdienen?</summary>
+<p>Bei dienstleistungsbasierten Modellen oft innerhalb weniger Wochen – sobald du den ersten Kunden gewinnst. Entscheidend ist nicht das perfekte Angebot, sondern dass du in einer klaren Nische ein konkretes Problem löst und sauber lieferst. Reichweiten- oder Plattform-Modelle brauchen dagegen Monate bis Jahre und zahlen sich meist nicht aus.</p>
+</details>
 
 ## Fazit
 
