@@ -66,7 +66,7 @@ const socialIcons: Record<string, string> = {
           Leistungen
         </h5>
         <ul class="flex flex-col gap-2.5">
-          {site.footer.leistungen.map((item) => (
+          {site.footer.leistungen.slice(0, 4).map((item) => (
             <li>
               <a
                 href={item.href}
@@ -77,6 +77,23 @@ const socialIcons: Record<string, string> = {
             </li>
           ))}
         </ul>
+        {site.footer.leistungen.length > 4 && (
+          <details class="footer-more mt-2.5">
+            <summary class="footer-more-toggle text-sm text-[var(--color-text-muted)] transition-colors hover:text-[var(--color-text)]"></summary>
+            <ul class="mt-2.5 flex flex-col gap-2.5">
+              {site.footer.leistungen.slice(4).map((item) => (
+                <li>
+                  <a
+                    href={item.href}
+                    class="text-sm text-[var(--color-text-muted)] transition-colors hover:text-[var(--color-text)]"
+                  >
+                    {item.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </details>
+        )}
       </div>
 
       {/* Regional */}
@@ -85,7 +102,7 @@ const socialIcons: Record<string, string> = {
           Regional
         </h5>
         <ul class="flex flex-col gap-2.5">
-          {site.footer.regional.map((item) => (
+          {site.footer.regional.slice(0, 4).map((item) => (
             <li>
               <a
                 href={item.href}
@@ -96,6 +113,23 @@ const socialIcons: Record<string, string> = {
             </li>
           ))}
         </ul>
+        {site.footer.regional.length > 4 && (
+          <details class="footer-more mt-2.5">
+            <summary class="footer-more-toggle text-sm text-[var(--color-text-muted)] transition-colors hover:text-[var(--color-text)]"></summary>
+            <ul class="mt-2.5 flex flex-col gap-2.5">
+              {site.footer.regional.slice(4).map((item) => (
+                <li>
+                  <a
+                    href={item.href}
+                    class="text-sm text-[var(--color-text-muted)] transition-colors hover:text-[var(--color-text)]"
+                  >
+                    {item.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </details>
+        )}
       </div>
 
       {/* Kontakt / NAP */}
@@ -146,3 +180,23 @@ const socialIcons: Record<string, string> = {
     </div>
   </div>
 </footer>
+
+<style>
+  .footer-more > summary {
+    list-style: none;
+    cursor: pointer;
+    user-select: none;
+  }
+  .footer-more > summary::-webkit-details-marker {
+    display: none;
+  }
+  .footer-more > summary::marker {
+    content: "";
+  }
+  .footer-more-toggle::after {
+    content: "+ Mehr anzeigen";
+  }
+  .footer-more[open] > .footer-more-toggle::after {
+    content: "− Weniger anzeigen";
+  }
+</style>
