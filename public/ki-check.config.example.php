@@ -21,6 +21,11 @@ return [
     // ---- Schutz für ki-check-log.php und ki-check-leads.php ----
     'admin_key' => 'BITTE_LANGES_ZUFALLS_GEHEIMNIS_SETZEN',
 
+    // ---- Login fürs Admin-Dashboard unter /admin/ ----
+    // Dieses Passwort merkst du dir; den admin_key oben musst du nicht kennen,
+    // das Dashboard setzt ihn automatisch ein.
+    'admin_pass' => 'DEIN_MERKBARES_ADMIN_PASSWORT',
+
     // ---- Double-Opt-in / Newsletter-Liste (MySQL auf all-inkl) ----
     // DB in KAS anlegen (Datenbanken → neue MySQL-DB). Die Tabelle ki_check_leads
     // legt das Skript bei Bedarf selbst an. Bleibt db_host leer, ist die
