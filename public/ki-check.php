@@ -463,20 +463,43 @@ try {
 }
 
 /* ------------------------------------------------------------------ */
-/*  Double-Opt-in für die Marketing-Liste (NUR wenn explizit gewünscht) */
+/*  Auswertung per E-Mail — IMMER über Double-Opt-in                    */
 /* ------------------------------------------------------------------ */
 /*
- * Wichtig (Schutz gegen Fremdadressen-Missbrauch): Es geht KEINE Mail mit
- * Werbung oder Ergebnis an die eingegebene Adresse. Wenn der Nutzer die
- * Marketing-Checkbox aktiviert hat, bekommt die Adresse genau EINE neutrale
- * Bestätigungs-Mail. Erst nach Klick auf den Link wird sie „confirmed" und
- * darf für Newsletter/Anschreiben genutzt werden. Wer nicht klickt, landet
- * in keiner nutzbaren Liste; unbestätigte Einträge werden nach 30 Tagen
- * gelöscht.
+ * Ablauf (Schutz gegen Fremdadressen-Missbrauch):
+ *  - Neue Adresse  → EINE neutrale Bestätigungsmail. Die vollständige,
+ *    grafisch aufbereitete Auswertung geht ERST nach Klick auf den
+ *    Bestätigungslink raus (siehe ki-check-confirm.php).
+ *  - Bereits früher bestätigte Adresse → DOI lag schon vor, die Auswertung
+ *    darf direkt zugestellt werden.
+ *  - Auf der Seite selbst erscheint nur eine kurze Vorschau (Score + Level).
  */
-$confirmationSent = false;
-$alreadySubscribed = false;
-if ($newsletter && !empty($config['db_host']) && !empty($config['smtp_host'])) {
+require_once __DIR__ . '/ki-check-mail.php';
+
+$confirmationSent = false;   // neue Bestätigungsmail wurde verschickt
+$alreadyConfirmed = false;   // Adresse hatte DOI bereits durchlaufen
+$resultEmailed    = false;   // Auswertung wurde direkt zugestellt
+
+// Einheitliche Datenstruktur für die Auswertungsmail
+$mailData = [
+    'email'           => $email,
+    'business'        => $business,
+    'domain'          => $domain,
+    'score'           => $score,
+    'level'           => $level,
+    'summary'         => $summary,
+    'mentions'        => $mentions,
+    'citations'       => $citations,
+    'nChecked'        => $nChecked,
+    'questions'       => array_map(fn($r) => [
+        'question'  => $r['question'],
+        'mentioned' => (bool)$r['mentioned'],
+        'cited'     => (bool)$r['cited'],
+    ], $results),
+    'recommendations' => $recs,
+];
+
+if (!empty($config['db_host']) && !empty($config['smtp_host'])) {
     try {
         $pdo = new PDO(
             sprintf('mysql:host=%s;dbname=%s;charset=utf8mb4',
@@ -503,58 +526,67 @@ if ($newsletter && !empty($config['db_host']) && !empty($config['smtp_host'])) {
                 KEY idx_status (status)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4"
         );
-        // Ergebnis-Spalten nachrüsten (idempotent, MariaDB unterstützt IF NOT EXISTS).
-        // So kann die Ergebnis-Mail NACH der DOI-Bestätigung das gespeicherte Ergebnis versenden.
+        // Ergebnis-/Marketing-Spalten idempotent nachrüsten (MariaDB: IF NOT EXISTS).
         try {
             $pdo->exec("ALTER TABLE ki_check_leads
                 ADD COLUMN IF NOT EXISTS result_score INT NULL,
                 ADD COLUMN IF NOT EXISTS result_level VARCHAR(120) NULL,
                 ADD COLUMN IF NOT EXISTS result_json LONGTEXT NULL,
-                ADD COLUMN IF NOT EXISTS result_sent_at DATETIME NULL");
+                ADD COLUMN IF NOT EXISTS result_sent_at DATETIME NULL,
+                ADD COLUMN IF NOT EXISTS marketing TINYINT(1) NOT NULL DEFAULT 0");
         } catch (\Throwable $e) {
             error_log('[2fox4 KI-Check] ALTER ki_check_leads: ' . $e->getMessage());
         }
         // Aufräumen: unbestätigte Einträge älter als 30 Tage entfernen
         $pdo->exec("DELETE FROM ki_check_leads WHERE status='pending' AND signup_at < (NOW() - INTERVAL 30 DAY)");
 
-        // Schon bestätigt? Dann nichts weiter tun.
+        $resultSnapshot = json_encode([
+            'summary'         => $summary,
+            'mentions'        => $mentions,
+            'citations'       => $citations,
+            'nChecked'        => $nChecked,
+            'questions'       => $mailData['questions'],
+            'recommendations' => $recs,
+        ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+
+        // Adresse bereits per DOI bestätigt?
         $st = $pdo->prepare("SELECT COUNT(*) FROM ki_check_leads WHERE email = ? AND status='confirmed'");
         $st->execute([$email]);
-        if ((int)$st->fetchColumn() > 0) {
-            $alreadySubscribed = true;
+        $alreadyConfirmed = ((int)$st->fetchColumn() > 0);
+
+        if ($alreadyConfirmed) {
+            // DOI lag bereits vor → Auswertung direkt zustellen (Flut-Schutz: 1/Adresse/Stunde)
+            $sendLock = sys_get_temp_dir() . '/2fox4_kicres_' . hash('sha256', mb_strtolower($email)) . '.txt';
+            $recently = is_file($sendLock) && (time() - (int)@file_get_contents($sendLock)) < 3600;
+            if (!$recently) {
+                try {
+                    $resultEmailed = kicheck_send_result_mail($config, $mailData);
+                } catch (\Throwable $e) {
+                    error_log('[2fox4 KI-Check] Direkt-Auswertung: ' . $e->getMessage());
+                }
+                if ($resultEmailed) @file_put_contents($sendLock, (string)time(), LOCK_EX);
+            } else {
+                $resultEmailed = true; // wurde gerade eben schon zugestellt
+            }
         } else {
-            // Flut-Schutz: max. 1 Bestätigungsmail pro Adresse / 24 h
+            // Neuer Lead → neutrale Bestätigungsmail (Flut-Schutz: 1/Adresse/24 h)
             $mailLock = sys_get_temp_dir() . '/2fox4_doi_' . hash('sha256', mb_strtolower($email)) . '.txt';
             $recently = is_file($mailLock) && (time() - (int)@file_get_contents($mailLock)) < 86400;
             if (!$recently) {
                 $token = bin2hex(random_bytes(16));
-                // Ergebnis-Snapshot für die spätere Ergebnis-Mail (NUR nach DOI versendet).
-                $resultSnapshot = json_encode([
-                    'summary'         => $summary,
-                    'mentions'        => $mentions,
-                    'citations'       => $citations,
-                    'nChecked'        => $nChecked,
-                    'questions'       => array_map(fn($r) => [
-                        'question'  => $r['question'],
-                        'mentioned' => (bool)$r['mentioned'],
-                        'cited'     => (bool)$r['cited'],
-                    ], $results),
-                    'recommendations' => $recs,
-                ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
                 $ins = $pdo->prepare(
                     "INSERT INTO ki_check_leads
                        (email, business, service, region, token, status, consent_version, signup_ip, signup_at,
-                        result_score, result_level, result_json)
-                     VALUES (?, ?, ?, ?, ?, 'pending', ?, ?, NOW(), ?, ?, ?)"
+                        result_score, result_level, result_json, marketing)
+                     VALUES (?, ?, ?, ?, ?, 'pending', ?, ?, NOW(), ?, ?, ?, ?)"
                 );
                 $ins->execute([
                     $email, $business, $service, ($region !== '' ? $region : null),
                     $token, (string)($config['consent_version'] ?? date('Y-m-d')),
                     preg_replace('/\.\d+$/', '.0', $ip),
-                    $score, $level, $resultSnapshot,
+                    $score, $level, $resultSnapshot, ($newsletter ? 1 : 0),
                 ]);
 
-                // Neutrale Bestätigungsmail (KEINE Werbung)
                 $base = rtrim((string)($config['site_base_url'] ?? 'https://www.2fox4.de'), '/');
                 $confirmUrl = $base . '/ki-check-confirm.php?token=' . $token;
                 require_once __DIR__ . '/lib/PHPMailer/Exception.php';
@@ -573,17 +605,18 @@ if ($newsletter && !empty($config['db_host']) && !empty($config['smtp_host'])) {
                 $cm->CharSet = 'UTF-8';
                 $cm->setFrom($config['mail_from'], $config['mail_from_name'] ?? '2fox4');
                 $cm->addAddress($email);
-                $cm->Subject = 'Bitte bestätige deine Anmeldung';
+                $cm->Subject = 'Bestätige deine E-Mail – dann kommt deine Auswertung';
                 $cm->Body = implode("\r\n", [
                     'Hallo,',
                     '',
-                    'diese E-Mail-Adresse wurde beim KI-Sichtbarkeits-Check von 2fox4',
-                    'eingetragen, um das Ergebnis und gelegentliche Tipps per E-Mail zu erhalten.',
+                    'du hast auf 2fox4.de einen KI-Sichtbarkeits-Check gemacht und deine',
+                    'Auswertung per E-Mail angefordert.',
                     '',
-                    'Warst du das? Dann bestätige deine Anmeldung mit einem Klick:',
+                    'Bitte bestätige einmal kurz, dass diese Adresse dir gehört:',
                     $confirmUrl,
                     '',
-                    'Direkt nach deiner Bestätigung schicken wir dir dein Check-Ergebnis per E-Mail.',
+                    'Direkt nach deiner Bestätigung schicken wir dir deine vollständige,',
+                    'aufbereitete Auswertung – mit Score, Erklärung und nächsten Schritten.',
                     '',
                     'Falls du das nicht warst, ignoriere diese E-Mail einfach. Ohne deine',
                     'Bestätigung nutzen wir die Adresse nicht; sie wird nach 30 Tagen gelöscht.',
@@ -598,26 +631,19 @@ if ($newsletter && !empty($config['db_host']) && !empty($config['smtp_host'])) {
             }
         }
     } catch (\Throwable $e) {
-        error_log('[2fox4 KI-Check] DOI-Fehler: ' . $e->getMessage());
+        error_log('[2fox4 KI-Check] DOI/Mail-Fehler: ' . $e->getMessage());
     }
 }
 
-/* ---------- Antwort ---------- */
+/* ---------- Antwort: nur Vorschau (vollständige Auswertung kommt per Mail) ---------- */
 out_json([
-    'ok'                 => true,
-    'score'              => $score,
-    'level'              => $level,
-    'summary'            => $summary,
-    'email'              => $email,
-    'domain'             => $domain,
-    'newsletter'         => $newsletter,
-    'confirmation_sent'  => $confirmationSent,
-    'already_subscribed' => $alreadySubscribed,
-    'questions'          => array_map(fn($r) => [
-        'question'  => $r['question'],
-        'mentioned' => (bool)$r['mentioned'],
-        'cited'     => (bool)$r['cited'],
-        'snippet'   => $r['snippet'],
-    ], $results),
-    'recommendations'    => $recs,
+    'ok'                => true,
+    'score'             => $score,
+    'level'             => $level,
+    'summary'           => $summary,
+    'email'             => $email,
+    'domain'            => $domain,
+    'confirmation_sent' => $confirmationSent,
+    'already_confirmed' => $alreadyConfirmed,
+    'result_emailed'    => $resultEmailed,
 ]);

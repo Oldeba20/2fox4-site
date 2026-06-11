@@ -23,7 +23,7 @@ import { site } from "../../data/site";
 
 const title = "KI-Sichtbarkeits-Check: Wirst du von ChatGPT & Co. gefunden?";
 const description =
-  "Kostenloser Check: Wie gut wird dein Unternehmen in KI-Suchmaschinen wie ChatGPT, Perplexity, Gemini und Claude gefunden? Suchbegriff eingeben, Ergebnis und Handlungsempfehlung erhalten.";
+  "Kostenloser Check: Wie gut wird dein Unternehmen in KI-Suchmaschinen wie ChatGPT, Perplexity, Gemini und Claude gefunden? Suchbegriff eingeben, Vorschau ansehen und die vollständige Auswertung per E-Mail erhalten.";
 
 const ogImage = "/uploads/ki-check/og.jpg";
 
@@ -41,7 +41,7 @@ const faqItems = [
   {
     question: "Ist der Check wirklich kostenlos?",
     answerText:
-      "Ja. Der Check ist kostenlos. Wir bitten lediglich um deine E-Mail-Adresse, damit wir dir das Ergebnis zuordnen und auf Wunsch erklären können. Es entstehen keine Kosten und keine Verpflichtung.",
+      "Ja. Der Check ist kostenlos. Auf der Seite siehst du sofort eine Vorschau mit deinem Score; die vollständige Auswertung mit allen Fragen und Empfehlungen schicken wir dir nach kurzer Bestätigung (Double-Opt-in) per E-Mail. Es entstehen keine Kosten und keine Verpflichtung.",
   },
   {
     question: "Warum sehe ich die Fragen, bevor der Check startet?",
@@ -56,7 +56,7 @@ const faqItems = [
   {
     question: "Was passiert mit meinen Daten?",
     answerText:
-      "Wir speichern deine Eingaben und deine E-Mail-Adresse, um den Check durchzuführen und dir das Ergebnis bereitzustellen. Es erfolgt keine Weitergabe an Dritte zu Werbezwecken. Details stehen in unseren Datenschutzhinweisen.",
+      "Wir speichern deine Eingaben und deine E-Mail-Adresse, um den Check durchzuführen und dir die Auswertung per E-Mail zuzustellen. Die Adresse nutzen wir erst, nachdem du sie per Double-Opt-in bestätigt hast – so kann niemand eine fremde Adresse eintragen. Es erfolgt keine Weitergabe an Dritte zu Werbezwecken. Details stehen in unseren Datenschutzhinweisen.",
   },
 ];
 
@@ -192,11 +192,11 @@ const schema = [
 
         <div class="mt-6 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)] p-5">
           <p class="text-left text-[14px] font-medium">
-            Deine E-Mail-Adresse
+            Wohin sollen wir deine Auswertung schicken?
           </p>
           <p class="mt-1 text-left text-[12px] text-[var(--color-text-muted)]">
-            Dein Ergebnis siehst du gleich direkt hier auf der Seite. Die Adresse
-            brauchen wir, um den Check zuzuordnen und Missbrauch zu verhindern.
+            Auf der Seite siehst du gleich eine kurze Vorschau. Deine vollständige,
+            aufbereitete Auswertung bekommst du per E-Mail – nach kurzer Bestätigung.
           </p>
           <input
             id="kic-email"
@@ -209,18 +209,18 @@ const schema = [
           <label class="mt-3 flex items-start gap-2 text-left text-[13px] text-[var(--color-text-muted)]">
             <input id="kic-consent" type="checkbox" class="mt-1" />
             <span>
-              Ich bin einverstanden, dass meine Eingaben und meine E-Mail-Adresse
-              zur Durchführung des Checks verarbeitet werden
+              Schickt mir meine Auswertung per E-Mail und verarbeitet dafür meine
+              Eingaben. Zur Bestätigung erhalte ich zuerst eine Double-Opt-in-Mail;
+              erst nach meinem Klick folgt die Auswertung, die auch einen Hinweis auf
+              ein Beratungsangebot enthalten kann
               (<a href="/datenschutz/" class="underline hover:text-[var(--color-text)]">Datenschutz</a>).
             </span>
           </label>
           <label class="mt-3 flex items-start gap-2 text-left text-[13px] text-[var(--color-text-muted)]">
             <input id="kic-newsletter" type="checkbox" class="mt-1" />
             <span>
-              Optional: Ja, schickt mir mein Ergebnis und gelegentlich Tipps zur
-              KI-Sichtbarkeit per E-Mail. Ich erhalte zuerst eine Bestätigungsmail
-              (Double-Opt-in) – erst nach meinem Klick darauf folgt die Ergebnis-Mail.
-              Widerrufen kann ich jederzeit.
+              Optional: Schickt mir darüber hinaus gelegentlich Tipps und Angebote
+              zur KI-Sichtbarkeit. Jederzeit widerrufbar.
             </span>
           </label>
           <button
@@ -228,10 +228,10 @@ const schema = [
             type="button"
             class="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[var(--color-accent)] px-6 py-3.5 text-[15px] font-semibold text-black transition-all hover:-translate-y-px disabled:opacity-50"
           >
-            Jetzt kostenlos prüfen
+            Auswertung kostenlos anfordern
           </button>
           <p class="mt-2 text-center text-[12px] text-[var(--color-text-muted)]">
-            Kostenlos · keine Verpflichtung · Ergebnis in ~60 Sekunden
+            Kostenlos · keine Verpflichtung · Vorschau in ~60 Sekunden, Details per E-Mail
           </p>
         </div>
         <button id="kic-back" type="button" class="mt-3 text-[13px] text-[var(--color-text-muted)] underline">
@@ -555,39 +555,29 @@ const schema = [
 
     function renderResult(data) {
       var score = Math.max(0, Math.min(100, Math.round(data.score || 0)));
-      var rows = (data.questions || [])
-        .map(function (q) {
-          return (
-            '<div class="kic-qrow">' +
-            '<div class="flex-1"><div class="text-[14px]">' +
-            esc(q.question) +
-            "</div>" +
-            (q.snippet
-              ? '<div class="mt-1 text-[12px] text-[var(--color-text-muted)]">' + esc(q.snippet) + "</div>"
-              : "") +
-            "</div>" +
-            '<div class="flex shrink-0 flex-col items-end gap-1">' +
-            '<span class="kic-badge ' +
-            (q.mentioned ? "yes" : "no") +
-            '">' +
-            (q.mentioned ? "genannt" : "nicht genannt") +
-            "</span>" +
-            '<span class="kic-badge ' +
-            (q.cited ? "yes" : "no") +
-            '">' +
-            (q.cited ? "verlinkt" : "nicht verlinkt") +
-            "</span>" +
-            "</div>" +
-            "</div>"
-          );
-        })
-        .join("");
+      var email = esc(data.email || "");
 
-      var recs = (data.recommendations || [])
-        .map(function (r) {
-          return '<li class="flex gap-2"><span class="text-[var(--color-accent)]">→</span><span>' + esc(r) + "</span></li>";
-        })
-        .join("");
+      // Hinweis-Box je nach Zustellweg
+      var mailBox;
+      if (data.result_emailed) {
+        mailBox =
+          '<p class="text-[15px] font-semibold text-[var(--color-text)]">Deine vollständige Auswertung ist unterwegs ✉️</p>' +
+          '<p class="mt-2 text-[14px] text-[var(--color-text-muted)]">Wir haben sie gerade an <strong class="text-[var(--color-text)]">' +
+          email +
+          "</strong> geschickt – mit allen geprüften Fragen, Erklärungen und deinen nächsten Schritten. Schau in dein Postfach.</p>";
+      } else if (data.confirmation_sent) {
+        mailBox =
+          '<p class="text-[15px] font-semibold text-[var(--color-text)]">Nur noch ein Klick zu deiner vollständigen Auswertung ✉️</p>' +
+          '<p class="mt-2 text-[14px] text-[var(--color-text-muted)]">Wir haben dir eine kurze Bestätigungsmail an <strong class="text-[var(--color-text)]">' +
+          email +
+          "</strong> geschickt. Bestätige den Link darin – direkt danach erhältst du deine vollständige, aufbereitete Auswertung per E-Mail.</p>";
+      } else {
+        mailBox =
+          '<p class="text-[15px] font-semibold text-[var(--color-text)]">Deine vollständige Auswertung kommt per E-Mail ✉️</p>' +
+          '<p class="mt-2 text-[14px] text-[var(--color-text-muted)]">Bitte prüfe dein Postfach (' +
+          email +
+          ") und bestätige kurz den Link – danach senden wir dir alle Details.</p>";
+      }
 
       result.innerHTML =
         '<div class="text-center">' +
@@ -601,33 +591,12 @@ const schema = [
         '<p class="mx-auto mt-1 max-w-md text-[14px] text-[var(--color-text-muted)]">' +
         esc(data.summary || "") +
         "</p>" +
+        '<p class="mx-auto mt-2 max-w-md text-[12px] text-[var(--color-text-faint)]">Das ist eine kurze Vorschau. Die ausführliche Auswertung mit allen Fragen und Empfehlungen erhältst du per E-Mail.</p>' +
         "</div>" +
-        '<div class="mt-6">' +
-        '<p class="text-[13px] font-medium uppercase tracking-wide text-[var(--color-text-muted)]">Gestellte Fragen &amp; Ergebnis</p>' +
-        '<div class="mt-3 grid gap-1.5 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] p-3 text-[12px] leading-relaxed text-[var(--color-text-muted)]">' +
-        '<p><span class="kic-badge yes">genannt</span> Dein Unternehmen wird im Antworttext der KI-Suche namentlich erwähnt – die KI „kennt" dich und nennt dich als möglichen Anbieter.</p>' +
-        '<p><span class="kic-badge yes">verlinkt</span> Die KI führt deine Website als Quelle an und verlinkt sie. Das ist die stärkste Form der Sichtbarkeit, weil Nutzer direkt zu dir gelangen.</p>' +
-        '<p class="text-[var(--color-text-faint)]">„nicht genannt" bzw. „nicht verlinkt" heißt: Bei dieser konkreten Frage tauchst du im KI-Ergebnis (noch) nicht auf.</p>' +
-        (data.domain
-          ? ""
-          : '<p class="text-[var(--color-text-faint)]">Tipp: Gib oben deine Website-Domain an – dann erkennt der Check „verlinkt" exakt über deine Quellen-URLs statt nur über den Namen.</p>') +
+        '<div class="mt-6 rounded-xl border border-[var(--color-accent)] bg-[var(--color-bg)] p-5 text-center">' +
+        mailBox +
         "</div>" +
-        '<div class="mt-3">' + rows + "</div>" +
-        "</div>" +
-        (recs
-          ? '<div class="mt-6 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)] p-5">' +
-            '<p class="text-[15px] font-semibold">Deine Handlungsempfehlung</p>' +
-            '<ul class="mt-3 grid gap-2 text-[14px] text-[var(--color-text-muted)]">' + recs + "</ul>" +
-            "</div>"
-          : "") +
-        '<a href="/kontakt/" class="mt-6 inline-flex w-full items-center justify-center rounded-lg bg-[var(--color-accent)] px-6 py-3.5 text-[15px] font-semibold text-black transition-all hover:-translate-y-px">Kostenloses Gespräch zur KI-Sichtbarkeit</a>' +
-        (data.confirmation_sent
-          ? '<p class="mt-3 text-center text-[12px] text-[var(--color-text-muted)]">Wir haben dir eine Bestätigungsmail an ' +
-            esc(data.email) +
-            " geschickt. Sobald du sie bestätigst, schicken wir dir dein Ergebnis und passende Tipps per E-Mail.</p>"
-          : data.already_subscribed
-          ? '<p class="mt-3 text-center text-[12px] text-[var(--color-text-muted)]">Du bist bereits für unsere Tipps angemeldet.</p>'
-          : "");
+        '<a href="/kontakt/" class="mt-5 inline-flex w-full items-center justify-center rounded-lg bg-[var(--color-accent)] px-6 py-3.5 text-[15px] font-semibold text-black transition-all hover:-translate-y-px">Kostenloses Gespräch zur KI-Sichtbarkeit</a>';
       result.hidden = false;
       result.scrollIntoView({ behavior: "smooth", block: "start" });
     }

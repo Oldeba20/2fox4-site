@@ -12,100 +12,31 @@ $configFile = __DIR__ . '/ki-check.config.php';
 $ok = false;
 $message = 'Dieser Bestätigungslink ist ungültig oder bereits verwendet worden.';
 
+// Gemeinsamer Mail-Baustein (branded HTML-Auswertung + Sender)
+require_once __DIR__ . '/ki-check-mail.php';
+
 /**
- * Sendet dem Kunden sein KI-Sichtbarkeits-Ergebnis per E-Mail.
- * Wird NUR nach erfolgreicher Double-Opt-in-Bestätigung aufgerufen, damit
- * niemals an eine nicht bestätigte (ggf. fremde) Adresse versendet wird.
+ * Baut aus einer Lead-Zeile die Datenstruktur für die Auswertungsmail und
+ * verschickt sie. Wird NUR nach erfolgreicher Double-Opt-in-Bestätigung
+ * aufgerufen, damit niemals an eine unbestätigte (ggf. fremde) Adresse geht.
  */
-function send_result_mail(array $config, array $lead): void
+function send_result_mail(array $config, array $lead): bool
 {
-    $mailFile = __DIR__ . '/lib/PHPMailer/PHPMailer.php';
-    if (!is_file($mailFile)) {
-        return;
-    }
-    require_once __DIR__ . '/lib/PHPMailer/Exception.php';
-    require_once __DIR__ . '/lib/PHPMailer/PHPMailer.php';
-    require_once __DIR__ . '/lib/PHPMailer/SMTP.php';
-
-    $r = json_decode((string)$lead['result_json'], true) ?: [];
-    $score    = (int)($lead['result_score'] ?? 0);
-    $level    = (string)($lead['result_level'] ?? '');
-    $business = (string)($lead['business'] ?? '');
-    $summary  = (string)($r['summary'] ?? '');
-    $mentions = (int)($r['mentions'] ?? 0);
-    $citations = (int)($r['citations'] ?? 0);
-    $nChecked  = (int)($r['nChecked'] ?? 0);
-    $questions = is_array($r['questions'] ?? null) ? $r['questions'] : [];
-    $recs      = is_array($r['recommendations'] ?? null) ? $r['recommendations'] : [];
-
-    $lines = [];
-    $lines[] = 'Hallo,';
-    $lines[] = '';
-    $lines[] = 'danke für deine Bestätigung. Hier ist dein KI-Sichtbarkeits-Check'
-             . ($business !== '' ? ' für ' . $business : '') . ':';
-    $lines[] = '';
-    $lines[] = 'Score: ' . $score . '% – ' . $level;
-    if ($summary !== '') {
-        $lines[] = $summary;
-    }
-    $lines[] = '';
-    if ($nChecked > 0) {
-        $lines[] = 'Genannt:  ' . $mentions . ' von ' . $nChecked . ' Fragen';
-        $lines[] = 'Verlinkt: ' . $citations . ' von ' . $nChecked . ' Fragen';
-        $lines[] = '';
-    }
-    $lines[] = 'Was bedeuten die Begriffe?';
-    $lines[] = '- "Genannt": Dein Unternehmen wird im Antworttext der KI-Suche';
-    $lines[] = '  namentlich erwähnt – die KI kennt dich und nennt dich als Anbieter.';
-    $lines[] = '- "Verlinkt": Die KI führt deine Website als Quelle an und verlinkt';
-    $lines[] = '  sie. Das ist die stärkste Form der Sichtbarkeit, weil Nutzer direkt';
-    $lines[] = '  zu dir gelangen.';
-    $lines[] = '';
-    if ($questions) {
-        $lines[] = 'Geprüfte Fragen:';
-        foreach ($questions as $q) {
-            $tag = !empty($q['cited']) ? 'genannt + verlinkt'
-                 : (!empty($q['mentioned']) ? 'genannt' : 'nicht genannt');
-            $lines[] = ' [' . $tag . '] ' . (string)($q['question'] ?? '');
-        }
-        $lines[] = '';
-    }
-    if ($recs) {
-        $lines[] = 'Deine nächsten Schritte:';
-        foreach ($recs as $rec) {
-            $lines[] = ' - ' . (string)$rec;
-        }
-        $lines[] = '';
-    }
-    $lines[] = 'Hinweis: Das Ergebnis ist ein starker Indikator für deine';
-    $lines[] = 'KI-Sichtbarkeit, keine garantierte 1:1-Abbildung der jeweiligen App.';
-    $lines[] = '';
-    $lines[] = 'Du möchtest sichtbarer werden? Lass uns unverbindlich sprechen:';
-    $lines[] = 'https://www.2fox4.de/kontakt/';
-    $lines[] = '';
-    $lines[] = 'Viele Grüße';
-    $lines[] = '2fox4 · www.2fox4.de';
-    $lines[] = '';
-    $lines[] = 'Du erhältst diese E-Mail, weil du deine Anmeldung zum KI-Sichtbarkeits-Check';
-    $lines[] = 'bestätigt hast. Abmelden jederzeit per Antwort auf diese E-Mail.';
-
-    $mail = new \PHPMailer\PHPMailer\PHPMailer(true);
-    $mail->isSMTP();
-    $mail->Host       = $config['smtp_host'];
-    $mail->SMTPAuth   = true;
-    $mail->Username   = $config['smtp_user'];
-    $mail->Password   = $config['smtp_password'];
-    $mail->SMTPSecure = ($config['smtp_secure'] ?? 'tls') === 'ssl'
-        ? \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_SMTPS
-        : \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
-    $mail->Port    = (int)($config['smtp_port'] ?? 587);
-    $mail->CharSet = 'UTF-8';
-    $mail->setFrom($config['mail_from'], $config['mail_from_name'] ?? '2fox4');
-    $mail->addAddress((string)$lead['email']);
-    $mail->Subject = 'Dein KI-Sichtbarkeits-Check: ' . $score . '%';
-    $mail->Body    = implode("\r\n", $lines);
-    $mail->isHTML(false);
-    $mail->send();
+    $r = json_decode((string)($lead['result_json'] ?? ''), true) ?: [];
+    $data = [
+        'email'           => (string)($lead['email'] ?? ''),
+        'business'        => (string)($lead['business'] ?? ''),
+        'domain'          => '',
+        'score'           => (int)($lead['result_score'] ?? 0),
+        'level'           => (string)($lead['result_level'] ?? ''),
+        'summary'         => (string)($r['summary'] ?? ''),
+        'mentions'        => (int)($r['mentions'] ?? 0),
+        'citations'       => (int)($r['citations'] ?? 0),
+        'nChecked'        => (int)($r['nChecked'] ?? 0),
+        'questions'       => is_array($r['questions'] ?? null) ? $r['questions'] : [],
+        'recommendations' => is_array($r['recommendations'] ?? null) ? $r['recommendations'] : [],
+    ];
+    return kicheck_send_result_mail($config, $data);
 }
 
 $token = (string)($_GET['token'] ?? '');
