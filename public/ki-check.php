@@ -65,10 +65,11 @@ function clean(string $s, int $max): string {
     if (mb_strlen($s) > $max) $s = mb_substr($s, 0, $max);
     return $s;
 }
-$business = clean((string)($in['business'] ?? ''), 120);
-$service  = clean((string)($in['service'] ?? ''), 120);
-$region   = clean((string)($in['region'] ?? ''), 120);
-$email    = clean((string)($in['email'] ?? ''), 200);
+$business  = clean((string)($in['business'] ?? ''), 120);
+$service   = clean((string)($in['service'] ?? ''), 120);
+$region    = clean((string)($in['region'] ?? ''), 120);
+$domainRaw = clean((string)($in['domain'] ?? ''), 120);
+$email     = clean((string)($in['email'] ?? ''), 200);
 $consent  = !empty($in['consent']);
 $newsletter = !empty($in['newsletter']); // separate, freiwillige Marketing-Einwilligung
 $elapsed  = (int)($in['elapsed_ms'] ?? 99999);
@@ -154,6 +155,30 @@ if ($distinctToken === '') {
     $distinctToken = $tokens[0] ?? '';
 }
 
+/* ---------- Domain (optional) für präzise „verlinkt"-Erkennung ---------- */
+function normalize_domain(string $raw): string {
+    $d = mb_strtolower(trim($raw), 'UTF-8');
+    if ($d === '') return '';
+    $d = preg_replace('#^https?://#u', '', $d);   // Schema entfernen
+    $d = preg_replace('#[/?\#].*$#u', '', $d);     // Pfad/Query/Anker entfernen
+    $d = preg_replace('#^www\.#u', '', $d);        // führendes www. entfernen
+    $d = trim($d, " \t.");
+    // Nur plausible Domains akzeptieren (mind. ein Punkt + TLD)
+    if (!preg_match('/^[a-z0-9äöüß][a-z0-9äöüß.\-]*\.[a-z]{2,}$/u', $d)) return '';
+    return $d;
+}
+$domain = normalize_domain($domainRaw);
+// Marken-Label aus der Domain (z. B. 2fox4.de → „2fox4") als ZUSÄTZLICHES Token
+// für die Text-Nennung – aber nur, wenn es kein generisches Leistungs-/Regionwort ist.
+$domainToken = '';
+if ($domain !== '') {
+    $labels = explode('.', $domain);
+    $label  = preg_replace('/[^a-z0-9äöüß]/u', '', $labels[count($labels) - 2] ?? '');
+    if (mb_strlen($label) >= 4 && !isset($stopTokens[$label])) {
+        $domainToken = $label;
+    }
+}
+
 /* ---------- Perplexity-Call ---------- */
 function perplexity_ask(string $apiKey, string $model, string $question): array {
     $payload = [
@@ -201,18 +226,31 @@ function perplexity_ask(string $apiKey, string $model, string $question): array 
 }
 
 /* ---------- Treffer-Erkennung pro Frage ---------- */
-function detect_mention(string $content, array $sources, string $normName, string $nameNoSpace, string $distinctToken): array {
+function detect_mention(string $content, array $sources, string $normName, string $nameNoSpace, string $distinctToken, string $domain = '', string $domainToken = ''): array {
     $hay = mb_strtolower($content, 'UTF-8');
     $mentioned = false;
     if ($normName !== '' && mb_strlen($normName) >= 4 && mb_strpos($hay, $normName) !== false) {
         $mentioned = true;
     } elseif ($distinctToken !== '' && mb_strpos($hay, $distinctToken) !== false) {
         $mentioned = true;
+    } elseif ($domainToken !== '' && mb_strlen($domainToken) >= 4 && mb_strpos($hay, $domainToken) !== false) {
+        $mentioned = true;
     }
-    // zitiert? Name oder zusammengezogener Name taucht in Quellen-Titel/URL auf
+    // zitiert? Bevorzugt: exakter Host-Abgleich mit der angegebenen Domain.
+    // Fallback: Name/Token taucht in Quellen-Titel/URL auf.
     $cited = false;
     foreach ($sources as $s) {
-        $blob = mb_strtolower(($s['title'] ?? '') . ' ' . ($s['url'] ?? ''), 'UTF-8');
+        $url = trim((string)($s['url'] ?? ''));
+        if ($domain !== '' && $url !== '') {
+            $host = (string)(parse_url(stripos($url, 'http') === 0 ? $url : 'http://' . $url, PHP_URL_HOST) ?: '');
+            $host = preg_replace('#^www\.#u', '', mb_strtolower($host, 'UTF-8'));
+            if ($host === $domain
+                || ($host !== '' && mb_substr($host, -(mb_strlen($domain) + 1)) === '.' . $domain)) {
+                $cited = true;
+                break;
+            }
+        }
+        $blob = mb_strtolower(($s['title'] ?? '') . ' ' . $url, 'UTF-8');
         $hostToken = preg_replace('/[^a-z0-9äöüß]/u', '', $blob);
         if (($nameNoSpace !== '' && mb_strlen($nameNoSpace) >= 6 && mb_strpos($hostToken, $nameNoSpace) !== false)
             || ($distinctToken !== '' && mb_strpos($blob, $distinctToken) !== false)) {
@@ -223,7 +261,10 @@ function detect_mention(string $content, array $sources, string $normName, strin
     // Snippet
     $snippet = '';
     if ($mentioned) {
-        $needle = $normName !== '' && mb_strpos($hay, $normName) !== false ? $normName : $distinctToken;
+        $needle = '';
+        foreach ([$normName, $distinctToken, $domainToken] as $cand) {
+            if ($cand !== '' && mb_strpos($hay, $cand) !== false) { $needle = $cand; break; }
+        }
         $pos = $needle !== '' ? mb_strpos($hay, $needle) : false;
         if ($pos !== false) {
             $start = max(0, $pos - 60);
@@ -249,7 +290,7 @@ foreach ($questions as $q) {
                       'snippet' => 'Diese Frage konnte gerade nicht geprüft werden.', 'error' => true];
         continue;
     }
-    $d = detect_mention($resp['content'], $resp['sources'], $normName, $nameNoSpace, $distinctToken);
+    $d = detect_mention($resp['content'], $resp['sources'], $normName, $nameNoSpace, $distinctToken, $domain, $domainToken);
     $results[] = [
         'question'  => $q,
         'mentioned' => $d['mentioned'],
@@ -361,6 +402,7 @@ try {
             '============================',
             'E-Mail:    ' . $email,
             'Firma:     ' . $business,
+            'Domain:    ' . ($domain !== '' ? $domain : '—'),
             'Leistung:  ' . $service,
             'Region:    ' . ($region !== '' ? $region : '—'),
             'Score:     ' . $score . '% (' . $level . ')',
@@ -529,6 +571,7 @@ out_json([
     'level'              => $level,
     'summary'            => $summary,
     'email'              => $email,
+    'domain'             => $domain,
     'newsletter'         => $newsletter,
     'confirmation_sent'  => $confirmationSent,
     'already_subscribed' => $alreadySubscribed,
