@@ -1,0 +1,594 @@
+---
+/**
+ * /ki-sichtbarkeit-check/ — kostenloses Tool: Wie gut wird ein Unternehmen
+ * von KI-Suchmaschinen (ChatGPT, Perplexity, Gemini, Claude) gefunden?
+ *
+ * MVP: Backend-Check läuft über Perplexity Sonar (public/ki-check.php).
+ * Ablauf im Frontend (3 Schritte):
+ *   1. Nutzer gibt Firmenname, Leistung/Suchbegriff und Region ein.
+ *   2. Tool generiert die echten Käuferfragen und zeigt sie transparent an
+ *      (kostenlos, keine API-Kosten).
+ *   3. E-Mail-Schranke: Erst nach E-Mail + Einwilligung läuft der Live-Check
+ *      gegen die KI-Suche, dann Score + Handlungsempfehlung.
+ *
+ * Diese Seite ist gleichzeitig SEO/GEO-Ranking-Seite (generische Anfragen
+ * wie „werde ich von ChatGPT gefunden") und das Ziel der Facebook-Ads.
+ */
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import FAQ from "../../components/FAQ.astro";
+import CTASection from "../../components/CTASection.astro";
+import { faqSchema, breadcrumbSchema } from "../../lib/schema";
+import { site } from "../../data/site";
+
+const title = "KI-Sichtbarkeits-Check: Wirst du von ChatGPT & Co. gefunden?";
+const description =
+  "Kostenloser Check: Wie gut wird dein Unternehmen in KI-Suchmaschinen wie ChatGPT, Perplexity, Gemini und Claude gefunden? Suchbegriff eingeben, Ergebnis und Handlungsempfehlung erhalten.";
+
+const ogImage = "/uploads/ki-check/og.jpg";
+
+const faqItems = [
+  {
+    question: "Wie funktioniert der KI-Sichtbarkeits-Check?",
+    answerText:
+      "Du gibst deinen Firmennamen, deine Leistung und deine Region ein. Das Tool formuliert daraus die echten Fragen, die deine Kunden einer KI stellen würden, und schickt sie an eine KI-Suchmaschine. Anschließend prüft es, ob und wie dein Unternehmen in den Antworten auftaucht – und gibt dir einen Score samt Handlungsempfehlung.",
+  },
+  {
+    question: "Welche KI-Suchmaschinen werden geprüft?",
+    answerText:
+      "Im aktuellen Stand prüfen wir die KI-Suche über Perplexity, die live im Web recherchiert und Quellen zitiert – ein starker Indikator dafür, wie KI-Systeme dich generell einordnen. ChatGPT, Gemini und Claude folgen als weitere Prüf-Engines.",
+  },
+  {
+    question: "Ist der Check wirklich kostenlos?",
+    answerText:
+      "Ja. Der Check ist kostenlos. Wir bitten lediglich um deine E-Mail-Adresse, damit wir dir das Ergebnis zuordnen und auf Wunsch erklären können. Es entstehen keine Kosten und keine Verpflichtung.",
+  },
+  {
+    question: "Warum sehe ich die Fragen, bevor der Check startet?",
+    answerText:
+      "Transparenz: Du sollst genau sehen, welche Fragen wir der KI in deinem Namen stellen. Die Fragen entsprechen der Art, wie echte Interessenten heute nach Anbietern suchen – in ganzen Sätzen statt einzelner Stichworte.",
+  },
+  {
+    question: "Stimmt das Ergebnis exakt mit der ChatGPT-App überein?",
+    answerText:
+      "Es ist ein sehr starker Indikator, aber keine hundertprozentige Kopie. Die KI-Antworten schwanken von Abfrage zu Abfrage und hängen von Personalisierung ab. Deshalb stellen wir jede Frage in mehreren Varianten und werten das Gesamtbild aus.",
+  },
+  {
+    question: "Was passiert mit meinen Daten?",
+    answerText:
+      "Wir speichern deine Eingaben und deine E-Mail-Adresse, um den Check durchzuführen und dir das Ergebnis bereitzustellen. Es erfolgt keine Weitergabe an Dritte zu Werbezwecken. Details stehen in unseren Datenschutzhinweisen.",
+  },
+];
+
+const schema = [
+  breadcrumbSchema([
+    { name: "Start", url: "/" },
+    { name: "KI-Sichtbarkeits-Check", url: "/ki-sichtbarkeit-check/" },
+  ]),
+  faqSchema(faqItems),
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    name: "KI-Sichtbarkeits-Check",
+    url: new URL("/ki-sichtbarkeit-check/", site.url).href,
+    applicationCategory: "BusinessApplication",
+    operatingSystem: "Web",
+    offers: { "@type": "Offer", price: "0", priceCurrency: "EUR" },
+    description,
+  },
+];
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonicalPath="/ki-sichtbarkeit-check/"
+  ogImage={ogImage}
+  schema={schema}
+>
+  <Breadcrumb
+    crumbs={[
+      { label: "Start", href: "/" },
+      { label: "KI-Sichtbarkeits-Check", href: "/ki-sichtbarkeit-check/" },
+    ]}
+  />
+
+  <!-- ===================== HERO + TOOL ===================== -->
+  <section class="container-content pt-6 pb-16 md:pt-10 md:pb-24">
+    <div class="mx-auto max-w-3xl text-center">
+      <span
+        class="inline-block rounded-full border border-[var(--color-border)] px-4 py-1 text-[12px] font-medium uppercase tracking-[0.18em] text-[var(--color-accent)]"
+      >
+        Kostenloser KI-Sichtbarkeits-Check
+      </span>
+      <h1 class="mt-5 text-[34px] font-bold leading-[1.1] md:text-[52px]">
+        Wirst du von <span class="text-[var(--color-accent)]">ChatGPT &amp; Co.</span>
+        überhaupt gefunden?
+      </h1>
+      <p class="mx-auto mt-5 max-w-2xl text-[17px] leading-relaxed text-[var(--color-text-muted)] md:text-[19px]">
+        Immer mehr Kunden suchen Anbieter nicht mehr bei Google, sondern fragen
+        KI-Suchmaschinen wie ChatGPT, Perplexity, Gemini und Claude. Prüfe in 60
+        Sekunden, ob dein Unternehmen dort empfohlen wird – inklusive konkreter
+        Handlungsempfehlung.
+      </p>
+    </div>
+
+    <!-- TOOL-KARTE -->
+    <div
+      id="ki-tool"
+      class="mx-auto mt-10 max-w-2xl rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg-elevated)] p-6 md:p-8"
+    >
+      <!-- Schritt 1: Eingabe -->
+      <form id="kic-form" novalidate>
+        <div class="grid gap-4">
+          <label class="block text-left">
+            <span class="text-[14px] font-medium">Dein Firmenname</span>
+            <input
+              type="text"
+              name="business"
+              required
+              autocomplete="organization"
+              placeholder="z. B. Mustermann Steuerberatung"
+              class="mt-1 w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] px-4 py-3 text-[15px] outline-none focus:border-[var(--color-accent)]"
+            />
+          </label>
+          <label class="block text-left">
+            <span class="text-[14px] font-medium">Deine Leistung / dein Suchbegriff</span>
+            <input
+              type="text"
+              name="service"
+              required
+              placeholder="z. B. Steuerberater, Webdesign, Heizungsbau"
+              class="mt-1 w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] px-4 py-3 text-[15px] outline-none focus:border-[var(--color-accent)]"
+            />
+          </label>
+          <label class="block text-left">
+            <span class="text-[14px] font-medium">
+              Region / Stadt
+              <span class="text-[var(--color-text-muted)]">(optional – für lokale Suche)</span>
+            </span>
+            <input
+              type="text"
+              name="region"
+              placeholder="z. B. Stadthagen, Region Hannover"
+              class="mt-1 w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] px-4 py-3 text-[15px] outline-none focus:border-[var(--color-accent)]"
+            />
+          </label>
+          <!-- Honeypot (für Menschen unsichtbar) -->
+          <div aria-hidden="true" style="position:absolute;left:-9999px;top:-9999px;height:0;overflow:hidden;">
+            <label>Website (bitte leer lassen)
+              <input type="text" name="company_url" tabindex="-1" autocomplete="off" />
+            </label>
+          </div>
+          <button
+            type="submit"
+            class="mt-1 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[var(--color-accent)] px-6 py-3.5 text-[15px] font-semibold text-black transition-all hover:-translate-y-px"
+          >
+            Fragen anzeigen →
+          </button>
+        </div>
+      </form>
+
+      <!-- Schritt 2: Generierte Fragen + E-Mail-Schranke -->
+      <div id="kic-step2" hidden class="mt-2">
+        <p class="text-left text-[14px] text-[var(--color-text-muted)]">
+          Diese echten Käuferfragen stellen wir der KI-Suche in deinem Namen:
+        </p>
+        <ol id="kic-questions" class="mt-3 grid gap-2 text-left"></ol>
+
+        <div class="mt-6 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)] p-5">
+          <p class="text-left text-[14px] font-medium">
+            Wohin sollen wir dein Ergebnis schicken?
+          </p>
+          <input
+            id="kic-email"
+            type="email"
+            name="email"
+            required
+            placeholder="deine@firma.de"
+            class="mt-2 w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-bg-elevated)] px-4 py-3 text-[15px] outline-none focus:border-[var(--color-accent)]"
+          />
+          <label class="mt-3 flex items-start gap-2 text-left text-[13px] text-[var(--color-text-muted)]">
+            <input id="kic-consent" type="checkbox" class="mt-1" />
+            <span>
+              Ich bin einverstanden, dass meine Eingaben und meine E-Mail-Adresse
+              zur Durchführung des Checks verarbeitet werden
+              (<a href="/datenschutz/" class="underline hover:text-[var(--color-text)]">Datenschutz</a>).
+            </span>
+          </label>
+          <button
+            id="kic-run"
+            type="button"
+            class="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[var(--color-accent)] px-6 py-3.5 text-[15px] font-semibold text-black transition-all hover:-translate-y-px disabled:opacity-50"
+          >
+            Jetzt kostenlos prüfen
+          </button>
+          <p class="mt-2 text-center text-[12px] text-[var(--color-text-muted)]">
+            Kostenlos · keine Verpflichtung · Ergebnis in ~60 Sekunden
+          </p>
+        </div>
+        <button id="kic-back" type="button" class="mt-3 text-[13px] text-[var(--color-text-muted)] underline">
+          ← Eingaben ändern
+        </button>
+      </div>
+
+      <!-- Lade-Zustand -->
+      <div id="kic-loading" hidden class="py-10 text-center">
+        <div class="kic-spinner mx-auto"></div>
+        <p id="kic-loading-text" class="mt-4 text-[15px] text-[var(--color-text-muted)]">
+          Wir fragen gerade die KI-Suche …
+        </p>
+      </div>
+
+      <!-- Schritt 3: Ergebnis -->
+      <div id="kic-result" hidden></div>
+
+      <!-- Fehler -->
+      <div id="kic-error" hidden class="mt-4 rounded-lg border border-[var(--color-accent)] bg-[var(--color-bg)] p-4 text-[14px]"></div>
+    </div>
+
+    <p class="mx-auto mt-4 max-w-2xl text-center text-[12px] text-[var(--color-text-muted)]">
+      Hinweis: Das Ergebnis ist ein starker Indikator für deine KI-Sichtbarkeit,
+      keine garantierte 1:1-Abbildung der jeweiligen App.
+    </p>
+  </section>
+
+  <!-- ===================== SO FUNKTIONIERT'S ===================== -->
+  <section class="border-t border-[var(--color-border)] py-16 md:py-20">
+    <div class="container-content">
+      <h2 class="text-center text-[26px] font-bold md:text-[34px]">So funktioniert der Check</h2>
+      <div class="mt-10 grid gap-6 md:grid-cols-3">
+        <div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-elevated)] p-6">
+          <div class="text-[28px] font-bold text-[var(--color-accent)]">1</div>
+          <h3 class="mt-2 text-[18px] font-semibold">Suchbegriff eingeben</h3>
+          <p class="mt-2 text-[15px] text-[var(--color-text-muted)]">
+            Firmenname, Leistung und (optional) Region eingeben. Mehr braucht es nicht.
+          </p>
+        </div>
+        <div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-elevated)] p-6">
+          <div class="text-[28px] font-bold text-[var(--color-accent)]">2</div>
+          <h3 class="mt-2 text-[18px] font-semibold">Echte Fragen an die KI</h3>
+          <p class="mt-2 text-[15px] text-[var(--color-text-muted)]">
+            Das Tool formuliert die Fragen, die deine Kunden wirklich stellen, und
+            schickt sie an die KI-Suche. Du siehst jede Frage transparent.
+          </p>
+        </div>
+        <div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-elevated)] p-6">
+          <div class="text-[28px] font-bold text-[var(--color-accent)]">3</div>
+          <h3 class="mt-2 text-[18px] font-semibold">Score &amp; Empfehlung</h3>
+          <p class="mt-2 text-[15px] text-[var(--color-text-muted)]">
+            Du erfährst, ob und wie du genannt wirst – plus konkrete nächste Schritte,
+            um sichtbarer zu werden.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== RANKING-CONTENT ===================== -->
+  <section class="border-t border-[var(--color-border)] py-16 md:py-20">
+    <div class="container-content mx-auto max-w-3xl">
+      <h2 class="text-[26px] font-bold md:text-[34px]">
+        Warum KI-Sichtbarkeit über deine nächsten Aufträge entscheidet
+      </h2>
+      <div class="mt-6 grid gap-5 text-[16px] leading-relaxed text-[var(--color-text-muted)]">
+        <p>
+          Die Suche verschiebt sich gerade fundamental. Statt bei Google zehn blaue
+          Links zu vergleichen, stellen immer mehr Menschen ihre Frage direkt einer
+          KI-Suchmaschine wie ChatGPT, Perplexity, Gemini oder Claude – und bekommen
+          eine fertige Empfehlung mit konkreten Namen. Steht dein Unternehmen dort
+          nicht drin, verlierst du Anfragen, von denen du nie erfährst.
+        </p>
+        <p>
+          Diese KI-Sichtbarkeit nennt man <strong class="text-[var(--color-text)]">GEO – Generative Engine
+          Optimization</strong>. Sie ist die Weiterentwicklung der klassischen
+          Suchmaschinenoptimierung: Es geht nicht mehr nur um Platz 1 bei Google,
+          sondern darum, in den Antworten der KI-Systeme als Empfehlung aufzutauchen.
+          Wie das im Detail funktioniert und welche drei Stufen der KI-Sichtbarkeit es
+          gibt, erklären wir im Beitrag
+          <a href="/blog/geo-ki-suche-marketing-3-stufen-sichtbarkeit/" class="text-[var(--color-accent)] underline">
+            GEO: die 3 Stufen der KI-Sichtbarkeit</a>.
+        </p>
+        <p>
+          Parallel entsteht eine völlig neue Käuferschicht: KI-Agenten, die selbständig
+          Anbieter recherchieren, vergleichen und sogar anfragen – noch bevor ein Mensch
+          deine Website öffnet. Warum deine Seite dafür
+          <a href="/blog/ki-agenten-als-kaeufer-website-maschinenlesbar/" class="text-[var(--color-accent)] underline">
+            maschinenlesbar sein muss</a>, liest du in unserem aktuellen Beitrag.
+        </p>
+        <p>
+          Der KI-Sichtbarkeits-Check macht den Status sichtbar: Er zeigt dir schwarz auf
+          weiß, ob die KI dich heute schon empfiehlt. Willst du anschließend gezielt
+          nach oben, ist unsere
+          <a href="/leistungen/seo/" class="text-[var(--color-accent)] underline">SEO- &amp; KI-Sichtbarkeits-Leistung</a>
+          der nächste Schritt.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <FAQ items={faqItems} title="Häufige Fragen zum KI-Sichtbarkeits-Check." />
+
+  <CTASection title="Unsichtbar in der KI-Suche? Lass uns das ändern." />
+</BaseLayout>
+
+<style>
+  .kic-spinner {
+    width: 42px;
+    height: 42px;
+    border: 4px solid var(--color-border);
+    border-top-color: var(--color-accent);
+    border-radius: 50%;
+    animation: kic-spin 0.8s linear infinite;
+  }
+  @keyframes kic-spin {
+    to { transform: rotate(360deg); }
+  }
+  .kic-ring {
+    width: 132px;
+    height: 132px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    margin: 0 auto;
+  }
+  .kic-ring > div {
+    width: 104px;
+    height: 104px;
+    border-radius: 50%;
+    background: var(--color-bg-elevated);
+    display: grid;
+    place-items: center;
+    font-size: 30px;
+    font-weight: 700;
+  }
+  .kic-qrow {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    padding: 12px 0;
+    border-top: 1px solid var(--color-border);
+  }
+  .kic-badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+  .kic-badge.yes { background: var(--color-accent); color: #000; }
+  .kic-badge.no { background: var(--color-border); color: var(--color-text-muted); }
+</style>
+
+<script is:inline>
+  (function () {
+    var form = document.getElementById("kic-form");
+    if (!form) return;
+    var step2 = document.getElementById("kic-step2");
+    var qList = document.getElementById("kic-questions");
+    var loading = document.getElementById("kic-loading");
+    var loadingText = document.getElementById("kic-loading-text");
+    var result = document.getElementById("kic-result");
+    var errorBox = document.getElementById("kic-error");
+    var runBtn = document.getElementById("kic-run");
+    var backBtn = document.getElementById("kic-back");
+    var emailEl = document.getElementById("kic-email");
+    var consentEl = document.getElementById("kic-consent");
+
+    // Endpoint relativ zur Seite (funktioniert auch unter /neu/-Preview):
+    // Seite liegt unter /ki-sichtbarkeit-check/ → ../ki-check.php = /ki-check.php
+    var ENDPOINT = new URL("../ki-check.php", window.location.href).href;
+
+    var state = { business: "", service: "", region: "", questions: [] };
+    var startedAt = Date.now();
+
+    function esc(s) {
+      return String(s).replace(/[&<>"']/g, function (c) {
+        return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+      });
+    }
+
+    // Fragen-Generator — IDENTISCH zur Logik in ki-check.php
+    function buildQuestions(service, region) {
+      var s = service.trim();
+      var r = region.trim();
+      if (r) {
+        return [
+          "Wer sind die besten Anbieter für " + s + " in " + r + "?",
+          "Welche " + s + "-Dienstleister kannst du mir in " + r + " empfehlen?",
+          "Ich suche " + s + " in " + r + " – wen würdest du empfehlen?",
+          "Was ist eine gute Adresse für " + s + " im Raum " + r + "?",
+          "Nenne mir seriöse Anbieter für " + s + " in " + r + ".",
+        ];
+      }
+      return [
+        "Wer sind die besten Anbieter für " + s + "?",
+        "Welche " + s + "-Dienstleister kannst du empfehlen?",
+        "Ich suche einen Anbieter für " + s + " – wen würdest du empfehlen?",
+        "Was sind führende Unternehmen im Bereich " + s + "?",
+        "Nenne mir seriöse Anbieter für " + s + ".",
+      ];
+    }
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var fd = new FormData(form);
+      // Honeypot
+      if ((fd.get("company_url") || "").toString().trim() !== "") return;
+      state.business = (fd.get("business") || "").toString().trim();
+      state.service = (fd.get("service") || "").toString().trim();
+      state.region = (fd.get("region") || "").toString().trim();
+      if (state.business.length < 2 || state.service.length < 2) {
+        showError("Bitte gib mindestens Firmenname und Leistung ein.");
+        return;
+      }
+      hideError();
+      state.questions = buildQuestions(state.service, state.region);
+      qList.innerHTML = state.questions
+        .map(function (q) {
+          return (
+            '<li class="flex gap-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2 text-[14px]">' +
+            '<span class="text-[var(--color-accent)]">›</span><span>' +
+            esc(q) +
+            "</span></li>"
+          );
+        })
+        .join("");
+      form.hidden = true;
+      step2.hidden = false;
+      step2.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    });
+
+    backBtn.addEventListener("click", function () {
+      step2.hidden = true;
+      form.hidden = false;
+    });
+
+    runBtn.addEventListener("click", function () {
+      var email = (emailEl.value || "").trim();
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        showError("Bitte gib eine gültige E-Mail-Adresse ein.");
+        return;
+      }
+      if (!consentEl.checked) {
+        showError("Bitte bestätige die Verarbeitung deiner Daten.");
+        return;
+      }
+      hideError();
+      step2.hidden = true;
+      loading.hidden = false;
+      cycleLoading();
+
+      fetch(ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          business: state.business,
+          service: state.service,
+          region: state.region,
+          email: email,
+          consent: true,
+          elapsed_ms: Date.now() - startedAt,
+        }),
+      })
+        .then(function (res) {
+          return res.json().catch(function () {
+            throw new Error("Unerwartete Antwort vom Server.");
+          });
+        })
+        .then(function (data) {
+          loading.hidden = true;
+          if (!data || data.ok !== true) {
+            throw new Error((data && data.error) || "Der Check ist fehlgeschlagen.");
+          }
+          renderResult(data);
+        })
+        .catch(function (err) {
+          loading.hidden = true;
+          step2.hidden = false;
+          showError(err.message || "Es ist ein Fehler aufgetreten. Bitte später erneut versuchen.");
+        });
+    });
+
+    var loadingMsgs = [
+      "Wir fragen gerade die KI-Suche …",
+      "Die KI recherchiert live im Web …",
+      "Wir prüfen, ob du genannt wirst …",
+      "Gleich ist dein Ergebnis fertig …",
+    ];
+    function cycleLoading() {
+      var i = 0;
+      loadingText.textContent = loadingMsgs[0];
+      var t = setInterval(function () {
+        if (loading.hidden) {
+          clearInterval(t);
+          return;
+        }
+        i = (i + 1) % loadingMsgs.length;
+        loadingText.textContent = loadingMsgs[i];
+      }, 4000);
+    }
+
+    function ringColor(score) {
+      if (score >= 67) return "var(--color-accent)";
+      if (score >= 34) return "#ff6b35";
+      return "#888";
+    }
+
+    function renderResult(data) {
+      var score = Math.max(0, Math.min(100, Math.round(data.score || 0)));
+      var rows = (data.questions || [])
+        .map(function (q) {
+          return (
+            '<div class="kic-qrow">' +
+            '<div class="flex-1"><div class="text-[14px]">' +
+            esc(q.question) +
+            "</div>" +
+            (q.snippet
+              ? '<div class="mt-1 text-[12px] text-[var(--color-text-muted)]">' + esc(q.snippet) + "</div>"
+              : "") +
+            "</div>" +
+            '<div class="flex shrink-0 flex-col items-end gap-1">' +
+            '<span class="kic-badge ' +
+            (q.mentioned ? "yes" : "no") +
+            '">' +
+            (q.mentioned ? "genannt" : "nicht genannt") +
+            "</span>" +
+            '<span class="kic-badge ' +
+            (q.cited ? "yes" : "no") +
+            '">' +
+            (q.cited ? "verlinkt" : "nicht verlinkt") +
+            "</span>" +
+            "</div>" +
+            "</div>"
+          );
+        })
+        .join("");
+
+      var recs = (data.recommendations || [])
+        .map(function (r) {
+          return '<li class="flex gap-2"><span class="text-[var(--color-accent)]">→</span><span>' + esc(r) + "</span></li>";
+        })
+        .join("");
+
+      result.innerHTML =
+        '<div class="text-center">' +
+        '<div class="kic-ring" style="background: conic-gradient(' +
+        ringColor(score) +
+        " " +
+        score +
+        "%, var(--color-border) 0);\">" +
+        '<div>' + score + "%</div></div>" +
+        '<p class="mt-3 text-[18px] font-semibold">' + esc(data.level || "") + "</p>" +
+        '<p class="mx-auto mt-1 max-w-md text-[14px] text-[var(--color-text-muted)]">' +
+        esc(data.summary || "") +
+        "</p>" +
+        "</div>" +
+        '<div class="mt-6">' +
+        '<p class="text-[13px] font-medium uppercase tracking-wide text-[var(--color-text-muted)]">Gestellte Fragen &amp; Ergebnis</p>' +
+        '<div class="mt-1">' + rows + "</div>" +
+        "</div>" +
+        (recs
+          ? '<div class="mt-6 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)] p-5">' +
+            '<p class="text-[15px] font-semibold">Deine Handlungsempfehlung</p>' +
+            '<ul class="mt-3 grid gap-2 text-[14px] text-[var(--color-text-muted)]">' + recs + "</ul>" +
+            "</div>"
+          : "") +
+        '<a href="/kontakt/" class="mt-6 inline-flex w-full items-center justify-center rounded-lg bg-[var(--color-accent)] px-6 py-3.5 text-[15px] font-semibold text-black transition-all hover:-translate-y-px">Kostenloses Gespräch zur KI-Sichtbarkeit</a>' +
+        '<p class="mt-3 text-center text-[12px] text-[var(--color-text-muted)]">Das Ergebnis haben wir auch an ' +
+        esc(data.email || "deine E-Mail") +
+        " gesendet.</p>";
+      result.hidden = false;
+      result.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function showError(msg) {
+      errorBox.textContent = msg;
+      errorBox.hidden = false;
+    }
+    function hideError() {
+      errorBox.hidden = true;
+    }
+  })();
+</script>

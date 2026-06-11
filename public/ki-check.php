@@ -1,0 +1,398 @@
+<?php
+/**
+ * KI-Sichtbarkeits-Check — Backend-Endpoint für 2fox4.de
+ *
+ * Prüft über die Perplexity-Sonar-API (live Web-Suche mit Quellen), ob ein
+ * Unternehmen für typische Käuferfragen von der KI-Suche genannt/zitiert wird,
+ * berechnet einen Score + Handlungsempfehlung, protokolliert die Anfrage und
+ * schickt den Lead per SMTP an 2fox4.
+ *
+ * Aufruf: POST application/json
+ *   { business, service, region, email, consent, elapsed_ms }
+ * Antwort: application/json
+ *   { ok:true, score, level, summary, email, questions:[{question,mentioned,cited,snippet}], recommendations:[] }
+ *   { ok:false, error:"..." }
+ *
+ * Konfiguration: ki-check.config.php (NICHT im Repo, Vorlage: .example.php).
+ * Protokoll: ki-check-data/log.jsonl (per .htaccess vor Direktzugriff geschützt).
+ *
+ * Hinweis zum Hosting: läuft als statisch hochgeladene PHP-Datei auf all-inkl,
+ * analog zu kontakt.php. Der API-Key bleibt serverseitig.
+ */
+
+declare(strict_types=1);
+
+header('Content-Type: application/json; charset=utf-8');
+header('Cache-Control: no-store');
+
+/* ---------- kleine JSON-Helfer ---------- */
+function out_json(array $data, int $code = 200): never {
+    http_response_code($code);
+    echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    exit;
+}
+function fail(string $msg, int $code = 400): never {
+    out_json(['ok' => false, 'error' => $msg], $code);
+}
+
+/* ---------- nur POST ---------- */
+if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
+    fail('Nur POST erlaubt.', 405);
+}
+
+/* ---------- Config laden ---------- */
+$configFile = __DIR__ . '/ki-check.config.php';
+if (!is_file($configFile)) {
+    error_log('[2fox4 KI-Check] ki-check.config.php fehlt');
+    fail('Der Check ist gerade nicht verfügbar (Konfiguration fehlt).', 500);
+}
+$config = require $configFile;
+$apiKey  = (string)($config['perplexity_api_key'] ?? '');
+$model   = (string)($config['perplexity_model'] ?? 'sonar');
+$qCount  = max(1, min(6, (int)($config['question_count'] ?? 5)));
+if ($apiKey === '' || str_starts_with($apiKey, 'DEIN_')) {
+    fail('Der Check ist gerade nicht verfügbar (API-Key fehlt).', 500);
+}
+
+/* ---------- Eingabe (JSON) lesen ---------- */
+$raw = file_get_contents('php://input') ?: '';
+$in  = json_decode($raw, true);
+if (!is_array($in)) {
+    fail('Ungültige Anfrage.');
+}
+function clean(string $s, int $max): string {
+    $s = trim($s);
+    if (mb_strlen($s) > $max) $s = mb_substr($s, 0, $max);
+    return $s;
+}
+$business = clean((string)($in['business'] ?? ''), 120);
+$service  = clean((string)($in['service'] ?? ''), 120);
+$region   = clean((string)($in['region'] ?? ''), 120);
+$email    = clean((string)($in['email'] ?? ''), 200);
+$consent  = !empty($in['consent']);
+$elapsed  = (int)($in['elapsed_ms'] ?? 99999);
+
+/* ---------- Validierung ---------- */
+if (mb_strlen($business) < 2) fail('Bitte gib deinen Firmennamen an.');
+if (mb_strlen($service) < 2)  fail('Bitte gib deine Leistung an.');
+if (!filter_var($email, FILTER_VALIDATE_EMAIL)) fail('Bitte gib eine gültige E-Mail-Adresse an.');
+if (!$consent) fail('Bitte bestätige die Verarbeitung deiner Daten.');
+// Time-Trap: realer Nutzer braucht > 2 s für die Eingabe
+if ($elapsed >= 0 && $elapsed < 2000) fail('Bitte versuche es erneut.');
+
+/* ---------- Rate-Limit: max. 5 Checks / IP / Stunde ---------- */
+$ip = $_SERVER['REMOTE_ADDR'] ?? '';
+if ($ip !== '') {
+    $rl = sys_get_temp_dir() . '/2fox4_kicheck_' . hash('sha256', $ip) . '.txt';
+    $now = time(); $cut = $now - 3600; $stamps = [];
+    if (is_readable($rl)) {
+        foreach (@file($rl, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) ?: [] as $l) {
+            if ((int)$l > $cut) $stamps[] = (int)$l;
+        }
+    }
+    if (count($stamps) >= 5) {
+        fail('Du hast in der letzten Stunde schon mehrere Checks gemacht. Bitte versuche es später erneut.', 429);
+    }
+    $stamps[] = $now;
+    @file_put_contents($rl, implode("\n", $stamps), LOCK_EX);
+}
+
+/* ---------- Fragen generieren (identisch zur JS-Logik im Frontend) ---------- */
+function build_questions(string $service, string $region): array {
+    $s = trim($service); $r = trim($region);
+    if ($r !== '') {
+        return [
+            "Wer sind die besten Anbieter für {$s} in {$r}?",
+            "Welche {$s}-Dienstleister kannst du mir in {$r} empfehlen?",
+            "Ich suche {$s} in {$r} – wen würdest du empfehlen?",
+            "Was ist eine gute Adresse für {$s} im Raum {$r}?",
+            "Nenne mir seriöse Anbieter für {$s} in {$r}.",
+        ];
+    }
+    return [
+        "Wer sind die besten Anbieter für {$s}?",
+        "Welche {$s}-Dienstleister kannst du empfehlen?",
+        "Ich suche einen Anbieter für {$s} – wen würdest du empfehlen?",
+        "Was sind führende Unternehmen im Bereich {$s}?",
+        "Nenne mir seriöse Anbieter für {$s}.",
+    ];
+}
+$questions = array_slice(build_questions($service, $region), 0, $qCount);
+
+/* ---------- Namens-Normalisierung für die Treffer-Erkennung ---------- */
+function normalize_name(string $name): string {
+    $n = mb_strtolower($name, 'UTF-8');
+    // gängige Rechtsformen entfernen
+    $n = preg_replace('/\b(gmbh|ug|mbh|ag|kg|ohg|gbr|e\.?\s?k\.?|e\.?\s?kfm\.?|& co\.? kg|& co|haftungsbeschr\w*)\b/u', ' ', $n);
+    $n = preg_replace('/[^a-z0-9äöüß ]+/u', ' ', $n);
+    $n = trim(preg_replace('/\s+/u', ' ', $n));
+    return $n;
+}
+$normName = normalize_name($business);
+$nameNoSpace = str_replace(' ', '', $normName);
+// Distinktives Marken-Token: das längste Wort aus dem Firmennamen, das NICHT
+// zur Leistung/Region gehört. Wichtig, damit z. B. bei „2fox4 Webdesign" nicht
+// das generische „webdesign" (steht ohnehin in jeder Frage) als Treffer zählt,
+// sondern die eigentliche Marke „2fox4".
+$stopTokens = [];
+foreach (explode(' ', normalize_name($service . ' ' . $region)) as $t) {
+    if ($t !== '') $stopTokens[$t] = true;
+}
+// Deutsche Firmennamen führen meist mit der Marke ("Mustermann Steuerberatung",
+// "2fox4 Webdesign") → erstes bedeutsames Token bevorzugen; sonst längstes.
+$distinctToken = '';
+foreach (explode(' ', $normName) as $t) {
+    if (mb_strlen($t) >= 4 && !isset($stopTokens[$t])) { $distinctToken = $t; break; }
+}
+if ($distinctToken === '') {
+    $tokens = array_filter(
+        explode(' ', $normName),
+        fn($t) => mb_strlen($t) >= 4 && !isset($stopTokens[$t])
+    );
+    usort($tokens, fn($a, $b) => mb_strlen($b) <=> mb_strlen($a));
+    $distinctToken = $tokens[0] ?? '';
+}
+
+/* ---------- Perplexity-Call ---------- */
+function perplexity_ask(string $apiKey, string $model, string $question): array {
+    $payload = [
+        'model' => $model,
+        'messages' => [
+            ['role' => 'system', 'content' =>
+                'Du bist eine hilfreiche Such-Assistenz. Beantworte die Frage des Nutzers, '
+                . 'indem du konkrete, real existierende Anbieter oder Unternehmen mit Namen nennst, '
+                . 'sofern es welche gibt. Antworte knapp und auf Deutsch.'],
+            ['role' => 'user', 'content' => $question],
+        ],
+        'max_tokens' => 500,
+        'temperature' => 0.2,
+    ];
+    $ch = curl_init('https://api.perplexity.ai/chat/completions');
+    curl_setopt_array($ch, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_POST => true,
+        CURLOPT_HTTPHEADER => [
+            'Authorization: Bearer ' . $apiKey,
+            'Content-Type: application/json',
+        ],
+        CURLOPT_POSTFIELDS => json_encode($payload, JSON_UNESCAPED_UNICODE),
+        CURLOPT_TIMEOUT => 25,
+        CURLOPT_CONNECTTIMEOUT => 10,
+    ]);
+    $res  = curl_exec($ch);
+    $code = (int)curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $err  = curl_error($ch);
+    curl_close($ch);
+    if ($res === false || $code >= 400) {
+        return ['ok' => false, 'content' => '', 'sources' => [], 'http' => $code, 'err' => $err];
+    }
+    $data = json_decode($res, true);
+    $content = (string)($data['choices'][0]['message']['content'] ?? '');
+    // Quellen können als 'citations' (URLs) oder 'search_results' ([{title,url}]) kommen
+    $sources = [];
+    foreach (($data['citations'] ?? []) as $c) {
+        if (is_string($c)) $sources[] = ['title' => '', 'url' => $c];
+    }
+    foreach (($data['search_results'] ?? []) as $sr) {
+        $sources[] = ['title' => (string)($sr['title'] ?? ''), 'url' => (string)($sr['url'] ?? '')];
+    }
+    return ['ok' => true, 'content' => $content, 'sources' => $sources, 'http' => $code, 'err' => ''];
+}
+
+/* ---------- Treffer-Erkennung pro Frage ---------- */
+function detect_mention(string $content, array $sources, string $normName, string $nameNoSpace, string $distinctToken): array {
+    $hay = mb_strtolower($content, 'UTF-8');
+    $mentioned = false;
+    if ($normName !== '' && mb_strlen($normName) >= 4 && mb_strpos($hay, $normName) !== false) {
+        $mentioned = true;
+    } elseif ($distinctToken !== '' && mb_strpos($hay, $distinctToken) !== false) {
+        $mentioned = true;
+    }
+    // zitiert? Name oder zusammengezogener Name taucht in Quellen-Titel/URL auf
+    $cited = false;
+    foreach ($sources as $s) {
+        $blob = mb_strtolower(($s['title'] ?? '') . ' ' . ($s['url'] ?? ''), 'UTF-8');
+        $hostToken = preg_replace('/[^a-z0-9äöüß]/u', '', $blob);
+        if (($nameNoSpace !== '' && mb_strlen($nameNoSpace) >= 6 && mb_strpos($hostToken, $nameNoSpace) !== false)
+            || ($distinctToken !== '' && mb_strpos($blob, $distinctToken) !== false)) {
+            $cited = true;
+            break;
+        }
+    }
+    // Snippet
+    $snippet = '';
+    if ($mentioned) {
+        $needle = $normName !== '' && mb_strpos($hay, $normName) !== false ? $normName : $distinctToken;
+        $pos = $needle !== '' ? mb_strpos($hay, $needle) : false;
+        if ($pos !== false) {
+            $start = max(0, $pos - 60);
+            $snippet = trim(mb_substr($content, $start, 180));
+            $snippet = ($start > 0 ? '… ' : '') . $snippet . ' …';
+        }
+    } else {
+        $first = trim(mb_substr($content, 0, 150));
+        if ($first !== '') $snippet = 'KI-Antwort (Auszug): ' . $first . ' …';
+    }
+    return ['mentioned' => $mentioned, 'cited' => $cited, 'snippet' => $snippet];
+}
+
+/* ---------- Check ausführen ---------- */
+@set_time_limit(150);
+$results = [];
+$apiErrors = 0;
+foreach ($questions as $q) {
+    $resp = perplexity_ask($apiKey, $model, $q);
+    if (!$resp['ok']) {
+        $apiErrors++;
+        $results[] = ['question' => $q, 'mentioned' => false, 'cited' => false,
+                      'snippet' => 'Diese Frage konnte gerade nicht geprüft werden.', 'error' => true];
+        continue;
+    }
+    $d = detect_mention($resp['content'], $resp['sources'], $normName, $nameNoSpace, $distinctToken);
+    $results[] = [
+        'question'  => $q,
+        'mentioned' => $d['mentioned'],
+        'cited'     => $d['cited'],
+        'snippet'   => $d['snippet'],
+        'error'     => false,
+    ];
+}
+// Alle Calls fehlgeschlagen → ehrlicher Fehler statt 0-Score
+if ($apiErrors === count($questions)) {
+    fail('Die KI-Suche ist gerade nicht erreichbar. Bitte versuche es in ein paar Minuten erneut.', 502);
+}
+
+/* ---------- Score + Level + Empfehlung ---------- */
+$checked = array_filter($results, fn($r) => empty($r['error']));
+$nChecked = max(1, count($checked));
+$mentions = 0; $citations = 0; $points = 0;
+foreach ($checked as $r) {
+    if ($r['mentioned']) { $mentions++; $points += 2; }
+    if ($r['cited'])     { $citations++; $points += 1; }
+}
+$score = (int)round($points / ($nChecked * 3) * 100);
+
+if ($score >= 85)      { $level = 'Dominant in der KI-Suche (Stufe 3)'; }
+elseif ($score >= 60)  { $level = 'Stark sichtbar (oberes Stufe 2)'; }
+elseif ($score >= 34)  { $level = 'Teilweise sichtbar (Stufe 2)'; }
+elseif ($score > 0)    { $level = 'Erste Signale (unteres Stufe 2)'; }
+else                   { $level = 'Aktuell unsichtbar (Stufe 1)'; }
+
+if ($mentions === 0 && $citations === 0) {
+    $summary = 'Die KI-Suche nennt dein Unternehmen für diese Anfragen nicht und verweist auch nicht auf deine Inhalte. Hier liegt das größte Potenzial.';
+} elseif ($mentions === 0) {
+    $summary = 'Deine Inhalte werden teils als Quelle erfasst, aber die KI empfiehlt dich noch nicht aktiv. Der Sprung zur echten Empfehlung ist machbar.';
+} elseif ($mentions < $nChecked) {
+    $summary = 'Du wirst bei einem Teil der Anfragen genannt – das Ziel ist, über alle Anfragen hinweg konstant empfohlen zu werden.';
+} else {
+    $summary = 'Du wirst bei allen geprüften Anfragen genannt – eine sehr starke Ausgangslage. Jetzt geht es darum, diese Position abzusichern.';
+}
+
+$recs = [];
+if ($mentions === 0 && $citations === 0) {
+    $recs[] = 'Stufe 1: Du bist in der KI-Suche praktisch unsichtbar – der wichtigste Hebel ist, deine Inhalte überhaupt für KI-Systeme erfassbar zu machen.';
+    $recs[] = 'Beschreibe deine Leistungen klar und konkret: was du machst, für wen, was es ungefähr kostet und in welcher Zeit – statt allgemeiner Marketing-Floskeln.';
+    $recs[] = 'Baue zitierfähige Inhalte auf (FAQ, klare Überschriften, strukturierte Daten), damit KI-Systeme dich als Quelle erkennen.';
+} elseif ($mentions === 0) {
+    $recs[] = 'Deine Seite wird als Quelle wahrgenommen, aber nicht aktiv empfohlen – schärfe deine Positionierung, damit klar wird, wofür genau du stehst.';
+    $recs[] = 'Stärke Signale wie Bewertungen, Fachbeiträge und konsistente Einträge im Web, auf die sich KI-Systeme stützen.';
+    $recs[] = 'Ergänze pro Leistung eigenständige, klar beantwortete Fragen – das erhöht die Chance, direkt genannt zu werden.';
+} elseif ($mentions < $nChecked) {
+    $recs[] = 'Du wirst bei manchen Anfragen genannt – analysiere, bei welchen nicht, und baue genau dafür gezielt Inhalte auf.';
+    $recs[] = 'Sorge für konsistente Nennungen über mehrere Quellen hinweg; das verstetigt die KI-Empfehlung.';
+    $recs[] = 'Erweitere deine zitierfähigen Inhalte rund um deine wichtigsten Suchbegriffe und deine Region.';
+} else {
+    $recs[] = 'Starke KI-Sichtbarkeit – sichere die Position ab, indem du regelmäßig frische, zitierfähige Inhalte veröffentlichst.';
+    $recs[] = 'Beobachte deine Sichtbarkeit laufend, da sich KI-Antworten verändern – so reagierst du, bevor ein Wettbewerber aufholt.';
+}
+$recs[] = 'Mehr zum Thema: unser Leitfaden „GEO – die 3 Stufen der KI-Sichtbarkeit" unter 2fox4.de/blog. Für einen konkreten Plan: kostenloses Erstgespräch.';
+
+/* ---------- Protokollierung (JSONL) ---------- */
+$logDir = __DIR__ . '/ki-check-data';
+if (!is_dir($logDir)) { @mkdir($logDir, 0750, true); }
+// Direktzugriff via Web unterbinden
+$htaccess = $logDir . '/.htaccess';
+if (!is_file($htaccess)) { @file_put_contents($htaccess, "Require all denied\nDeny from all\n"); }
+$logEntry = [
+    'ts'        => date('c'),
+    'email'     => $email,
+    'business'  => $business,
+    'service'   => $service,
+    'region'    => $region,
+    'score'     => $score,
+    'level'     => $level,
+    'mentions'  => $mentions,
+    'citations' => $citations,
+    'questions' => array_map(fn($r) => [
+        'q' => $r['question'], 'mentioned' => $r['mentioned'], 'cited' => $r['cited'],
+    ], $results),
+    'ip'        => preg_replace('/\.\d+$/', '.0', $ip),
+    'ua'        => substr($_SERVER['HTTP_USER_AGENT'] ?? '', 0, 180),
+];
+@file_put_contents($logDir . '/log.jsonl',
+    json_encode($logEntry, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . "\n",
+    FILE_APPEND | LOCK_EX);
+
+/* ---------- Lead-Mail an 2fox4 (best effort, bricht den Check nicht ab) ---------- */
+try {
+    $mailFile = __DIR__ . '/lib/PHPMailer/PHPMailer.php';
+    if (is_file($mailFile) && !empty($config['smtp_host'])) {
+        require_once __DIR__ . '/lib/PHPMailer/Exception.php';
+        require_once __DIR__ . '/lib/PHPMailer/PHPMailer.php';
+        require_once __DIR__ . '/lib/PHPMailer/SMTP.php';
+        $mail = new \PHPMailer\PHPMailer\PHPMailer(true);
+        $mail->isSMTP();
+        $mail->Host       = $config['smtp_host'];
+        $mail->SMTPAuth   = true;
+        $mail->Username   = $config['smtp_user'];
+        $mail->Password   = $config['smtp_password'];
+        $mail->SMTPSecure = ($config['smtp_secure'] ?? 'tls') === 'ssl'
+            ? \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_SMTPS
+            : \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->Port    = (int)($config['smtp_port'] ?? 587);
+        $mail->CharSet = 'UTF-8';
+        $mail->setFrom($config['mail_from'], $config['mail_from_name'] ?? '2fox4 KI-Check');
+        $mail->addAddress($config['mail_to'] ?? $config['mail_from']);
+        $mail->addReplyTo($email, $business);
+        $mail->Subject = '[2fox4 KI-Check] Neuer Lead: ' . $business . ' (' . $score . '%)';
+        $lines = [
+            'Neuer KI-Sichtbarkeits-Check',
+            '============================',
+            'E-Mail:    ' . $email,
+            'Firma:     ' . $business,
+            'Leistung:  ' . $service,
+            'Region:    ' . ($region !== '' ? $region : '—'),
+            'Score:     ' . $score . '% (' . $level . ')',
+            'Genannt:   ' . $mentions . ' / ' . $nChecked,
+            'Verlinkt:  ' . $citations . ' / ' . $nChecked,
+            '',
+            'Geprüfte Fragen:',
+        ];
+        foreach ($results as $r) {
+            $lines[] = sprintf(' [%s] %s', $r['mentioned'] ? 'genannt' : 'nicht', $r['question']);
+        }
+        $lines[] = '';
+        $lines[] = 'Zeit: ' . date('Y-m-d H:i:s');
+        $mail->Body = implode("\r\n", $lines);
+        $mail->isHTML(false);
+        $mail->send();
+    }
+} catch (\Throwable $e) {
+    error_log('[2fox4 KI-Check] Mail-Fehler: ' . $e->getMessage());
+}
+
+/* ---------- Antwort ---------- */
+out_json([
+    'ok'              => true,
+    'score'           => $score,
+    'level'           => $level,
+    'summary'         => $summary,
+    'email'           => $email,
+    'questions'       => array_map(fn($r) => [
+        'question'  => $r['question'],
+        'mentioned' => (bool)$r['mentioned'],
+        'cited'     => (bool)$r['cited'],
+        'snippet'   => $r['snippet'],
+    ], $results),
+    'recommendations' => $recs,
+]);

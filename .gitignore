@@ -20,6 +20,10 @@ pnpm-debug.log*
 # SMTP-Credentials für das Kontaktformular — lebt nur am Server
 public/kontakt.config.php
 
+# KI-Sichtbarkeits-Check — API-Key/Secrets + Protokolldaten, nur am Server
+public/ki-check.config.php
+public/ki-check-data/
+
 # macOS / Editor
 .DS_Store
 .vscode/
