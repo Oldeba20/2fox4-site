@@ -12,6 +12,102 @@ $configFile = __DIR__ . '/ki-check.config.php';
 $ok = false;
 $message = 'Dieser Bestätigungslink ist ungültig oder bereits verwendet worden.';
 
+/**
+ * Sendet dem Kunden sein KI-Sichtbarkeits-Ergebnis per E-Mail.
+ * Wird NUR nach erfolgreicher Double-Opt-in-Bestätigung aufgerufen, damit
+ * niemals an eine nicht bestätigte (ggf. fremde) Adresse versendet wird.
+ */
+function send_result_mail(array $config, array $lead): void
+{
+    $mailFile = __DIR__ . '/lib/PHPMailer/PHPMailer.php';
+    if (!is_file($mailFile)) {
+        return;
+    }
+    require_once __DIR__ . '/lib/PHPMailer/Exception.php';
+    require_once __DIR__ . '/lib/PHPMailer/PHPMailer.php';
+    require_once __DIR__ . '/lib/PHPMailer/SMTP.php';
+
+    $r = json_decode((string)$lead['result_json'], true) ?: [];
+    $score    = (int)($lead['result_score'] ?? 0);
+    $level    = (string)($lead['result_level'] ?? '');
+    $business = (string)($lead['business'] ?? '');
+    $summary  = (string)($r['summary'] ?? '');
+    $mentions = (int)($r['mentions'] ?? 0);
+    $citations = (int)($r['citations'] ?? 0);
+    $nChecked  = (int)($r['nChecked'] ?? 0);
+    $questions = is_array($r['questions'] ?? null) ? $r['questions'] : [];
+    $recs      = is_array($r['recommendations'] ?? null) ? $r['recommendations'] : [];
+
+    $lines = [];
+    $lines[] = 'Hallo,';
+    $lines[] = '';
+    $lines[] = 'danke für deine Bestätigung. Hier ist dein KI-Sichtbarkeits-Check'
+             . ($business !== '' ? ' für ' . $business : '') . ':';
+    $lines[] = '';
+    $lines[] = 'Score: ' . $score . '% – ' . $level;
+    if ($summary !== '') {
+        $lines[] = $summary;
+    }
+    $lines[] = '';
+    if ($nChecked > 0) {
+        $lines[] = 'Genannt:  ' . $mentions . ' von ' . $nChecked . ' Fragen';
+        $lines[] = 'Verlinkt: ' . $citations . ' von ' . $nChecked . ' Fragen';
+        $lines[] = '';
+    }
+    $lines[] = 'Was bedeuten die Begriffe?';
+    $lines[] = '- "Genannt": Dein Unternehmen wird im Antworttext der KI-Suche';
+    $lines[] = '  namentlich erwähnt – die KI kennt dich und nennt dich als Anbieter.';
+    $lines[] = '- "Verlinkt": Die KI führt deine Website als Quelle an und verlinkt';
+    $lines[] = '  sie. Das ist die stärkste Form der Sichtbarkeit, weil Nutzer direkt';
+    $lines[] = '  zu dir gelangen.';
+    $lines[] = '';
+    if ($questions) {
+        $lines[] = 'Geprüfte Fragen:';
+        foreach ($questions as $q) {
+            $tag = !empty($q['cited']) ? 'genannt + verlinkt'
+                 : (!empty($q['mentioned']) ? 'genannt' : 'nicht genannt');
+            $lines[] = ' [' . $tag . '] ' . (string)($q['question'] ?? '');
+        }
+        $lines[] = '';
+    }
+    if ($recs) {
+        $lines[] = 'Deine nächsten Schritte:';
+        foreach ($recs as $rec) {
+            $lines[] = ' - ' . (string)$rec;
+        }
+        $lines[] = '';
+    }
+    $lines[] = 'Hinweis: Das Ergebnis ist ein starker Indikator für deine';
+    $lines[] = 'KI-Sichtbarkeit, keine garantierte 1:1-Abbildung der jeweiligen App.';
+    $lines[] = '';
+    $lines[] = 'Du möchtest sichtbarer werden? Lass uns unverbindlich sprechen:';
+    $lines[] = 'https://www.2fox4.de/kontakt/';
+    $lines[] = '';
+    $lines[] = 'Viele Grüße';
+    $lines[] = '2fox4 · www.2fox4.de';
+    $lines[] = '';
+    $lines[] = 'Du erhältst diese E-Mail, weil du deine Anmeldung zum KI-Sichtbarkeits-Check';
+    $lines[] = 'bestätigt hast. Abmelden jederzeit per Antwort auf diese E-Mail.';
+
+    $mail = new \PHPMailer\PHPMailer\PHPMailer(true);
+    $mail->isSMTP();
+    $mail->Host       = $config['smtp_host'];
+    $mail->SMTPAuth   = true;
+    $mail->Username   = $config['smtp_user'];
+    $mail->Password   = $config['smtp_password'];
+    $mail->SMTPSecure = ($config['smtp_secure'] ?? 'tls') === 'ssl'
+        ? \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_SMTPS
+        : \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
+    $mail->Port    = (int)($config['smtp_port'] ?? 587);
+    $mail->CharSet = 'UTF-8';
+    $mail->setFrom($config['mail_from'], $config['mail_from_name'] ?? '2fox4');
+    $mail->addAddress((string)$lead['email']);
+    $mail->Subject = 'Dein KI-Sichtbarkeits-Check: ' . $score . '%';
+    $mail->Body    = implode("\r\n", $lines);
+    $mail->isHTML(false);
+    $mail->send();
+}
+
 $token = (string)($_GET['token'] ?? '');
 if (is_file($configFile) && preg_match('/^[a-f0-9]{32}$/', $token)) {
     $config = require $configFile;
@@ -22,6 +118,16 @@ if (is_file($configFile) && preg_match('/^[a-f0-9]{32}$/', $token)) {
                 $config['db_user'], $config['db_pass'],
                 [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::ATTR_TIMEOUT => 8]
             );
+            // Ergebnis-Spalten sicherstellen (für Alt-Leads von vor diesem Update).
+            try {
+                $pdo->exec("ALTER TABLE ki_check_leads
+                    ADD COLUMN IF NOT EXISTS result_score INT NULL,
+                    ADD COLUMN IF NOT EXISTS result_level VARCHAR(120) NULL,
+                    ADD COLUMN IF NOT EXISTS result_json LONGTEXT NULL,
+                    ADD COLUMN IF NOT EXISTS result_sent_at DATETIME NULL");
+            } catch (\Throwable $e) {
+                error_log('[2fox4 KI-Check] ALTER (confirm): ' . $e->getMessage());
+            }
             $ip = preg_replace('/\.\d+$/', '.0', $_SERVER['REMOTE_ADDR'] ?? '');
             $up = $pdo->prepare(
                 "UPDATE ki_check_leads
@@ -31,7 +137,28 @@ if (is_file($configFile) && preg_match('/^[a-f0-9]{32}$/', $token)) {
             $up->execute([$ip, $token]);
             if ($up->rowCount() > 0) {
                 $ok = true;
-                $message = 'Vielen Dank – deine Anmeldung ist jetzt bestätigt. Du erhältst künftig gelegentlich Tipps rund um deine KI-Sichtbarkeit. Abmelden kannst du dich jederzeit.';
+                $message = 'Vielen Dank – deine Anmeldung ist jetzt bestätigt. Dein Ergebnis und passende Tipps schicken wir dir gleich per E-Mail. Abmelden kannst du dich jederzeit.';
+
+                // Ergebnis-Mail an den Kunden senden – AUSSCHLIESSLICH nach dieser
+                // Bestätigung (Double-Opt-in). Genau einmal: result_sent_at als Sperre.
+                try {
+                    $row = $pdo->prepare(
+                        "SELECT email, business, service, region,
+                                result_score, result_level, result_json, result_sent_at
+                           FROM ki_check_leads WHERE token=? LIMIT 1"
+                    );
+                    $row->execute([$token]);
+                    $lead = $row->fetch(PDO::FETCH_ASSOC);
+
+                    if ($lead && empty($lead['result_sent_at']) && !empty($config['smtp_host'])
+                        && filter_var($lead['email'], FILTER_VALIDATE_EMAIL)) {
+                        send_result_mail($config, $lead);
+                        $pdo->prepare("UPDATE ki_check_leads SET result_sent_at=NOW() WHERE token=?")
+                            ->execute([$token]);
+                    }
+                } catch (\Throwable $e) {
+                    error_log('[2fox4 KI-Check] Ergebnis-Mail-Fehler: ' . $e->getMessage());
+                }
             }
         } catch (\Throwable $e) {
             error_log('[2fox4 KI-Check] Confirm-Fehler: ' . $e->getMessage());

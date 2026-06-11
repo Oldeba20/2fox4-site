@@ -423,6 +423,17 @@ if ($newsletter && !empty($config['db_host']) && !empty($config['smtp_host'])) {
                 KEY idx_status (status)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4"
         );
+        // Ergebnis-Spalten nachrüsten (idempotent, MariaDB unterstützt IF NOT EXISTS).
+        // So kann die Ergebnis-Mail NACH der DOI-Bestätigung das gespeicherte Ergebnis versenden.
+        try {
+            $pdo->exec("ALTER TABLE ki_check_leads
+                ADD COLUMN IF NOT EXISTS result_score INT NULL,
+                ADD COLUMN IF NOT EXISTS result_level VARCHAR(120) NULL,
+                ADD COLUMN IF NOT EXISTS result_json LONGTEXT NULL,
+                ADD COLUMN IF NOT EXISTS result_sent_at DATETIME NULL");
+        } catch (\Throwable $e) {
+            error_log('[2fox4 KI-Check] ALTER ki_check_leads: ' . $e->getMessage());
+        }
         // Aufräumen: unbestätigte Einträge älter als 30 Tage entfernen
         $pdo->exec("DELETE FROM ki_check_leads WHERE status='pending' AND signup_at < (NOW() - INTERVAL 30 DAY)");
 
@@ -437,15 +448,30 @@ if ($newsletter && !empty($config['db_host']) && !empty($config['smtp_host'])) {
             $recently = is_file($mailLock) && (time() - (int)@file_get_contents($mailLock)) < 86400;
             if (!$recently) {
                 $token = bin2hex(random_bytes(16));
+                // Ergebnis-Snapshot für die spätere Ergebnis-Mail (NUR nach DOI versendet).
+                $resultSnapshot = json_encode([
+                    'summary'         => $summary,
+                    'mentions'        => $mentions,
+                    'citations'       => $citations,
+                    'nChecked'        => $nChecked,
+                    'questions'       => array_map(fn($r) => [
+                        'question'  => $r['question'],
+                        'mentioned' => (bool)$r['mentioned'],
+                        'cited'     => (bool)$r['cited'],
+                    ], $results),
+                    'recommendations' => $recs,
+                ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
                 $ins = $pdo->prepare(
                     "INSERT INTO ki_check_leads
-                       (email, business, service, region, token, status, consent_version, signup_ip, signup_at)
-                     VALUES (?, ?, ?, ?, ?, 'pending', ?, ?, NOW())"
+                       (email, business, service, region, token, status, consent_version, signup_ip, signup_at,
+                        result_score, result_level, result_json)
+                     VALUES (?, ?, ?, ?, ?, 'pending', ?, ?, NOW(), ?, ?, ?)"
                 );
                 $ins->execute([
                     $email, $business, $service, ($region !== '' ? $region : null),
                     $token, (string)($config['consent_version'] ?? date('Y-m-d')),
                     preg_replace('/\.\d+$/', '.0', $ip),
+                    $score, $level, $resultSnapshot,
                 ]);
 
                 // Neutrale Bestätigungsmail (KEINE Werbung)
@@ -471,11 +497,13 @@ if ($newsletter && !empty($config['db_host']) && !empty($config['smtp_host'])) {
                 $cm->Body = implode("\r\n", [
                     'Hallo,',
                     '',
-                    'diese E-Mail-Adresse wurde beim KI-Sichtbarkeits-Check von 2fox4 für',
-                    'gelegentliche Tipps und Informationen per E-Mail eingetragen.',
+                    'diese E-Mail-Adresse wurde beim KI-Sichtbarkeits-Check von 2fox4',
+                    'eingetragen, um das Ergebnis und gelegentliche Tipps per E-Mail zu erhalten.',
                     '',
                     'Warst du das? Dann bestätige deine Anmeldung mit einem Klick:',
                     $confirmUrl,
+                    '',
+                    'Direkt nach deiner Bestätigung schicken wir dir dein Check-Ergebnis per E-Mail.',
                     '',
                     'Falls du das nicht warst, ignoriere diese E-Mail einfach. Ohne deine',
                     'Bestätigung nutzen wir die Adresse nicht; sie wird nach 30 Tagen gelöscht.',
