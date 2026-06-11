@@ -411,4 +411,46 @@ const schema = [
   .post-content details p:last-of-type {
     margin-bottom: 0;
   }
+
+  /* Inline-CTA-Box (z. B. KI-Sichtbarkeits-Check) */
+  .post-content .blog-cta {
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--color-accent);
+    border-radius: 14px;
+    padding: 1.6em 1.8em;
+    margin: 2.2em 0;
+  }
+  .post-content .blog-cta p { margin: 0; }
+  .post-content .blog-cta .blog-cta-eyebrow {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--color-accent);
+    margin-bottom: 0.5em;
+  }
+  .post-content .blog-cta .blog-cta-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--color-text);
+    line-height: 1.25;
+    margin-bottom: 0.45em;
+  }
+  .post-content .blog-cta .blog-cta-text {
+    color: var(--color-text-muted);
+    margin-bottom: 1.1em;
+  }
+  .post-content .blog-cta a.blog-cta-btn {
+    display: inline-block;
+    background: var(--color-accent);
+    color: #0a0a0a;
+    font-weight: 600;
+    padding: 0.7em 1.3em;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: transform 0.15s ease;
+  }
+  .post-content .blog-cta a.blog-cta-btn:hover {
+    transform: translateY(-1px);
+  }
 </style>

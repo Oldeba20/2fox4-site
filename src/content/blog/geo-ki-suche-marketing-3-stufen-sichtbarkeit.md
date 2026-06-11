@@ -57,6 +57,13 @@ Klassisches SEO und GEO schließen sich nicht aus – aber sie funktionieren gru
 
 Der vielleicht wichtigste Vorteil von GEO: Du machst dich unabhängiger. Wenn dein Fundament stimmt, ist es egal, ob jemand bei Google sucht, ChatGPT befragt, Gemini nutzt oder Perplexity testet – du tauchst auf. Statt von einem einzigen Algorithmus abhängig zu sein, bist du über die gesamte Landschaft hinweg präsent.
 
+<div class="blog-cta">
+<p class="blog-cta-eyebrow">Kostenloses Tool</p>
+<p class="blog-cta-title">Auf welcher Stufe stehst du gerade?</p>
+<p class="blog-cta-text">Finde es heraus: Der kostenlose KI-Sichtbarkeits-Check zeigt dir in 60 Sekunden, ob ChatGPT, Perplexity &amp; Co. dein Unternehmen empfehlen – samt Handlungsempfehlung.</p>
+<a class="blog-cta-btn" href="/ki-sichtbarkeit-check/">Jetzt KI-Sichtbarkeit testen →</a>
+</div>
+
 ## Die 3 Stufen der KI-Sichtbarkeit
 
 Aus der Praxis mit mittelständischen Unternehmen lassen sich drei klare Stufen der Suchsichtbarkeit ableiten. Auf welcher dein Unternehmen steht, entscheidet darüber, ob du in den nächsten Jahren problemlos an Kunden kommst – oder an einem Vorsprung knabberst, den jemand anderes gerade aufbaut.

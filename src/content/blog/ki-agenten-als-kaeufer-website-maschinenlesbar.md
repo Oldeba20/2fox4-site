@@ -61,6 +61,13 @@ Jetzt rate, welcher Anbieter bei der nächsten Kaufentscheidung empfohlen wird. 
 
 Die meisten Mittelstandswebsites in Deutschland sind heute wie Anbieter A aufgebaut. Genau das ist die unbesetzte Chance: Wer jetzt zu Anbieter B wird, hat in vielen Branchen das Feld fast für sich allein.
 
+<div class="blog-cta">
+<p class="blog-cta-eyebrow">Kostenloses Tool</p>
+<p class="blog-cta-title">Wirst du von ChatGPT &amp; Co. gefunden?</p>
+<p class="blog-cta-text">Mach den kostenlosen KI-Sichtbarkeits-Check: Suchbegriff eingeben und in 60 Sekunden sehen, ob die KI dein Unternehmen empfiehlt – inklusive konkreter Handlungsempfehlung.</p>
+<a class="blog-cta-btn" href="/ki-sichtbarkeit-check/">Jetzt KI-Sichtbarkeit testen →</a>
+</div>
+
 ## Wie KI-Agenten eine Website tatsächlich „lesen"
 
 Ein KI-Agent sieht deine Website nicht wie ein Mensch. Er nimmt keine Farben, keine Animationen und keine Emotionen wahr. Er verarbeitet Text und Struktur. Drei Dinge entscheiden darüber, ob er deine Inhalte versteht.
