@@ -37,6 +37,14 @@ import { site } from "../data/site";
         {site.nap.phoneDisplay}
       </a>
 
+      {/* KI-Check — Akzent-Button (kostenloses Tool, Lead-Magnet) */}
+      <a
+        href="/ki-sichtbarkeit-check/"
+        class="hidden md:inline-flex items-center gap-2 rounded-md bg-[var(--color-accent)] px-4 py-2 text-sm font-semibold text-black transition-all hover:-translate-y-px"
+      >
+        KI-Check
+      </a>
+
       {/* Erstgespräch-CTA nur auf Desktop sichtbar — Mobile hat unten eigenen CTA-Block */}
       <a
         href="/kontakt/"
@@ -76,6 +84,12 @@ import { site } from "../data/site";
     class="md:hidden hidden border-t border-[var(--color-border)] bg-[rgba(10,10,10,0.95)] backdrop-blur-xl"
   >
     <nav class="container-content flex flex-col py-4">
+      <a
+        href="/ki-sichtbarkeit-check/"
+        class="mb-3 inline-flex items-center justify-center gap-2 rounded-md bg-[var(--color-accent)] px-4 py-3 text-base font-semibold text-black"
+      >
+        KI-Sichtbarkeits-Check
+      </a>
       {site.nav.map((item) => (
         <a
           href={item.href}
