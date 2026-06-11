@@ -336,7 +336,36 @@ const datenschutzHtml = `
 </section>
 
 <section>
-  <h2>9. Eingebettete Inhalte (Karten, Videos)</h2>
+  <h2>9. KI-Sichtbarkeits-Check und Newsletter</h2>
+  <p>
+    <strong>Durchführung des Checks:</strong> Wenn Sie unseren
+    KI-Sichtbarkeits-Check nutzen, verarbeiten wir Ihre Eingaben (Firmenname,
+    Leistung, ggf. Region) und Ihre E-Mail-Adresse, um den Check durchzuführen.
+    Dazu stellen wir automatisiert Suchanfragen an den Dienst Perplexity
+    (Perplexity AI, Inc., USA); Ihre eingegebenen Begriffe werden dabei an
+    Perplexity übermittelt. Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO
+    (Durchführung der von Ihnen angeforderten Leistung). Das Ergebnis wird
+    Ihnen direkt am Bildschirm angezeigt; eine Ergebnis-E-Mail an Sie
+    versenden wir nicht. Zur Nachvollziehbarkeit protokollieren wir die
+    Anfrage mit gekürzter IP-Adresse.
+  </p>
+  <p>
+    <strong>Tipps &amp; Angebote per E-Mail (optional, Double-Opt-in):</strong>
+    Nur wenn Sie die entsprechende Checkbox aktiv anhaken, speichern wir Ihre
+    E-Mail-Adresse, um Ihnen gelegentlich Informationen und Angebote rund um
+    Ihre KI-Sichtbarkeit zu senden. Wir versenden zunächst eine neutrale
+    Bestätigungs-E-Mail; erst nach Ihrem Klick auf den Bestätigungslink
+    (Double-Opt-in) wird Ihre Adresse für den Versand gespeichert.
+    Rechtsgrundlage ist Ihre Einwilligung (Art. 6 Abs. 1 lit. a DSGVO
+    i. V. m. § 7 Abs. 2 UWG). Sie können Ihre Einwilligung jederzeit mit
+    Wirkung für die Zukunft widerrufen, z. B. formlos per E-Mail an
+    <a href="mailto:info@2fox4.de">info@2fox4.de</a>. Nicht bestätigte
+    Anmeldungen löschen wir automatisch nach 30 Tagen.
+  </p>
+</section>
+
+<section>
+  <h2>10. Eingebettete Inhalte (Karten, Videos)</h2>
   <p>
     Wir binden derzeit <strong>keine externen Karten oder Videos</strong>
     ein. Sollten wir künftig Google Maps oder YouTube-Videos einbinden,
@@ -346,7 +375,7 @@ const datenschutzHtml = `
 </section>
 
 <section>
-  <h2>10. Datenübermittlung in Drittländer</h2>
+  <h2>11. Datenübermittlung in Drittländer</h2>
   <p>
     Mit Ihrer Einwilligung in das Meta-Pixel (siehe § 5) werden
     personenbezogene Daten an Meta Platforms, Inc. in die USA übermittelt.
@@ -358,7 +387,7 @@ const datenschutzHtml = `
 </section>
 
 <section>
-  <h2>11. SSL-Verschlüsselung</h2>
+  <h2>12. SSL-Verschlüsselung</h2>
   <p>
     Diese Website nutzt SSL/TLS-Verschlüsselung. Sie erkennen sie am
     „https://" in der Adresszeile und dem Schloss-Symbol Ihres Browsers.
@@ -368,7 +397,7 @@ const datenschutzHtml = `
 </section>
 
 <section>
-  <h2>12. Aktualität dieser Erklärung</h2>
+  <h2>13. Aktualität dieser Erklärung</h2>
   <p>
     Wir behalten uns vor, diese Datenschutzerklärung anzupassen, wenn
     rechtliche oder technische Änderungen es erfordern. Die jeweils

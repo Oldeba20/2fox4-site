@@ -196,6 +196,14 @@ const schema = [
               (<a href="/datenschutz/" class="underline hover:text-[var(--color-text)]">Datenschutz</a>).
             </span>
           </label>
+          <label class="mt-3 flex items-start gap-2 text-left text-[13px] text-[var(--color-text-muted)]">
+            <input id="kic-newsletter" type="checkbox" class="mt-1" />
+            <span>
+              Optional: Ja, 2fox4 darf mir gelegentlich Tipps zur KI-Sichtbarkeit
+              und passende Angebote per E-Mail senden. Zur Bestätigung erhalte ich
+              eine E-Mail (Double-Opt-in); widerrufen kann ich jederzeit.
+            </span>
+          </label>
           <button
             id="kic-run"
             type="button"
@@ -375,6 +383,7 @@ const schema = [
     var backBtn = document.getElementById("kic-back");
     var emailEl = document.getElementById("kic-email");
     var consentEl = document.getElementById("kic-consent");
+    var newsletterEl = document.getElementById("kic-newsletter");
 
     // Endpoint relativ zur Seite (funktioniert auch unter /neu/-Preview):
     // Seite liegt unter /ki-sichtbarkeit-check/ → ../ki-check.php = /ki-check.php
@@ -469,6 +478,7 @@ const schema = [
           region: state.region,
           email: email,
           consent: true,
+          newsletter: newsletterEl.checked,
           elapsed_ms: Date.now() - startedAt,
         }),
       })
@@ -576,9 +586,13 @@ const schema = [
             "</div>"
           : "") +
         '<a href="/kontakt/" class="mt-6 inline-flex w-full items-center justify-center rounded-lg bg-[var(--color-accent)] px-6 py-3.5 text-[15px] font-semibold text-black transition-all hover:-translate-y-px">Kostenloses Gespräch zur KI-Sichtbarkeit</a>' +
-        '<p class="mt-3 text-center text-[12px] text-[var(--color-text-muted)]">Das Ergebnis haben wir auch an ' +
-        esc(data.email || "deine E-Mail") +
-        " gesendet.</p>";
+        (data.confirmation_sent
+          ? '<p class="mt-3 text-center text-[12px] text-[var(--color-text-muted)]">Wir haben dir eine Bestätigungsmail an ' +
+            esc(data.email) +
+            " geschickt – bitte bestätige sie, damit wir dir Tipps senden dürfen.</p>"
+          : data.already_subscribed
+          ? '<p class="mt-3 text-center text-[12px] text-[var(--color-text-muted)]">Du bist bereits für unsere Tipps angemeldet.</p>'
+          : "");
       result.hidden = false;
       result.scrollIntoView({ behavior: "smooth", block: "start" });
     }

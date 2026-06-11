@@ -70,6 +70,7 @@ $service  = clean((string)($in['service'] ?? ''), 120);
 $region   = clean((string)($in['region'] ?? ''), 120);
 $email    = clean((string)($in['email'] ?? ''), 200);
 $consent  = !empty($in['consent']);
+$newsletter = !empty($in['newsletter']); // separate, freiwillige Marketing-Einwilligung
 $elapsed  = (int)($in['elapsed_ms'] ?? 99999);
 
 /* ---------- Validierung ---------- */
@@ -381,18 +382,133 @@ try {
     error_log('[2fox4 KI-Check] Mail-Fehler: ' . $e->getMessage());
 }
 
+/* ------------------------------------------------------------------ */
+/*  Double-Opt-in für die Marketing-Liste (NUR wenn explizit gewünscht) */
+/* ------------------------------------------------------------------ */
+/*
+ * Wichtig (Schutz gegen Fremdadressen-Missbrauch): Es geht KEINE Mail mit
+ * Werbung oder Ergebnis an die eingegebene Adresse. Wenn der Nutzer die
+ * Marketing-Checkbox aktiviert hat, bekommt die Adresse genau EINE neutrale
+ * Bestätigungs-Mail. Erst nach Klick auf den Link wird sie „confirmed" und
+ * darf für Newsletter/Anschreiben genutzt werden. Wer nicht klickt, landet
+ * in keiner nutzbaren Liste; unbestätigte Einträge werden nach 30 Tagen
+ * gelöscht.
+ */
+$confirmationSent = false;
+$alreadySubscribed = false;
+if ($newsletter && !empty($config['db_host']) && !empty($config['smtp_host'])) {
+    try {
+        $pdo = new PDO(
+            sprintf('mysql:host=%s;dbname=%s;charset=utf8mb4',
+                $config['db_host'], $config['db_name']),
+            $config['db_user'], $config['db_pass'],
+            [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::ATTR_TIMEOUT => 8]
+        );
+        $pdo->exec(
+            "CREATE TABLE IF NOT EXISTS ki_check_leads (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                email VARCHAR(255) NOT NULL,
+                business VARCHAR(255) NULL,
+                service VARCHAR(255) NULL,
+                region VARCHAR(255) NULL,
+                token CHAR(32) NOT NULL,
+                status ENUM('pending','confirmed') NOT NULL DEFAULT 'pending',
+                consent_version VARCHAR(40) NULL,
+                signup_ip VARCHAR(64) NULL,
+                signup_at DATETIME NOT NULL,
+                confirmed_ip VARCHAR(64) NULL,
+                confirmed_at DATETIME NULL,
+                UNIQUE KEY uniq_token (token),
+                KEY idx_email (email),
+                KEY idx_status (status)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4"
+        );
+        // Aufräumen: unbestätigte Einträge älter als 30 Tage entfernen
+        $pdo->exec("DELETE FROM ki_check_leads WHERE status='pending' AND signup_at < (NOW() - INTERVAL 30 DAY)");
+
+        // Schon bestätigt? Dann nichts weiter tun.
+        $st = $pdo->prepare("SELECT COUNT(*) FROM ki_check_leads WHERE email = ? AND status='confirmed'");
+        $st->execute([$email]);
+        if ((int)$st->fetchColumn() > 0) {
+            $alreadySubscribed = true;
+        } else {
+            // Flut-Schutz: max. 1 Bestätigungsmail pro Adresse / 24 h
+            $mailLock = sys_get_temp_dir() . '/2fox4_doi_' . hash('sha256', mb_strtolower($email)) . '.txt';
+            $recently = is_file($mailLock) && (time() - (int)@file_get_contents($mailLock)) < 86400;
+            if (!$recently) {
+                $token = bin2hex(random_bytes(16));
+                $ins = $pdo->prepare(
+                    "INSERT INTO ki_check_leads
+                       (email, business, service, region, token, status, consent_version, signup_ip, signup_at)
+                     VALUES (?, ?, ?, ?, ?, 'pending', ?, ?, NOW())"
+                );
+                $ins->execute([
+                    $email, $business, $service, ($region !== '' ? $region : null),
+                    $token, (string)($config['consent_version'] ?? date('Y-m-d')),
+                    preg_replace('/\.\d+$/', '.0', $ip),
+                ]);
+
+                // Neutrale Bestätigungsmail (KEINE Werbung)
+                $base = rtrim((string)($config['site_base_url'] ?? 'https://www.2fox4.de'), '/');
+                $confirmUrl = $base . '/ki-check-confirm.php?token=' . $token;
+                require_once __DIR__ . '/lib/PHPMailer/Exception.php';
+                require_once __DIR__ . '/lib/PHPMailer/PHPMailer.php';
+                require_once __DIR__ . '/lib/PHPMailer/SMTP.php';
+                $cm = new \PHPMailer\PHPMailer\PHPMailer(true);
+                $cm->isSMTP();
+                $cm->Host       = $config['smtp_host'];
+                $cm->SMTPAuth   = true;
+                $cm->Username   = $config['smtp_user'];
+                $cm->Password   = $config['smtp_password'];
+                $cm->SMTPSecure = ($config['smtp_secure'] ?? 'tls') === 'ssl'
+                    ? \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_SMTPS
+                    : \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
+                $cm->Port    = (int)($config['smtp_port'] ?? 587);
+                $cm->CharSet = 'UTF-8';
+                $cm->setFrom($config['mail_from'], $config['mail_from_name'] ?? '2fox4');
+                $cm->addAddress($email);
+                $cm->Subject = 'Bitte bestätige deine Anmeldung';
+                $cm->Body = implode("\r\n", [
+                    'Hallo,',
+                    '',
+                    'diese E-Mail-Adresse wurde beim KI-Sichtbarkeits-Check von 2fox4 für',
+                    'gelegentliche Tipps und Informationen per E-Mail eingetragen.',
+                    '',
+                    'Warst du das? Dann bestätige deine Anmeldung mit einem Klick:',
+                    $confirmUrl,
+                    '',
+                    'Falls du das nicht warst, ignoriere diese E-Mail einfach. Ohne deine',
+                    'Bestätigung nutzen wir die Adresse nicht; sie wird nach 30 Tagen gelöscht.',
+                    '',
+                    'Viele Grüße',
+                    '2fox4 · www.2fox4.de',
+                ]);
+                $cm->isHTML(false);
+                $cm->send();
+                @file_put_contents($mailLock, (string)time(), LOCK_EX);
+                $confirmationSent = true;
+            }
+        }
+    } catch (\Throwable $e) {
+        error_log('[2fox4 KI-Check] DOI-Fehler: ' . $e->getMessage());
+    }
+}
+
 /* ---------- Antwort ---------- */
 out_json([
-    'ok'              => true,
-    'score'           => $score,
-    'level'           => $level,
-    'summary'         => $summary,
-    'email'           => $email,
-    'questions'       => array_map(fn($r) => [
+    'ok'                 => true,
+    'score'              => $score,
+    'level'              => $level,
+    'summary'            => $summary,
+    'email'              => $email,
+    'newsletter'         => $newsletter,
+    'confirmation_sent'  => $confirmationSent,
+    'already_subscribed' => $alreadySubscribed,
+    'questions'          => array_map(fn($r) => [
         'question'  => $r['question'],
         'mentioned' => (bool)$r['mentioned'],
         'cited'     => (bool)$r['cited'],
         'snippet'   => $r['snippet'],
     ], $results),
-    'recommendations' => $recs,
+    'recommendations'    => $recs,
 ]);
