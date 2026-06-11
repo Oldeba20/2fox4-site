@@ -49,7 +49,7 @@ if (!is_file($configFile)) {
 $config = require $configFile;
 $apiKey  = (string)($config['perplexity_api_key'] ?? '');
 $model   = (string)($config['perplexity_model'] ?? 'sonar');
-$qCount  = max(1, min(6, (int)($config['question_count'] ?? 5)));
+$qCount  = max(1, min(10, (int)($config['question_count'] ?? 8)));
 if ($apiKey === '' || str_starts_with($apiKey, 'DEIN_')) {
     fail('Der Check ist gerade nicht verfügbar (API-Key fehlt).', 500);
 }
@@ -109,6 +109,9 @@ function build_questions(string $service, string $region): array {
             "Ich suche {$s} in {$r} – wen würdest du empfehlen?",
             "Was ist eine gute Adresse für {$s} im Raum {$r}?",
             "Nenne mir seriöse Anbieter für {$s} in {$r}.",
+            "Welcher {$s}-Anbieter in {$r} wird besonders gut bewertet?",
+            "Wer bietet gutes {$s} zu fairen Preisen in {$r}?",
+            "Welchen erfahrenen {$s}-Experten in {$r} kannst du empfehlen?",
         ];
     }
     return [
@@ -117,6 +120,9 @@ function build_questions(string $service, string $region): array {
         "Ich suche einen Anbieter für {$s} – wen würdest du empfehlen?",
         "Was sind führende Unternehmen im Bereich {$s}?",
         "Nenne mir seriöse Anbieter für {$s}.",
+        "Welcher {$s}-Anbieter wird besonders gut bewertet?",
+        "Wer bietet gutes {$s} zu fairen Preisen?",
+        "Welchen erfahrenen {$s}-Experten kannst du empfehlen?",
     ];
 }
 $questions = array_slice(build_questions($service, $region), 0, $qCount);
@@ -179,8 +185,9 @@ if ($domain !== '') {
     }
 }
 
-/* ---------- Perplexity-Call ---------- */
-function perplexity_ask(string $apiKey, string $model, string $question): array {
+/* ---------- Perplexity-Calls (parallel via curl_multi) ---------- */
+// Ein cURL-Handle für eine Frage aufbauen.
+function perplexity_handle(string $apiKey, string $model, string $question) {
     $payload = [
         'model' => $model,
         'messages' => [
@@ -202,17 +209,18 @@ function perplexity_ask(string $apiKey, string $model, string $question): array 
             'Content-Type: application/json',
         ],
         CURLOPT_POSTFIELDS => json_encode($payload, JSON_UNESCAPED_UNICODE),
-        CURLOPT_TIMEOUT => 25,
+        CURLOPT_TIMEOUT => 30,
         CURLOPT_CONNECTTIMEOUT => 10,
     ]);
-    $res  = curl_exec($ch);
-    $code = (int)curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    $err  = curl_error($ch);
-    curl_close($ch);
-    if ($res === false || $code >= 400) {
+    return $ch;
+}
+
+// Rohe Antwort eines Handles in die einheitliche Struktur überführen.
+function perplexity_parse($res, int $code, string $err): array {
+    if ($res === false || $res === null || $code >= 400) {
         return ['ok' => false, 'content' => '', 'sources' => [], 'http' => $code, 'err' => $err];
     }
-    $data = json_decode($res, true);
+    $data = json_decode((string)$res, true);
     $content = (string)($data['choices'][0]['message']['content'] ?? '');
     // Quellen können als 'citations' (URLs) oder 'search_results' ([{title,url}]) kommen
     $sources = [];
@@ -223,6 +231,35 @@ function perplexity_ask(string $apiKey, string $model, string $question): array 
         $sources[] = ['title' => (string)($sr['title'] ?? ''), 'url' => (string)($sr['url'] ?? '')];
     }
     return ['ok' => true, 'content' => $content, 'sources' => $sources, 'http' => $code, 'err' => ''];
+}
+
+// Alle Fragen GLEICHZEITIG abfragen → Gesamtdauer ≈ ein einzelner Call.
+// Rückgabe in derselben Reihenfolge wie $questions.
+function perplexity_ask_all(string $apiKey, string $model, array $questions): array {
+    $mh = curl_multi_init();
+    $handles = [];
+    foreach ($questions as $i => $q) {
+        $ch = perplexity_handle($apiKey, $model, $q);
+        curl_multi_add_handle($mh, $ch);
+        $handles[$i] = $ch;
+    }
+    $running = null;
+    do {
+        $status = curl_multi_exec($mh, $running);
+        if ($running) curl_multi_select($mh, 1.0);
+    } while ($running && $status === CURLM_OK);
+
+    $out = [];
+    foreach ($handles as $i => $ch) {
+        $res  = curl_multi_getcontent($ch);
+        $code = (int)curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $err  = curl_error($ch);
+        $out[$i] = perplexity_parse($res, $code, $err);
+        curl_multi_remove_handle($mh, $ch);
+        curl_close($ch);
+    }
+    curl_multi_close($mh);
+    return $out;
 }
 
 /* ---------- Treffer-Erkennung pro Frage ---------- */
@@ -278,13 +315,14 @@ function detect_mention(string $content, array $sources, string $normName, strin
     return ['mentioned' => $mentioned, 'cited' => $cited, 'snippet' => $snippet];
 }
 
-/* ---------- Check ausführen ---------- */
+/* ---------- Check ausführen (alle Fragen parallel) ---------- */
 @set_time_limit(150);
 $results = [];
 $apiErrors = 0;
-foreach ($questions as $q) {
-    $resp = perplexity_ask($apiKey, $model, $q);
-    if (!$resp['ok']) {
+$responses = perplexity_ask_all($apiKey, $model, $questions);
+foreach ($questions as $i => $q) {
+    $resp = $responses[$i] ?? ['ok' => false];
+    if (empty($resp['ok'])) {
         $apiErrors++;
         $results[] = ['question' => $q, 'mentioned' => false, 'cited' => false,
                       'snippet' => 'Diese Frage konnte gerade nicht geprüft werden.', 'error' => true];
