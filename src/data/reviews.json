@@ -1,9 +1,29 @@
 {
   "name": "2Fox4 Webdesign - Stadthagen",
   "rating": 5.0,
-  "user_ratings_total": 20,
+  "user_ratings_total": 22,
   "url": "https://maps.google.com/?cid=3401057852367166353",
   "reviews": [
+    {
+      "author_name": "Tobias Möller",
+      "author_url": "https://maps.google.com/?cid=3401057852367166353",
+      "profile_photo_url": "https://lh3.googleusercontent.com/a/ACg8ocL8w9AniJr60ayu8je05kU0KDloZyAI061btY8c5HJPTbznvg=s128-c-rp-mo-br100",
+      "rating": 5,
+      "relative_time_description": "Google-Bewertung",
+      "text": "Für meinen Website-Relaunch kann ich Oliver uneingeschränkt empfehlen.\nEr hat meine neue Seite schnell, professionell und zu fairen Festpreisen umgesetzt, alles verständlich erklärt und sogar an rechtliche Feinheiten gedacht.\nDie Seite ist modern, schnell und im Landkreis Schaumburg bei Google bestens auffindbar. Top Zusammenarbeit – klare Empfehlung!",
+      "time": 1781260396,
+      "profile_photo_local": "/reviews/tobias-moeller.jpg"
+    },
+    {
+      "author_name": "Frechdachs",
+      "author_url": "https://maps.google.com/?cid=3401057852367166353",
+      "profile_photo_url": "https://lh3.googleusercontent.com/a-/ALV-UjWEXiUuTez4w5M-TC6hO-gszJek-NvvkwhVyaL60V4vgbyu2rO0=s128-c-rp-mo-br100",
+      "rating": 5,
+      "relative_time_description": "Google-Bewertung",
+      "text": "Wir haben unseren neuen WooCommerce-Onlineshop von 2fox4.de umsetzen lassen und sind rundum glücklich. Oliver Deppe arbeitet extrem zuverlässig, schnell und auf höchstem Niveau.\n\nNeben der perfekten technischen Umsetzung des Shops gab es obendrein noch super wertvolle Tipps und Ratschläge für unseren Online-Erfolg gratis dazu. Das ist kein Standard-Service, sondern echte Partner-Unterstützung. Wer einen Webdesigner sucht, der mitdenkt und liefert, sollte sich definitiv an 2fox4 wenden!\nAuf diesem Wege noch einmal ein herzliches Dankeschön und wir freuen uns auf weitere gute Zusammenarbeit. Das Team von Fake Tattoo Studio",
+      "time": 1781173996,
+      "profile_photo_local": "/reviews/frechdachs.jpg"
+    },
     {
       "author_name": "Svenja Claußen",
       "author_url": "https://maps.google.com/?cid=3401057852367166353",
@@ -55,5 +75,5 @@
       "profile_photo_local": "/reviews/marcel-armgardt.jpg"
     }
   ],
-  "fetched_at": "2026-05-17"
+  "fetched_at": "2026-06-12"
 }
