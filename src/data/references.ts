@@ -51,6 +51,10 @@ export interface Reference {
   featured?: boolean;
   /** Case-Study-Inhalt, falls featured */
   story?: ReferenceStory;
+  /** Optional: externe Live-URL der Kundenseite. Wenn gesetzt, zeigt die Karte
+   *  ein „Live ansehen"-Badge rechts in der Beschreibung (öffnet in neuem Tab,
+   *  Follow-Link). Nur für geprüft aktive, unproblematische Seiten setzen. */
+  liveUrl?: string;
 }
 
 export const references: Reference[] = [
@@ -62,6 +66,7 @@ export const references: Reference[] = [
     date: "2026",
     title: "LivePerfekt",
     meta: "Renovierung · Dresden",
+    liveUrl: "https://liveperfekt.de",
   },
   {
     slug: "yogaeule",
@@ -71,6 +76,7 @@ export const references: Reference[] = [
     date: "2026",
     title: "Yogaeule",
     meta: "WordPress · Yoga & Coaching",
+    liveUrl: "https://yogaeule.de",
   },
   {
     slug: "events-stadthagen",
@@ -80,6 +86,7 @@ export const references: Reference[] = [
     date: "2026",
     title: "Events Stadthagen",
     meta: "Astro · Veranstaltungs-Portal Schaumburg",
+    liveUrl: "https://events-stadthagen.de",
   },
   {
     slug: "systemische-beratung",
@@ -89,6 +96,7 @@ export const references: Reference[] = [
     date: "2026",
     title: "Systemische Beratung",
     meta: "WordPress · Beratung & Coaching",
+    liveUrl: "https://systemische-beratung.de",
   },
   {
     slug: "friseursalon-leverkusen",
@@ -98,6 +106,7 @@ export const references: Reference[] = [
     date: "2026",
     title: "Friseursalon Leverkusen",
     meta: "WordPress · Lokale Auffindbarkeit",
+    liveUrl: "https://friseur-leverkusen.de",
   },
   {
     slug: "fake-tattoo-studio",
@@ -107,6 +116,7 @@ export const references: Reference[] = [
     date: "2026",
     title: "Fake Tattoo Studio",
     meta: "WooCommerce · Shop",
+    liveUrl: "https://fake-tattoo-studio.de",
   },
   {
     slug: "tattoo-studio-magdeburg",
@@ -116,6 +126,7 @@ export const references: Reference[] = [
     date: "2026",
     title: "Tattoo- & Piercing Studio Magdeburg",
     meta: "WordPress · Studio-Website",
+    liveUrl: "https://blackskull-tattoo.de",
   },
   {
     slug: "pc-service-schaumburg",
@@ -125,6 +136,7 @@ export const references: Reference[] = [
     date: "2026",
     title: "PC-Service Schaumburg",
     meta: "WordPress · IT-Dienstleister",
+    liveUrl: "https://pc-service-aus-schaumburg.de",
   },
   {
     slug: "basianer",
@@ -134,6 +146,7 @@ export const references: Reference[] = [
     date: "2026",
     title: "Deutsche Gesellschaft für basisches Leben",
     meta: "WordPress · Vereins-Website",
+    liveUrl: "https://basianer.de",
   },
   {
     slug: "blitzzscale-ki-vertrieb",
@@ -143,6 +156,7 @@ export const references: Reference[] = [
     date: "2025",
     title: "Blitzzscale — KI-Vertrieb",
     meta: "Custom Build · KI-Automation",
+    liveUrl: "https://blitzzscale.com",
   },
   {
     slug: "tattoo-studio-stadthagen",
@@ -152,6 +166,7 @@ export const references: Reference[] = [
     date: "2025",
     title: "Tattoo Studio Stadthagen",
     meta: "WordPress · Studio-Website",
+    liveUrl: "https://tattoo-stadthagen.de",
   },
   {
     slug: "schule-fuer-sicherheitsmitarbeiter",
@@ -161,6 +176,7 @@ export const references: Reference[] = [
     date: "2025",
     title: "Schule für Sicherheitsmitarbeiter",
     meta: "WordPress · Bildung",
+    liveUrl: "https://sad-sicherheit.de",
   },
   {
     slug: "entspannungs-trainerin",
