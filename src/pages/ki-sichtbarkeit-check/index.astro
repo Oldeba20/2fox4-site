@@ -18,6 +18,7 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import Breadcrumb from "../../components/Breadcrumb.astro";
 import FAQ from "../../components/FAQ.astro";
 import CTASection from "../../components/CTASection.astro";
+import SearchShiftInfographic from "../../components/SearchShiftInfographic.astro";
 import { faqSchema, breadcrumbSchema } from "../../lib/schema";
 import { site } from "../../data/site";
 
@@ -291,6 +292,9 @@ const schema = [
       </div>
     </div>
   </section>
+
+  <!-- ===================== SUCH-VERSCHIEBUNG (INFOGRAFIK) ===================== -->
+  <SearchShiftInfographic />
 
   <!-- ===================== RANKING-CONTENT ===================== -->
   <section class="border-t border-[var(--color-border)] py-16 md:py-20">

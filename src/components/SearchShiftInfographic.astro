@@ -1,0 +1,209 @@
+---
+/**
+ * SearchShiftInfographic — Trend-Infografik „Vom Googeln zum Fragen".
+ *
+ * Zeigt zwei sich kreuzende Kurven (die „Such-Schere"):
+ *   - steigend (orange):   Nutzung von KI wie ChatGPT zur Informationssuche
+ *   - fallend (teal):      klassische Google-Suche mit Klick auf Websites
+ * Darunter vier belegte Kennzahlen-Karten inkl. dem „Google nutzt selbst KI"-
+ * Faktor (AI Overviews) und eine Quellenzeile.
+ *
+ * Komplett ohne JavaScript (Inline-SVG), responsiv und theme-fähig:
+ * alle Farben über CSS-Variablen, passt sich Hell-/Dunkel-/Kontrast-Theme an.
+ *
+ * Quellen (Stand Juni 2026):
+ *   - Bitkom Research, „Künstliche Intelligenz in Deutschland" 2024
+ *     (GenAI-Nutzung 40 % Sommer 2023 → 67 % 2024)
+ *   - Bitkom Research, „Internet-Suche im Wandel" 2025
+ *     (50 % nutzen zumindest gelegentlich KI-Chats statt Suchmaschinen,
+ *      n = 1.030 Internetnutzende, KW 39–43/2025)
+ *   - Google / Branchenanalysen 2025: AI Overviews ~2,5 Mrd. Nutzende/Monat,
+ *     steigender Anteil „Zero-Click"-Suchen (bis ~69 %).
+ */
+---
+
+<section
+  class="ssi border-t border-[var(--color-border)] py-16 md:py-20"
+  aria-labelledby="ssi-title"
+>
+  <div class="container-content mx-auto max-w-4xl">
+    <div class="mb-3 text-xs uppercase tracking-[0.16em] text-[var(--color-accent)]">
+      Das verändert sich gerade
+    </div>
+    <h2 id="ssi-title" class="text-[26px] font-bold leading-tight md:text-[34px]">
+      Vom Googeln zum Fragen: So verschiebt sich die Suche
+    </h2>
+    <p class="mt-4 max-w-2xl text-[16px] leading-relaxed text-[var(--color-text-muted)]">
+      Immer mehr Menschen tippen ihre Frage nicht mehr bei Google ein, um zehn
+      blaue Links zu vergleichen, sondern fragen direkt eine KI – und bekommen
+      eine fertige Empfehlung. Gleichzeitig beantwortet Google die Suche
+      zunehmend selbst per KI. Beides führt zum selben Ergebnis: weniger Klicks
+      auf klassische Treffer, mehr Entscheidungen direkt in der KI-Antwort.
+    </p>
+
+    <!-- ===== Trend-Chart (Inline-SVG) ===== -->
+    <figure class="mt-9">
+      <div class="rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg-elevated)] p-4 md:p-7">
+        <!-- Legende -->
+        <div class="mb-4 flex flex-wrap items-center gap-x-6 gap-y-2 text-[13px]">
+          <span class="inline-flex items-center gap-2">
+            <span class="h-2.5 w-2.5 rounded-full" style="background: var(--color-accent)"></span>
+            <span class="text-[var(--color-text)]">KI-Suche (ChatGPT, Perplexity, Gemini, Claude)</span>
+          </span>
+          <span class="inline-flex items-center gap-2">
+            <span class="h-2.5 w-2.5 rounded-full" style="background: var(--color-teal)"></span>
+            <span class="text-[var(--color-text)]">Klassische Google-Suche (Klick auf Websites)</span>
+          </span>
+        </div>
+
+        <svg
+          viewBox="0 0 800 380"
+          class="w-full"
+          role="img"
+          aria-labelledby="ssi-svg-title ssi-svg-desc"
+          preserveAspectRatio="xMidYMid meet"
+        >
+          <title id="ssi-svg-title">
+            Trendkurven: KI-Suche steigt, klassische Google-Suche sinkt
+          </title>
+          <desc id="ssi-svg-desc">
+            Zwei sich kreuzende Kurven von 2023 bis 2026. Die orange Kurve
+            (Nutzung von KI zur Suche) steigt stark an, die türkise Kurve
+            (klassische Google-Suche mit Klick auf Websites) fällt ab.
+          </desc>
+
+          <!-- Verläufe für die Flächen unter den Kurven -->
+          <defs>
+            <linearGradient id="ssi-ki-fill" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="var(--color-accent)" stop-opacity="0.22" />
+              <stop offset="100%" stop-color="var(--color-accent)" stop-opacity="0" />
+            </linearGradient>
+            <linearGradient id="ssi-cls-fill" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="var(--color-teal)" stop-opacity="0.16" />
+              <stop offset="100%" stop-color="var(--color-teal)" stop-opacity="0" />
+            </linearGradient>
+          </defs>
+
+          <!-- Grundlinie -->
+          <line x1="60" y1="312" x2="772" y2="312"
+                stroke="var(--color-border)" stroke-width="1" />
+
+          <!-- Jahres-Ticks -->
+          <g font-size="13" fill="var(--color-text-faint)" text-anchor="middle"
+             font-family="inherit">
+            <text x="120" y="338">2023</text>
+            <text x="335" y="338">2024</text>
+            <text x="550" y="338">2025</text>
+            <text x="725" y="338">2026</text>
+          </g>
+
+          <!-- Fläche: klassische Suche (fallend) -->
+          <path
+            d="M120,96 C230,118 250,150 335,170 C430,192 470,250 550,266 L725,300 L725,312 L120,312 Z"
+            fill="url(#ssi-cls-fill)" />
+          <!-- Fläche: KI-Suche (steigend) -->
+          <path
+            d="M120,266 C230,250 250,210 335,176 C430,138 470,118 550,104 L725,72 L725,312 L120,312 Z"
+            fill="url(#ssi-ki-fill)" />
+
+          <!-- Linie: klassische Suche (durchgezogen bis 2025, dann projiziert) -->
+          <path
+            d="M120,96 C230,118 250,150 335,170 C430,192 470,250 550,266"
+            fill="none" stroke="var(--color-teal)" stroke-width="3.5"
+            stroke-linecap="round" />
+          <path
+            d="M550,266 L725,300"
+            fill="none" stroke="var(--color-teal)" stroke-width="3.5"
+            stroke-linecap="round" stroke-dasharray="3 7" opacity="0.7" />
+
+          <!-- Linie: KI-Suche (durchgezogen bis 2025, dann projiziert) -->
+          <path
+            d="M120,266 C230,250 250,210 335,176 C430,138 470,118 550,104"
+            fill="none" stroke="var(--color-accent)" stroke-width="3.5"
+            stroke-linecap="round" />
+          <path
+            d="M550,104 L725,72"
+            fill="none" stroke="var(--color-accent)" stroke-width="3.5"
+            stroke-linecap="round" stroke-dasharray="3 7" opacity="0.75" />
+
+          <!-- Kreuzungspunkt-Markierung -->
+          <circle cx="377" cy="183" r="6" fill="var(--color-bg-elevated)"
+                  stroke="var(--color-text-muted)" stroke-width="1.5" />
+
+          <!-- Datenpunkte KI -->
+          <circle cx="120" cy="266" r="5" fill="var(--color-accent)" />
+          <circle cx="335" cy="176" r="5" fill="var(--color-accent)" />
+          <circle cx="550" cy="104" r="6" fill="var(--color-accent)" />
+          <!-- Datenpunkte klassische Suche -->
+          <circle cx="120" cy="96" r="5" fill="var(--color-teal)" />
+          <circle cx="550" cy="266" r="5" fill="var(--color-teal)" />
+
+          <!-- Wert-Labels KI -->
+          <g font-family="inherit" text-anchor="middle">
+            <text x="120" y="252" font-size="14" font-weight="700"
+                  fill="var(--color-accent)">40 %</text>
+            <text x="335" y="160" font-size="14" font-weight="700"
+                  fill="var(--color-accent)">67 %</text>
+            <text x="556" y="90" font-size="15" font-weight="800"
+                  fill="var(--color-accent)">50 %</text>
+          </g>
+
+          <!-- erläuternde Label-Texte -->
+          <g font-family="inherit" font-size="12" fill="var(--color-text-muted)">
+            <text x="120" y="78" text-anchor="middle">10 blaue Links</text>
+            <text x="556" y="288" text-anchor="middle">nur noch Restklick</text>
+          </g>
+
+          <!-- "Projektion" Hinweis -->
+          <text x="725" y="58" font-family="inherit" font-size="11"
+                fill="var(--color-text-faint)" text-anchor="middle">Trend</text>
+        </svg>
+
+        <p class="mt-2 text-center text-[12px] text-[var(--color-text-faint)]">
+          Orange: Anteil der Deutschen, die KI nutzen (40 % 2023 → 67 % 2024;
+          2025 nutzt jede:r Zweite KI-Chats für die Suche). Kurvenverlauf zeigt
+          die Richtung der Entwicklung.
+        </p>
+      </div>
+    </figure>
+
+    <!-- ===== Kennzahlen-Karten ===== -->
+    <div class="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-elevated)] p-5">
+        <div class="text-[30px] font-extrabold leading-none text-[var(--color-accent)]">50 %</div>
+        <p class="mt-2 text-[13.5px] leading-snug text-[var(--color-text-muted)]">
+          der deutschen Internetnutzer fragen bereits KI-Chats statt einer
+          klassischen Suchmaschine.
+        </p>
+      </div>
+      <div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-elevated)] p-5">
+        <div class="text-[30px] font-extrabold leading-none text-[var(--color-accent)]">40→67 %</div>
+        <p class="mt-2 text-[13.5px] leading-snug text-[var(--color-text-muted)]">
+          stieg die KI-Nutzung in Deutschland innerhalb eines einzigen Jahres.
+        </p>
+      </div>
+      <div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-elevated)] p-5">
+        <div class="text-[30px] font-extrabold leading-none text-[var(--color-text)]">2,5&nbsp;Mrd.</div>
+        <p class="mt-2 text-[13.5px] leading-snug text-[var(--color-text-muted)]">
+          Menschen sehen monatlich Googles eigene KI-Antworten („AI Overviews“) –
+          Google beantwortet die Suche selbst.
+        </p>
+      </div>
+      <div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-elevated)] p-5">
+        <div class="text-[30px] font-extrabold leading-none text-[var(--color-text)]">~69 %</div>
+        <p class="mt-2 text-[13.5px] leading-snug text-[var(--color-text-muted)]">
+          der Google-Suchen enden inzwischen ohne Klick auf eine Website – die
+          KI-Antwort reicht den Nutzern.
+        </p>
+      </div>
+    </div>
+
+    <p class="mt-5 text-[12px] leading-relaxed text-[var(--color-text-faint)]">
+      Quellen: Bitkom Research – „Künstliche Intelligenz in Deutschland“ (2024)
+      und „Internet-Suche im Wandel“ (2025, n = 1.030 Internetnutzende);
+      Google sowie Branchenanalysen zum Suchverhalten 2025. Stand: Juni 2026.
+      Die Kurven zeigen die Richtung der Entwicklung, keine exakte
+      gemeinsame Skala.
+    </p>
+  </div>
+</section>
