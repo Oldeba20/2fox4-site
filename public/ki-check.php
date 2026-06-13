@@ -413,55 +413,6 @@ $logEntry = [
     json_encode($logEntry, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . "\n",
     FILE_APPEND | LOCK_EX);
 
-/* ---------- Lead-Mail an 2fox4 (best effort, bricht den Check nicht ab) ---------- */
-try {
-    $mailFile = __DIR__ . '/lib/PHPMailer/PHPMailer.php';
-    if (is_file($mailFile) && !empty($config['smtp_host'])) {
-        require_once __DIR__ . '/lib/PHPMailer/Exception.php';
-        require_once __DIR__ . '/lib/PHPMailer/PHPMailer.php';
-        require_once __DIR__ . '/lib/PHPMailer/SMTP.php';
-        $mail = new \PHPMailer\PHPMailer\PHPMailer(true);
-        $mail->isSMTP();
-        $mail->Host       = $config['smtp_host'];
-        $mail->SMTPAuth   = true;
-        $mail->Username   = $config['smtp_user'];
-        $mail->Password   = $config['smtp_password'];
-        $mail->SMTPSecure = ($config['smtp_secure'] ?? 'tls') === 'ssl'
-            ? \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_SMTPS
-            : \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
-        $mail->Port    = (int)($config['smtp_port'] ?? 587);
-        $mail->CharSet = 'UTF-8';
-        $mail->setFrom($config['mail_from'], $config['mail_from_name'] ?? '2fox4 KI-Check');
-        $mail->addAddress($config['mail_to'] ?? $config['mail_from']);
-        $mail->addReplyTo($email, $business);
-        $mail->Subject = '[2fox4 KI-Check] Neuer Lead: ' . $business . ' (' . $score . '%)';
-        $lines = [
-            'Neuer KI-Sichtbarkeits-Check',
-            '============================',
-            'E-Mail:    ' . $email,
-            'Firma:     ' . $business,
-            'Domain:    ' . ($domain !== '' ? $domain : '—'),
-            'Leistung:  ' . $service,
-            'Region:    ' . ($region !== '' ? $region : '—'),
-            'Score:     ' . $score . '% (' . $level . ')',
-            'Genannt:   ' . $mentions . ' / ' . $nChecked,
-            'Verlinkt:  ' . $citations . ' / ' . $nChecked,
-            '',
-            'Geprüfte Fragen:',
-        ];
-        foreach ($results as $r) {
-            $lines[] = sprintf(' [%s] %s', $r['mentioned'] ? 'genannt' : 'nicht', $r['question']);
-        }
-        $lines[] = '';
-        $lines[] = 'Zeit: ' . date('Y-m-d H:i:s');
-        $mail->Body = implode("\r\n", $lines);
-        $mail->isHTML(false);
-        $mail->send();
-    }
-} catch (\Throwable $e) {
-    error_log('[2fox4 KI-Check] Mail-Fehler: ' . $e->getMessage());
-}
-
 /* ------------------------------------------------------------------ */
 /*  Auswertung per E-Mail — IMMER über Double-Opt-in                    */
 /* ------------------------------------------------------------------ */
@@ -485,6 +436,8 @@ $mailData = [
     'email'           => $email,
     'business'        => $business,
     'domain'          => $domain,
+    'service'         => $service,
+    'region'          => $region,
     'score'           => $score,
     'level'           => $level,
     'summary'         => $summary,
@@ -564,7 +517,12 @@ if (!empty($config['db_host']) && !empty($config['smtp_host'])) {
                 } catch (\Throwable $e) {
                     error_log('[2fox4 KI-Check] Direkt-Auswertung: ' . $e->getMessage());
                 }
-                if ($resultEmailed) @file_put_contents($sendLock, (string)time(), LOCK_EX);
+                if ($resultEmailed) {
+                    @file_put_contents($sendLock, (string)time(), LOCK_EX);
+                    // Interne Benachrichtigung erst jetzt – zusammen mit der Auswertung
+                    try { kicheck_send_lead_notification($config, $mailData); }
+                    catch (\Throwable $e) { error_log('[2fox4 KI-Check] Lead-Notify: ' . $e->getMessage()); }
+                }
             } else {
                 $resultEmailed = true; // wurde gerade eben schon zugestellt
             }
@@ -605,26 +563,13 @@ if (!empty($config['db_host']) && !empty($config['smtp_host'])) {
                 $cm->CharSet = 'UTF-8';
                 $cm->setFrom($config['mail_from'], $config['mail_from_name'] ?? '2fox4');
                 $cm->addAddress($email);
+                if (!empty($config['mail_to'])) {
+                    $cm->addReplyTo($config['mail_to'], '2fox4');
+                }
                 $cm->Subject = 'Bestätige deine E-Mail – dann kommt deine Auswertung';
-                $cm->Body = implode("\r\n", [
-                    'Hallo,',
-                    '',
-                    'du hast auf 2fox4.de einen KI-Sichtbarkeits-Check gemacht und deine',
-                    'Auswertung per E-Mail angefordert.',
-                    '',
-                    'Bitte bestätige einmal kurz, dass diese Adresse dir gehört:',
-                    $confirmUrl,
-                    '',
-                    'Direkt nach deiner Bestätigung schicken wir dir deine vollständige,',
-                    'aufbereitete Auswertung – mit Score, Erklärung und nächsten Schritten.',
-                    '',
-                    'Falls du das nicht warst, ignoriere diese E-Mail einfach. Ohne deine',
-                    'Bestätigung nutzen wir die Adresse nicht; sie wird nach 30 Tagen gelöscht.',
-                    '',
-                    'Viele Grüße',
-                    '2fox4 · www.2fox4.de',
-                ]);
-                $cm->isHTML(false);
+                $cm->isHTML(true);
+                $cm->Body    = kicheck_doi_email_html($confirmUrl, $config, $business, $score);
+                $cm->AltBody = kicheck_doi_email_text($confirmUrl, $config, $business);
                 $cm->send();
                 @file_put_contents($mailLock, (string)time(), LOCK_EX);
                 $confirmationSent = true;
@@ -633,6 +578,17 @@ if (!empty($config['db_host']) && !empty($config['smtp_host'])) {
     } catch (\Throwable $e) {
         error_log('[2fox4 KI-Check] DOI/Mail-Fehler: ' . $e->getMessage());
     }
+}
+
+/* ---------- Invariante: NIE beides in derselben Anfrage ----------
+ * Eine neue (unbestätigte) Adresse bekommt ausschließlich die DOI-Mail; die
+ * Auswertung folgt erst nach Klick (ki-check-confirm.php). Eine bereits per DOI
+ * bestätigte Adresse bekommt die Auswertung direkt – dann aber KEINE DOI-Mail.
+ * Sollten durch einen Sonderfall doch beide Flags gesetzt sein, hat die
+ * Bestätigung Vorrang: die Auswertung wird unterdrückt, bis bestätigt wurde. */
+if ($confirmationSent && $resultEmailed) {
+    $resultEmailed = false;
+    error_log('[2fox4 KI-Check] Invariante verletzt: DOI+Result zugleich – Result unterdrückt für ' . $email);
 }
 
 /* ---------- Antwort: nur Vorschau (vollständige Auswertung kommt per Mail) ---------- */
