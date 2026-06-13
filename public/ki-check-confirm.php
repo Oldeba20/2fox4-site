@@ -86,6 +86,22 @@ if (is_file($configFile) && preg_match('/^[a-f0-9]{32}$/', $token)) {
                         send_result_mail($config, $lead);
                         $pdo->prepare("UPDATE ki_check_leads SET result_sent_at=NOW() WHERE token=?")
                             ->execute([$token]);
+
+                        // Interne Lead-Benachrichtigung an 2fox4 – erst jetzt (nach DOI)
+                        $rj = json_decode((string)($lead['result_json'] ?? ''), true) ?: [];
+                        kicheck_send_lead_notification($config, [
+                            'email'     => (string)$lead['email'],
+                            'business'  => (string)($lead['business'] ?? ''),
+                            'domain'    => '',
+                            'service'   => (string)($lead['service'] ?? ''),
+                            'region'    => (string)($lead['region'] ?? ''),
+                            'score'     => (int)($lead['result_score'] ?? 0),
+                            'level'     => (string)($lead['result_level'] ?? ''),
+                            'mentions'  => (int)($rj['mentions'] ?? 0),
+                            'citations' => (int)($rj['citations'] ?? 0),
+                            'nChecked'  => (int)($rj['nChecked'] ?? 0),
+                            'questions' => is_array($rj['questions'] ?? null) ? $rj['questions'] : [],
+                        ]);
                     }
                 } catch (\Throwable $e) {
                     error_log('[2fox4 KI-Check] Ergebnis-Mail-Fehler: ' . $e->getMessage());
