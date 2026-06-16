@@ -22,6 +22,9 @@ export const site = {
     phoneHref: 'tel:+4957259890175',
     email: 'info@2fox4.de',
     emailHref: 'mailto:info@2fox4.de',
+    // WhatsApp Business — internationale Nummer ohne + / Leerzeichen (für wa.me)
+    whatsapp: '4915751038643',
+    whatsappDisplay: '+49 1575 1038643',
   },
 
   // Geo-Koordinaten Sachsenhagen (für Schema.org)

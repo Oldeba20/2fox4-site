@@ -1,0 +1,107 @@
+---
+/**
+ * WhatsAppButton — schwebender Klick-zu-Chat-Button (unten links).
+ *
+ * Nutzt den offiziellen wa.me-Link (Click-to-Chat). KEINE WhatsApp-Business-API
+ * nötig — der Link öffnet auf Mobilgeräten die WhatsApp-App, am Desktop
+ * WhatsApp Web, jeweils mit vorausgefülltem Chat zur Business-Nummer.
+ *
+ * Positionierung: unten LINKS, damit es nicht mit dem AccessibilityWidget-FAB
+ * (unten rechts, z-index 998) kollidiert. z-index 997 hält den Button unter
+ * dem Cookie-Banner (1000), sodass die Consent-Abfrage immer Vorrang hat.
+ *
+ * Respektiert den "no-motion"-Modus des AccessibilityWidget: bei aktiver
+ * Klasse .a11y-no-motion wird die Pulse-Animation deaktiviert.
+ */
+import { site } from "../data/site";
+
+const number = site.nap.whatsapp;
+const message = "Hallo, ich habe eine Frage zu Ihren Leistungen.";
+const href = `https://wa.me/${number}?text=${encodeURIComponent(message)}`;
+---
+
+<a
+  class="wa-fab"
+  href={href}
+  target="_blank"
+  rel="noopener noreferrer"
+  aria-label="Kontakt über WhatsApp aufnehmen"
+  title="Schreiben Sie uns auf WhatsApp"
+>
+  <svg viewBox="0 0 32 32" fill="currentColor" aria-hidden="true">
+    <path d="M16.004 0h-.008C7.174 0 .002 7.173.002 16c0 3.504 1.13 6.752 3.05 9.39L1.05 31.5l6.32-2.02A15.93 15.93 0 0 0 16.004 32C24.83 32 32 24.827 32 16S24.83 0 16.004 0Zm9.31 22.59c-.386 1.09-1.92 1.995-3.142 2.26-.836.178-1.927.32-5.6-1.203-4.7-1.948-7.726-6.724-7.962-7.034-.226-.31-1.9-2.53-1.9-4.826 0-2.296 1.165-3.426 1.635-3.906.386-.394.84-.573 1.319-.573.155 0 .295.008.42.014.376.016.564.038.812.63.31.74 1.06 2.56 1.15 2.74.092.18.182.41.06.71-.115.31-.215.45-.43.7-.215.25-.408.44-.623.71-.196.232-.418.482-.18.882.24.394 1.066 1.756 2.288 2.844 1.576 1.404 2.85 1.86 3.286 2.044.327.135.71.103.95-.16.305-.328.68-.872 1.062-1.41.27-.388.612-.435.97-.3.366.13 2.32 1.094 2.72 1.294.4.2.665.296.762.46.097.166.097.95-.29 2.04Z"/>
+  </svg>
+</a>
+
+<style is:global>
+  .wa-fab {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    z-index: 997;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: #25d366;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    animation: wa-pulse 2.4s ease-in-out infinite;
+  }
+  .wa-fab svg {
+    width: 32px;
+    height: 32px;
+  }
+  .wa-fab:hover,
+  .wa-fab:focus-visible {
+    transform: translateY(-2px) scale(1.06);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    outline: none;
+  }
+  .wa-fab:focus-visible {
+    box-shadow: 0 0 0 3px rgba(37, 211, 102, 0.45),
+      0 10px 30px rgba(0, 0, 0, 0.5);
+  }
+
+  @keyframes wa-pulse {
+    0% {
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35),
+        0 0 0 0 rgba(37, 211, 102, 0.5);
+    }
+    70% {
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35),
+        0 0 0 14px rgba(37, 211, 102, 0);
+    }
+    100% {
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35),
+        0 0 0 0 rgba(37, 211, 102, 0);
+    }
+  }
+
+  /* Bewegung respektieren: a11y-Widget "Animationen pausieren" + OS-Einstellung */
+  :global(.a11y-no-motion) .wa-fab {
+    animation: none;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .wa-fab {
+      animation: none;
+    }
+  }
+
+  /* Auf sehr kleinen Screens etwas kompakter */
+  @media (max-width: 480px) {
+    .wa-fab {
+      width: 52px;
+      height: 52px;
+      bottom: 16px;
+      left: 16px;
+    }
+    .wa-fab svg {
+      width: 28px;
+      height: 28px;
+    }
+  }
+</style>
