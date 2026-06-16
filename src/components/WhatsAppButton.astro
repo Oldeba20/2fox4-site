@@ -6,12 +6,11 @@
  * nötig — der Link öffnet auf Mobilgeräten die WhatsApp-App, am Desktop
  * WhatsApp Web, jeweils mit vorausgefülltem Chat zur Business-Nummer.
  *
- * Positionierung: unten LINKS, damit es nicht mit dem AccessibilityWidget-FAB
- * (unten rechts, z-index 998) kollidiert. z-index 997 hält den Button unter
- * dem Cookie-Banner (1000), sodass die Consent-Abfrage immer Vorrang hat.
+ * Positionierung: unten RECHTS. z-index 997 hält den Button unter dem
+ * Cookie-Banner (1000), sodass die Consent-Abfrage immer Vorrang hat.
  *
- * Respektiert den "no-motion"-Modus des AccessibilityWidget: bei aktiver
- * Klasse .a11y-no-motion wird die Pulse-Animation deaktiviert.
+ * Respektiert reduzierte Bewegung: bei prefers-reduced-motion (bzw. der
+ * Alt-Klasse .a11y-no-motion) wird die Pulse-Animation deaktiviert.
  */
 import { site } from "../data/site";
 
@@ -37,7 +36,7 @@ const href = `https://wa.me/${number}?text=${encodeURIComponent(message)}`;
   .wa-fab {
     position: fixed;
     bottom: 20px;
-    left: 20px;
+    right: 20px;
     z-index: 997;
     width: 56px;
     height: 56px;
@@ -97,7 +96,7 @@ const href = `https://wa.me/${number}?text=${encodeURIComponent(message)}`;
       width: 52px;
       height: 52px;
       bottom: 16px;
-      left: 16px;
+      right: 16px;
     }
     .wa-fab svg {
       width: 28px;
