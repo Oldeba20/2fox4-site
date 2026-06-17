@@ -438,6 +438,134 @@ export const serviceCities: ServiceCity[] = [
       },
     ],
   },
+
+  // ===================================================================
+  // SEO × RINTELN
+  // ===================================================================
+  {
+    slug: "seo-rinteln",
+    service: "seo",
+    serviceName: "SEO & lokale Auffindbarkeit",
+    city: "Rinteln",
+    cityAdjective: "Rintelner",
+    distanceKm: 30,
+    heroEyebrow: "SEO Rinteln · Weserbergland seit 2008",
+    heroTitleLine1: "SEO für Rinteln",
+    heroTitleLine2: "und das Weserbergland.",
+    heroSub:
+      "Rintelner Unternehmen suchen lokale SEO-Partner — die meisten Agenturen sitzen in Hameln, Hannover oder Bielefeld und kennen den Rintelner Markt nur vom Vorbeifahren. Wir sind 30 km entfernt in Sachsenhagen, kennen das Weserbergland und bauen SEO, die für Rintelner Kunden funktioniert, nicht für ein Agentur-Portfolio.",
+    seoTitle: "SEO Rinteln: Suchmaschinenoptimierung im Weserbergland",
+    seoDescription:
+      "Suchmaschinenoptimierung für Rinteln: lokale Rankings, Google Business, technische SEO. Persönlich, aus dem Weserbergland, seit 2008. BAFA-gefördert ab 800 € netto.",
+    sections: [
+      {
+        eyebrow: "Rintelner SEO-Lage",
+        headline: "Kleiner Markt, klare Suchen — und kaum lokale SEO-Konkurrenz.",
+        body: `<p>Rinteln hat rund 25.000 Einwohner, eine sehenswerte Weserrenaissance-Altstadt, Tourismus an der Weser und einen soliden Mix aus Handwerk, Einzelhandel und Mittelstand. Genau dieser Zuschnitt ist aus SEO-Sicht dankbar: Die Suchen sind konkret und lokal („… Rinteln“), das Volumen reicht für echte Anfragen, und es gibt kaum Agenturen, die sich gezielt um den Rintelner Markt kümmern.</p>
+<p>Unsere Search-Console-Daten (Mai 2026) zeigen genau das: Begriffe wie „seo rinteln“, „suchmaschinenoptimierung rinteln“ und „seo optimierung rinteln“ tauchen regelmäßig auf — bislang ohne eigene Rintelner Seite, weshalb dafür nur die Startseite rankte. Diese Lücke schließt diese Seite.</p>`,
+        bullets: [
+          "Rintelner Google-Business-Profile-Optimierung",
+          "Local-Pack-Optimierung Rinteln + Weserbergland",
+          "Schema.org LocalBusiness + Service-Markup",
+          "Service-Keyword-Pages für Handwerk & Einzelhandel",
+          "Tourismus-SEO für Weser & Altstadt",
+          "Regionaler Backlink-Aufbau (Schaumburger Zeitung & Co.)",
+        ],
+      },
+      {
+        eyebrow: "Was Rintelner Betriebe brauchen",
+        headline: "Gefunden werden, wenn der Nachbar nach deiner Leistung sucht.",
+        body: `<p>Für die meisten Rintelner Betriebe geht es nicht um abstrakte Reichweite, sondern um die handfeste lokale Suche: Wer „Heizung Rinteln“, „Steuerberater Rinteln“ oder „Friseur Rinteln“ googelt, soll dich finden — und zwar oben, im lokalen Drei-Pack mit Karte. Das entscheidet sich über ein sauberes Google-Business-Profil, konsistente Adressdaten (NAP), Bewertungen und eine Website, die mobil schnell lädt.</p>
+<p>Wir bauen genau diesen Unterbau auf und ergänzen ihn um Inhalte zu deinen konkreten Leistungen. Kein SEO-Theater, sondern messbar mehr qualifizierte Anfragen aus Rinteln und dem Umland.</p>`,
+      },
+    ],
+    faq: [
+      {
+        question: "Warum eine Agentur aus Sachsenhagen und nicht aus Hameln oder Hannover?",
+        answerHtml: `Weil Nähe und Fokus zählen. Aus Sachsenhagen sind wir in 30 Minuten in Rinteln — persönliche Termine sind kein Problem. Und während große Agenturen aus Hannover Rinteln nebenbei mitlaufen lassen, kennen wir die Region wirklich. Du redest direkt mit dem Menschen, der die Arbeit macht, nicht mit einem Account-Manager.`,
+      },
+      {
+        question: "Welche Rintelner Branchen profitieren am meisten von lokaler SEO?",
+        answerHtml: `Klar vorn: <strong>Handwerk & SHK</strong> (Notdienst- und „in der Nähe“-Suchen mit hoher Kauf-Absicht), <strong>Heilberufe & lokale Dienstleister</strong> (Vertrauen + Online-Terminbuchung), <strong>Einzelhandel & Gastronomie</strong> in der Altstadt sowie <strong>Tourismus an der Weser</strong> (Pensionen, Ausflugsziele). Für all das gibt es konkrete, lokale Suchen mit überschaubarer Konkurrenz.`,
+      },
+      {
+        question: "Was kostet SEO für ein Rintelner Unternehmen?",
+        answerHtml: `Audit + Maßnahmenplan: <strong>800 € netto</strong> einmalig. Laufende Betreuung ab <strong>200 € / Monat</strong>. Über die BAFA-Förderung „Unternehmerische Know-how“ sind bis zu 80 % der Beratung erstattungsfähig — den Antrag machen wir für dich.`,
+      },
+      {
+        question: "Wie lange dauert es, bis ich in Rinteln vorne stehe?",
+        answerHtml: `Bei lokalen Rintelner Keywords mit überschaubarer Konkurrenz: oft 3-6 Monate bis in die Top 5, vorausgesetzt Google-Business-Profil und Basis stimmen. Stark umkämpfte Begriffe brauchen länger. Wir nennen dir vorab realistische Erwartungen — keine Garantie-Versprechen, die seriöse SEO gar nicht halten kann.`,
+      },
+      {
+        question: "Wie oft kommt ihr für Termine nach Rinteln?",
+        answerHtml: `Bei laufenden Projekten alle 4-6 Wochen, gern auch öfter, wenn es etwas zu besprechen gibt. 30 km / 30 Minuten aus Sachsenhagen sind entspannt. Erstgespräche gehen auch per Videocall — wie es dir lieber ist.`,
+      },
+    ],
+  },
+
+  // ===================================================================
+  // WORDPRESS × WUNSTORF
+  // ===================================================================
+  {
+    slug: "wordpress-wunstorf",
+    service: "wordpress",
+    serviceName: "WordPress-Entwicklung & Service",
+    city: "Wunstorf",
+    cityAdjective: "Wunstorfer",
+    distanceKm: 12,
+    heroEyebrow: "WordPress Wunstorf · 12 km, persönlich erreichbar",
+    heroTitleLine1: "WordPress für Wunstorf",
+    heroTitleLine2: "— am Steinhuder Meer.",
+    heroSub:
+      "Wunstorfer Unternehmen brauchen keinen WordPress-Dienstleister in Hannover, der nur per Ticket-System antwortet. Wir sitzen 12 km entfernt in Sachsenhagen — in 14 Minuten bei dir, mit klaren Service-Wegen und ohne Großagentur-Hierarchie. Vom kleinen Handwerksbetrieb bis zum Tourismus am Steinhuder Meer.",
+    seoTitle: "WordPress Agentur Wunstorf: Service & Entwicklung 2026",
+    seoDescription:
+      "WordPress-Agentur für Wunstorf: Wartung, Sicherheits-Updates, Performance und Custom-Entwicklung. Persönlicher Ansprechpartner, 12 km entfernt, seit 2008.",
+    sections: [
+      {
+        eyebrow: "Wunstorfer WordPress-Marktlage",
+        headline: "So nah an Hannover — und trotzdem unterversorgt.",
+        body: `<p>Wunstorf liegt im Speckgürtel von Hannover: rund 41.000 Einwohner, viele Pendler, ein gesunder Mix aus Handwerk, Mittelstand, Einzelhandel und Tourismus rund ums Steinhuder Meer. Die Nähe zur Landeshauptstadt hat einen Haken: Wer einen WordPress-Dienstleister sucht, landet schnell bei einer Hannoveraner Agentur, für die Wunstorf nur eine Postleitzahl unter vielen ist.</p>
+<p>Wir sehen bei Wunstorfer Bestands-Sites oft dasselbe Bild: vor Jahren gebaut, danach kaum gepflegt, ein Pagebuilder drübergelegt, langsam und mobil unschön. Genau solche Sites machen wir wieder fit — saubere Bestandsaufnahme, klar priorisierte Maßnahmen, Rebuild nur, wenn die Substanz es wirklich verlangt.</p>`,
+        bullets: [
+          "WordPress-Bestandsaufnahme + Sanierungsplan",
+          "Sicherheits-Updates, Backups, Monitoring",
+          "Performance-Tuning (Core Web Vitals)",
+          "Migration alter Pagebuilder-Sites",
+          "Tourismus-Setup für Steinhuder-Meer-Betriebe",
+          "Persönlicher Ansprechpartner statt Ticket-System",
+        ],
+      },
+      {
+        eyebrow: "Was Wunstorfer Betriebe schätzen",
+        headline: "Erreichbarkeit, die eine Hannoveraner Agentur nicht bietet.",
+        body: `<p>12 km Entfernung sind der eigentliche Unterschied. Wenn deine Site Probleme macht, reden wir nicht erst nächste Woche — und im Ernstfall sind wir in einer Viertelstunde physisch bei dir. Für Handwerk, Heilberufe, Einzelhandel und Tourismus am Steinhuder Meer heißt das: ein verlässlicher Partner um die Ecke, der WordPress wirklich beherrscht und Klartext redet.</p>
+<p>Dazu kommen 18 Jahre Praxis und über 125 Projekte — von der Visitenkarten-Website über WooCommerce-Shops bis zu eigenen WordPress-Plugins, die wir im offiziellen Repository veröffentlichen.</p>`,
+      },
+    ],
+    faq: [
+      {
+        question: "Warum 2fox4 statt einer WordPress-Agentur aus Hannover?",
+        answerHtml: `Wegen Nähe und Verbindlichkeit. Aus Sachsenhagen sind wir in 14 Minuten in Wunstorf — persönliche Termine, auch kurzfristig, sind selbstverständlich. Bei einer Hannoveraner Großagentur bist du eine Ticket-Nummer; bei uns redest du mit dem Menschen, der deine Site tatsächlich betreut.`,
+      },
+      {
+        question: "Was kostet WordPress-Wartung für einen Wunstorfer Betrieb?",
+        answerHtml: `Basis-Paket ab <strong>30 € / Monat</strong> (Updates, Backups, Monitoring) für kleinere Sites. Erweitertes Paket ab <strong>80-150 € / Monat</strong> für komplexere Sites mit Shop, Buchung oder Mehrsprachigkeit. Du zahlst, was du brauchst — kein aufgeblähtes Paket.`,
+      },
+      {
+        question: "Macht ihr auch WordPress-Sites für Tourismus am Steinhuder Meer?",
+        answerHtml: `Ja. Pensionen, Gastronomie, Ausflugs- und Freizeitangebote am Steinhuder Meer brauchen schnelle mobile Seiten, klare Buchungs- und Kontaktwege und gute Bilder. Genau dafür bauen wir das passende Setup — inklusive lokaler SEO, damit Tagesgäste aus Hannover dich finden.`,
+      },
+      {
+        question: "Könnt ihr eine bestehende, langsame Wunstorfer WordPress-Site retten?",
+        answerHtml: `Meistens ja. Wir machen zuerst eine ehrliche Bestandsaufnahme: Was bremst (Pagebuilder, Plugins, Hosting, Bilder), was ist Substanz, was muss weg. Daraus wird ein priorisierter Plan. Oft reicht ein gezieltes Performance-Tuning; nur wenn die Basis nicht mehr trägt, empfehlen wir einen Rebuild — und sagen das offen.`,
+      },
+      {
+        question: "Wie schnell reagiert ihr im Notfall?",
+        answerHtml: `Für Wartungs-Kunden gilt eine 4-Stunden-Reaktionszeit während der Bürozeiten; bei echten Notfällen (Site offline, Hack) sind wir gesondert erreichbar. Wunstorf ist 12 km entfernt — im Worst Case stehen wir bei dir vor der Tür. Kein anonymer Subunternehmer irgendwo.`,
+      },
+    ],
+  },
 ];
 
 export function serviceCityBySlug(slug: string): ServiceCity {
