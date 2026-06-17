@@ -16,6 +16,7 @@ import FAQ from "../components/FAQ.astro";
 import NAPSection from "../components/NAPSection.astro";
 import CTASection from "../components/CTASection.astro";
 import { cities, faqFor, type City } from "../data/cities";
+import { serviceCities } from "../data/service-cities";
 import { localBusinessSchema, faqSchema, breadcrumbSchema } from "../lib/schema";
 import { site } from "../data/site";
 
@@ -32,6 +33,14 @@ interface Props {
 
 const { city } = Astro.props;
 const faqItems = faqFor(city);
+
+// Vertiefende Service×Stadt-Seiten (z. B. /seo-minden/, /wordpress-minden/),
+// sofern für diese Stadt vorhanden. Verlinkung stärkt diese sonst verwaisten
+// Seiten intern und bündelt die lokale Relevanz für "seo <stadt>" etc.
+const cityBase = city.slug.replace(/^webdesign-/, "");
+const serviceSiblings = serviceCities.filter((sc) =>
+  sc.slug.endsWith(`-${cityBase}`),
+);
 
 // Quick-Trust-Leiste für den Hero (Distanz, Erfahrung, Termine, Refs).
 // Bei distance.km === 0 (Heimsitz Sachsenhagen) wird der Distanz-Hinweis
@@ -160,6 +169,41 @@ const schema = [
   />
 
   <CityServices city={city.name} />
+
+  {serviceSiblings.length > 0 && (
+    <section class="border-t border-[var(--color-border)] py-16">
+      <div class="container-content">
+        <div class="mb-3.5 text-xs uppercase tracking-[0.16em] text-[var(--color-accent)]">
+          Spezialisiert für {city.name}
+        </div>
+        <h2 class="mb-8 max-w-[760px] text-[clamp(24px,3vw,36px)] font-bold tracking-[-0.02em] leading-[1.15]">
+          Mehr für {city.name}: Themenseiten im Detail.
+        </h2>
+        <div class="grid gap-4 md:grid-cols-2">
+          {serviceSiblings.map((sc) => (
+            <a
+              href={`/${sc.slug}/`}
+              class="group flex items-center justify-between gap-4 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-card)] p-6 transition-colors hover:border-[var(--color-border-strong)]"
+            >
+              <div>
+                <h3 class="mb-1 text-[17px] font-semibold tracking-[-0.01em]">
+                  {sc.serviceName} {city.name}
+                </h3>
+                <p class="text-sm leading-[1.6] text-[var(--color-text-muted)]">
+                  {sc.service === "seo"
+                    ? `Lokale Suchmaschinenoptimierung für ${city.name} — gefunden werden, wo deine Kunden suchen.`
+                    : `WordPress-Entwicklung, Wartung & Support für Unternehmen in ${city.name}.`}
+                </p>
+              </div>
+              <svg class="h-5 w-5 flex-shrink-0 text-[var(--color-accent)] transition-transform group-hover:translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
 
   <FAQ
     items={faqItems}

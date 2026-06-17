@@ -16,6 +16,7 @@ import FAQ from "../components/FAQ.astro";
 import NAPSection from "../components/NAPSection.astro";
 import CTASection from "../components/CTASection.astro";
 import { serviceCities, type ServiceCity } from "../data/service-cities";
+import { cities } from "../data/cities";
 import {
   localBusinessSchema,
   faqSchema,
@@ -35,6 +36,15 @@ interface Props {
 }
 
 const { sc } = Astro.props;
+
+// Interne Verlinkung: die anderen Themenseiten derselben Stadt (Service-Geschwister)
+// + die zugehörige Webdesign-Stadtseite. Bündelt lokale Relevanz im Trio.
+const cityBase = sc.slug.replace(/^(seo|wordpress)-/, "");
+const serviceSiblings = serviceCities.filter(
+  (s) => s.slug !== sc.slug && s.slug.endsWith(`-${cityBase}`),
+);
+const webdesignSlug = `webdesign-${cityBase}`;
+const hasWebdesignPage = cities.some((c) => c.slug === webdesignSlug);
 
 const serviceTypeMap: Record<ServiceCity["service"], string> = {
   seo: "Search Engine Optimization",
@@ -177,6 +187,55 @@ const schema = [
       city: sc.city,
     }}
   />
+
+  {(serviceSiblings.length > 0 || hasWebdesignPage) && (
+    <section class="border-t border-[var(--color-border)] py-16">
+      <div class="container-content">
+        <div class="mb-3.5 text-xs uppercase tracking-[0.16em] text-[var(--color-accent)]">
+          Auch in {sc.city}
+        </div>
+        <h2 class="mb-8 max-w-[760px] text-[clamp(24px,3vw,36px)] font-bold tracking-[-0.02em] leading-[1.15]">
+          Weitere Leistungen für {sc.city}.
+        </h2>
+        <div class="grid gap-4 md:grid-cols-2">
+          {hasWebdesignPage && (
+            <a
+              href={`/${webdesignSlug}/`}
+              class="group flex items-center justify-between gap-4 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-card)] p-6 transition-colors hover:border-[var(--color-border-strong)]"
+            >
+              <div>
+                <h3 class="mb-1 text-[17px] font-semibold tracking-[-0.01em]">Webdesign {sc.city}</h3>
+                <p class="text-sm leading-[1.6] text-[var(--color-text-muted)]">
+                  WordPress-Websites & Onlineshops für Unternehmen in {sc.city}.
+                </p>
+              </div>
+              <svg class="h-5 w-5 flex-shrink-0 text-[var(--color-accent)] transition-transform group-hover:translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+            </a>
+          )}
+          {serviceSiblings.map((s) => (
+            <a
+              href={`/${s.slug}/`}
+              class="group flex items-center justify-between gap-4 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-card)] p-6 transition-colors hover:border-[var(--color-border-strong)]"
+            >
+              <div>
+                <h3 class="mb-1 text-[17px] font-semibold tracking-[-0.01em]">{s.serviceName} {s.city}</h3>
+                <p class="text-sm leading-[1.6] text-[var(--color-text-muted)]">
+                  {s.service === "seo"
+                    ? `Lokale Suchmaschinenoptimierung für ${s.city}.`
+                    : `WordPress-Entwicklung, Wartung & Support für ${s.city}.`}
+                </p>
+              </div>
+              <svg class="h-5 w-5 flex-shrink-0 text-[var(--color-accent)] transition-transform group-hover:translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
 
   <CTASection
     title={`Bereit für ${sc.serviceName} in ${sc.city}?`}
