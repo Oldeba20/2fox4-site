@@ -152,12 +152,6 @@ export const services: Service[] = [
         layout: "stacked",
       },
       {
-        eyebrow: "KI im Einsatz",
-        headline: "Wir nutzen KI — aber wir vertrauen ihr nicht blind.",
-        body: `<p>Unser eigenes WordPress-Plugin <a href="/wp-plugins/wp-blog-agent/" class="text-[var(--color-accent)]">WP Blog Agent</a> hilft beim Recherchieren, Strukturieren und Vor-Texten von Blog-Beiträgen. Aber jeder Beitrag wird vor Veröffentlichung von einem Menschen redigiert. Wir sehen KI als Beschleuniger, nicht als Ersatz für Qualität.</p>`,
-        layout: "stacked",
-      },
-      {
         eyebrow: "Reporting & Transparenz",
         headline: "Du bleibst immer auf dem Laufenden.",
         body: `<p>SEO ist nur dann etwas wert, wenn du nachvollziehen kannst, was passiert. Deshalb bekommst du von uns in <strong>regelmäßigen Abständen einen verständlichen Bericht</strong> — keine 30-seitige PDF, in der die Antwort versteckt liegt, sondern die Kennzahlen, die wirklich zählen: Sichtbarkeit, Klicks, Positionen und welche Maßnahmen als Nächstes anstehen.</p><p>Jeder Bericht enthält unsere persönliche Einschätzung dazu, was die Zahlen bedeuten und woran wir gerade arbeiten. So siehst du nicht nur, <em>dass</em> sich etwas bewegt, sondern verstehst auch <em>warum</em> — und kannst dich jederzeit bei uns melden.</p>`,
@@ -184,7 +178,7 @@ export const services: Service[] = [
       },
       {
         question: "Übernehmt ihr auch die laufende Content-Produktion?",
-        answerHtml: `Ja, auf Wunsch. Wir produzieren Blogbeiträge, Ratgeber und Landingpages — entweder klassisch redaktionell oder mit unserem WP Blog Agent als KI-Vorlage. Final geht aber immer ein Mensch drüber.`,
+        answerHtml: `Ja, auf Wunsch. Wir produzieren Blogbeiträge, Ratgeber und Landingpages — klassisch redaktionell und bei Bedarf KI-gestützt vorbereitet. Final geht aber immer ein Mensch drüber.`,
       },
       {
         question: "Wieso braucht es Schema.org-Markup?",
