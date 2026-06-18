@@ -157,6 +157,25 @@ export const services: Service[] = [
         body: `<p>Unser eigenes WordPress-Plugin <a href="/wp-plugins/wp-blog-agent/" class="text-[var(--color-accent)]">WP Blog Agent</a> hilft beim Recherchieren, Strukturieren und Vor-Texten von Blog-Beiträgen. Aber jeder Beitrag wird vor Veröffentlichung von einem Menschen redigiert. Wir sehen KI als Beschleuniger, nicht als Ersatz für Qualität.</p>`,
         layout: "stacked",
       },
+      {
+        eyebrow: "Reporting & Transparenz",
+        headline: "Du bleibst immer auf dem Laufenden.",
+        body: `<p>SEO ist nur dann etwas wert, wenn du nachvollziehen kannst, was passiert. Deshalb bekommst du von mir in <strong>regelmäßigen Abständen einen verständlichen Bericht</strong> — keine 30-seitige PDF, in der die Antwort versteckt liegt, sondern die Kennzahlen, die wirklich zählen: Sichtbarkeit, Klicks, Positionen und welche Maßnahmen als Nächstes anstehen.</p><p>Jeder Bericht enthält meine persönliche Einschätzung dazu, was die Zahlen bedeuten und woran wir gerade arbeiten. So siehst du nicht nur, <em>dass</em> sich etwas bewegt, sondern verstehst auch <em>warum</em> — und kannst jederzeit nachfragen.</p>`,
+        bullets: [
+          "Verständliche Berichte in regelmäßigen Abständen — direkt von mir",
+          "Die Kennzahlen, die zählen: Sichtbarkeit, Klicks, Positionen",
+          "Persönliche Einschätzung: was die Zahlen bedeuten, was als Nächstes kommt",
+          "Daten aus Search Console, GA4 und RankMath, klar aufbereitet",
+          "Keine Daten-Friedhöfe — kurz, ehrlich, auf den Punkt",
+          "Fragen? Du erreichst mich direkt, nicht über ein Ticketsystem",
+        ],
+        layout: "split",
+        image: {
+          src: "/images/leistungen/seo/seo-bericht-mockup.webp",
+          alt: "Beispielhafter SEO-Bericht von 2fox4 im dunklen Branding mit orangem Akzent — Sichtbarkeitsindex, organische Klicks, Impressionen und durchschnittliche Position als Kennzahlen, Sichtbarkeitsverlauf als Liniendiagramm, Top-Keywords mit Positionsveränderung und einer persönlichen Einschätzung. Alle Zahlen sind Beispieldaten.",
+          position: "below",
+        },
+      },
     ],
     faq: [
       {
@@ -173,7 +192,7 @@ export const services: Service[] = [
       },
       {
         question: "Bekomme ich ein SEO-Reporting?",
-        answerHtml: `Ja, monatlich. Du bekommst die wichtigsten Kennzahlen aus Search Console, GA4 und RankMath als verständliche Zusammenfassung — keine 30-Seiten-PDF, in der die Antwort versteckt liegt.`,
+        answerHtml: `Ja. In regelmäßigen Abständen bekommst du von mir persönlich die wichtigsten Kennzahlen aus Search Console, GA4 und RankMath als verständliche Zusammenfassung — inklusive meiner Einschätzung, was die Zahlen bedeuten und was als Nächstes ansteht. Keine 30-Seiten-PDF, in der die Antwort versteckt liegt.`,
       },
     ],
   },
