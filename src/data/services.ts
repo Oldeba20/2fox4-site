@@ -160,14 +160,14 @@ export const services: Service[] = [
       {
         eyebrow: "Reporting & Transparenz",
         headline: "Du bleibst immer auf dem Laufenden.",
-        body: `<p>SEO ist nur dann etwas wert, wenn du nachvollziehen kannst, was passiert. Deshalb bekommst du von mir in <strong>regelmäßigen Abständen einen verständlichen Bericht</strong> — keine 30-seitige PDF, in der die Antwort versteckt liegt, sondern die Kennzahlen, die wirklich zählen: Sichtbarkeit, Klicks, Positionen und welche Maßnahmen als Nächstes anstehen.</p><p>Jeder Bericht enthält meine persönliche Einschätzung dazu, was die Zahlen bedeuten und woran wir gerade arbeiten. So siehst du nicht nur, <em>dass</em> sich etwas bewegt, sondern verstehst auch <em>warum</em> — und kannst jederzeit nachfragen.</p>`,
+        body: `<p>SEO ist nur dann etwas wert, wenn du nachvollziehen kannst, was passiert. Deshalb bekommst du von uns in <strong>regelmäßigen Abständen einen verständlichen Bericht</strong> — keine 30-seitige PDF, in der die Antwort versteckt liegt, sondern die Kennzahlen, die wirklich zählen: Sichtbarkeit, Klicks, Positionen und welche Maßnahmen als Nächstes anstehen.</p><p>Jeder Bericht enthält unsere persönliche Einschätzung dazu, was die Zahlen bedeuten und woran wir gerade arbeiten. So siehst du nicht nur, <em>dass</em> sich etwas bewegt, sondern verstehst auch <em>warum</em> — und kannst dich jederzeit bei uns melden.</p>`,
         bullets: [
-          "Verständliche Berichte in regelmäßigen Abständen — direkt von mir",
+          "Verständliche Berichte in regelmäßigen Abständen — persönlich von uns",
           "Die Kennzahlen, die zählen: Sichtbarkeit, Klicks, Positionen",
-          "Persönliche Einschätzung: was die Zahlen bedeuten, was als Nächstes kommt",
+          "Unsere Einschätzung: was die Zahlen bedeuten, was als Nächstes kommt",
           "Daten aus Search Console, GA4 und RankMath, klar aufbereitet",
           "Keine Daten-Friedhöfe — kurz, ehrlich, auf den Punkt",
-          "Fragen? Du erreichst mich direkt, nicht über ein Ticketsystem",
+          "Fragen? Du erreichst uns direkt, nicht über ein Ticketsystem",
         ],
         layout: "split",
         image: {
@@ -192,7 +192,27 @@ export const services: Service[] = [
       },
       {
         question: "Bekomme ich ein SEO-Reporting?",
-        answerHtml: `Ja. In regelmäßigen Abständen bekommst du von mir persönlich die wichtigsten Kennzahlen aus Search Console, GA4 und RankMath als verständliche Zusammenfassung — inklusive meiner Einschätzung, was die Zahlen bedeuten und was als Nächstes ansteht. Keine 30-Seiten-PDF, in der die Antwort versteckt liegt.`,
+        answerHtml: `Ja. In regelmäßigen Abständen bekommst du von uns persönlich die wichtigsten Kennzahlen aus Search Console, GA4 und RankMath als verständliche Zusammenfassung — inklusive unserer Einschätzung, was die Zahlen bedeuten und was als Nächstes ansteht. Keine 30-Seiten-PDF, in der die Antwort versteckt liegt.`,
+      },
+      {
+        question: "Wie oft bekomme ich einen Bericht?",
+        answerHtml: `In regelmäßigen Abständen — den genauen Rhythmus stimmen wir individuell mit dir ab, je nachdem wie viel sich auf deinem Projekt gerade bewegt. Wichtiger als ein starrer Takt ist uns, dass du den Bericht immer dann bekommst, wenn es etwas Sinnvolles zu berichten gibt, und nicht eine leere Pflichtübung im Postfach landet.`,
+      },
+      {
+        question: "Welche Kennzahlen stehen in dem Bericht?",
+        answerHtml: `Die, die wirklich aussagen, wie es um deine Auffindbarkeit steht: <strong>Sichtbarkeit</strong> (wie oft du in den Suchergebnissen auftauchst), <strong>organische Klicks und Impressionen</strong> aus der Search Console, deine <strong>durchschnittliche Position</strong> und die Entwicklung deiner wichtigsten Keywords. Dazu eine kurze Einordnung, was die Zahlen bedeuten — keine Rohdaten ohne Kontext.`,
+      },
+      {
+        question: "Verstehe ich den Bericht auch ohne SEO-Vorwissen?",
+        answerHtml: `Genau dafür ist er gemacht. Wir verzichten bewusst auf Fachchinesisch und erklären in normalem Deutsch, was passiert ist und warum das gut (oder noch verbesserungswürdig) ist. Wenn etwas unklar bleibt, erreichst du uns direkt und wir gehen den Bericht gemeinsam durch.`,
+      },
+      {
+        question: "Was passiert, wenn die Zahlen mal nicht so gut aussehen?",
+        answerHtml: `Dann steht das genauso im Bericht. SEO ist keine gerade Linie nach oben — Google-Updates, Saisonalität oder ein Relaunch können Dellen verursachen. Wir benennen Rückgänge offen, erklären die wahrscheinliche Ursache und sagen dir, was wir dagegen tun. Schöngefärbte Berichte helfen niemandem.`,
+      },
+      {
+        question: "Bleiben die Daten meiner Kunden vertraulich?",
+        answerHtml: `Ja. Deine Reportings und Analysedaten behandeln wir vertraulich und geben sie nicht weiter. Wenn wir Beispiele öffentlich zeigen — etwa auf dieser Seite — sind das ausschließlich <strong>anonymisierte Muster mit frei erfundenen Zahlen</strong>, aus denen sich keine Rückschlüsse auf reale Kunden ziehen lassen.`,
       },
     ],
   },
