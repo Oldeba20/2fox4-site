@@ -78,7 +78,7 @@ export const industries: Industry[] = [
       {
         eyebrow: "Was eine Praxis-Website wirklich leisten muss",
         headline: "Drei Aufgaben — alle gleichzeitig.",
-        body: `<p><strong>1. Vertrauen vermitteln, bevor der Patient den Hörer in die Hand nimmt.</strong> Über 60 % der Patienten googeln die Praxis vor dem Anruf. Was sie finden, entscheidet, ob sie sich melden — Bilder, Team-Kurzporträts, Lebensläufe, Praxisräume, Schwerpunkte.</p>
+        body: `<p><strong>1. Vertrauen vermitteln, bevor der Patient den Hörer in die Hand nimmt.</strong> Ein Großteil der Patienten googelt die Praxis vor dem Anruf. Was sie finden, entscheidet, ob sie sich melden — Bilder, Team-Kurzporträts, Lebensläufe, Praxisräume, Schwerpunkte.</p>
 <p><strong>2. Den Anruf vermeiden.</strong> Eine gute Praxis-Website beantwortet 80 % der Standard-Fragen so, dass die Sprechstundenhilfe entlastet wird: Öffnungszeiten, Krankenkassen, Privatleistungen, Anfahrt, Parkplätze, Aufnahmebedingungen für Neupatienten. Das macht die Praxis effizienter — und Patienten zufriedener.</p>
 <p><strong>3. Termine erleichtern.</strong> Online-Terminbuchung via Doctolib, Jameda, Samedi oder eigene Lösung. Oder zumindest ein DSGVO-konformes Kontaktformular, das ohne Telefon-Hürde funktioniert.</p>`,
         bullets: [
@@ -114,7 +114,7 @@ export const industries: Industry[] = [
       },
       {
         problem: "Patienten rufen ständig wegen Standard-Fragen an, die auf der Website stehen müssten.",
-        solution: "Eine gute FAQ-Sektion, klare Öffnungszeiten und Krankenkassen-Übersicht reduzieren Standard-Anrufe um 30-50 % laut Erfahrungswerten unserer Praxis-Kunden.",
+        solution: "Eine gute FAQ-Sektion, klare Öffnungszeiten und Krankenkassen-Übersicht nehmen spürbar Standard-Anrufe ab, weil Patienten die Antwort direkt online finden.",
       },
     ],
     faq: [
@@ -192,7 +192,7 @@ export const industries: Industry[] = [
       },
       {
         problem: "Meine alte Website ist langsam und sieht auf dem Handy schlecht aus.",
-        solution: "Mobile sind ~70 % der Handwerks-Anfragen — Mobile-Optimierung ist kein nice-to-have. Wir bauen mobile-first, mit echten Core-Web-Vitals im grünen Bereich.",
+        solution: "Mobil kommen ~70 % der Handwerks-Anfragen — Mobile-Optimierung ist kein Nice-to-have. Wir bauen mobile-first, mit echten Core-Web-Vitals im grünen Bereich.",
       },
     ],
     faq: [
@@ -241,7 +241,7 @@ export const industries: Industry[] = [
         eyebrow: "Was eine Gastro-Website wirklich leisten muss",
         headline: "Vier kritische Klicks: Karte, Reservierung, Anfahrt, Bewertungen.",
         body: `<p>Bei Gastronomie zählt nicht „schöne Website“, sondern „funktionierender Funnel“. Wir messen den Erfolg in vier konkreten Aktionen, die ein Besucher machen kann — und wie schnell er sie macht:</p>
-<p><strong>1. Speisekarte anschauen.</strong> Aktuell, mobiloptimiert, kein PDF-Download. Saisonal sortiert, mit Preisen, Allergenen, Veganen Markern. Bei Hotels: Zimmerübersicht inkl. Preisliste pro Saison.</p>
+<p><strong>1. Speisekarte anschauen.</strong> Aktuell, mobiloptimiert, kein PDF-Download. Saisonal sortiert, mit Preisen, Allergenen, veganen Markern. Bei Hotels: Zimmerübersicht inkl. Preisliste pro Saison.</p>
 <p><strong>2. Reservieren / Buchen.</strong> Tisch- oder Zimmerbuchung in unter 3 Klicks. OpenTable, Quandoo, Booking.com, eigene Lösung. Plus Telefonnummer ein-Klick-erreichbar.</p>
 <p><strong>3. Anfahrt erkennen.</strong> Google-Maps-Embed mit Pin, Adresse, „Route starten“-Button. Parkplatz-Info, ÖPNV.</p>
 <p><strong>4. Bewertungen einsehen.</strong> Google-Reviews-Aggregate, prominent. Niemand bucht ein Hotel ohne Reviews zu checken — also zeig sie, statt sie zu verstecken.</p>`,
@@ -258,7 +258,7 @@ export const industries: Industry[] = [
       {
         eyebrow: "Tourismus-Sichtbarkeit",
         headline: "Wer Tagestouristen will, muss in Google Maps stehen.",
-        body: `<p>Tagestouristen googeln direkt: „Restaurant Bückeburg“, „Café Stadthagen Altstadt“, „Hotel Steinhuder Meer“. Die Top-3 im Google-Local-Pack bekommen 70-80 % aller Klicks. Wer da nicht steht, sieht keine Anfrage.</p>
+        body: `<p>Tagestouristen googeln direkt: „Restaurant Bückeburg“, „Café Stadthagen Altstadt“, „Hotel Steinhuder Meer“. Die Top-3 im Google-Local-Pack bekommen den Großteil der Klicks. Wer da nicht steht, sieht keine Anfrage.</p>
 <p>Wir optimieren dein Google Business Profile mit professionellen Bildern, vollständigem Branchen-Eintrag, regelmäßigen Posts (Saison-Specials, Events), Q&A-Pflege und einer aktiven Bewertungs-Strategie. Zudem bauen wir die Website mit LocalBusiness- und Restaurant-/Hotel-Schema, damit Google die Daten direkt in Karten- und Suchergebnisse übernimmt.</p>`,
       },
     ],
@@ -269,7 +269,7 @@ export const industries: Industry[] = [
       },
       {
         problem: "Ich bezahle Booking.com 15 % Provision für jede Hotelbuchung.",
-        solution: "Mit einer eigenen Buchungslösung (z. B. Beds24, Cloudbeds, eigenes System) reduzierst du Direkt-Buchungen-Provisions auf 0-3 %. Investition rechnet sich oft in 6-12 Monaten.",
+        solution: "Mit einer eigenen Buchungslösung (z. B. Beds24, Cloudbeds, eigenes System) reduzierst du die Provisionen bei Direktbuchungen auf 0-3 %. Investition rechnet sich oft in 6-12 Monaten.",
       },
       {
         problem: "Meine Website hat keine aktuellen Bilder, die letzten sind von 2019.",
@@ -291,7 +291,7 @@ export const industries: Industry[] = [
       },
       {
         question: "Helft ihr beim aktiven Reviews-Sammeln?",
-        answerHtml: `Ja. Wir richten ein System ein, mit dem du nach jedem Gast (oder Hotel-Aufenthalt) automatisch eine freundliche Erinnerung mit dem Google-Bewertungslink schicken kannst — entweder per QR-Code auf der Quittung oder per E-Mail. Konversionsrate von „Gast“ zu „Bewertung“ steigt erfahrungsgemäß um 3-5x.`,
+        answerHtml: `Ja. Wir richten ein System ein, mit dem du nach jedem Gast (oder Hotel-Aufenthalt) automatisch eine freundliche Erinnerung mit dem Google-Bewertungslink schicken kannst — entweder per QR-Code auf der Quittung oder per E-Mail. So kommen erfahrungsgemäß deutlich mehr Bewertungen zusammen.`,
       },
       {
         question: "Wie schnell ist eine Gastro-Website auf dem Handy ladbar?",
@@ -341,9 +341,9 @@ export const industries: Industry[] = [
 <li><strong>DSEE (Deutsche Stiftung für Engagement und Ehrenamt):</strong> Förderprogramme für digitale Vereinsarbeit, oft bis 5.000 € Pauschalbetrag.</li>
 <li><strong>Land Niedersachsen — Ehrenamtsservicestelle:</strong> regionale Programme für Vereins-Digitalisierung.</li>
 <li><strong>BAFA — Unternehmensberatung:</strong> für gemeinnützige Vereine mit wirtschaftlicher Tätigkeit teilweise zugänglich.</li>
-<li><strong>Aktion Mensch / Aktion Mensch-Förderung:</strong> für inklusiv arbeitende Vereine.</li>
+<li><strong>Aktion-Mensch-Förderung:</strong> für inklusiv arbeitende Vereine.</li>
 </ul>
-<p>Wir kennen die Programme und helfen beim Antragstexte schreiben — kostenlos, weil wir uns über die Förderung mit-finanzieren.</p>`,
+<p>Wir kennen die Programme und helfen beim Schreiben der Antragstexte — kostenlos, weil wir uns über die Förderung mitfinanzieren.</p>`,
       },
     ],
     painPoints: [
@@ -367,7 +367,7 @@ export const industries: Industry[] = [
       },
       {
         question: "Helft ihr beim DSEE- oder Land-Niedersachsen-Förder-Antrag?",
-        answerHtml: `Ja, kostenlos. Wir schreiben den Maßnahmen-Teil des Antrags (technische Beschreibung der Vereins-Website) und stellen das Kosten-Angebot bereit. Antrags-Erfolgsquote bei den Programmen liegt erfahrungsgemäß bei ~60-70 %. Bei DSEE „MikroProjekte“ sogar höher.`,
+        answerHtml: `Ja, kostenlos. Wir schreiben den Maßnahmen-Teil des Antrags (technische Beschreibung der Vereins-Website) und stellen das Kosten-Angebot bereit. Die Erfolgsquote bei diesen Programmen ist erfahrungsgemäß hoch — bei DSEE „MikroProjekte“ besonders.`,
       },
       {
         question: "Können wir die Website nach dem Launch selbst pflegen?",

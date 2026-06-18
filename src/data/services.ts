@@ -92,7 +92,7 @@ export const services: Service[] = [
       {
         eyebrow: "Tech-Stack",
         headline: "Modern, schlank, wartbar.",
-        body: `<p>Wir setzen auf <strong>WordPress 6.x</strong> als bewährtes CMS, kombiniert mit einem schlanken, custom-codierten Theme oder Astro+Headless-WP für Hochleistungs-Projekte. Bilder werden automatisch in modernen Formaten (WebP, AVIF) ausgespielt. JavaScript läuft nur dort, wo es wirklich nötig ist.</p><p>Wer maximale Geschwindigkeit braucht (oder einfach das beste aus seinem Ranking herausholen will), bekommt von uns auf Wunsch eine statische Variante per Astro: <strong>volle Trennung von Backend und Frontend</strong>, deployt als reines HTML/CSS auf einem CDN. Genau die Architektur, mit der unsere eigene Website gerade neu gebaut wird.</p>`,
+        body: `<p>Wir setzen auf <strong>WordPress 6.x</strong> als bewährtes CMS, kombiniert mit einem schlanken, custom-codierten Theme oder Astro+Headless-WP für Hochleistungs-Projekte. Bilder werden automatisch in modernen Formaten (WebP, AVIF) ausgespielt. JavaScript läuft nur dort, wo es wirklich nötig ist.</p><p>Wer maximale Geschwindigkeit braucht (oder einfach das Beste aus seinem Ranking herausholen will), bekommt von uns auf Wunsch eine statische Variante per Astro: <strong>volle Trennung von Backend und Frontend</strong>, deployt als reines HTML/CSS auf einem CDN. Genau die Architektur, mit der unsere eigene Website gerade neu gebaut wird.</p>`,
         layout: "stacked",
       },
     ],
@@ -154,7 +154,7 @@ export const services: Service[] = [
       {
         eyebrow: "Reporting & Transparenz",
         headline: "Du bleibst immer auf dem Laufenden.",
-        body: `<p>SEO ist nur dann etwas wert, wenn du nachvollziehen kannst, was passiert. Deshalb bekommst du von uns in <strong>regelmäßigen Abständen einen verständlichen Bericht</strong> — keine 30-seitige PDF, in der die Antwort versteckt liegt, sondern die Kennzahlen, die wirklich zählen: Sichtbarkeit, Klicks, Positionen und welche Maßnahmen als Nächstes anstehen.</p><p>Jeder Bericht enthält unsere persönliche Einschätzung dazu, was die Zahlen bedeuten und woran wir gerade arbeiten. So siehst du nicht nur, <em>dass</em> sich etwas bewegt, sondern verstehst auch <em>warum</em> — und kannst dich jederzeit bei uns melden.</p>`,
+        body: `<p>SEO ist nur dann etwas wert, wenn du nachvollziehen kannst, was passiert. Deshalb bekommst du von uns in <strong>regelmäßigen Abständen einen verständlichen Bericht</strong> — kein 30-seitiges PDF, in dem die Antwort versteckt liegt, sondern die Kennzahlen, die wirklich zählen: Sichtbarkeit, Klicks, Positionen und welche Maßnahmen als Nächstes anstehen.</p><p>Jeder Bericht enthält unsere persönliche Einschätzung dazu, was die Zahlen bedeuten und woran wir gerade arbeiten. So siehst du nicht nur, <em>dass</em> sich etwas bewegt, sondern verstehst auch <em>warum</em> — und kannst dich jederzeit bei uns melden.</p>`,
         bullets: [
           "Verständliche Berichte in regelmäßigen Abständen — persönlich von uns",
           "Die Kennzahlen, die zählen: Sichtbarkeit, Klicks, Positionen",
@@ -186,7 +186,7 @@ export const services: Service[] = [
       },
       {
         question: "Bekomme ich ein SEO-Reporting?",
-        answerHtml: `Ja. In regelmäßigen Abständen bekommst du von uns persönlich die wichtigsten Kennzahlen aus Search Console, GA4 und RankMath als verständliche Zusammenfassung — inklusive unserer Einschätzung, was die Zahlen bedeuten und was als Nächstes ansteht. Keine 30-Seiten-PDF, in der die Antwort versteckt liegt.`,
+        answerHtml: `Ja. In regelmäßigen Abständen bekommst du von uns persönlich die wichtigsten Kennzahlen aus Search Console, GA4 und RankMath als verständliche Zusammenfassung — inklusive unserer Einschätzung, was die Zahlen bedeuten und was als Nächstes ansteht. Kein 30-Seiten-PDF, in dem die Antwort versteckt liegt.`,
       },
       {
         question: "Wie oft bekomme ich einen Bericht?",
@@ -286,7 +286,7 @@ export const services: Service[] = [
       },
       {
         question: "Lässt sich das auf mehrere Städte einer Region ausweiten?",
-        answerHtml: `Genau dafür ist die Architektur gebaut. Eine geteilte Engine bedient mehrere Städte, jede mit <strong>eigener Domain und eigenem Branding</strong>. Sobald der politische Rückhalt da ist, lässt sich ein übergeordnetes Regional-Portal darüberlegen, das alle Rallyes bündelt. So tritt die Region gemeinsam auf, ohne dass eine Stadt ihre eigene Identität verliert.`,
+        answerHtml: `Genau dafür ist die Architektur gebaut. Eine gemeinsame Engine bedient mehrere Städte, jede mit <strong>eigener Domain und eigenem Branding</strong>. Sobald der politische Rückhalt da ist, lässt sich ein übergeordnetes Regional-Portal darüberlegen, das alle Rallyes bündelt. So tritt die Region gemeinsam auf, ohne dass eine Stadt ihre eigene Identität verliert.`,
       },
     ],
   },
@@ -354,7 +354,7 @@ export const services: Service[] = [
     sections: [
       {
         eyebrow: "Was drin ist",
-        headline: "Hosting, das wie eine Wartungs-Pauschale fühlt.",
+        headline: "Hosting, das sich wie eine Wartungs-Pauschale anfühlt.",
         body: `<p>Wir hosten direkt bei <strong>all-inkl.com</strong> (deutsches Rechenzentrum) oder einem unserer Partner. Pakete starten bei <strong>9 €/Monat</strong> für eine WordPress-Single-Site, inklusive PHP 8.3, MariaDB, Let&apos;s-Encrypt-SSL, täglichem Backup.</p>`,
         bullets: [
           "Deutsche Rechenzentren (Frankfurt / München)",
@@ -396,7 +396,7 @@ export const services: Service[] = [
     cardSummary:
       "KI-Beratung für KMU: welche KI-Use-Cases sich wirklich lohnen, welche nicht. Automatisierung, Tool-Auswahl, Schulungen — BAFA-förderfähig.",
     iconSvg: `<path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>`,
-    tldr: `<strong>Kurz gesagt:</strong> Wir beraten kleine und mittlere Unternehmen dabei, Künstliche Intelligenz praktisch einzusetzen — in vier Schritten: <strong>(1) KI-Strategie &amp; Use-Case-Analyse</strong> (wo lohnt sich KI überhaupt?), <strong>(2) Prozessautomatisierung mit KI-Agenten</strong>, <strong>(3) Auswahl &amp; Einführung passender KI-Tools</strong> und <strong>(4) Schulungen für dein Team</strong>. Ehrlich statt Hype, mit ROI-Blick und in vielen Fällen <strong>BAFA-förderfähig</strong> (bis zu 50 % Zuschuss).`,
+    tldr: `<strong>Kurz gesagt:</strong> Wir beraten kleine und mittlere Unternehmen dabei, Künstliche Intelligenz praktisch einzusetzen — in vier Schritten: <strong>(1) KI-Strategie &amp; Use-Case-Analyse</strong> (wo lohnt sich KI überhaupt?), <strong>(2) Prozessautomatisierung mit KI-Agenten</strong>, <strong>(3) Auswahl &amp; Einführung passender KI-Tools</strong> und <strong>(4) Schulungen für dein Team</strong>. Ehrlich statt Hype, mit ROI-Blick und in vielen Fällen <strong>BAFA-förderfähig</strong> (bis zu 80 % Zuschuss).`,
     sections: [
       {
         eyebrow: "Schritt 1 · Strategie",
@@ -444,7 +444,7 @@ export const services: Service[] = [
       },
       {
         question: "Was kostet eine KI-Beratung?",
-        answerHtml: `Ein Prozess-Audit inkl. schriftlicher Roadmap kostet ab <strong>1.200 €</strong>. Bei BAFA-Förderfähigkeit übernimmt der Staat bis zu 50 % der Kosten — siehe unsere <a href="/leistungen/bafa-foerderung/" class="text-[var(--color-accent)]">BAFA-Seite</a>. Umsetzung und Schulungen kalkulieren wir transparent nach Aufwand.`,
+        answerHtml: `Ein Prozess-Audit inkl. schriftlicher Roadmap kostet ab <strong>1.200 €</strong>. Bei BAFA-Förderfähigkeit übernimmt der Staat bis zu 80 % der Kosten — siehe unsere <a href="/leistungen/bafa-foerderung/" class="text-[var(--color-accent)]">BAFA-Seite</a>. Umsetzung und Schulungen kalkulieren wir transparent nach Aufwand.`,
       },
       {
         question: "Ersetzt KI dann meine Mitarbeiter?",
@@ -464,17 +464,17 @@ export const services: Service[] = [
     slug: "bafa-foerderung",
     name: "BAFA-Förderung",
     kicker: "Leistung · Förderung",
-    seoTitle: "BAFA-Förderung für Digitalisierung — bis zu 50 % Zuschuss für KMU",
+    seoTitle: "BAFA-Förderung für Digitalisierung — bis zu 80 % Zuschuss für KMU",
     seoDescription:
-      "Bis zu 50 % staatlicher Zuschuss für Digitalisierungsberatung über das BAFA-Programm. Wir helfen beim Antrag und bei der Umsetzung.",
-    heroTitleLine1: "Bis zu 50 %",
+      "Bis zu 80 % staatlicher Zuschuss für Digitalisierungsberatung über das BAFA-Programm. Wir helfen beim Antrag und bei der Umsetzung.",
+    heroTitleLine1: "Bis zu 80 %",
     heroTitleLine2: "Zuschuss vom Staat.",
     heroSub:
       'Das BAFA-Programm „Förderung von Unternehmensberatungen für KMU" fördert genau die Art von Beratung, die wir anbieten. Wir helfen dir durch den Antrag und liefern die Unterlagen, die der Staat sehen will.',
     cardSummary:
-      "Bis zu 50 % staatlicher Zuschuss für Digitalisierungsberatung. Wir unterstützen beim Antrag.",
+      "Bis zu 80 % staatlicher Zuschuss für Digitalisierungsberatung. Wir unterstützen beim Antrag.",
     iconSvg: `<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>`,
-    tldr: `<strong>Kurz gesagt:</strong> Das BAFA-Programm „Förderung von Unternehmensberatungen für KMU" bezuschusst <strong>Digitalisierungs- und KI-Beratung mit bis zu 50 %</strong> der Kosten. <strong>Wichtig:</strong> Der Antrag muss <strong>vor</strong> Beratungsbeginn gestellt werden. Ablauf: Antrag → Bewilligung (~4 Wochen) → Beratung → Verwendungsnachweis → Auszahlung. Wir sind im BAFA-Beraterverzeichnis gelistet und unterstützen beim Antrag.`,
+    tldr: `<strong>Kurz gesagt:</strong> Das BAFA-Programm „Förderung von Unternehmensberatungen für KMU" bezuschusst <strong>Digitalisierungs- und KI-Beratung mit bis zu 80 %</strong> der Kosten. <strong>Wichtig:</strong> Der Antrag muss <strong>vor</strong> Beratungsbeginn gestellt werden. Ablauf: Antrag → Bewilligung (~4 Wochen) → Beratung → Verwendungsnachweis → Auszahlung. Wir sind im BAFA-Beraterverzeichnis gelistet und unterstützen beim Antrag.`,
     sections: [
       {
         eyebrow: "So funktioniert es",
@@ -502,7 +502,7 @@ export const services: Service[] = [
       },
       {
         question: "Wie hoch ist die Förderung?",
-        answerHtml: `In Niedersachsen typischerweise <strong>50 % der Beratungskosten</strong>, gedeckelt bei einem maximalen Förderbetrag (aktuell 3.500 € Bundesmittel + ggf. Landesmittel). Genaue Quoten variieren — wir nennen dir die aktuellen Zahlen im Erstgespräch.`,
+        answerHtml: `Je nach Bundesland zwischen 50 und <strong>80 % der Beratungskosten</strong> — in den neuen Bundesländern am höchsten —, gedeckelt bei einem maximalen Förderbetrag (aktuell 3.500 € Bundesmittel + ggf. Landesmittel). Genaue Quoten variieren — wir nennen dir die aktuellen Zahlen im Erstgespräch.`,
       },
       {
         question: "Kann ich euch als Berater wählen?",
@@ -576,8 +576,8 @@ export const services: Service[] = [
     sections: [
       {
         eyebrow: "Was wir gestalten",
-        headline: "Vom Visitenkarten-Stapel bis zum 24 m² Messestand.",
-        body: `<p>Wir bauen nicht nur Websites — wir gestalten die komplette visuelle Identität, mit der dein Unternehmen am Markt auftritt. Ob du gerade einen Imageprospekt für die nächste Akquise brauchst, ein A0-Plakat für die regionale Veranstaltung oder einen Messestand, der auf der nächsten Hannover Messe Aufmerksamkeit zieht: wir liefern Konzept, Layout und druckfertige Reinzeichnung aus einer Hand.</p><p>Alle Druck-Materialien werden im selben visuellen System wie deine Website gestaltet — Farbe, Typografie, Bildsprache bleiben konsistent. Das spart dir auf Dauer Geld, weil du kein zweites Mal „Corporate Design" einkaufen musst.</p>`,
+        headline: "Vom Visitenkarten-Stapel bis zum 24-m²-Messestand.",
+        body: `<p>Wir bauen nicht nur Websites — wir gestalten die komplette visuelle Identität, mit der dein Unternehmen am Markt auftritt. Ob du gerade einen Imageprospekt für die nächste Akquise brauchst, ein A0-Plakat für die regionale Veranstaltung oder einen Messestand, der auf der nächsten Hannover Messe Aufmerksamkeit erregt: wir liefern Konzept, Layout und druckfertige Reinzeichnung aus einer Hand.</p><p>Alle Druck-Materialien werden im selben visuellen System wie deine Website gestaltet — Farbe, Typografie, Bildsprache bleiben konsistent. Das spart dir auf Dauer Geld, weil du kein zweites Mal „Corporate Design" einkaufen musst.</p>`,
         bullets: [
           "Flyer & Folder (DIN lang, A6, A5, Wickelfalz)",
           "Imageprospekte & Kataloge (8 bis 64 Seiten)",

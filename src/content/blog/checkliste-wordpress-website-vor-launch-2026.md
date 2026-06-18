@@ -24,7 +24,7 @@ Früher reichte es, SSL-Zertifikat aktivieren, Meta-Tags prüfen, Ladezeit optim
 
 ### 1. SSL-Zertifikat & HTTPS aktiv
 
-Grundlage bleibt grundlegend: Ohne HTTPS stuft Google deine Seite als unsicher ein. Prüfe außerdem, dass alle internen Links, Bilder und Skripte über HTTPS geladen werden – gemischte Inhalte (Mixed Content) blockieren moderne Browser und kosten dich Vertrauen.
+Die Basis bleibt Pflicht: Ohne HTTPS stuft Google deine Seite als unsicher ein. Prüfe außerdem, dass alle internen Links, Bilder und Skripte über HTTPS geladen werden – gemischte Inhalte (Mixed Content) blockieren moderne Browser und kosten dich Vertrauen.
 
 ### 2. BFSG-Konformität prüfen
 
@@ -126,4 +126,4 @@ Du willst den Launch lieber in erfahrene Hände geben? Dann schau dir unser [Wor
 
 ## Bereit für deinen Launch?
 
-Lade dir diese **WordPress Website Launch Checkliste** als PDF herunter und hake jeden Punkt systematisch ab – so kannst du deinen Launch mit einem guten Gefühl angehen. Hast du Fragen zu einem der Punkte oder brauchst du Unterstützung bei der Umsetzung? Schreib mir gerne in den Kommentaren oder [kontaktiere mich direkt](https://www.2fox4.de/kontakt/) – ich helfe dir, deine Website sauber und zukunftssicher an den Start zu bringen.
+Lade dir diese **WordPress Website Launch Checkliste** als PDF herunter und hake jeden Punkt systematisch ab – so kannst du deinen Launch mit einem guten Gefühl angehen. Hast du Fragen zu einem der Punkte oder brauchst du Unterstützung bei der Umsetzung? Schreib uns gerne oder [kontaktiere uns direkt](https://www.2fox4.de/kontakt/) – wir helfen dir, deine Website sauber und zukunftssicher an den Start zu bringen.

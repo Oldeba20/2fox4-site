@@ -230,7 +230,7 @@ export const cities: City[] = [
       },
       {
         question: "Bedient ihr auch Wunstorfer B2B-Mittelständler?",
-        answerHtml: `Klar — eine größere Hälfte unserer Wunstorf-Aufträge sind klassische B2B-Webseiten (Maschinenbau, Logistik, Beratung). Hier zählen andere Dinge als bei Tourismus: Case-Studies, Whitepaper-Downloads, Vertriebs-Funnels. Wir bauen beide Welten — und entscheiden gemeinsam mit dir, welcher Ansatz für dein Unternehmen passt.`,
+        answerHtml: `Klar — der größere Teil unserer Wunstorf-Aufträge sind klassische B2B-Webseiten (Maschinenbau, Logistik, Beratung). Hier zählen andere Dinge als bei Tourismus: Case-Studies, Whitepaper-Downloads, Vertriebs-Funnels. Wir bauen beide Welten — und entscheiden gemeinsam mit dir, welcher Ansatz für dein Unternehmen passt.`,
       },
     ],
   },
@@ -246,7 +246,7 @@ export const cities: City[] = [
     heroSub:
       "Websites und Onlineshops für die Rattenfänger-Stadt und das Weserbergland. Wir sind zwar 50 km entfernt — dafür mit echter Mittelstands-Erfahrung und einer Liebe zu detailverliebten Projekten. Termine vor Ort sind selbstverständlich möglich.",
     localContext:
-      "Hameln ist mit knapp 57.000 Einwohnern die größte Stadt im Weserbergland und zugleich Rattenfänger-Tourismus-Stadt Nummer eins: jährlich kommen Hunderttausende für Open-Air-Spiele, Altstadt-Bummel und Weserrundfahrt. Für Hotels, Gastronomen, Souvenir-Händler und Tagungs-Veranstalter heißt das: Sichtbarkeit auf Google Maps ist überlebenswichtig, weil 80 % der Besucher die Stadt erst auf der Anfahrt googeln. Daneben gibt's eine starke industrielle Basis (Continental, KSB), die regelmäßig B2B-Webdesign braucht — Karriereseiten, Produkt-Mikro-Sites, Investor-Relations.",
+      "Hameln ist mit knapp 57.000 Einwohnern die größte Stadt im Weserbergland und zugleich Rattenfänger-Tourismus-Stadt Nummer eins: jährlich kommen Hunderttausende für Open-Air-Spiele, Altstadt-Bummel und Weserrundfahrt. Für Hotels, Gastronomen, Souvenir-Händler und Tagungs-Veranstalter heißt das: Sichtbarkeit auf Google Maps ist überlebenswichtig, weil viele Besucher die Stadt erst auf der Anfahrt googeln. Daneben gibt's eine starke industrielle Basis (Continental, KSB), die regelmäßig B2B-Webdesign braucht — Karriereseiten, Produkt-Mikro-Sites, Investor-Relations.",
     localFAQs: [
       {
         question: "Warum eine Webagentur aus Sachsenhagen statt direkt aus Hameln?",
@@ -302,11 +302,11 @@ export const cities: City[] = [
     localFAQs: [
       {
         question: "Bedient ihr auch OWL-Unternehmen, obwohl ihr in Niedersachsen sitzt?",
-        answerHtml: `Genau dafür gibt's diese Seite. Wir sind selbst Niedersachsen, arbeiten aber häufig für OWL-Mittelständler — die Landesgrenze ist eine bürokratische Konstrukte, kein wirtschaftliches Hindernis. Wichtig zu wissen: BAFA-Beratungsförderung läuft bundesweit, da spielt es keine Rolle ob du in Bückeburg, Minden oder Bielefeld sitzt.`,
+        answerHtml: `Genau dafür gibt's diese Seite. Wir sind selbst Niedersachsen, arbeiten aber häufig für OWL-Mittelständler — die Landesgrenze ist ein bürokratisches Konstrukt, kein wirtschaftliches Hindernis. Wichtig zu wissen: BAFA-Beratungsförderung läuft bundesweit, da spielt es keine Rolle, ob du in Bückeburg, Minden oder Bielefeld sitzt.`,
       },
       {
         question: "Habt ihr Erfahrung mit Mindener Mittelständlern und Industrie-Kunden?",
-        answerHtml: `Ja. Mindener B2B-Mittelstand bedeutet meistens: technische Produkte, B2B-Vertriebszyklus, langfristige Kundenbeziehungen. Hier zählt eine Website, die Vertrieb unterstützt — Datenblätter, Case-Studies, Kontakt-Anfrage über klare Funnel, Karriere-Seiten für Fachkräfte-Rekrutierung. Klassisches „schicke Website“ reicht nicht.`,
+        answerHtml: `Ja. Mindener B2B-Mittelstand bedeutet meistens: technische Produkte, B2B-Vertriebszyklus, langfristige Kundenbeziehungen. Hier zählt eine Website, die Vertrieb unterstützt — Datenblätter, Case-Studies, Kontakt-Anfrage über klare Funnel, Karriere-Seiten für Fachkräfte-Rekrutierung. Eine bloß „schicke Website“ reicht nicht.`,
       },
     ],
   },
@@ -430,7 +430,7 @@ export const cities: City[] = [
     localFAQs: [
       {
         question: "Habt ihr Erfahrung mit B2B-Mittelständlern und Maschinenbau-Unternehmen aus Garbsen?",
-        answerHtml: `Ja — Garbsener B2B-Mittelstand bedeutet meistens: technische Produkte, lange Vertriebszyklen, Fachkräfte-Rekrutierung als zweite Säule. Hier zählt eine Website, die Vertrieb aktiv unterstützt — Produkt-Datenblätter, Case-Studies, Whitepaper-Downloads, klare Kontakt-Funnel und eine starke Karriere-Sektion. Reines „schicke Website“ greift in diesem Umfeld zu kurz. Wir bauen für Maschinenbau, Logistik und technische Dienstleister regelmäßig.`,
+        answerHtml: `Ja — Garbsener B2B-Mittelstand bedeutet meistens: technische Produkte, lange Vertriebszyklen, Fachkräfte-Rekrutierung als zweite Säule. Hier zählt eine Website, die Vertrieb aktiv unterstützt — Produkt-Datenblätter, Case-Studies, Whitepaper-Downloads, klare Kontakt-Funnel und eine starke Karriere-Sektion. Eine reine „schicke Website“ greift in diesem Umfeld zu kurz. Wir bauen für Maschinenbau, Logistik und technische Dienstleister regelmäßig.`,
       },
       {
         question: "Bedient ihr auch Spin-offs und Forschungs-Unternehmen vom PZH-Campus?",

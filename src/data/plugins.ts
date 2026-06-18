@@ -404,7 +404,7 @@ export const plugins: Plugin[] = [
       {
         iconSvg: `<rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/>`,
         title: "Block-Editor-Integration",
-        text: "Der Übersetze-Button sitzt direkt im Sidebar. Original und Übersetzung kannst du nebeneinander sehen.",
+        text: "Der Übersetze-Button sitzt direkt in der Sidebar. Original und Übersetzung kannst du nebeneinander sehen.",
       },
       {
         iconSvg: `<polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>`,

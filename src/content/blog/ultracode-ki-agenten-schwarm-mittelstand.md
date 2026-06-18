@@ -16,7 +16,7 @@ seoDescription: "Ultracode startet mit einer Anweisung bis zu 1.000 KI-Agenten, 
 
 Stell dir vor, du gibst am Abend eine einzige Anweisung ein, machst Feierabend – und am nächsten Morgen liegt ein komplettes Arbeitsergebnis fertig auf dem Tisch. Keine drei Stunden Fleißarbeit, keine zwanzig manuellen Einzelschritte. Genau das ist die Idee hinter **Ultracode**: einem neuen Modus, in dem nicht mehr nur ein KI-Assistent für dich arbeitet, sondern ein ganzer Schwarm aus KI-Agenten, der sich selbst organisiert und gegenseitig kontrolliert.
 
-Das klingt nach Zukunftsmusik, läuft aber heute schon. In diesem Beitrag erkläre ich dir verständlich, was Ultracode wirklich ist, zeige dir drei echte Praxis-Tests mit ihren Ergebnissen – und sage dir am Ende ehrlich, wann sich der Aufwand lohnt und wann du besser beim ganz normalen KI-Assistenten bleibst.
+Das klingt nach Zukunftsmusik, läuft aber heute schon. In diesem Beitrag erklären wir dir verständlich, was Ultracode wirklich ist, zeigen dir drei echte Praxis-Tests mit ihren Ergebnissen – und sage dir am Ende ehrlich, wann sich der Aufwand lohnt und wann du besser beim ganz normalen KI-Assistenten bleibst.
 
 > **Kurz gesagt:** Ultracode ist eine Einstellung im KI-Coding-Werkzeug *Claude Code* (Stand 2026 als Research Preview). Eine einzige Anweisung startet ein selbstorganisiertes Team aus bis zu **1.000 KI-Agenten**, von denen bis zu **16 gleichzeitig** arbeiten. Die Agenten planen die Aufgabe, zerlegen sie, erledigen die Teile parallel – und andere Agenten prüfen anschließend das Ergebnis. Für große oder gut zerlegbare Aufgaben ist das ein enormer Hebel; für kleine Einzelschritte ist es überdimensioniert und teuer.
 
@@ -52,9 +52,9 @@ Der eigentliche Clou steckt im letzten Punkt: Die KI prüft sich selbst. Sie sch
 
 ## Praxis-Test 1: Das digitale Startpaket über Nacht
 
-Um zu sehen, was tatsächlich dabei herauskommt, habe ich Ultracode mit einer bewusst großen Aufgabe gefüttert. Der Auftrag an den Agenten-Schwarm, in eigenen Worten: Erstelle für einen fiktiven Handwerksbetrieb ein komplettes digitales Startpaket – bestehend aus einer neuen Website, einer Marktanalyse, einem Marketingplan für die ersten 30 Tage, einem Kostenrechner für Kunden samt Angebots- und Rechnungsvorlagen sowie einem kurzen Werbespot zum Schluss.
+Um zu sehen, was tatsächlich dabei herauskommt, haben wir Ultracode mit einer bewusst großen Aufgabe gefüttert. Der Auftrag an den Agenten-Schwarm, in eigenen Worten: Erstelle für einen fiktiven Handwerksbetrieb ein komplettes digitales Startpaket – bestehend aus einer neuen Website, einer Marktanalyse, einem Marketingplan für die ersten 30 Tage, einem Kostenrechner für Kunden samt Angebots- und Rechnungsvorlagen sowie einem kurzen Werbespot zum Schluss.
 
-Das ist genau die Art von Aufgabe, die einen Menschen tagelang beschäftigen würde: sechs eigenständige Bausteine, jeder für sich ein kleines Projekt. „Über Nacht laufen lassen" war hier nötig gedacht – tatsächlich war der Schwarm aber schon nach knapp **20 Minuten** fertig. Das Ergebnis kann sich sehen lassen:
+Das ist genau die Art von Aufgabe, die einen Menschen tagelang beschäftigen würde: sechs eigenständige Bausteine, jeder für sich ein kleines Projekt. „Über Nacht laufen lassen" war hier eigentlich eingeplant – tatsächlich war der Schwarm aber schon nach knapp **20 Minuten** fertig. Das Ergebnis kann sich sehen lassen:
 
 - Eine komplette, scrollbare **Startseite** mit Hero-Bereich, Leistungen, einer Sektion mit Zahlen und Fakten sowie einem abschließenden Handlungsaufruf – inklusive **Unterseiten** für Leistungen und „Über uns" und sogar einem fertigen Impressum mit Datenschutzhinweisen.
 - Eine **Marktanalyse** mit Executive Summary, Einschätzung der stärksten Position, des größten Risikos und der wichtigsten Markttrends.

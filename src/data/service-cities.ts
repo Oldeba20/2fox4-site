@@ -164,7 +164,7 @@ export const serviceCities: ServiceCity[] = [
     faq: [
       {
         question: "Bedient ihr OWL-Unternehmen, obwohl ihr in Niedersachsen sitzt?",
-        answerHtml: `Ja — und das ist gerade ein Vorteil. Niedersachsen / NRW-Grenze ist eine bürokratische Konstrukte, keine wirtschaftliche. Wir kennen die Mindener Wirtschaft (Wasserstraßenkreuz, Verpackung, Maschinenbau) und können von Sachsenhagen aus auch persönliche Termine wahrnehmen. BAFA-Förderung läuft bundesweit, egal welches Bundesland.`,
+        answerHtml: `Ja — und das ist gerade ein Vorteil. Niedersachsen / NRW-Grenze ist ein bürokratisches Konstrukt, keine wirtschaftliche. Wir kennen die Mindener Wirtschaft (Wasserstraßenkreuz, Verpackung, Maschinenbau) und können von Sachsenhagen aus auch persönliche Termine wahrnehmen. BAFA-Förderung läuft bundesweit, egal welches Bundesland.`,
       },
       {
         question: "Welche Mindener Branchen sind aus SEO-Sicht besonders interessant?",

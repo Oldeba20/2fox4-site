@@ -126,7 +126,7 @@ Wer diesen Weg in den nächsten zwölf Monaten geht, wird nicht nur in klassisch
 
 ## Drei Einwände – und warum sie nicht stechen
 
-Wenn dieses Thema zur Sprache kommt, höre ich fast immer dieselben drei Einwände. Sie sind nachvollziehbar, halten aber einer nüchternen Betrachtung nicht stand.
+Wenn dieses Thema zur Sprache kommt, hören wir fast immer dieselben drei Einwände. Sie sind nachvollziehbar, halten aber einer nüchternen Betrachtung nicht stand.
 
 Der erste lautet: „Meine Kunden nutzen so etwas doch gar nicht." Das mag heute für einen Teil stimmen – aber die Frage ist nicht, was deine Kunden gestern getan haben, sondern was sie in zwölf bis vierundzwanzig Monaten tun werden. Wer erst reagiert, wenn die Einkaufsagenten flächendeckend da sind, hat den Vorsprung bereits verschenkt. Maschinenlesbarkeit ist kein Schalter, den man über Nacht umlegt; sie wächst mit jeder Seite, die du sauber strukturierst.
 

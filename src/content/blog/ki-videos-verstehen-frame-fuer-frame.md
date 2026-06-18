@@ -18,7 +18,7 @@ Ein KI-Assistent kann längst Texte schreiben, Code erzeugen und Webseiten durch
 
 Das ist ein echtes Problem. Denn oft steckt das Wichtige nicht in dem, was gesagt wird, sondern in dem, was gezeigt wird. Eine Tabelle, ein Diagramm, eine Animation, ein Klickweg in einer Software – das alles geht im reinen Transkript verloren. Genau diese Lücke schließt sich jetzt: Mit dem richtigen Werkzeug kann ein KI-Assistent Videos **Frame für Frame** verstehen. Und zwar nicht nur YouTube-Videos, sondern auch Bildschirmaufnahmen, Social-Media-Clips oder Aufnahmen, in denen überhaupt nicht gesprochen wird.
 
-In diesem Beitrag zeige ich dir, wie das funktioniert – und vor allem, wo es für dich und dein Unternehmen konkret nützlich wird.
+In diesem Beitrag zeigen wir dir, wie das funktioniert – und vor allem, wo es für dich und dein Unternehmen konkret nützlich wird.
 
 ![KI Videos verstehen – Frame für Frame statt nur Transkript](/uploads/blog/ki-videos-verstehen-frame-fuer-frame/01.webp)
 
