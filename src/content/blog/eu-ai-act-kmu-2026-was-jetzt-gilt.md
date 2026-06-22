@@ -14,7 +14,7 @@ seoTitle: "EU AI Act 2026: Pflichten für kleine Unternehmen einfach erklärt"
 seoDescription: "EU AI Act ab August 2026: Was für KMU wirklich gilt, was der Digital Omnibus verschoben hat, KI-Kompetenz- und Transparenzpflicht, Bußgelder und ein Handlungsplan in 6 Schritten. Mit Übersichtstabellen und FAQ."
 ---
 
-Kaum ein Thema sorgt im Mittelstand gerade für so viel Verunsicherung wie der EU AI Act. Die einen hören „ab August 2026 wird alles streng reguliert" und bekommen Panik. Die anderen lesen „die EU hat die Regeln verschoben" und haken das Thema ab. Beide liegen falsch – und beide Irrtümer kosten am Ende Geld.
+Kaum ein Thema sorgt im Mittelstand gerade für so viel Verunsicherung wie der EU AI Act. Die einen hören „ab August 2026 wird alles streng reguliert" und bekommen Panik. Die anderen lesen „die EU hat die Regeln verschoben" und haken das Thema ab. Beide liegen falsch. Der Panik-Macher verbrennt Zeit mit Pflichten, die ihn gar nicht treffen – der Abwinker übersieht zwei, die ihn sehr wohl treffen.
 
 In diesem Beitrag bekommst du einen klaren, aktuellen Überblick: Was der EU AI Act überhaupt regelt, was sich durch den sogenannten Digital Omnibus Ende 2025 geändert hat, welche Pflichten für kleine Unternehmen 2026 tatsächlich gelten und was du konkret tun solltest. Ohne Juristen-Kauderwelsch, dafür mit Tabellen, einer Checkliste und einem klaren Blick darauf, was für dich wirklich relevant ist.
 
@@ -74,7 +74,7 @@ Dies ist die Pflicht, die am häufigsten übersehen wird – und die für dein U
 
 Wichtig: Diese Pflicht gilt unabhängig von der Risikoklasse und unabhängig von der Unternehmensgröße. Sie ist bereits seit dem 2. Februar 2025 anwendbar. Sobald in deinem Betrieb jemand ChatGPT, einen KI-Chatbot oder ein KI-Tool im Marketing nutzt, bist du in der Pflicht.
 
-Was „ausreichende Kompetenz" bedeutet, ist nicht starr definiert – es hängt vom Kontext ab. Gemeint ist ein Grundverständnis davon, wie KI funktioniert, wo ihre Grenzen liegen, welche Risiken bestehen (etwa Falschinformationen oder Datenschutz) und wie man Ergebnisse kritisch prüft. Eine Marketingmitarbeiterin, die KI für Texte nutzt, braucht ein anderes Niveau als ein Entwickler, der KI-Systeme einbindet. Entscheidend ist in der Praxis: Du solltest dokumentieren können, dass deine Leute geschult wurden. Eine kurze interne Schulung plus eine schriftliche Richtlinie zum KI-Einsatz reichen für viele kleine Betriebe als solide Basis.
+Was „ausreichende Kompetenz" bedeutet, ist nicht starr definiert – es hängt vom Kontext ab. Gemeint ist ein Grundverständnis davon, wie KI funktioniert, wo ihre Grenzen liegen, welche Risiken bestehen (etwa Falschinformationen oder Datenschutz) und wie man Ergebnisse kritisch prüft. Eine Marketingmitarbeiterin, die KI für Texte nutzt, braucht ein anderes Niveau als ein Entwickler, der KI-Systeme einbindet. Entscheidend ist am Ende ein Satz: Kannst du belegen, dass deine Leute geschult wurden? Eine kurze interne Schulung plus eine schriftliche Richtlinie zum KI-Einsatz reichen vielen kleinen Betrieben als solide Basis.
 
 ## Transparenzpflicht ab August 2026: Chatbots, Deepfakes und KI-Texte kennzeichnen
 
@@ -90,7 +90,7 @@ Eine technische Detailregel: Die Pflicht zur maschinenlesbaren Kennzeichnung KI-
 
 ## Was bedeutet das konkret für kleine Unternehmen?
 
-Konkret heißt das für dich: Wenn du einen typischen kleinen Betrieb führst – Handwerk, Handel, Dienstleistung, lokale Agentur – und KI vor allem für Texte, Bilder, Kundenkommunikation oder Recherche nutzt, dann gilt für dich realistisch betrachtet:
+Übersetzt auf deinen Alltag: Wenn du einen typischen kleinen Betrieb führst – Handwerk, Handel, Dienstleistung, lokale Agentur – und KI vor allem für Texte, Bilder, Kundenkommunikation oder Recherche nutzt, dann gilt für dich realistisch betrachtet:
 
 Du musst keine aufwendige Hochrisiko-Dokumentation erstellen. Du musst aber zwei Dinge ernst nehmen: deine Mitarbeitenden im Umgang mit KI fit machen (Kompetenzpflicht) und überall dort kennzeichnen, wo Kunden mit KI interagieren oder KI-Inhalte sehen (Transparenzpflicht). Beides ist mit überschaubarem Aufwand machbar.
 
@@ -98,7 +98,7 @@ Spannend wird es nur, wenn du KI für Entscheidungen über Menschen einsetzt –
 
 ## AI Act und Datenschutz: zwei Themen, die zusammengehören
 
-Ein Punkt wird beim AI Act oft vergessen: Er ersetzt nicht den Datenschutz, sondern kommt obendrauf. Die DSGVO gilt für KI genauso wie für jede andere Datenverarbeitung. Gerade bei kleinen Unternehmen entsteht das größere Risiko häufig hier – nicht beim AI Act selbst.
+Und es gibt eine Falle, die viele übersehen – und die für kleine Betriebe oft gefährlicher ist als der AI Act selbst: der Datenschutz. Denn der AI Act ersetzt die DSGVO nicht, er kommt obendrauf. Die DSGVO gilt für KI genauso wie für jede andere Datenverarbeitung. Gerade bei kleinen Unternehmen entsteht das größere Risiko häufig hier.
 
 Das klassische Beispiel: Eine Mitarbeiterin kopiert Kundendaten, Angebote oder interne Dokumente in ein kostenloses KI-Tool, dessen Server in den USA stehen. Damit werden personenbezogene Daten an einen Dienst übermittelt, ohne dass ein Auftragsverarbeitungsvertrag besteht oder geprüft wurde, ob das Datenschutzniveau ausreicht. Das ist ein DSGVO-Problem, lange bevor der AI Act ins Spiel kommt.
 
@@ -114,7 +114,7 @@ Der AI Act sieht spürbare Bußgelder vor, gestaffelt nach Schwere des Verstoße
 | Verstoß gegen Hochrisiko- oder Transparenzpflichten | bis 15 Mio. € oder 3 % des weltweiten Jahresumsatzes |
 | Falsche Angaben gegenüber Behörden | bis 7,5 Mio. € oder 1 % des weltweiten Jahresumsatzes |
 
-Diese Zahlen klingen dramatisch und zielen vor allem auf große Anbieter. Für einen kleinen Betrieb ist das realistische Risiko weniger das Maximalbußgeld als vielmehr Abmahnungen, Imageschäden und Rechtsunsicherheit. Trotzdem gilt: Die Pflichten sind verbindlich, und die einfachen Grundregeln einzuhalten ist deutlich günstiger als jeder Streitfall.
+Mal ehrlich: 35 Millionen Euro zielen auf Tech-Konzerne, nicht auf deinen Drei-Mann-Betrieb. Dein realistisches Risiko heißt eher abgemahnter Chatbot ohne Hinweis, verärgerter Kunde, Unsicherheit im Team. Ärgerlich und vermeidbar. Trotzdem gilt: Die Pflichten sind verbindlich, und die einfachen Grundregeln einzuhalten ist deutlich günstiger als jeder Streit darum.
 
 ## Dein Handlungsplan in 6 Schritten
 
@@ -137,7 +137,7 @@ Das gehört bei uns zur [KI- und Digitalisierungsberatung](/leistungen/digitalis
 
 ## Fazit: ruhig bleiben, aber handeln
 
-Der EU AI Act ist kein Grund zur Panik – aber auch kein Thema zum Aussitzen. Die Hochrisiko-Pflichten wurden auf Dezember 2027 verschoben, die Grundpflichten gelten jedoch jetzt: KI-Kompetenz seit Februar 2025, Transparenz ab August 2026. Für die meisten kleinen Unternehmen ist das mit ein paar konkreten Schritten erledigt: Tools erfassen, Risiko einordnen, Team schulen, KI kennzeichnen, Richtlinie schreiben, dokumentieren. Wer das jetzt angeht, hat Rechtssicherheit und kann KI mit gutem Gewissen für sein Wachstum nutzen. [Sprich uns an](/kontakt/), dann gehen wir die Schritte gemeinsam durch.
+Der EU AI Act ist kein Grund zur Panik – aber auch kein Thema zum Aussitzen. Die Hochrisiko-Pflichten wurden auf Dezember 2027 verschoben, die Grundpflichten gelten jedoch jetzt: KI-Kompetenz seit Februar 2025, Transparenz ab August 2026. Für die meisten kleinen Unternehmen ist das mit ein paar konkreten Schritten erledigt: Tools erfassen, Risiko einordnen, Team schulen, KI kennzeichnen, Richtlinie schreiben, dokumentieren. Wer das jetzt angeht, hat Rechtssicherheit und kann KI mit gutem Gewissen für sein Wachstum nutzen. Der AI Act belohnt am Ende die, die ihn nicht ignoriert, aber auch nicht überdramatisiert haben – sondern einfach drangegangen sind.
 
 ## Häufige Fragen (FAQ)
 
