@@ -385,19 +385,25 @@ export const services: Service[] = [
   {
     slug: "digitalisierungsberatung",
     name: "KI- & Digitalisierungsberatung",
-    kicker: "Leistung · KI-Beratung für den Mittelstand",
-    seoTitle: "KI-Beratung für den Mittelstand — ehrlich, ohne Hype, BAFA-förderfähig | 2FOX4",
+    kicker: "Leistung · KI-Beratung & KI-Schulung",
+    seoTitle: "KI-Beratung & KI-Schulung für Mittelstand und Kommunen — BAFA-förderfähig | 2FOX4",
     seoDescription:
-      "KI-Beratung für KMU: Use-Case-Analyse, Prozessautomatisierung mit KI-Agenten, Tool-Auswahl und Schulungen. Ehrlich, ohne Hype, BAFA-förderfähig — aus Niedersachsen.",
+      "KI-Beratung und KI-Schulung für KMU und Kommunen: Use-Case-Analyse, Prozessautomatisierung, datenschutzkonformer KI-Einsatz nach DSGVO und Schulungen für alle Bereiche. Ehrlich, ohne Hype, BAFA-förderfähig — aus Niedersachsen.",
     heroTitleLine1: "KI im Mittelstand,",
     heroTitleLine2: "ohne Buzzword-Bingo.",
     heroSub:
-      "Wir kommen nicht mit einer 90-Minuten-Slideshow über disruptive Zukunftsvisionen. Wir setzen uns mit dir hin, schauen uns deine Prozesse an — und sagen ehrlich, wo dir KI heute schon Zeit und Geld spart und wo sie überflüssig ist. Von der Use-Case-Analyse über Automatisierung mit KI-Agenten bis zur Schulung deines Teams.",
+      "Wir kommen nicht mit einer 90-Minuten-Slideshow über disruptive Zukunftsvisionen. Wir setzen uns mit dir hin, schauen uns deine Prozesse an — und sagen ehrlich, wo dir KI heute schon Zeit und Geld spart und wo sie überflüssig ist. Egal ob du gerade erst anfängst oder schon erste Tools nutzt: Wir geben dir einen Fahrplan, der zu deinem Betrieb passt — von der ersten Analyse über die datenschutzkonforme Einführung bis zur KI-Schulung. Für Unternehmen jeder Größe und für Kommunen.",
     cardSummary:
-      "KI-Beratung für KMU: welche KI-Use-Cases sich wirklich lohnen, welche nicht. Automatisierung, Tool-Auswahl, Schulungen — BAFA-förderfähig.",
+      "KI-Beratung & KI-Schulung für KMU und Kommunen: welche Use-Cases sich lohnen, datenschutzkonformer Einsatz nach DSGVO, Automatisierung und Schulungen für alle Bereiche — BAFA-förderfähig.",
     iconSvg: `<path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>`,
-    tldr: `<strong>Kurz gesagt:</strong> Wir beraten kleine und mittlere Unternehmen dabei, Künstliche Intelligenz praktisch einzusetzen — in vier Schritten: <strong>(1) KI-Strategie &amp; Use-Case-Analyse</strong> (wo lohnt sich KI überhaupt?), <strong>(2) Prozessautomatisierung mit KI-Agenten</strong>, <strong>(3) Auswahl &amp; Einführung passender KI-Tools</strong> und <strong>(4) Schulungen für dein Team</strong>. Ehrlich statt Hype, mit ROI-Blick und in vielen Fällen <strong>BAFA-förderfähig</strong> (bis zu 80 % Zuschuss).`,
+    tldr: `<strong>Kurz gesagt:</strong> Wir beraten kleine und mittlere Unternehmen — und Kommunen — dabei, Künstliche Intelligenz praktisch und <strong>datenschutzkonform</strong> einzusetzen. Für Einsteiger gibt es einen klaren <strong>Fahrplan</strong>: <strong>(1) verstehen</strong>, was KI heute wirklich kann, <strong>(2) anwenden</strong>, wo sie im Betrieb konkret hilft, <strong>(3) absichern</strong>, was Datenschutz (DSGVO &amp; EU AI Act) verlangt, und <strong>(4) einführen</strong> — sicher in den Arbeitsalltag. Dazu <strong>KI-Schulungen für alle Bereiche — von Unternehmen bis Kommunen</strong>. Ehrlich statt Hype — wir schauen, was sich wirklich rechnet — und in vielen Fällen <strong>BAFA-förderfähig</strong> (bis zu 80 % Zuschuss).`,
     sections: [
+      {
+        eyebrow: "Neu bei KI? · Dein Fahrplan",
+        headline: "Dein Fahrplan in die KI — von der ersten Idee bis zum datenschutzkonformen Einsatz.",
+        body: `<p>Du musst kein KI-Experte werden, um KI sinnvoll zu nutzen — ein bisschen Orientierung reicht. Dieser Fahrplan zeigt dir, wie der Weg von „Davon habe ich gehört" zu „Das setzen wir im Alltag ein" konkret aussieht. Vier Etappen, in deinem Tempo:</p><p><strong>Etappe 1 — Verstehen: was KI heute wirklich kann (und was nicht).</strong> Wir zeigen dir am praktischen Beispiel, was hinter Begriffen wie ChatGPT, KI-Agenten und Automatisierung steckt — entzaubert und ehrlich. Du siehst, wo die Technik heute zuverlässig funktioniert (Texte, Recherche, Auswertungen, wiederkehrende Aufgaben) und wo sie noch Grenzen hat. So unterscheidest du Werbeversprechen von echter Substanz.</p><p><strong>Etappe 2 — Anwenden: wo KI in deinem Betrieb konkret hilft.</strong> Gemeinsam finden wir die Stellen, an denen KI dir heute schon Arbeit abnimmt: Angebote und E-Mails vorformulieren, Dokumente zusammenfassen, Anfragen beantworten, Daten aufbereiten, Inhalte erstellen. Statt einer allgemeinen Tool-Liste bekommst du Einsatzfelder, die zu deiner Branche und deinen Abläufen passen.</p><p><strong>Etappe 3 — Absichern: Datenschutz von Anfang an mitdenken.</strong> Genau hier scheitern viele KI-Projekte — oder kommen gar nicht erst in Gang. Wir klären, welche Daten überhaupt in ein KI-Tool dürfen, worauf es bei DSGVO und dem EU AI Act ankommt und warum „einfach ChatGPT mit Kundendaten füttern" keine gute Idee ist. Du erfährst, welche Werkzeuge sich in der EU datenschutzkonform betreiben lassen und wie ein sauberer Auftragsverarbeitungsvertrag dazugehört. Mehr dazu im Beitrag <a href="/blog/eu-ai-act-kmu-2026-was-jetzt-gilt/">EU AI Act für KMU</a>.</p><p><strong>Etappe 4 — Einführen: sicher in den Arbeitsalltag bringen.</strong> Zum Schluss bringen wir KI verlässlich in deinen Betrieb: klare interne Regeln, wer was nutzen darf, datenschutzkonforme Einrichtung (etwa mit EU-Hosting) und eine KI-Schulung, damit dein Team die neuen Werkzeuge richtig und sicher bedient. So wird aus einem Test ein fester Teil eurer Abläufe — ohne mulmiges Gefühl beim Datenschutz.</p>`,
+        layout: "stacked",
+      },
       {
         eyebrow: "Schritt 1 · Strategie",
         headline: "KI-Strategie & Use-Case-Analyse: Wo lohnt sich KI wirklich?",
@@ -426,12 +432,13 @@ export const services: Service[] = [
       },
       {
         eyebrow: "Schritt 4 · Befähigung",
-        headline: "Schulungen & Workshops für dein Team.",
-        body: `<p>Die beste KI nützt nichts, wenn sie niemand bedient. Deshalb befähigen wir dein Team in praxisnahen Workshops: <strong>KI-Grundlagen, sinnvolles Prompting, sichere und datenschutzkonforme Nutzung</strong> im Arbeitsalltag. Kein theoretischer Frontalunterricht, sondern an euren echten Aufgaben.</p>`,
+        headline: "KI-Schulungen für Teams, Unternehmen — und Kommunen.",
+        body: `<p>Die beste KI nützt nichts, wenn sie niemand bedient. Deshalb bieten wir <strong>KI-Schulungen</strong>, die genau dort ansetzen, wo dein Team gerade steht — vom ersten Kontakt bis zum souveränen Alltag. Kein theoretischer Frontalunterricht, sondern Training an euren echten Aufgaben: <strong>KI-Grundlagen, sinnvolles Prompting und vor allem die sichere, datenschutzkonforme Nutzung</strong>.</p><p>Wir schulen <strong>alle Bereiche</strong> — von Vertrieb und Marketing über Verwaltung und Buchhaltung bis zum Kundenservice. Für <strong>Kommunen und öffentliche Verwaltungen</strong> gehen wir gezielt auf die besonderen Anforderungen des öffentlichen Sektors ein: den Umgang mit Bürgerdaten, DSGVO im Amt und den verantwortungsvollen KI-Einsatz in der Verwaltung. Auf Wunsch begleiten wir euch dauerhaft, statt euch nach einem Termin allein zu lassen.</p>`,
         bullets: [
-          "Praxis-Workshops an euren echten Aufgaben",
-          "KI-Grundlagen & Prompting verständlich erklärt",
-          "Datenschutz & sichere Nutzung im Team",
+          "KI-Schulungen für alle Abteilungen und Vorkenntnisse",
+          "Spezielle Schulungen für Kommunen & öffentliche Verwaltung",
+          "Praxis-Training an euren echten Aufgaben",
+          "Schwerpunkt Datenschutz & sichere Nutzung (DSGVO)",
           "Auf Wunsch laufende Begleitung statt Einmal-Termin",
         ],
         layout: "split",
@@ -456,7 +463,15 @@ export const services: Service[] = [
       },
       {
         question: "Wie stellt ihr sicher, dass KI datenschutzkonform eingesetzt wird?",
-        answerHtml: `Wir wählen Tools und Hosting-Varianten so aus, dass sie DSGVO-konform betrieben werden können (z. B. EU-Hosting), und schulen dein Team im sicheren Umgang mit Unternehmensdaten. Datenschutz ist Teil jeder Use-Case-Bewertung — nicht ein nachträglicher Anbau.`,
+        answerHtml: `Wir wählen Tools und Hosting-Varianten so aus, dass sie DSGVO-konform betrieben werden können (z. B. EU-Hosting), und schulen dein Team im sicheren Umgang mit Unternehmensdaten. Datenschutz ist Teil jeder Use-Case-Bewertung — nicht ein nachträglicher Anbau. Worauf es rechtlich ankommt, fassen wir im Beitrag <a href="/blog/eu-ai-act-kmu-2026-was-jetzt-gilt/" class="text-[var(--color-accent)]">EU AI Act für KMU</a> zusammen.`,
+      },
+      {
+        question: "Was beinhaltet eine KI-Schulung?",
+        answerHtml: `Je nach Bedarf: KI-Grundlagen verständlich erklärt, sinnvolles Prompting, die Auswahl passender Tools und vor allem die datenschutzkonforme Nutzung im Arbeitsalltag. Wir üben an euren tatsächlichen Aufgaben statt an Beispielen von der Stange. KI-Schulungen sind als Einzeltermin oder als laufende Begleitung möglich und in vielen Fällen <a href="/leistungen/bafa-foerderung/" class="text-[var(--color-accent)]">BAFA-förderfähig</a>.`,
+      },
+      {
+        question: "Bietet ihr KI-Schulungen auch für Kommunen an?",
+        answerHtml: `Ja. Wir schulen Mitarbeitende in Kommunen und öffentlichen Verwaltungen praxisnah im sicheren Umgang mit KI — mit besonderem Blick auf Bürgerdaten und die Datenschutzpflichten im Amt. Inhalte und Tempo stimmen wir auf eure Ausgangslage ab; Vorkenntnisse sind nicht nötig.`,
       },
     ],
   },
