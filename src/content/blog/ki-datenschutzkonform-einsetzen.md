@@ -1,7 +1,7 @@
 ---
 title: "KI datenschutzkonform einsetzen: der Praxis-Fahrplan für Unternehmen"
 date: 2026-06-22
-description: "Wie du KI datenschutzkonform im Unternehmen einsetzt – verständlich erklärt: was KI heute kann, welche Daten in ein KI-Tool dürfen, was DSGVO und EU AI Act verlangen und ein Fahrplan in vier Etappen. Mit Datenschutz-Ampel, Vergleichstabelle und FAQ."
+description: "Wie du KI datenschutzkonform im Unternehmen einsetzt – verständlich erklärt: was KI heute kann, welche Daten in ein KI-Tool dürfen, was DSGVO und EU AI Act verlangen und ein Fahrplan in vier Etappen. Mit…"
 cover:
   src: "/uploads/blog/ki-datenschutzkonform-einsetzen/cover.webp"
   alt: "KI datenschutzkonform einsetzen – der Praxis-Fahrplan für Unternehmen und Kommunen"
