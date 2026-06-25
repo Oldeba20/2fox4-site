@@ -1,0 +1,241 @@
+---
+/**
+ * /ueber-uns/ — Team- & Vertrauensseite.
+ *
+ * Zeigt die beiden Köpfe hinter 2FOX4 (Vater & Sohn) mit kreisförmigen
+ * Foto-Cutouts. Ziel: E-E-A-T stärken, Vertrauen aufbauen, regionale Nähe
+ * betonen.
+ *
+ * WICHTIG — bewusste SEO-Asymmetrie:
+ *   - Oliver Deppe steht als crawlbarer Text + Person-Schema auf der Seite
+ *     (soll für seinen Namen ranken).
+ *   - Der zweite Kopf (Technik) wird NICHT als durchsuchbarer Text geführt.
+ *     Sein Name erscheint ausschließlich als Bild-Grafik
+ *     (`team-entwicklung-name.png`, alt leer / aria-hidden). Es gibt für ihn
+ *     bewusst KEIN Person-Schema, keine Meta-/Title-Nennung und keinen
+ *     sprechenden Dateinamen. So findet eine Namens-Suche bei Google diese
+ *     Seite nicht über ihn — die Seite selbst bleibt aber normal indexierbar.
+ */
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import CTASection from "../../components/CTASection.astro";
+import { breadcrumbSchema } from "../../lib/schema";
+import { site } from "../../data/site";
+
+const title = "Über uns · 2FOX4 — persönlich, regional, seit 2008";
+const description =
+  "Hinter 2FOX4 stehen keine anonyme Agentur, sondern zwei Menschen aus Schaumburg, die Websites als Handwerk verstehen. Lern das Team kennen, das deine Website baut und betreut.";
+
+const canonicalPath = "/ueber-uns/";
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "AboutPage",
+    name: "Über uns – 2FOX4",
+    url: new URL(canonicalPath, site.url).href,
+    description,
+    about: { "@id": `${site.url}/#organization` },
+    mainEntity: {
+      "@type": "Person",
+      name: "Oliver Deppe",
+      jobTitle: "Gründer & Geschäftsführer",
+      worksFor: { "@id": `${site.url}/#organization` },
+      image: `${site.url}/images/team/oliver-deppe.png`,
+    },
+  },
+  breadcrumbSchema([
+    { name: "Start", url: "/" },
+    { name: "Über uns", url: canonicalPath },
+  ]),
+];
+
+const werte = [
+  {
+    title: "Persönlich erreichbar",
+    text: "Du sprichst mit den Menschen, die deine Website auch wirklich bauen. Keine Hotline, keine Ticket-Nummer, kein Zuständigkeits-Pingpong.",
+  },
+  {
+    title: "Regional verwurzelt",
+    text: "Unser Sitz ist in Sachsenhagen, zu Hause sind wir in ganz Schaumburg und der Region Hannover — und per Videocall überall in Deutschland.",
+  },
+  {
+    title: "Verständlich statt Fachchinesisch",
+    text: "Wir erklären, was wir tun, in Worten, die ohne IT-Studium funktionieren. Du sollst verstehen, wofür du bezahlst.",
+  },
+  {
+    title: "Verlässlich nach dem Launch",
+    text: "Eine Website ist nie „fertig“. Wartung, Updates, Weiterentwicklung — wir bleiben an deiner Seite, lange nach dem Launch.",
+  },
+];
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonicalPath={canonicalPath}
+  schema={schema}
+>
+  <Breadcrumb
+    crumbs={[
+      { label: "Start", href: "/" },
+      { label: "Über uns", href: canonicalPath },
+    ]}
+  />
+
+  {/* ---------- Intro ---------- */}
+  <section class="relative overflow-hidden py-20 md:py-28">
+    <div class="hero-grid-bg"></div>
+    <div class="container-content relative">
+      <p class="mb-4 text-sm font-mono uppercase tracking-[0.2em] text-[var(--color-accent)]">
+        Über uns
+      </p>
+      <h1 class="max-w-[820px] text-[clamp(34px,5vw,56px)] font-bold leading-[1.06] tracking-[-0.03em]">
+        Zwei Köpfe, ein Anspruch:
+        <span class="text-gradient-accent">Websites, die wirklich zu dir passen.</span>
+      </h1>
+      <div class="mt-7 max-w-[680px] space-y-5 text-lg leading-relaxed text-[var(--color-text-muted)]">
+        <p>
+          Hinter 2FOX4 steht keine anonyme Agentur und kein Großraumbüro,
+          sondern zwei Menschen, die Websites als Handwerk verstehen: Vater
+          und Sohn. Seit 2008 bauen wir Auftritte für Unternehmen, Vereine und
+          Selbstständige in Schaumburg, der Region Hannover und weit darüber
+          hinaus — nah genug für einen Kaffee vor Ort, vernetzt genug für ganz
+          Deutschland.
+        </p>
+        <p>
+          Was unsere Kunden an uns schätzen, ist selten die Technik allein. Es
+          ist das Gefühl, dass jemand zuhört, mitdenkt und erreichbar bleibt —
+          auch dann noch, wenn die Seite längst live ist.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  {/* ---------- Team ---------- */}
+  <section class="py-10 md:py-16">
+    <div class="container-content">
+      <div class="grid gap-6 md:grid-cols-2">
+
+        {/* --- Oliver: crawlbarer Name + Schema --- */}
+        <article class="rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg-card)] p-8 md:p-10">
+          <div class="mb-6 flex items-center gap-5">
+            <div class="relative h-32 w-32 shrink-0 overflow-hidden rounded-full bg-[radial-gradient(circle_at_50%_30%,rgba(255,107,53,0.28),rgba(17,17,17,1)_72%)] ring-1 ring-[var(--color-border-strong)]">
+              <picture>
+                <source srcset="/images/team/oliver-deppe.webp" type="image/webp" />
+                <img
+                  src="/images/team/oliver-deppe.png"
+                  alt="Oliver Deppe, Gründer von 2FOX4"
+                  width="128"
+                  height="128"
+                  loading="lazy"
+                  class="h-full w-full object-cover object-top"
+                />
+              </picture>
+            </div>
+            <div>
+              <h2 class="text-2xl font-bold tracking-tight">Oliver Deppe</h2>
+              <p class="mt-1 text-sm font-medium text-[var(--color-accent)]">
+                Gründer · Strategie &amp; Beratung
+              </p>
+            </div>
+          </div>
+          <div class="space-y-4 text-[var(--color-text-muted)] leading-relaxed">
+            <p>
+              Oliver hat 2FOX4 gegründet und ist für die meisten Kunden das
+              erste Gesicht: Beratung, Konzept, Webdesign — und die Frage, die
+              am Anfang über allem steht: Was soll deine Website eigentlich für
+              dich erreichen?
+            </p>
+            <p>
+              Als IHK-geprüfter KI-Manager bringt er Digitalisierung und
+              Künstliche Intelligenz genau dorthin, wo sie kleinen und
+              mittleren Unternehmen wirklich helfen — in den Alltag, nicht in
+              die Hochglanz-Broschüre.
+            </p>
+          </div>
+        </article>
+
+        {/*
+          --- Technik: Name NUR als Bild ---
+          Bewusst kein <h2> mit Text-Namen, kein Schema, keine Namens-Nennung
+          im Fließtext. Die Grafik trägt aria-hidden + leeres alt, damit der
+          Name nicht über Alt-Text crawlbar wird.
+        */}
+        <article class="rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg-card)] p-8 md:p-10">
+          <div class="mb-6 flex items-center gap-5">
+            <div class="relative h-32 w-32 shrink-0 overflow-hidden rounded-full bg-[radial-gradient(circle_at_50%_30%,rgba(255,107,53,0.28),rgba(17,17,17,1)_72%)] ring-1 ring-[var(--color-border-strong)]">
+              <picture>
+                <source srcset="/images/team/team-entwicklung.webp" type="image/webp" />
+                <img
+                  src="/images/team/team-entwicklung.jpg"
+                  alt="Verantwortlich für Programmierung und Deploy-Management bei 2FOX4"
+                  width="128"
+                  height="128"
+                  loading="lazy"
+                  class="h-full w-full object-cover object-center"
+                />
+              </picture>
+            </div>
+            <div>
+              <img
+                src="/images/team/team-entwicklung-name.png"
+                alt=""
+                aria-hidden="true"
+                width="200"
+                height="30"
+                class="h-[26px] w-auto"
+              />
+              <p class="mt-2 text-sm font-medium text-[var(--color-accent)]">
+                Programmierung &amp; Deploy-Management
+              </p>
+            </div>
+          </div>
+          <div class="space-y-4 text-[var(--color-text-muted)] leading-relaxed">
+            <p>
+              Er übersetzt Konzepte in sauberen Code und sorgt dafür, dass jede
+              Seite schnell, sicher und zuverlässig online geht. Vom ersten
+              Commit bis zum reibungslosen Deployment laufen bei ihm die
+              technischen Fäden zusammen.
+            </p>
+            <p>
+              Das Ergebnis merkst du nicht an einzelnen Funktionen, sondern am
+              großen Ganzen: Es lädt schnell, es bleibt stabil, und es
+              funktioniert auch dann noch, wenn niemand hinschaut.
+            </p>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  {/* ---------- Werte ---------- */}
+  <section class="py-16 md:py-24">
+    <div class="container-content">
+      <h2 class="mb-3 text-[clamp(28px,4vw,40px)] font-bold tracking-[-0.02em]">
+        Worauf es bei uns ankommt
+      </h2>
+      <p class="mb-12 max-w-[620px] text-lg text-[var(--color-text-muted)]">
+        Technik ist die Voraussetzung — nicht das Versprechen. Das hier zählt
+        bei uns am Ende.
+      </p>
+      <div class="grid gap-6 sm:grid-cols-2">
+        {werte.map((w, i) => (
+          <div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-card)] p-7">
+            <span class="mb-4 inline-flex h-9 w-9 items-center justify-center rounded-lg bg-[var(--color-accent-soft)] font-mono text-sm font-bold text-[var(--color-accent)]">
+              {String(i + 1).padStart(2, "0")}
+            </span>
+            <h3 class="mb-2 text-lg font-semibold">{w.title}</h3>
+            <p class="text-[var(--color-text-muted)] leading-relaxed">{w.text}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <CTASection
+    title="Lern uns kennen."
+    text="Am einfachsten findest du heraus, ob wir zusammenpassen, in einem kurzen Gespräch. 30 Minuten, kostenlos, unverbindlich — und garantiert ohne Fachchinesisch."
+  />
+</BaseLayout>

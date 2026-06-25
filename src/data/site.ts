@@ -39,6 +39,7 @@ export const site = {
     { label: 'Regional', href: '/regional/' },
     { label: 'Plugins', href: '/wordpress-plugins/' },
     { label: 'Referenzen', href: '/referenzen/' },
+    { label: 'Über uns', href: '/ueber-uns/' },
     { label: 'Blog', href: '/blog/' },
     { label: 'Kontakt', href: '/kontakt/' },
   ],
@@ -70,6 +71,7 @@ export const site = {
       { label: 'Garbsen', href: '/webdesign-garbsen/' },
     ],
     pflicht: [
+      { label: 'Über uns', href: '/ueber-uns/' },
       { label: 'Impressum', href: '/impressum/' },
       { label: 'Datenschutz', href: '/datenschutz/' },
       { label: 'AGB', href: '/agb/' },

@@ -35,6 +35,7 @@ export const GET: APIRoute = async () => {
     { loc: "/preise/", changefreq: "monthly", priority: 0.85, lastmod: today },
     { loc: "/wordpress-plugins/", changefreq: "monthly", priority: 0.8, lastmod: today },
     { loc: "/referenzen/", changefreq: "monthly", priority: 0.7, lastmod: today },
+    { loc: "/ueber-uns/", changefreq: "yearly", priority: 0.6, lastmod: today },
     { loc: "/blog/", changefreq: "daily", priority: 0.8, lastmod: today },
     { loc: "/kontakt/", changefreq: "yearly", priority: 0.7, lastmod: today },
     { loc: "/barrierefreiheit/", changefreq: "yearly", priority: 0.4, lastmod: today }
