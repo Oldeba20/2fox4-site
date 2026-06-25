@@ -294,6 +294,7 @@ export const references: Reference[] = [
     date: "2024",
     title: "Natur Buddy",
     meta: "Shopware 6 · Onlineshop",
+    liveUrl: "https://natur-buddy.de",
   },
   {
     slug: "ergotherapeutin-trainerin",
