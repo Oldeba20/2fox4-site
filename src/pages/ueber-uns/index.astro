@@ -2,19 +2,19 @@
 /**
  * /ueber-uns/ — Team- & Vertrauensseite.
  *
- * Zeigt die beiden Köpfe hinter 2FOX4 (Vater & Sohn) mit kreisförmigen
- * Foto-Cutouts. Ziel: E-E-A-T stärken, Vertrauen aufbauen, regionale Nähe
- * betonen.
+ * Zeigt die drei Köpfe hinter 2FOX4 mit kreisförmigen Foto-Cutouts.
+ * Ziel: E-E-A-T stärken, Vertrauen aufbauen, regionale Nähe betonen.
  *
  * WICHTIG — bewusste SEO-Asymmetrie:
  *   - Oliver Deppe steht als crawlbarer Text + Person-Schema auf der Seite
  *     (soll für seinen Namen ranken).
- *   - Der zweite Kopf (Technik) wird NICHT als durchsuchbarer Text geführt.
- *     Sein Name erscheint ausschließlich als Bild-Grafik
- *     (`team-entwicklung-name.png`, alt leer / aria-hidden). Es gibt für ihn
- *     bewusst KEIN Person-Schema, keine Meta-/Title-Nennung und keinen
- *     sprechenden Dateinamen. So findet eine Namens-Suche bei Google diese
- *     Seite nicht über ihn — die Seite selbst bleibt aber normal indexierbar.
+ *   - Die beiden weiteren Köpfe (Technik & Gestaltung) werden NICHT als
+ *     durchsuchbarer Text geführt. Ihre Namen erscheinen ausschließlich als
+ *     Bild-Grafik (`team-entwicklung-name.png` bzw. `fiona-wachter-name.png`,
+ *     alt leer / aria-hidden). Für sie gibt es bewusst KEIN Person-Schema,
+ *     keine Meta-/Title-Nennung und keinen sprechenden Dateinamen. So findet
+ *     eine Namens-Suche bei Google diese Seite nicht über sie — die Seite
+ *     selbst bleibt aber normal indexierbar.
  */
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import Breadcrumb from "../../components/Breadcrumb.astro";
@@ -24,7 +24,7 @@ import { site } from "../../data/site";
 
 const title = "Über uns · 2FOX4 — persönlich, regional, seit 2008";
 const description =
-  "Hinter 2FOX4 stehen keine anonyme Agentur, sondern zwei Menschen aus Schaumburg, die Websites als Handwerk verstehen. Lern das Team kennen, das deine Website baut und betreut.";
+  "Hinter 2FOX4 steht keine anonyme Agentur, sondern ein kleines Team aus Schaumburg, das Websites als Handwerk versteht. Lern die Menschen kennen, die deine Website bauen, gestalten und betreuen.";
 
 const canonicalPath = "/ueber-uns/";
 
@@ -91,14 +91,15 @@ const werte = [
         Über uns
       </p>
       <h1 class="max-w-[820px] text-[clamp(34px,5vw,56px)] font-bold leading-[1.06] tracking-[-0.03em]">
-        Zwei Köpfe, ein Anspruch:
+        Drei Köpfe, ein Anspruch:
         <span class="text-gradient-accent">Websites, die wirklich zu dir passen.</span>
       </h1>
       <div class="mt-7 max-w-[680px] space-y-5 text-lg leading-relaxed text-[var(--color-text-muted)]">
         <p>
           Hinter 2FOX4 steht keine anonyme Agentur und kein Großraumbüro,
-          sondern zwei Menschen, die Websites als Handwerk verstehen: Vater
-          und Sohn. Seit 2008 bauen wir Auftritte für Unternehmen, Vereine und
+          sondern ein kleines Team, das Websites als Handwerk versteht: Vater
+          und Sohn, ergänzt um eine Mediengestalterin für das gestalterische
+          Auge. Seit 2008 bauen wir Auftritte für Unternehmen, Vereine und
           Selbstständige in Schaumburg, der Region Hannover und weit darüber
           hinaus — nah genug für einen Kaffee vor Ort, vernetzt genug für ganz
           Deutschland.
@@ -115,7 +116,7 @@ const werte = [
   {/* ---------- Team ---------- */}
   <section class="py-10 md:py-16">
     <div class="container-content">
-      <div class="grid gap-6 md:grid-cols-2">
+      <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
 
         {/* --- Oliver: crawlbarer Name + Schema --- */}
         <article class="rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg-card)] p-8 md:p-10">
@@ -202,6 +203,58 @@ const werte = [
               Das Ergebnis merkst du nicht an einzelnen Funktionen, sondern am
               großen Ganzen: Es lädt schnell, es bleibt stabil, und es
               funktioniert auch dann noch, wenn niemand hinschaut.
+            </p>
+          </div>
+        </article>
+
+        {/*
+          --- Gestaltung: Name NUR als Bild ---
+          Wie beim Technik-Kopf bewusst kein <h2> mit Text-Namen, kein Schema,
+          keine Namens-Nennung im Fließtext. Die Grafik trägt aria-hidden +
+          leeres alt, damit der Name nicht über Alt-Text crawlbar wird.
+        */}
+        <article class="rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg-card)] p-8 md:p-10">
+          <div class="mb-6 flex items-center gap-5">
+            <div class="relative h-32 w-32 shrink-0 overflow-hidden rounded-full bg-[radial-gradient(circle_at_50%_30%,rgba(255,107,53,0.28),rgba(17,17,17,1)_72%)] ring-1 ring-[var(--color-border-strong)]">
+              <picture>
+                <source srcset="/images/team/fiona-wachter.webp" type="image/webp" />
+                <img
+                  src="/images/team/fiona-wachter.png"
+                  alt="Verantwortlich für Design und Gestaltung bei 2FOX4"
+                  width="128"
+                  height="128"
+                  loading="lazy"
+                  class="h-full w-full object-cover object-top"
+                />
+              </picture>
+            </div>
+            <div>
+              <img
+                src="/images/team/fiona-wachter-name.png"
+                alt=""
+                aria-hidden="true"
+                width="200"
+                height="30"
+                class="h-[26px] w-auto"
+              />
+              <p class="mt-2 text-sm font-medium text-[var(--color-accent)]">
+                Mediengestalterin
+              </p>
+            </div>
+          </div>
+          <div class="space-y-4 text-[var(--color-text-muted)] leading-relaxed">
+            <p>
+              Als Designbeauftragte gibt sie jedem Projekt sein Gesicht: Layout,
+              Farbwelt, Bildsprache und der rote Faden, der eine Website von der
+              ersten bis zur letzten Seite zusammenhält. Sie sorgt dafür, dass
+              aus Technik und Inhalt am Ende ein Auftritt wird, den man gerne
+              ansieht.
+            </p>
+            <p>
+              Ihr Blick gilt den Details, die den Unterschied machen: stimmige
+              Typografie, klare Hierarchien und ein Gespür dafür, wie sich eine
+              Marke anfühlen soll. So entsteht Gestaltung, die nicht nur schön
+              aussieht, sondern deine Besucher führt.
             </p>
           </div>
         </article>
