@@ -1,21 +1,18 @@
 /**
  * Blog-Daten-Quelle (Hybrid).
  *
- * Posts kommen aus zwei Quellen, die zur Build-Zeit gemerged werden:
+ * MIGRATION ABGESCHLOSSEN (2026-06-26): Alle 125 historischen WordPress-Posts
+ * sind als Markdown nach src/content/blog/ migriert. `blog-cache.json` enthält
+ * jetzt KEINE Posts mehr (`posts: []`) — nur noch die Kategorien-Metadaten
+ * (id/description). WordPress wird als Datenquelle nicht mehr benötigt.
  *
- *   1) WP-Cache (blog-cache.json)
- *      → Die historischen Posts aus WordPress. Werden Schritt für Schritt
- *        nach Markdown migriert.
+ * Posts kommen jetzt aus EINER Quelle:
+ *   Astro Content Collection "blog" (src/content/blog/*.md)
+ *   → Pages CMS schreibt direkt hierhin; Bilder unter public/uploads/.
  *
- *   2) Astro Content Collection "blog" (src/content/blog/*.md)
- *      → Neue Posts, geschrieben über Pages CMS (oder direkt im Repo).
- *        Pages CMS legt Bilder unter public/uploads/blog/ ab.
- *
- * Merge-Regel: Bei Slug-Konflikt gewinnt die MD-Version (Migration-Pfad).
- * `draft: true` in MD-Frontmatter schließt den Post aus dem Build aus.
- *
- * Wenn ein Post in MD existiert, wird sein WP-Pendant ignoriert — so kann
- * man Posts einzeln migrieren, ohne URLs zu brechen oder Duplikate zu erzeugen.
+ * Der Merge mit blog-cache.json bleibt als harmlose No-Op bestehen (leerer
+ * posts-Array), damit getAllCategories die Kategorie-Beschreibungen behält.
+ * `draft: true` im MD-Frontmatter schließt den Post aus dem Build aus.
  */
 
 import blogCache from "../data/blog-cache.json";
