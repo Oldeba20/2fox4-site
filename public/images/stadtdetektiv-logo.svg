@@ -1,0 +1,54 @@
+<svg viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Stadtdetektiv">
+  <defs>
+    <style>
+      .ink{fill:#20304f}
+      .tan{fill:#cf7d3c}
+      .tanD{fill:#b3631e}
+      .glass{fill:#cfeafb}
+    </style>
+  </defs>
+
+  <!-- ================= HANDLE ================= -->
+  <g>
+    <line x1="156" y1="168" x2="222" y2="234" stroke="#20304f" stroke-width="30" stroke-linecap="round"/>
+    <line x1="180" y1="192" x2="222" y2="234" stroke="#b3631e" stroke-width="18" stroke-linecap="round"/>
+  </g>
+
+  <!-- ================= LENS ================= -->
+  <circle cx="110" cy="126" r="58" class="glass"/>
+  <!-- glass shine -->
+  <path d="M78 96 a58 58 0 0 0 -14 44" fill="none" stroke="#ffffff" stroke-width="9" stroke-linecap="round" opacity="0.85"/>
+  <path d="M92 92 a58 58 0 0 0 -22 26" fill="none" stroke="#ffffff" stroke-width="6" stroke-linecap="round" opacity="0.7"/>
+
+  <!-- eyebrow -->
+  <path d="M84 108 q20 -16 44 -4" fill="none" stroke="#20304f" stroke-width="10" stroke-linecap="round"/>
+  <!-- eye -->
+  <ellipse cx="106" cy="128" rx="26" ry="21" fill="#ffffff"/>
+  <ellipse cx="106" cy="128" rx="26" ry="21" fill="none" stroke="#20304f" stroke-width="5"/>
+  <circle cx="115" cy="133" r="11" class="ink"/>
+  <circle cx="111" cy="129" r="3.4" fill="#ffffff"/>
+  <!-- moustache (handlebar wink) -->
+  <path d="M82 158 q14 10 26 6 q12 -4 26 -6 q-10 12 -26 11 q-16 1 -26 -11 Z" class="ink"/>
+
+  <!-- lens ring on top of glass -->
+  <circle cx="110" cy="126" r="58" fill="none" stroke="#20304f" stroke-width="15"/>
+
+  <!-- ================= DEERSTALKER HAT ================= -->
+  <g>
+    <!-- brim -->
+    <ellipse cx="108" cy="70" rx="74" ry="15" class="tanD"/>
+    <ellipse cx="108" cy="67" rx="74" ry="14" class="tan"/>
+    <!-- dome -->
+    <path d="M52 70 Q50 22 108 20 Q166 22 164 70 Z" class="tan"/>
+    <path d="M52 70 Q50 22 108 20 Q166 22 164 70" fill="none" stroke="#20304f" stroke-width="6" stroke-linejoin="round"/>
+    <ellipse cx="108" cy="69" rx="74" ry="14" fill="none" stroke="#20304f" stroke-width="6"/>
+    <!-- top knob -->
+    <circle cx="108" cy="20" r="7" class="tanD"/>
+    <circle cx="108" cy="20" r="7" fill="none" stroke="#20304f" stroke-width="5"/>
+    <!-- tweed dots -->
+    <g fill="#7d4412" opacity="0.55">
+      <circle cx="86" cy="44" r="3"/><circle cx="108" cy="36" r="3"/><circle cx="130" cy="44" r="3"/>
+      <circle cx="74" cy="58" r="3"/><circle cx="97" cy="54" r="3"/><circle cx="120" cy="54" r="3"/><circle cx="143" cy="58" r="3"/>
+    </g>
+  </g>
+</svg>
