@@ -62,12 +62,11 @@ const impressumHtml = `
 </section>
 
 <section>
-  <h2>Umsatzsteuer</h2>
+  <h2>Umsatzsteuer-Identifikationsnummer</h2>
   <p>
-    Kleinunternehmer gemäß § 19 UStG. Es wird keine Umsatzsteuer ausgewiesen.
+    Umsatzsteuer-Identifikationsnummer gemäß § 27a Umsatzsteuergesetz:<br>
+    DE238491395
   </p>
-  <!-- TODO Oliver: Wenn du regelbesteuert bist, hier USt-IdNr eintragen und
-       diesen Hinweis entfernen. Beispiel: "USt-IdNr.: DE123456789". -->
 </section>
 
 <section>
@@ -517,9 +516,9 @@ const agbHtml = `
   <h2>6. Vergütung, Anzahlung, Fälligkeit</h2>
   <ol>
     <li>
-      Preise ergeben sich aus dem Angebot. Sofern 2FOX4 als
-      Kleinunternehmer im Sinne § 19 UStG handelt, wird keine
-      Umsatzsteuer ausgewiesen.
+      Preise ergeben sich aus dem Angebot. Sofern nicht anders
+      angegeben, verstehen sich Preise zzgl. der gesetzlichen
+      Umsatzsteuer.
     </li>
     <li>
       Zahlungsmodell: <strong>Anzahlung und Restzahlung</strong> gemäß
@@ -674,7 +673,7 @@ export const legalDocs: Record<LegalDoc["slug"], LegalDoc> = {
     slug: "impressum",
     title: "Impressum",
     kicker: "Pflichtangaben",
-    lastUpdated: "12. Mai 2026",
+    lastUpdated: "6. Juli 2026",
     html: impressumHtml,
   },
   datenschutz: {
@@ -688,7 +687,7 @@ export const legalDocs: Record<LegalDoc["slug"], LegalDoc> = {
     slug: "agb",
     title: "Allgemeine Geschäftsbedingungen",
     kicker: "Vertragsbedingungen B2B",
-    lastUpdated: "12. Mai 2026",
+    lastUpdated: "6. Juli 2026",
     html: agbHtml,
   },
 };
