@@ -418,6 +418,13 @@ const agbHtml = `
       damit verbundene Leistungen („Leistungen").
     </li>
     <li>
+      <strong>Nicht erfasst:</strong> Für digitale Stadtrallyes, die wir
+      unter der Marke „Stadtdetektiv" anbieten, gelten diese
+      Vertragsbedingungen nicht. Maßgeblich sind insoweit ausschließlich
+      die gesonderten AGB unter
+      <a href="https://stadtdetektiv.de/agb" target="_blank" rel="noopener">stadtdetektiv.de/agb</a>.
+    </li>
+    <li>
       <strong>Rangfolge:</strong> (1) individuelles Angebot inkl.
       Leistungsbeschreibung und Anlagen, (2) diese Vertragsbedingungen,
       (3) gesetzliche Regelungen.
