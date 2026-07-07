@@ -1,7 +1,7 @@
 ---
 title: "Sterben Webseiten aus? Warum deine KI-Sichtbarkeit jetzt über Kunden entscheidet"
 date: 2026-07-07
-description: "Immer mehr Kaufentscheidungen fallen in ChatGPT und Gemini, bevor jemand deine Website sieht. Wir zeigen dir, warum die klassische Seite an Bedeutung verliert und wie du mit einer maschinenlesbaren Wissensbasis in KI-Antworten sichtbar bleibst."
+description: "Immer mehr Kaufentscheidungen fallen in ChatGPT und Gemini, bevor jemand deine Website sieht. Warum die klassische Seite an Bedeutung verliert und wie du in KI-Antworten sichtbar bleibst."
 cover:
   src: "/uploads/blog/webseiten-sterben-ki-sichtbarkeit-wissensbasis-2026/cover.webp"
   alt: "KI-Sichtbarkeit statt klassischer Website – 2fox4-Grafik zur Verschiebung von der Webseite zur Wissensbasis"
@@ -11,7 +11,7 @@ categoryNames:
   - "SEO"
 draft: false
 seoTitle: "KI-Sichtbarkeit 2026: Wie du in ChatGPT & Gemini gefunden wirst"
-seoDescription: "Warum die klassische Website an Bedeutung verliert und wie du mit transparenten Preisen, KI-tauglicher Terminbuchung und einer maschinenlesbaren Wissensbasis in KI-Antworten sichtbar bleibst. Mit Vergleichstabelle und FAQ."
+seoDescription: "Warum die klassische Website an Bedeutung verliert und wie du mit transparenten Preisen, KI-tauglicher Terminbuchung und einer Wissensbasis in KI-Antworten sichtbar bleibst. Mit Vergleichstabelle und FAQ."
 ---
 
 Mach kurz einen Test, bevor du weiterliest. Nimm dein Handy, öffne ChatGPT oder Gemini und tippe ein, was du anbietest – Heizungsbau, Steuerberatung, Zahnarztpraxis, was auch immer dein Geschäft ausmacht. Und dann schau, wer empfohlen wird. Stehst du in der Antwort? Bei den meisten Betrieben lautet die Antwort: nein. Empfohlen werden drei, vier andere – und der Kunde hat seine Entscheidung schon getroffen, bevor er auch nur eine einzige Website gesehen hat.
