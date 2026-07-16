@@ -59,6 +59,16 @@ export interface Reference {
 
 export const references: Reference[] = [
   {
+    slug: "entdecke-stadthagen",
+    category: "websites",
+    domain: "entdecke-stadthagen.de",
+    image: "/images/referenzen/entdecke-stadthagen.jpg",
+    date: "2026",
+    title: "Entdecke Stadthagen",
+    meta: "Digitale Stadtrallye · Stadthagen",
+    liveUrl: "https://entdecke-stadthagen.de",
+  },
+  {
     slug: "liveperfekt",
     category: "websites",
     domain: "liveperfekt.de",
