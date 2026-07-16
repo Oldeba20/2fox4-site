@@ -101,12 +101,12 @@ export const references: Reference[] = [
   {
     slug: "friseursalon-leverkusen",
     category: "websites",
-    domain: "friseur-leverkusen.de",
+    domain: "friseursalon-leverkusen.de",
     image: "/images/referenzen/friseursalon-leverkusen.jpg",
     date: "2026",
     title: "Friseursalon Leverkusen",
     meta: "WordPress · Lokale Auffindbarkeit",
-    liveUrl: "https://friseur-leverkusen.de",
+    liveUrl: "https://friseursalon-leverkusen.de/",
   },
   {
     slug: "fake-tattoo-studio",
