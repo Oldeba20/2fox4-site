@@ -204,8 +204,19 @@ export const cities: City[] = [
     heroTitleLine2: "Bückeburg & die Residenz.",
     heroSub:
       "Wir bauen Websites, Onlineshops und SEO-Strategien für Unternehmen aus Bückeburg, dem Hofstaat und dem Schaumburger Land. Unser Büro liegt in Sachsenhagen — nur 18 km von der Schloss-Stadt entfernt. Persönlich, regional, mit langjähriger Erfahrung im Mittelstand.",
+    localRefs: [
+      {
+        url: "isolierklinker-zentral.de",
+        image: "/images/referenzen/isolierklinker-zentral.jpg",
+        href: "/referenzen/isolierklinker-zentral/",
+        tag: "Fassadensanierung · Bad Eilsen",
+        title: "Isolierklinker Zentralvertrieb Nord",
+        description:
+          "Relaunch für den Klinker-Spezialisten aus Bad Eilsen — von der Marktanalyse bis zur Fassadenvisualisierung.",
+      },
+    ],
     localContext:
-      "Bückeburg ist mit dem Schloss, der Hofreitschule und dem Hubschraubermuseum eine touristische Attraktion ersten Ranges — und gleichzeitig eine Wirtschaftsstadt mit über 19.000 Einwohnern. Das fürstliche Erbe der Linie Schaumburg-Lippe prägt das Stadtbild bis heute. Für Hotellerie, Gastronomie und Einzelhandel rund um die Schloss-Achse ist eine starke Online-Präsenz besonders wichtig: das Suchvolumen für „Bückeburg Hotel“, „Bückeburg Restaurant“ oder „Bückeburg Veranstaltung“ ist überraschend hoch, weil Touristen die Stadt gezielt ansteuern.",
+      "Bückeburg ist mit dem Schloss, der Hofreitschule und dem Hubschraubermuseum eine touristische Attraktion ersten Ranges — und gleichzeitig eine Wirtschaftsstadt mit über 19.000 Einwohnern. Das fürstliche Erbe der Linie Schaumburg-Lippe prägt das Stadtbild bis heute. Für Hotellerie, Gastronomie und Einzelhandel rund um die Schloss-Achse ist eine starke Online-Präsenz besonders wichtig: das Suchvolumen für „Bückeburg Hotel“, „Bückeburg Restaurant“ oder „Bückeburg Veranstaltung“ ist überraschend hoch, weil Touristen die Stadt gezielt ansteuern. Rund um Bückeburg liegen die kleinen Orte der Samtgemeinde Eilsen — Bad Eilsen, Ahnsen, Buchholz, Heeßen — deren Betriebe wirtschaftlich nach Bückeburg orientiert sind, im Netz aber oft unter dem eigenen Ortsnamen gesucht werden. Für die Isolierklinker Zentralvertrieb Nord GmbH aus Bad Eilsen haben wir genau das umgesetzt.",
     localFAQs: [
       {
         question: "Habt ihr Erfahrung mit Tourismus- und Schloss-bezogenen Websites in Bückeburg?",
@@ -280,6 +291,17 @@ export const cities: City[] = [
     heroTitleLine2: "Rinteln an der Weser.",
     heroSub:
       "Websites, SEO und WordPress-Service für Rintelner Unternehmen. Wir sitzen in Sachsenhagen, sind in 30 Minuten bei dir und kennen die Region wie unsere Westentasche. Persönliche Betreuung statt Großagentur-Anonymität.",
+    localRefs: [
+      {
+        url: "isolierklinker-zentral.de",
+        image: "/images/referenzen/isolierklinker-zentral.jpg",
+        href: "/referenzen/isolierklinker-zentral/",
+        tag: "Fassadensanierung · Bad Eilsen",
+        title: "Isolierklinker Zentralvertrieb Nord",
+        description:
+          "Relaunch für den Klinker-Spezialisten aus Bad Eilsen — von der Marktanalyse bis zur Fassadenvisualisierung.",
+      },
+    ],
     localContext:
       "Rinteln liegt malerisch zwischen Weser und Schaumburger Wald und gehört trotz der etwa 27.000 Einwohner administrativ noch zum Landkreis Schaumburg — wir sind hier also auf vertrautem Boden. Die Stadt lebt von einer Mischung aus traditionsreichem Handwerk, Tourismus an der Weser und einem überraschend regen kulturellen Leben (das Eulenspiegel-Brunnen-Fest, der Brückentor-Markt). Für Unternehmen heißt das: lokale Marktauftritte, klar regionale Außendarstellung, und ehrliche Schaumburger SEO-Strategie.",
     localFAQs: [
