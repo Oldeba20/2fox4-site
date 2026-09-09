@@ -130,9 +130,18 @@ export const cities: City[] = [
       "Stadthagen ist Kreisstadt des Landkreises Schaumburg mit rund 22.000 Einwohnern und Verwaltungssitz der Region. Die Innenstadt rund um den Marktplatz, das Renaissance-Schloss und die St.-Martini-Kirche bringt seit Jahren Tourismus + Einzelhandel zusammen — Branchen, in denen lokale Sichtbarkeit über Google Maps und gepflegte Website-Daten direkt umsatzwirksam ist. Industriell sind wir hier in Niedersachsens Bergbau-Geschichte: ehemalige Zechen, heute Maschinenbauer und Mittelständler. Wir kennen die Auftraggeber-Mentalität: bodenständig, ergebnisorientiert, ohne Buzzword-Geduld.",
     localRefs: [
       {
+        url: "entdecke-stadthagen.de",
+        image: "/images/referenzen/entdecke-stadthagen.jpg",
+        href: "/referenzen/entdecke-stadthagen/",
+        tag: "Digitale Stadtrallye · Stadthagen",
+        title: "Entdecke Stadthagen",
+        description:
+          "Rätsel-Rallye durch die Stadthagener Innenstadt — läuft im Browser, ganz ohne App.",
+      },
+      {
         url: "renaissance-stadthagen.de",
         image: "/images/referenzen/renaissance-stadthagen.jpg",
-        href: "/referenzen/renaissance-stadthagen/",
+        href: "/referenzen/",
         tag: "Vereins-Website · Stadthagen",
         title: "Renaissanceverein Stadthagen",
         description:
@@ -140,9 +149,8 @@ export const cities: City[] = [
       },
       {
         url: "tattoo-stadthagen.de",
-        image:
-          "https://www.2fox4.de/wp-content/uploads/2025/10/Tattoo-Studio-Stadthagen-Website.jpg",
-        href: "/referenzen/tattoo-studio-stadthagen/",
+        image: "/images/referenzen/tattoo-stadthagen.jpg",
+        href: "/referenzen/",
         tag: "Studio-Website · Stadthagen",
         title: "Tattoo- & Piercing Studio Stadthagen",
         description:
@@ -150,9 +158,8 @@ export const cities: City[] = [
       },
       {
         url: "sad-sicherheit.de",
-        image:
-          "https://www.2fox4.de/wp-content/uploads/2025/08/Website-SAD-Sicherheit-Referenz.png",
-        href: "/referenzen/schule-fuer-sicherheitsmitarbeiter/",
+        image: "/images/referenzen/sad-sicherheit.jpg",
+        href: "/referenzen/",
         tag: "Bildungs-Website · Stadthagen",
         title: "Schule für Sicherheitsmitarbeiter",
         description:
@@ -425,6 +432,17 @@ export const cities: City[] = [
     heroTitleLine2: "Garbsen & die Region Hannover.",
     heroSub:
       "Websites, Onlineshops und SEO-Strategien für Garbsener Unternehmen — vom Maschinenbau am Campus bis zum Handwerksbetrieb in Berenbostel. Unser Büro in Sachsenhagen liegt nur 22 km von Garbsen entfernt, A2-direkt. Persönlich, regional, mit langjähriger B2B-Erfahrung.",
+    localRefs: [
+      {
+        url: "msc-garbsen.de",
+        image: "/images/referenzen/msc-garbsen.jpg",
+        href: "/referenzen/",
+        tag: "Vereins-Website · Garbsen",
+        title: "Modellflugverein MSC-Garbsen",
+        description:
+          "Website für den Garbsener Modellflugverein — Termine, Platzordnung und Kontakt an einem Ort.",
+      },
+    ],
     localContext:
       "Garbsen ist mit rund 62.000 Einwohnern die größte Stadt in unserem Einzugsgebiet nach Minden und gleichzeitig eine der dynamischsten Wirtschaftsregionen rund um Hannover. Der Maschinenbau-Campus der Leibniz Universität (Produktionstechnisches Zentrum, PZH) macht Garbsen zu einem Hightech-Standort mit über 20 Forschungsinstituten und etlichen Spin-offs. Daneben prägen Logistik (Mittellandkanal-Anbindung, Nähe Hannover-Hafen), Maschinenbau-Mittelstand und ein starker Einzelhandel rund um den Garbsen-Center und Berenbostel das Stadtbild. Für Unternehmen heißt das: B2B-Webdesign mit klarem Kompetenzbeweis, Karriere-Seiten für Fachkräfte-Rekrutierung und SEO, das gegen Hannover-Wettbewerber besteht.",
     localFAQs: [

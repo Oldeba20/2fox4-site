@@ -44,7 +44,20 @@ const serviceSiblings = serviceCities.filter(
   (s) => s.slug !== sc.slug && s.slug.endsWith(`-${cityBase}`),
 );
 const webdesignSlug = `webdesign-${cityBase}`;
-const hasWebdesignPage = cities.some((c) => c.slug === webdesignSlug);
+const cityRecord = cities.find((c) => c.slug === webdesignSlug);
+const hasWebdesignPage = Boolean(cityRecord);
+
+// Lokales Signal (09.09.2026): Bis hierhin trugen auch die Service×Stadt-Seiten
+// die Geo-Meta-Tags von Sachsenhagen. Wo ein Stadt-Datensatz existiert, setzen
+// wir die echten Koordinaten der Stadt. Minden liegt als einzige Stadt in NRW.
+const cityGeo = cityRecord
+  ? {
+      latitude: cityRecord.geo.latitude,
+      longitude: cityRecord.geo.longitude,
+      placename: sc.city,
+      region: sc.city === "Minden" ? "DE-NW" : "DE-NI",
+    }
+  : undefined;
 
 const serviceTypeMap: Record<ServiceCity["service"], string> = {
   seo: "Search Engine Optimization",
@@ -77,6 +90,7 @@ const schema = [
   title={sc.seoTitle}
   description={sc.seoDescription}
   canonicalPath={`/${sc.slug}/`}
+  geo={cityGeo}
   noindex={false}
   schema={schema}
 >

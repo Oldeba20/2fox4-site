@@ -17,7 +17,7 @@ import NAPSection from "../components/NAPSection.astro";
 import CTASection from "../components/CTASection.astro";
 import { cities, faqFor, type City } from "../data/cities";
 import { serviceCities } from "../data/service-cities";
-import { localBusinessSchema, faqSchema, breadcrumbSchema } from "../lib/schema";
+import { localBusinessSchema, serviceSchema, faqSchema, breadcrumbSchema } from "../lib/schema";
 import { site } from "../data/site";
 
 export async function getStaticPaths() {
@@ -41,6 +41,20 @@ const cityBase = city.slug.replace(/^webdesign-/, "");
 const serviceSiblings = serviceCities.filter((sc) =>
   sc.slug.endsWith(`-${cityBase}`),
 );
+
+// Entkannibalisierung (09.09.2026, nach GSC-Analyse): Die Stadt-Seite trug
+// bisher starke „SEO <Stadt>"- und „WordPress <Stadt>"-Signale, ohne auf die
+// Spezialseiten zu verlinken — Ergebnis waren zwei eigene Seiten auf derselben
+// Suchanfrage (z. B. „seo agentur minden": /webdesign-minden Pos 44,1 UND
+// /seo-minden Pos 22,7). Die Leistungskarten verweisen jetzt mit Exact-Match-
+// Ankertext auf die zuständige Seite, damit Google die Hierarchie erkennt.
+const serviceLinks = serviceSiblings.map((sc) => ({
+  match: sc.service === "seo" ? `Lokale SEO für ${city.name}` : "WordPress-Webdesign",
+  href: `/${sc.slug}/`,
+  anchor: sc.service === "seo"
+    ? `Alles zu SEO ${city.name}`
+    : `Alles zu WordPress ${city.name}`,
+}));
 
 // Quick-Trust-Leiste für den Hero (Distanz, Erfahrung, Termine, Refs).
 // Bei distance.km === 0 (Heimsitz Sachsenhagen) wird der Distanz-Hinweis
@@ -102,13 +116,30 @@ const description = isHomeBase
   ? `Webdesign-Agentur direkt in Sachsenhagen: WordPress, SEO, Onlineshops. Persönlich, vor Ort, seit 2008. Über 125 Projekte. Jetzt Erstgespräch sichern.`
   : `Webdesign in ${city.name}: WordPress, SEO, Onlineshops. Lokale Agentur, persönlich, faire Preise. Seit 2008 mit über 125 Projekten. Jetzt anfragen.`;
 
-// JSON-LD Bundle: LocalBusiness + Breadcrumb + FAQPage
+// Minden liegt in NRW, alle anderen Städte in Niedersachsen. Für den
+// geo.region-Meta-Tag ist das der einzige Sonderfall im Datensatz.
+const geoRegion = city.name === "Minden" ? "DE-NW" : "DE-NI";
+
+// JSON-LD Bundle: LocalBusiness + Service + Breadcrumb + FAQPage
+// LocalBusiness behält bewusst die volle Servicegebiets-Liste (das ist die
+// Aussage über den Einzugsbereich). Neu ist das Service-Objekt: Es nennt genau
+// die Stadt, für die diese Seite gebaut ist — bis 09.09.2026 gab es auf
+// Stadt-Seiten überhaupt kein Service-Markup und damit kein Ortssignal
+// jenseits des Fließtexts.
 const schema = [
   localBusinessSchema({
     description: isHomeBase
       ? `Webdesign-Agentur mit Sitz in Sachsenhagen — Heimsitz Schaumburger Str. 21. Spezialisiert auf WordPress, SEO und Onlineshops.`
       : `Webdesign-Agentur mit Sitz in Sachsenhagen für Unternehmen in ${city.name} und der Region.`,
     image: city.localRefs?.[0]?.image,
+  }),
+  serviceSchema({
+    name: `Webdesign ${city.name}`,
+    description: `Websites, Onlineshops und Betreuung für Unternehmen in ${city.name}. Umsetzung aus Sachsenhagen, ${city.distance.km} km entfernt.`,
+    serviceType: "Webdesign",
+    slug: city.slug,
+    basePath: "/",
+    areaServed: [city.name],
   }),
   breadcrumbSchema([
     { name: "Start", url: "/" },
@@ -123,6 +154,12 @@ const schema = [
   title={title}
   description={description}
   canonicalPath={`/${city.slug}/`}
+  geo={{
+    latitude: city.geo.latitude,
+    longitude: city.geo.longitude,
+    placename: city.name,
+    region: geoRegion,
+  }}
   noindex={false}
   schema={schema}
 >
@@ -168,7 +205,7 @@ const schema = [
     reasons={reasons}
   />
 
-  <CityServices city={city.name} />
+  <CityServices city={city.name} serviceLinks={serviceLinks} />
 
   {serviceSiblings.length > 0 && (
     <section class="border-t border-[var(--color-border)] py-16">
@@ -177,7 +214,7 @@ const schema = [
           Spezialisiert für {city.name}
         </div>
         <h2 class="mb-8 max-w-[760px] text-[clamp(24px,3vw,36px)] font-bold tracking-[-0.02em] leading-[1.15]">
-          Mehr für {city.name}: Themenseiten im Detail.
+          {city.name} im Detail: SEO und WordPress auf eigenen Seiten.
         </h2>
         <div class="grid gap-4 md:grid-cols-2">
           {serviceSiblings.map((sc) => (
@@ -187,12 +224,12 @@ const schema = [
             >
               <div>
                 <h3 class="mb-1 text-[17px] font-semibold tracking-[-0.01em]">
-                  {sc.serviceName} {city.name}
+                  {sc.service === "seo" ? `SEO ${city.name}` : `WordPress ${city.name}`}
                 </h3>
                 <p class="text-sm leading-[1.6] text-[var(--color-text-muted)]">
                   {sc.service === "seo"
-                    ? `Lokale Suchmaschinenoptimierung für ${city.name} — gefunden werden, wo deine Kunden suchen.`
-                    : `WordPress-Entwicklung, Wartung & Support für Unternehmen in ${city.name}.`}
+                    ? `Suchmaschinenoptimierung für ${city.name}: lokale Rankings, Google Business Profile, technisches SEO. Die ausführliche Seite zur SEO-Agentur-Leistung in ${city.name}.`
+                    : `WordPress-Entwicklung, Wartung und Support für Unternehmen in ${city.name} — inklusive WooCommerce-Shops.`}
                 </p>
               </div>
               <svg class="h-5 w-5 flex-shrink-0 text-[var(--color-accent)] transition-transform group-hover:translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

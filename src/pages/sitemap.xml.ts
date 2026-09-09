@@ -17,7 +17,7 @@ import { services } from "../data/services";
 import { industries } from "../data/industries";
 import { serviceCities } from "../data/service-cities";
 import { plugins } from "../data/plugins";
-import { references } from "../data/references";
+import { references, featuredReferences } from "../data/references";
 import { legalList } from "../data/legal";
 import { getAllPosts, getAllCategories } from "../lib/wp";
 
@@ -98,6 +98,14 @@ export const GET: APIRoute = async () => {
   const serviceCitiesDate = gitDate("src/data/service-cities.ts");
   for (const sc of serviceCities) {
     entries.push({ loc: `/${sc.slug}/`, changefreq: "monthly", priority: 0.9, lastmod: serviceCitiesDate });
+  }
+
+  // Case-Study-Detailseiten (/referenzen/<slug>/) — nur featured + story.
+  // Ergänzt 09.09.2026: Die Seiten wurden gebaut, standen aber nicht in der
+  // Sitemap und waren damit für Google nur über die Übersichtsseite auffindbar.
+  const referencesDate = gitDate("src/data/references.ts");
+  for (const ref of featuredReferences()) {
+    entries.push({ loc: `/referenzen/${ref.slug}/`, changefreq: "yearly", priority: 0.7, lastmod: referencesDate });
   }
 
   // Plugins

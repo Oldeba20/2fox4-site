@@ -37,6 +37,11 @@ interface Props {
   noindex?: boolean;
   /** Optionales JSON-LD Schema (z. B. LocalBusiness, FAQPage) */
   schema?: Record<string, unknown> | Array<Record<string, unknown>>;
+  /** Optionaler Geo-Override für Stadt-Landingpages. Ohne diesen Wert trugen
+   *  ALLE Stadt-Seiten die Koordinaten von Sachsenhagen — für Google also
+   *  kein Ortsunterschied zwischen /webdesign-minden/ und /webdesign-hameln/.
+   *  Ergänzt 09.09.2026 als lokales Signal für die entfernteren Städte. */
+  geo?: { latitude: number; longitude: number; placename: string; region?: string };
 }
 
 const {
@@ -46,7 +51,13 @@ const {
   ogImage = site.ogImage,
   noindex = false,
   schema,
+  geo,
 } = Astro.props;
+
+const geoRegion = geo?.region ?? "DE-NI";
+const geoPlacename = geo?.placename ?? site.nap.city;
+const geoLat = geo?.latitude ?? site.geo.latitude;
+const geoLon = geo?.longitude ?? site.geo.longitude;
 
 const canonicalUrl = canonicalPath
   ? new URL(canonicalPath, site.url).href
@@ -82,10 +93,10 @@ const canonicalUrl = canonicalPath
     <meta name="twitter:image" content={new URL(ogImage, site.url).href} />
 
     {/* Geo-Meta (lokale SEO) */}
-    <meta name="geo.region" content="DE-NI" />
-    <meta name="geo.placename" content={site.nap.city} />
-    <meta name="geo.position" content={`${site.geo.latitude};${site.geo.longitude}`} />
-    <meta name="ICBM" content={`${site.geo.latitude}, ${site.geo.longitude}`} />
+    <meta name="geo.region" content={geoRegion} />
+    <meta name="geo.placename" content={geoPlacename} />
+    <meta name="geo.position" content={`${geoLat};${geoLon}`} />
+    <meta name="ICBM" content={`${geoLat}, ${geoLon}`} />
 
     {/* Schriften: lokal via @fontsource-variable (s. Frontmatter-Import).
         KEIN externes Laden von fonts.googleapis.com / fonts.gstatic.com mehr

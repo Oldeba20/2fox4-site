@@ -10,12 +10,26 @@ interface ServiceItem {
   text: string;
 }
 
+/** Optionale Vertiefungs-Links je Karte. Wenn eine Karte einen Link bekommt,
+ *  wird sie als <a> gerendert und trägt einen Exact-Match-Anker
+ *  (z. B. „SEO Minden"). Das ist die Entkannibalisierungs-Maßnahme: die
+ *  Stadt-Seite hört auf, selbst für „seo <stadt>" zu konkurrieren, und
+ *  reicht das Thema per eindeutigem internen Link an die Spezialseite weiter. */
+interface ServiceLink {
+  /** Titel der Karte, an die der Link gehängt wird (exakte Übereinstimmung) */
+  match: string;
+  href: string;
+  /** Ankertext, bewusst Exact-Match zum Ziel-Keyword */
+  anchor: string;
+}
+
 interface Props {
   city: string;
   eyebrow?: string;
   title?: string;
   sub?: string;
   services?: ServiceItem[];
+  serviceLinks?: ServiceLink[];
 }
 
 const {
@@ -58,8 +72,9 @@ const defaultServices: ServiceItem[] = [
   },
 ];
 
-const { services = defaultServices } = Astro.props;
+const { services = defaultServices, serviceLinks = [] } = Astro.props;
 const eyebrowText = eyebrow ?? `Leistungen für ${city}er Unternehmen`;
+const linkFor = (title: string) => serviceLinks.find((l) => l.match === title);
 ---
 
 <section id="leistungen" class="border-y border-[var(--color-border)] bg-[var(--color-bg-elevated)] py-24">
@@ -83,6 +98,17 @@ const eyebrowText = eyebrow ?? `Leistungen für ${city}er Unternehmen`;
           <div>
             <h4 class="mb-1 text-base font-semibold">{svc.title}</h4>
             <p class="text-sm leading-[1.6] text-[var(--color-text-muted)]">{svc.text}</p>
+            {linkFor(svc.title) && (
+              <a
+                href={linkFor(svc.title)!.href}
+                class="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-[var(--color-accent)] hover:underline"
+              >
+                {linkFor(svc.title)!.anchor}
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                  <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg>
+              </a>
+            )}
           </div>
         </div>
       ))}

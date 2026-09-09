@@ -69,6 +69,23 @@ export const references: Reference[] = [
     title: "Isolierklinker Zentralvertrieb Nord",
     meta: "Fassadensanierung & Klinker",
     liveUrl: "https://isolierklinker-zentral.de",
+    featured: true,
+    story: {
+      challenge:
+        "Der Zentralvertrieb Nord verkauft seit 1998 fundamentfreie Isolierklinker-Systeme — im Netz war davon wenig zu sehen. Die alte Baukasten-Seite tauchte bei keinem der zehn geprüften Suchbegriffe auf Seite 1 auf. Sogar beim eigenen Kernthema, dem Dämmen und Klinkern ohne neues Fundament, standen Wettbewerber vorn. Im Heimatmarkt Schaumburg rankte ausgerechnet die Impressumsseite, und für die Marke „Kess“ lag die Schwesterdomain kess-klinker.de vor der eigenen Seite.",
+      solution:
+        "Vor dem ersten Entwurf stand eine Marktanalyse: zehn Suchbegriffe, fünf Wettbewerber im 100-km-Umkreis, dazu die Rollenverteilung innerhalb der eigenen Marke. Daraus entstand die Struktur der Seite, bevor über Gestaltung gesprochen wurde: isolierklinker-zentral.de übernimmt klar die Rolle Vertrieb Nord, damit sich die beiden Domains nicht weiter gegenseitig Konkurrenz machen. Das Thema fundamentfrei bekam eine eigene Systemseite, dazu kamen lokale Landingpages mit echtem Ortsbezug und LocalBusiness-Markup. Ausgeliefert wird die Seite statisch — sie lädt schnell und ist vollständig indexierbar.",
+      outcome:
+        "Der Baukasten ist abgelöst, und das Kernthema fundamentfrei hat endlich eine Seite für sich. Dazu gehört eine Fassadenvisualisierung: Interessenten sehen ihr eigenes Haus im Wunschklinker, bevor sie anfragen.",
+      scope: [
+        "Marktanalyse & SEO-Konzept",
+        "Website-Relaunch",
+        "Lokale Landingpages",
+        "Strukturierte Daten",
+        "Fassadenvisualisierung",
+      ],
+      liveUrl: "https://isolierklinker-zentral.de",
+    },
   },
   {
     slug: "muckundpipp",
@@ -79,6 +96,22 @@ export const references: Reference[] = [
     title: "Muck & Pipp und das Mutfunkeln",
     meta: "Buch-Website & Kinderbuch",
     liveUrl: "https://muckundpipp.de",
+    featured: true,
+    story: {
+      challenge:
+        "Ein Bilderbuch, das erst am 1. November 2026 erscheint, und eine Autorin, die bis dahin sichtbar sein muss: Die Seite sollte tragen, obwohl es noch nichts zu kaufen gibt. Der Großteil der Besucher kommt über Social-Media-Reels — also von Menschen, die in wenigen Sekunden erkennen wollen, worum es geht.",
+      solution:
+        "Die Startseite erzählt das Buch, statt es zu bewerben: zwei Wesen, ein Junge, der sich vor dem Abschied fürchtet. Einen Shop-Link gibt es noch nicht, also stehen dort Erscheinungsdatum und ISBN. Wer erinnert werden möchte, öffnet mit einem Klick eine E-Mail — das erspart einen Newsletter-Dienst samt Einwilligungen und Vertrag. Das Begleitmaterial zum Vorlesen haben wir selbst entwickelt, Impressum und Datenschutz laufen auf die Autorin als Betreiberin. Die Reels, über die die Besucher kommen, entstehen ebenfalls bei uns.",
+      outcome:
+        "Die Seite ist seit Monaten online, lange vor dem Erscheinungstermin. Jedes Reel hat damit ein Ziel, auf das es verweisen kann.",
+      scope: [
+        "Webdesign",
+        "Buch-Landingpage",
+        "Social-Media-Reels",
+        "Rechtstexte & Datenschutz",
+      ],
+      liveUrl: "https://muckundpipp.de",
+    },
   },
   {
     slug: "entdecke-stadthagen",
@@ -89,6 +122,22 @@ export const references: Reference[] = [
     title: "Entdecke Stadthagen",
     meta: "Digitale Stadtrallye · Stadthagen",
     liveUrl: "https://entdecke-stadthagen.de",
+    featured: true,
+    story: {
+      challenge:
+        "Eine Stadtführung braucht einen Termin, einen Guide und eine Gruppe, die zur selben Zeit am selben Ort steht. Für Familien und Schulklassen, die spontan losziehen wollen, passt das selten. Die Idee: eine Rallye, die jederzeit startbar ist, ohne dass jemand vorher etwas installieren muss.",
+      solution:
+        "Für diese Rallye ist eine eigene Plattform entstanden: Stadtdetektiv. Sie läuft komplett im Browser — ohne App und ohne Konto. Die Spieler folgen einer Geschichte rund um Fürst Ernst durch die Stadthagener Innenstadt. An echten Orten lösen sie Rätsel und tragen die Lösungen am Handy ein. Gehostet wird in Deutschland, ohne Tracking der Teilnehmer.",
+      outcome:
+        "Die Plattform dahinter ist inzwischen ein eigenes Angebot. Kommunen können ihre eigene Rallye buchen, ohne selbst Technik aufzubauen.",
+      scope: [
+        "Konzept & Story",
+        "Plattform-Entwicklung",
+        "Mobile Web-App",
+        "Hosting in Deutschland",
+      ],
+      liveUrl: "https://entdecke-stadthagen.de",
+    },
   },
   {
     slug: "stadtdetektiv",
