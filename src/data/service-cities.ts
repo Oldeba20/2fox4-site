@@ -439,6 +439,142 @@ export const serviceCities: ServiceCity[] = [
     ],
   },
 
+
+  // ===================================================================
+  // SEO × HAMELN
+  // Angelegt 09.09.2026: 797 Impressionen in 90 Tagen auf SEO-Suchanfragen
+  // („seo hameln“, „seo agentur hameln“, „suchmaschinenoptimierung hameln“,
+  // „seo optimierung hameln“) landeten mangels eigener Seite auf
+  // /webdesign-hameln/ — einer Seite, die im Title Webdesign verspricht.
+  // ===================================================================
+  {
+    slug: "seo-hameln",
+    service: "seo",
+    serviceName: "SEO & lokale Auffindbarkeit",
+    city: "Hameln",
+    cityAdjective: "Hamelner",
+    distanceKm: 50,
+    heroEyebrow: "SEO Hameln · Weserbergland seit 2008",
+    heroTitleLine1: "SEO für Hameln",
+    heroTitleLine2: "und das Weserbergland.",
+    heroSub:
+      "Hameln ist die größte Stadt im Weserbergland — und ein Markt, in dem Tourismus und Industrie völlig unterschiedliche Suchen erzeugen. Ein Hotel an der Altstadt braucht etwas anderes als ein Zulieferer im Gewerbegebiet. Wir sortieren das, statt beiden dieselbe Maßnahmenliste zu verkaufen.",
+    seoTitle: "SEO Agentur Hameln: lokale Suchmaschinen-Optimierung",
+    seoDescription:
+      "SEO für Hameln: lokale Rankings, Google-Business-Profil, technisches SEO. Für Tourismus, Handel und Industrie im Weserbergland. BAFA-gefördert.",
+    sections: [
+      {
+        eyebrow: "Zwei Märkte in einer Stadt",
+        headline: "Der Tagesgast und der Einkäufer suchen nicht dasselbe.",
+        body: `<p>Hameln hat knapp 57.000 Einwohner und zwei Wirtschaftswelten, die sich im Suchverhalten kaum berühren. Auf der einen Seite der Rattenfänger-Tourismus: Besucher, die Hotel, Restaurant oder Ausflugsziel oft erst auf der Anfahrt googeln, meist mobil und über Google Maps. Auf der anderen Seite eine industrielle Basis mit Namen wie Continental und KSB, deren Zulieferer nach Produktbegriffen und Fachkräften gefunden werden müssen.</p>
+<p>Für die erste Gruppe entscheidet sich fast alles im lokalen Kartenpaket: Google-Business-Profil, Bewertungen, korrekte Öffnungszeiten, schnelle mobile Seite. Für die zweite zählt etwas anderes — Produktseiten, die die richtigen Fachbegriffe treffen, und eine Karriereseite, die bei „Techniker Hameln“ auftaucht.</p>`,
+        bullets: [
+          "Google-Business-Profil für Altstadt-Betriebe",
+          "Local-Pack-Optimierung Hameln + Weserbergland",
+          "Saison- und Event-Content (Open-Air, Festivals)",
+          "B2B-Produkt- und Karriereseiten für Zulieferer",
+          "Schema.org LocalBusiness + Service-Markup",
+          "Regionaler Backlink-Aufbau (Dewezet & Co.)",
+        ],
+      },
+      {
+        eyebrow: "Warum diese Seite existiert",
+        headline: "Weil die Suchen längst da waren — nur die passende Seite fehlte.",
+        body: `<p>Ein Blick in unsere eigene Search Console: In den letzten 90 Tagen entfielen rund 800 Einblendungen auf Hamelner SEO-Suchen — „seo hameln“, „seo agentur hameln“, „suchmaschinenoptimierung hameln“. Wer daraufhin klickte, landete auf unserer Webdesign-Seite für Hameln. Und wer nach SEO sucht und eine Webdesign-Überschrift sieht, klickt weiter.</p>
+<p>Das ist übrigens genau die Diagnose, die wir auch für Kunden stellen: Nicht fehlende Sichtbarkeit ist das Problem, sondern eine Seite, die etwas anderes verspricht als das, wonach gesucht wurde. Bei uns selbst haben wir es jetzt korrigiert.</p>`,
+      },
+    ],
+    faq: [
+      {
+        question: "Warum eine SEO-Agentur aus Sachsenhagen und nicht aus Hameln?",
+        answerHtml: `Ehrliche Antwort: Wegen der Anfahrt gibt es Argumente für eine Hamelner Agentur. Unsere: Wir arbeiten seit 2008 regelmäßig für Betriebe im Weserbergland, wir kalkulieren ohne Agentur-Overhead, und du sprichst direkt mit dem Menschen, der die Arbeit macht. Vor-Ort-Termine legen wir auf Tagesblöcke — bei 50 Minuten Fahrt lohnt sich das für beide mehr als halbstündige Häppchen.`,
+      },
+      {
+        question: "Welche Hamelner Branchen profitieren am meisten von lokaler SEO?",
+        answerHtml: `Am deutlichsten <strong>Hotellerie und Gastronomie</strong> in und um die Altstadt — dort entscheidet das lokale Drei-Pack über den Tisch am Abend. Dahinter <strong>Handwerk und SHK</strong> mit ihren „in der Nähe“-Suchen, <strong>Heilberufe</strong> mit Online-Terminbuchung und <strong>Einzelhandel</strong> mit Tagesgast-Laufkundschaft. Industrielle Zulieferer profitieren weniger davon, dafür stark von Produkt- und Karriere-Rankings.`,
+      },
+      {
+        question: "Was kostet SEO für ein Hamelner Unternehmen?",
+        answerHtml: `Audit und Maßnahmenplan: <strong>800 € netto</strong> einmalig. Laufende Betreuung ab <strong>200 € / Monat</strong>. Projekte mit mehrsprachigem Content oder Karriereseiten liegen meist bei <strong>400-600 € / Monat</strong>. Über die BAFA-Beratungsförderung sind je nach Fördergebiet und Unternehmensalter bis zu 80 % erstattungsfähig, sofern der Antrag bewilligt wird — den stellen wir für dich.`,
+      },
+      {
+        question: "Wie lange dauert es, bis ich in Hameln vorne stehe?",
+        answerHtml: `Hameln ist kein leichter Markt — mehr Betriebe als in Rinteln oder Bückeburg heißen auch mehr Wettbewerb um dieselben Begriffe. Bei klar lokalen Begriffen haben wir Top-5-Platzierungen meist nach 4 bis 8 Monaten erreicht, vorausgesetzt Google-Business-Profil und technische Basis stimmen. Bei stark umkämpften Begriffen dauert es länger. Garantien gibt es bei uns nicht, weil seriöse SEO sie nicht halten kann.`,
+      },
+      {
+        question: "Übernehmt ihr auch das Google-Business-Profil?",
+        answerHtml: `Ja, auf Wunsch komplett: Einrichtung oder Übernahme, Kategorien, Leistungen, Fotos, Öffnungszeiten inklusive Feiertagen, Beiträge und die Antworten auf Bewertungen. Gerade bei Tourismus-Betrieben in Hameln wirkt das meist schneller als alles, was auf der Website passiert.`,
+      },
+    ],
+  },
+
+  // ===================================================================
+  // WORDPRESS × HAMELN
+  // Angelegt 09.09.2026: „wordpress hameln“ stand bereits auf Pos 3,8 und
+  // „wordpress experte hameln“ auf 4,5 — ohne eigene Seite, allein über
+  // /webdesign-hameln/. Die Nachfrage ist da und die Konkurrenz dünn.
+  // ===================================================================
+  {
+    slug: "wordpress-hameln",
+    service: "wordpress",
+    serviceName: "WordPress-Entwicklung & Service",
+    city: "Hameln",
+    cityAdjective: "Hamelner",
+    distanceKm: 50,
+    heroEyebrow: "WordPress Hameln · seit 2008",
+    heroTitleLine1: "WordPress für Hameln",
+    heroTitleLine2: "— gebaut, gewartet, repariert.",
+    heroSub:
+      "Ob neue Website, geerbtes Projekt vom Vorgänger oder eine Seite, die nach einem Update nicht mehr läuft: Wir arbeiten seit 2008 mit WordPress und übernehmen auch Installationen, die wir nicht selbst gebaut haben. Für Hameln und das Weserbergland.",
+    seoTitle: "WordPress Hameln: Entwicklung, Wartung und Support",
+    seoDescription:
+      "WordPress für Hameln: individuelle Themes, Wartung, Sicherheits-Updates und Rettung übernommener Projekte. Seit 2008, persönlich erreichbar.",
+    sections: [
+      {
+        eyebrow: "Was wir in Hameln übernehmen",
+        headline: "Auch dann, wenn jemand anderes angefangen hat.",
+        body: `<p>Ein großer Teil unserer WordPress-Arbeit besteht nicht aus Neubauten, sondern aus Übernahmen: Die Agentur ist nicht mehr erreichbar, niemand weiß mehr, wofür die Hälfte der Plugins da ist, oder nach dem letzten Update ist die Startseite weiß. Wir sichten solche Installationen erst einmal in Ruhe — was am Geschäft hängt und was ein Sicherheitsrisiko ist — und sagen ehrlich, ob Reparatur oder Neubau günstiger ist. In Hameln reicht die Bandbreite dabei vom Gastro- und Hotelauftritt in der Altstadt mit Buchungsanbindung bis zum Zulieferer im Gewerbegebiet, der einen eigenen Karrierebereich braucht.</p>
+<p>Bei Neubauten arbeiten wir in der Regel ohne schwere Pagebuilder. Das spart Code, den niemand braucht, und du bleibst unabhängig: Alles gehört dir, es gibt keine Lizenz, die dich an uns bindet, und keinen Export, der beim Anbieterwechsel zerbricht.</p>`,
+        bullets: [
+          "Individuelle Themes statt Baukasten-Theme",
+          "Wartungsverträge mit Updates, Backups, Monitoring",
+          "Übernahme und Aufräumen bestehender Installationen",
+          "WooCommerce-Shops für Handel und Manufakturen",
+          "Reparatur nach Update-Problemen und Hacks",
+          "Einweisung, damit du selbst pflegen kannst",
+        ],
+      },
+      {
+        eyebrow: "Was im Wartungsvertrag steht",
+        headline: "Was in einem Wartungsvertrag steckt — und was nicht.",
+        body: `<p>WordPress-Wartung wird gern als Pauschale verkauft, hinter der niemand nachschaut. Bei uns steht drin, was tatsächlich passiert: Core-, Theme- und Plugin-Updates, jeweils nach Backup. Wiederherstellung, wenn ein Update etwas kaputt macht. Erreichbarkeits-Monitoring und regelmäßige Sicherheitsprüfung. Und ein Ansprechpartner, wenn etwas klemmt.</p>
+<p>Was nicht drinsteht: unbegrenzte Inhaltspflege. Kleine Textänderungen machen wir nebenbei, größere Umbauten rechnen wir nach Aufwand ab. Bei einer Pauschale zahlt am Ende einer von uns beiden drauf.</p>`,
+      },
+    ],
+    faq: [
+      {
+        question: "Übernehmt ihr eine WordPress-Seite, die jemand anderes gebaut hat?",
+        answerHtml: `Ja, das ist sogar ein häufiger Fall. Wir schauen uns die Installation erst an: Welche Plugins laufen, wie aktuell sind Core und Theme, gibt es ein Backup, wo wird gehostet. Danach bekommst du eine Einschätzung mit Zahlen. Faustregel: Wenn Theme und die Hälfte der Plugins nicht mehr gepflegt werden, ist der Neubau billiger als das Aufräumen. Das sagen wir dann auch, statt monatelang an einer verbauten Installation zu verdienen.`,
+      },
+      {
+        question: "Meine Seite ist nach einem Update kaputt. Wie schnell könnt ihr helfen?",
+        answerHtml: `Melde dich telefonisch, dann schauen wir meist noch am selben oder am nächsten Werktag drauf — das geht per Fernzugriff, dafür müssen wir die 50 Minuten nach Hameln nicht fahren. Wenn ein Backup existiert, ist die Seite oft in kurzer Zeit wieder online, und die eigentliche Ursachensuche läuft danach in Ruhe. Ohne Backup wird es aufwendiger — das ist auch der Grund, warum in jedem unserer Wartungsverträge eines steckt.`,
+      },
+      {
+        question: "Was kostet WordPress-Wartung für ein Hamelner Unternehmen?",
+        answerHtml: `Die Wartung beginnt bei <strong>30 € netto / Monat</strong> für eine überschaubare Website und liegt bei Shops und größeren Seiten höher, weil mehr Technik zu überwachen ist. Eine neue WordPress-Website liegt typischerweise zwischen <strong>1.500 € und 5.000 € netto</strong>, WooCommerce-Shops ab <strong>2.500 € netto</strong>. Vorher gibt es ein kostenloses Erstgespräch und eine transparente Kalkulation.`,
+      },
+      {
+        question: "Kann ich Inhalte danach selbst pflegen?",
+        answerHtml: `Ja, genau dafür bauen wir die Seiten so. Nach dem Launch bekommst du eine Einweisung und kurze Videoanleitungen für die Stellen, die du regelmäßig anfasst. Wer keine Zeit dafür hat, gibt uns die Pflege ab — auf Stundenbasis oder als Pauschale. Beides ist möglich, du musst dich nicht vorher festlegen.`,
+      },
+      {
+        question: "Warum kein Pagebuilder wie Elementor oder Divi?",
+        answerHtml: `Pagebuilder sind bequem beim Bauen und teuer im Betrieb: Sie laden viel zusätzlichen Code, verlangsamen die Seite und binden die Inhalte an ihr eigenes Format — beim Wechsel bleiben oft nur Shortcode-Reste und unformatierter Text übrig. Für Seiten, die jemand ohne Technikkenntnisse selbst umbauen will, setzen wir sie trotzdem ein. Es ist eine Abwägung, keine Glaubensfrage, und wir besprechen sie vorher mit dir.`,
+      },
+    ],
+  },
+
   // ===================================================================
   // SEO × RINTELN
   // ===================================================================
@@ -449,12 +585,12 @@ export const serviceCities: ServiceCity[] = [
     city: "Rinteln",
     cityAdjective: "Rintelner",
     distanceKm: 30,
-    heroEyebrow: "SEO Rinteln · Weserbergland seit 2008",
+    heroEyebrow: "SEO Agentur Rinteln · Weserbergland seit 2008",
     heroTitleLine1: "SEO für Rinteln",
     heroTitleLine2: "und das Weserbergland.",
     heroSub:
       "Rintelner Unternehmen suchen lokale SEO-Partner — die meisten Agenturen sitzen in Hameln, Hannover oder Bielefeld und kennen den Rintelner Markt nur vom Vorbeifahren. Wir sind 30 km entfernt in Sachsenhagen, kennen das Weserbergland und bauen SEO, die für Rintelner Kunden funktioniert, nicht für ein Agentur-Portfolio.",
-    seoTitle: "SEO Rinteln: Suchmaschinenoptimierung im Weserbergland",
+    seoTitle: "SEO Agentur Rinteln: lokale Suchmaschinen-Optimierung",
     seoDescription:
       "Suchmaschinenoptimierung für Rinteln: lokale Rankings, Google Business, technische SEO. Persönlich, aus dem Weserbergland, seit 2008. BAFA-gefördert ab 800 € netto.",
     sections: [
@@ -490,7 +626,7 @@ export const serviceCities: ServiceCity[] = [
       },
       {
         question: "Was kostet SEO für ein Rintelner Unternehmen?",
-        answerHtml: `Audit + Maßnahmenplan: <strong>800 € netto</strong> einmalig. Laufende Betreuung ab <strong>200 € / Monat</strong>. Über die BAFA-Förderung „Unternehmerische Know-how“ sind bis zu 80 % der Beratung erstattungsfähig — den Antrag machen wir für dich.`,
+        answerHtml: `Audit + Maßnahmenplan: <strong>800 € netto</strong> einmalig. Laufende Betreuung ab <strong>200 € / Monat</strong>. Über die BAFA-Förderung „Förderung unternehmerischen Know-hows“ sind bis zu 80 % der Beratung erstattungsfähig — den Antrag machen wir für dich.`,
       },
       {
         question: "Wie lange dauert es, bis ich in Rinteln vorne stehe?",
