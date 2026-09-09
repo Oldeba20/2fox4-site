@@ -287,6 +287,27 @@ html.a11y-high-contrast *:focus-visible {
   cursor: default;
 }
 
+/* Flächendeckender Link für klickbare Karten („stretched link").
+ * Liegt über der ganzen Karte, damit sie sich wie ein Link anfühlt, ohne dass
+ * ein <a> um den Slot herum steht — im Slot stecken eigene Links (z. B.
+ * „Live ansehen"), und verschachtelte Anchor sind ungültiges HTML. */
+.monitor-card__link {
+  position: absolute;
+  inset: 0;
+  z-index: 25;
+  border-radius: 14px;
+}
+.monitor-card__link:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 4px;
+}
+/* Alles, was im Slot selbst anklickbar ist, muss über dem Overlay liegen. */
+.monitor-card .info a,
+.monitor-card .info button {
+  position: relative;
+  z-index: 26;
+}
+
 .monitor-card .monitor {
   position: relative;
   background: #1c1c1e;
