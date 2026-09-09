@@ -59,6 +59,26 @@ export interface Reference {
 
 export const references: Reference[] = [
   {
+    slug: "isolierklinker-zentral",
+    category: "websites",
+    domain: "isolierklinker-zentral.de",
+    image: "/images/referenzen/isolierklinker-zentral.jpg",
+    date: "2026",
+    title: "Isolierklinker Zentralvertrieb Nord",
+    meta: "Astro · Fassadensanierung & Klinker",
+    liveUrl: "https://isolierklinker-zentral.de",
+  },
+  {
+    slug: "muckundpipp",
+    category: "websites",
+    domain: "muckundpipp.de",
+    image: "/images/referenzen/muckundpipp.jpg",
+    date: "2026",
+    title: "Muck & Pipp und das Mutfunkeln",
+    meta: "Astro · Buch-Website & Kinderbuch",
+    liveUrl: "https://muckundpipp.de",
+  },
+  {
     slug: "entdecke-stadthagen",
     category: "websites",
     domain: "entdecke-stadthagen.de",
