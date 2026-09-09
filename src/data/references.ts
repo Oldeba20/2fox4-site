@@ -89,6 +89,16 @@ export const references: Reference[] = [
     liveUrl: "https://entdecke-stadthagen.de",
   },
   {
+    slug: "stadtdetektiv",
+    category: "websites",
+    domain: "stadtdetektiv.de",
+    image: "/images/referenzen/stadtdetektiv.jpg",
+    date: "2026",
+    title: "Stadtdetektiv",
+    meta: "Astro · Digitale Stadtrallyes",
+    liveUrl: "https://stadtdetektiv.de",
+  },
+  {
     slug: "liveperfekt",
     category: "websites",
     domain: "liveperfekt.de",
