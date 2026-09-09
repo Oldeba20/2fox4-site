@@ -45,7 +45,9 @@ export interface Reference {
   date: string;
   /** Anzeige-Titel */
   title: string;
-  /** Untertext z. B. "WordPress · Beratung & Coaching" */
+  /** Untertext: Branche/Thema, z. B. "Beratung & Coaching".
+   *  Bei Websites bewusst OHNE Technik-Nennung (kein Astro/WordPress/Custom Build).
+   *  Bei Onlineshops bleibt das Shopsystem drin, z. B. "Shopware 6 · Onlineshop". */
   meta: string;
   /** Wenn true: Detail-Seite wird generiert, Karte ist klickbar. Sonst Schaufenster-Tile. */
   featured?: boolean;
@@ -65,7 +67,7 @@ export const references: Reference[] = [
     image: "/images/referenzen/isolierklinker-zentral.jpg",
     date: "2026",
     title: "Isolierklinker Zentralvertrieb Nord",
-    meta: "Astro · Fassadensanierung & Klinker",
+    meta: "Fassadensanierung & Klinker",
     liveUrl: "https://isolierklinker-zentral.de",
   },
   {
@@ -75,7 +77,7 @@ export const references: Reference[] = [
     image: "/images/referenzen/muckundpipp.jpg",
     date: "2026",
     title: "Muck & Pipp und das Mutfunkeln",
-    meta: "Astro · Buch-Website & Kinderbuch",
+    meta: "Buch-Website & Kinderbuch",
     liveUrl: "https://muckundpipp.de",
   },
   {
@@ -95,7 +97,7 @@ export const references: Reference[] = [
     image: "/images/referenzen/stadtdetektiv.jpg",
     date: "2026",
     title: "Stadtdetektiv",
-    meta: "Astro · Digitale Stadtrallyes",
+    meta: "Digitale Stadtrallyes",
     liveUrl: "https://stadtdetektiv.de",
   },
   {
@@ -115,7 +117,7 @@ export const references: Reference[] = [
     image: "/images/referenzen/yogaeule.jpg",
     date: "2026",
     title: "Yogaeule",
-    meta: "WordPress · Yoga & Coaching",
+    meta: "Yoga & Coaching",
     liveUrl: "https://yogaeule.de",
   },
   {
@@ -125,7 +127,7 @@ export const references: Reference[] = [
     image: "/images/referenzen/events-stadthagen.jpg",
     date: "2026",
     title: "Events Stadthagen",
-    meta: "Astro · Veranstaltungs-Portal Schaumburg",
+    meta: "Veranstaltungs-Portal Schaumburg",
     liveUrl: "https://events-stadthagen.de",
   },
   {
@@ -135,7 +137,7 @@ export const references: Reference[] = [
     image: "/images/referenzen/systemische-beratung.jpg",
     date: "2026",
     title: "Systemische Beratung",
-    meta: "WordPress · Beratung & Coaching",
+    meta: "Beratung & Coaching",
     liveUrl: "https://systemische-beratung.de",
   },
   {
@@ -145,7 +147,7 @@ export const references: Reference[] = [
     image: "/images/referenzen/friseursalon-leverkusen.jpg",
     date: "2026",
     title: "Friseursalon Leverkusen",
-    meta: "WordPress · Lokale Auffindbarkeit",
+    meta: "Lokale Auffindbarkeit",
     liveUrl: "https://friseursalon-leverkusen.de/",
   },
   {
@@ -165,7 +167,7 @@ export const references: Reference[] = [
     image: "/images/referenzen/blackskull-tattoo.jpg",
     date: "2026",
     title: "Tattoo- & Piercing Studio Magdeburg",
-    meta: "WordPress · Studio-Website",
+    meta: "Studio-Website",
     liveUrl: "https://blackskull-tattoo.de",
   },
   {
@@ -175,7 +177,7 @@ export const references: Reference[] = [
     image: "/images/referenzen/pc-service-schaumburg.jpg",
     date: "2026",
     title: "PC-Service Schaumburg",
-    meta: "WordPress · IT-Dienstleister",
+    meta: "IT-Dienstleister",
     liveUrl: "https://pc-service-aus-schaumburg.de",
   },
   {
@@ -185,7 +187,7 @@ export const references: Reference[] = [
     image: "/images/referenzen/basianer.jpg",
     date: "2026",
     title: "Deutsche Gesellschaft für basisches Leben",
-    meta: "WordPress · Vereins-Website",
+    meta: "Vereins-Website",
     liveUrl: "https://basianer.de",
   },
   {
@@ -195,7 +197,7 @@ export const references: Reference[] = [
     image: "/images/referenzen/blitzzscale.jpg",
     date: "2025",
     title: "Blitzzscale — KI-Vertrieb",
-    meta: "Custom Build · KI-Automation",
+    meta: "KI-Automation",
     liveUrl: "https://blitzzscale.com",
   },
   {
@@ -205,7 +207,7 @@ export const references: Reference[] = [
     image: "/images/referenzen/tattoo-stadthagen.jpg",
     date: "2025",
     title: "Tattoo Studio Stadthagen",
-    meta: "WordPress · Studio-Website",
+    meta: "Studio-Website",
     liveUrl: "https://tattoo-stadthagen.de",
   },
   {
@@ -215,7 +217,7 @@ export const references: Reference[] = [
     image: "/images/referenzen/sad-sicherheit.jpg",
     date: "2025",
     title: "Schule für Sicherheitsmitarbeiter",
-    meta: "WordPress · Bildung",
+    meta: "Bildung",
     liveUrl: "https://sad-sicherheit.de",
   },
   {
@@ -225,7 +227,7 @@ export const references: Reference[] = [
     image: "/images/referenzen/healthy-horizons.jpg",
     date: "2025",
     title: "Entspannungs-Trainerin",
-    meta: "WordPress · Coaching",
+    meta: "Coaching",
   },
   {
     slug: "renaissance-stadthagen",
@@ -234,7 +236,7 @@ export const references: Reference[] = [
     image: "/images/referenzen/renaissance-stadthagen.jpg",
     date: "2025",
     title: "Renaissanceverein Stadthagen",
-    meta: "WordPress · Vereins-Website",
+    meta: "Vereins-Website",
   },
   {
     slug: "bauunternehmen-gebah",
@@ -243,7 +245,7 @@ export const references: Reference[] = [
     image: "/images/referenzen/gebah.jpg",
     date: "2025",
     title: "Bauunternehmen",
-    meta: "WordPress · Handwerk",
+    meta: "Handwerk",
   },
   {
     slug: "verfahrensbeistand",
@@ -252,7 +254,7 @@ export const references: Reference[] = [
     image: "/images/referenzen/verfahrensbeistand.jpg",
     date: "2025",
     title: "Verfahrensbeistand",
-    meta: "WordPress · Recht",
+    meta: "Recht",
   },
   {
     slug: "unternehmensberatung-suk",
@@ -261,7 +263,7 @@ export const references: Reference[] = [
     image: "/images/referenzen/suk-beratung.jpg",
     date: "2025",
     title: "Unternehmensberatung",
-    meta: "WordPress · Beratung",
+    meta: "Beratung",
   },
   {
     slug: "freie-rednerin",
@@ -270,7 +272,7 @@ export const references: Reference[] = [
     image: "/images/referenzen/freie-rednerin.jpg",
     date: "2025",
     title: "Freie Rednerin",
-    meta: "WordPress · Persönliche Marke",
+    meta: "Persönliche Marke",
   },
   {
     slug: "malerbetrieb-hannover",
@@ -279,7 +281,7 @@ export const references: Reference[] = [
     image: "/images/referenzen/haumgestaltung-hannover.jpg",
     date: "2025",
     title: "Malerbetrieb Hannover",
-    meta: "WordPress · Handwerk",
+    meta: "Handwerk",
   },
   {
     slug: "tiergesundheit",
@@ -288,7 +290,7 @@ export const references: Reference[] = [
     image: "/images/referenzen/tiergesundheit.jpg",
     date: "2025",
     title: "Tiergesundheit",
-    meta: "WordPress · Gesundheit",
+    meta: "Gesundheit",
   },
   {
     slug: "thc-abbau-rechner",
@@ -297,7 +299,7 @@ export const references: Reference[] = [
     image: "/images/referenzen/thc-abbau-rechner.jpg",
     date: "2025",
     title: "THC-Abbau-Rechner",
-    meta: "Custom Tool · Web-App",
+    meta: "Web-App",
   },
   {
     slug: "primus-natura",
@@ -315,7 +317,7 @@ export const references: Reference[] = [
     image: "/images/referenzen/gildenpage.jpg",
     date: "2025",
     title: "Gaming Clan Website",
-    meta: "WordPress · Community",
+    meta: "Community",
   },
   {
     slug: "ki-partei",
@@ -324,7 +326,7 @@ export const references: Reference[] = [
     image: "/images/referenzen/ki-partei.jpg",
     date: "2025",
     title: "KI-Partei",
-    meta: "WordPress · Politik & KI",
+    meta: "Politik & KI",
   },
   {
     slug: "natur-buddy",
@@ -343,7 +345,7 @@ export const references: Reference[] = [
     image: "/images/referenzen/alena-schoessler.jpg",
     date: "2024",
     title: "Alena Schößler — Lerntherapie",
-    meta: "WordPress · Therapie",
+    meta: "Therapie",
   },
   {
     slug: "psychologischer-coach",
@@ -352,7 +354,7 @@ export const references: Reference[] = [
     image: "/images/referenzen/for-your-life.jpg",
     date: "2024",
     title: "Psychologischer Coach",
-    meta: "WordPress · Coaching",
+    meta: "Coaching",
   },
   {
     slug: "watercoach",
@@ -361,7 +363,7 @@ export const references: Reference[] = [
     image: "/images/referenzen/watercoach-1.jpg",
     date: "2024",
     title: "Watercoach — Wasserfilter",
-    meta: "WordPress · Produkt-Website",
+    meta: "Produkt-Website",
   },
   {
     slug: "tarifakademie",
@@ -370,7 +372,7 @@ export const references: Reference[] = [
     image: "/images/referenzen/tarifakademie-2.jpg",
     date: "2024",
     title: "Tarifakademie",
-    meta: "WordPress · Bildung",
+    meta: "Bildung",
   },
   {
     slug: "moringa-deutschland",
@@ -397,7 +399,7 @@ export const references: Reference[] = [
     image: "/images/referenzen/msc-garbsen.jpg",
     date: "2024",
     title: "Modelflugverein MSC-Garbsen",
-    meta: "WordPress · Vereins-Website",
+    meta: "Vereins-Website",
   },
   {
     slug: "vital-engel",
@@ -406,7 +408,7 @@ export const references: Reference[] = [
     image: "/images/referenzen/vital-engel.jpg",
     date: "2024",
     title: "Vital Engel — Nahrungsergänzung",
-    meta: "WordPress · Produkt-Website",
+    meta: "Produkt-Website",
   },
   {
     slug: "tiergesundheit-ratgeber",
@@ -415,7 +417,7 @@ export const references: Reference[] = [
     image: "/images/referenzen/tiergesundheit-ratgeber.jpg",
     date: "2024",
     title: "Tiergesundheit Ratgeber",
-    meta: "WordPress · Content-Hub",
+    meta: "Content-Hub",
   },
   {
     slug: "cafe-xs",
@@ -424,7 +426,7 @@ export const references: Reference[] = [
     image: "/images/referenzen/cafe-xs.jpg",
     date: "2022",
     title: "Cafe XS",
-    meta: "WordPress · Gastronomie",
+    meta: "Gastronomie",
   },
   {
     slug: "saba-getoepfert",
@@ -451,7 +453,7 @@ export const references: Reference[] = [
     image: "/images/referenzen/q-bautrocknung.jpg",
     date: "2022",
     title: "Bautrocknung-Unternehmen",
-    meta: "WordPress · Handwerk",
+    meta: "Handwerk",
   },
   {
     slug: "keim-ade",
@@ -460,7 +462,7 @@ export const references: Reference[] = [
     image: "/images/referenzen/keim-ade-referenz.jpg",
     date: "2022",
     title: "Keim Ade — Oberflächendesinfektion",
-    meta: "WordPress · Produkt-Website",
+    meta: "Produkt-Website",
   },
 ];
 
