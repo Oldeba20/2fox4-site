@@ -26,11 +26,28 @@ interface Props {
   variant?: "compact" | "default";
   /** Optional: Mobil-Screenshot für das Smartphone-Mockup unten rechts. */
   mobileImage?: string;
+  /** sizes-Attribut fürs Smartphone-Bild. Default passt zur Referenz-Übersicht
+   *  (3 Spalten); die Detailseite übergibt einen größeren Wert. */
+  phoneSizes?: string;
 }
 
-const { url, image, alt, href, variant = "default", mobileImage } = Astro.props;
+const {
+  url,
+  image,
+  alt,
+  href,
+  variant = "default",
+  mobileImage,
+  phoneSizes = "(min-width: 1024px) 95px, (min-width: 640px) 80px, 85px",
+} = Astro.props;
 // Fallback-Alt aus der URL — besser als leer.
 const imageAlt = alt ?? `Vorschau der Website ${url}`;
+// Smartphone-Screenshot: drei vorab scharf skalierte Größen, damit der Browser
+// nie stark herunterrechnen muss (das machte die kleine Darstellung unscharf).
+const phoneSrc = mobileImage ? `${mobileImage}-360.webp` : undefined;
+const phoneSrcset = mobileImage
+  ? [240, 360, 540].map((w) => `${mobileImage}-${w}.webp ${w}w`).join(", ")
+  : undefined;
 ---
 
 {/*
@@ -74,7 +91,16 @@ const imageAlt = alt ?? `Vorschau der Website ${url}`;
     {mobileImage && (
       <div class="phone" aria-hidden="true">
         <div class="phone-screen">
-          <img src={mobileImage} alt="" loading="lazy" decoding="async" />
+          <img
+            src={phoneSrc}
+            srcset={phoneSrcset}
+            sizes={phoneSizes}
+            alt=""
+            width="360"
+            height="779"
+            loading="lazy"
+            decoding="async"
+          />
           <span class="phone-island"></span>
         </div>
       </div>
