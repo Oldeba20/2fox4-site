@@ -287,12 +287,31 @@ export const references: Reference[] = [
   {
     slug: "systemische-beratung",
     category: "websites",
-    domain: "systemische-beratung.de",
+    domain: "systemische-beratung-hilden.de",
     image: "/images/referenzen/systemische-beratung.jpg",
+    mobileImage: "/images/referenzen/systemische-beratung-mobile",
+    mobileShots: [
+      { image: "/images/referenzen/systemische-beratung-mobile-fuer-wen", label: "Für wen" },
+      { image: "/images/referenzen/systemische-beratung-mobile-ablauf", label: "Ablauf" },
+    ],
     date: "2026",
     title: "Systemische Beratung",
     meta: "Beratung & Coaching",
-    liveUrl: "https://systemische-beratung.de",
+    liveUrl: "https://systemische-beratung-hilden.de",
+    featured: true,
+    story: {
+      challenge:
+        "Zusätzlich zu Lerntherapie und Kursen bietet Alena Schößler in Hilden systemische Beratung für Familien, Paare und Eltern an, derzeit im Rahmen ihrer Ausbildung am ifs. Menschen in einer belastenden Lage sind vor dem ersten Kontakt oft unsicher, ob ihr Anliegen überhaupt in eine Beratung gehört. Für dieses Angebot brauchte es deshalb eine eigene Adresse, die den Ansatz in Ruhe erklärt und die Ausbildungssituation offen anspricht.",
+      solution:
+        "Die Seite ist ein One-Pager mit klarer Reihenfolge: sechs typische Anlässe von Erziehungsfragen bis Trennung, die drei Grundprinzipien des Ansatzes und ein Ablauf in drei Schritten, vom Erstgespräch bis zum eigenen Tempo. Ein eigener Abschnitt erklärt, was „in Ausbildung“ heißt, wie Supervision die Gespräche begleitet und warum das Honorar deshalb niedriger ausfällt. Ein FAQ beantwortet Fragen zu Dauer, Kosten und Schweigepflicht und nennt das Einzugsgebiet von Düsseldorf bis Mettmann. Für das Erstgespräch führen die Buttons auf das Kontaktformular der Hauptseite alena-schoessler.de.",
+      scope: [
+        "Webdesign",
+        "One-Pager",
+        "FAQ-Bereich",
+        "Strukturierte Daten",
+      ],
+      liveUrl: "https://systemische-beratung-hilden.de",
+    },
   },
   {
     slug: "friseursalon-leverkusen",
@@ -355,12 +374,31 @@ export const references: Reference[] = [
   {
     slug: "tattoo-studio-magdeburg",
     category: "websites",
-    domain: "blackskull-tattoo.de",
+    domain: "blackskulltattoo.de",
     image: "/images/referenzen/blackskull-tattoo.jpg",
+    mobileImage: "/images/referenzen/tattoo-studio-magdeburg-mobile",
+    mobileShots: [
+      { image: "/images/referenzen/tattoo-studio-magdeburg-mobile-portfolio", label: "Portfolio" },
+      { image: "/images/referenzen/tattoo-studio-magdeburg-mobile-ablauf", label: "Ablauf" },
+    ],
     date: "2026",
     title: "Tattoo- & Piercing Studio Magdeburg",
     meta: "Studio-Website",
-    liveUrl: "https://blackskull-tattoo.de",
+    liveUrl: "https://blackskulltattoo.de",
+    featured: true,
+    story: {
+      challenge:
+        "Marco betreibt Black Skull Tattoo in Magdeburg-Stadtfeld und ist seit 2001 in der Tattooszene unterwegs. Seine Preise von Tattoomessen in ganz Deutschland sagen viel über seine Arbeit, genauso wie die Motive selbst. Beides brauchte einen Ort, an dem Interessierte es sehen können, bevor sie einen Termin anfragen.",
+      solution:
+        "Die Startseite stellt Marco persönlich vor, zusammen mit seinen Stilen Realistic, Black & Grey, Color und Fineline. Darunter folgen das Studio, eine Galerie mit Auszeichnungen von Messen in Köln, Erfurt, Chemnitz und weiteren Städten sowie das Portfolio. In vier Schritten wird erklärt, wie ein Tattoo von der Beratung bis zur Sitzung entsteht. Öffnungszeiten, der Hinweis auf Walk-ins, das Terminformular und ein FAQ zu Preisen, Heilung und Nachbesserungen stehen auf derselben Seite.",
+      scope: [
+        "Webdesign",
+        "One-Pager",
+        "Bildergalerien",
+        "Terminanfrage",
+      ],
+      liveUrl: "https://blackskulltattoo.de",
+    },
   },
   {
     slug: "pc-service-schaumburg",
@@ -426,6 +464,7 @@ export const references: Reference[] = [
     domain: "blitzzscale.com",
     image: "/images/referenzen/blitzzscale.jpg",
     mobileImage: "/images/referenzen/blitzzscale-ki-vertrieb-mobile",
+    mobileImage: "/images/referenzen/blitzzscale-ki-vertrieb-mobile",
     date: "2025",
     title: "Blitzzscale — KI-Vertrieb",
     meta: "KI-Automation",
@@ -434,12 +473,31 @@ export const references: Reference[] = [
   {
     slug: "tattoo-studio-stadthagen",
     category: "websites",
-    domain: "tattoo-stadthagen.de",
+    domain: "tattoo-studio-stadthagen.de",
     image: "/images/referenzen/tattoo-stadthagen.jpg",
+    mobileImage: "/images/referenzen/tattoo-studio-stadthagen-mobile",
+    mobileShots: [
+      { image: "/images/referenzen/tattoo-studio-stadthagen-mobile-leistungen", label: "Leistungen" },
+      { image: "/images/referenzen/tattoo-studio-stadthagen-mobile-kuenstler", label: "Künstler" },
+    ],
     date: "2025",
     title: "Tattoo Studio Stadthagen",
     meta: "Studio-Website",
-    liveUrl: "https://tattoo-stadthagen.de",
+    liveUrl: "https://tattoo-studio-stadthagen.de",
+    featured: true,
+    story: {
+      challenge:
+        "Ein Tattoo bleibt ein Leben lang, entsprechend viele Fragen gibt es vor dem ersten Termin. Wie sauber wird gearbeitet, was kostet ein kleines Motiv, ab welchem Alter ist es erlaubt? Für das Studio in der Stadthagener Fußgängerzone ging es darum, diese Fragen online zu beantworten und den Weg zum Termin kurz zu halten.",
+      solution:
+        "Die Website ist ein One-Pager, der vom Studio über Service, Hygiene und Materialien bis zu den Künstlern und ihren Arbeiten führt. Im Hygiene-Teil steht, was nach jeder Sitzung desinfiziert wird und welche Materialien nur einmal zum Einsatz kommen. Die Marken hinter Nadeln, Farben und Maschinen sind verlinkt. Ein ausführliches FAQ klärt Preise, Heilung, Altersgrenze und Vorbereitung, und das Anfrageformular unterscheidet zwischen Tattoo und Piercing und erklärt, wie es nach dem Absenden weitergeht.",
+      scope: [
+        "Webdesign",
+        "One-Pager",
+        "FAQ-Bereich",
+        "Anfrageformular",
+      ],
+      liveUrl: "https://tattoo-studio-stadthagen.de",
+    },
   },
   {
     slug: "schule-fuer-sicherheitsmitarbeiter",
