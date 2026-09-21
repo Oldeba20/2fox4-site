@@ -10,6 +10,8 @@
  *   alt      — Alt-Text für das Vorschau-Bild (SEO + a11y). Fallback aus URL.
  *   href     — Wohin verlinkt die Karte
  *   variant  — "compact" (Stadt-Seite) oder "default" (Referenzen, mit Hover-Zoom)
+ *   mobileImage — optional: Mobil-Screenshot; blendet unten rechts ein
+ *                 Smartphone-Mockup über den Monitor ein
  *
  * Wichtig (Mai 2026 Refactor): Das Vorschau-Bild wird jetzt als <img>-Tag
  * gerendert statt als CSS background-image. Damit kommt es in die Google-
@@ -22,9 +24,11 @@ interface Props {
   /** Wenn href fehlt: Karte wird als <div> gerendert (nicht klickbar). */
   href?: string;
   variant?: "compact" | "default";
+  /** Optional: Mobil-Screenshot für das Smartphone-Mockup unten rechts. */
+  mobileImage?: string;
 }
 
-const { url, image, alt, href, variant = "default" } = Astro.props;
+const { url, image, alt, href, variant = "default", mobileImage } = Astro.props;
 // Fallback-Alt aus der URL — besser als leer.
 const imageAlt = alt ?? `Vorschau der Website ${url}`;
 ---
@@ -41,7 +45,7 @@ const imageAlt = alt ?? `Vorschau der Website ${url}`;
   ersten davon. Genau deshalb darf hier nie wieder ein <a> außen stehen.
 */}
 <div
-  class:list={["monitor-card", variant, !href && "monitor-card--static"]}
+  class:list={["monitor-card", variant, !href && "monitor-card--static", mobileImage && "has-phone"]}
   data-variant={variant}
 >
   {href && (
@@ -67,6 +71,14 @@ const imageAlt = alt ?? `Vorschau der Website ${url}`;
       <div class="screen-glare"></div>
       <div class="screen-tint"></div>
     </div>
+    {mobileImage && (
+      <div class="phone" aria-hidden="true">
+        <div class="phone-screen">
+          <img src={mobileImage} alt="" loading="lazy" decoding="async" />
+          <span class="phone-island"></span>
+        </div>
+      </div>
+    )}
   </div>
   <div class="info">
     <slot />

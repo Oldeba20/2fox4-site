@@ -40,6 +40,9 @@ export interface Reference {
   domain: string;
   /** Hintergrund-Screenshot */
   image: string;
+  /** Optional: Mobil-Screenshot (390er Viewport, Hochformat). Wenn gesetzt,
+   *  zeigt das Monitor-Mockup unten rechts ein kleines Smartphone. */
+  mobileImage?: string;
   /** Veröffentlichungsjahr als String, z. B. "2026". Bewusst nur Jahr,
    *  damit die Veröffentlichungs-Frequenz nicht abzählbar ist. */
   date: string;
@@ -65,6 +68,7 @@ export const references: Reference[] = [
     category: "websites",
     domain: "isolierklinker-zentral.de",
     image: "/images/referenzen/isolierklinker-zentral.jpg",
+    mobileImage: "/images/referenzen/isolierklinker-zentral-mobile.jpg",
     date: "2026",
     title: "Isolierklinker Zentralvertrieb Nord",
     meta: "Fassadensanierung & Klinker",
@@ -92,6 +96,7 @@ export const references: Reference[] = [
     category: "websites",
     domain: "muckundpipp.de",
     image: "/images/referenzen/muckundpipp.jpg",
+    mobileImage: "/images/referenzen/muckundpipp-mobile.jpg",
     date: "2026",
     title: "Muck & Pipp und das Mutfunkeln",
     meta: "Buch-Website & Kinderbuch",
@@ -118,6 +123,7 @@ export const references: Reference[] = [
     category: "websites",
     domain: "entdecke-stadthagen.de",
     image: "/images/referenzen/entdecke-stadthagen.jpg",
+    mobileImage: "/images/referenzen/entdecke-stadthagen-mobile.jpg",
     date: "2026",
     title: "Entdecke Stadthagen",
     meta: "Digitale Stadtrallye · Stadthagen",
