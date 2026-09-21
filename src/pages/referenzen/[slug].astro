@@ -14,6 +14,7 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import Breadcrumb from "../../components/Breadcrumb.astro";
 import CTASection from "../../components/CTASection.astro";
 import MonitorCard from "../../components/MonitorCard.astro";
+import PhoneFrame from "../../components/PhoneFrame.astro";
 import { featuredReferences, type Reference } from "../../data/references";
 import { breadcrumbSchema } from "../../lib/schema";
 
@@ -30,6 +31,11 @@ interface Props {
 
 const { ref } = Astro.props;
 const story = ref.story!; // garantiert da, weil featured + story Filter in featuredReferences()
+
+// Handy-Ansichten für den Abschnitt „So sieht es auf dem Handy aus"
+const phoneShots = ref.mobileImage
+  ? [{ image: ref.mobileImage, label: "Startseite" }, ...(ref.mobileShots ?? [])]
+  : [];
 
 const title = `${ref.title} — Case Study | 2FOX4`;
 const description = story.challenge;
@@ -148,6 +154,33 @@ const schema = breadcrumbSchema([
       )}
     </div>
   </article>
+
+  {/* Handy-Ansichten — groß und lesbar */}
+  {phoneShots.length > 0 && (
+    <section class="border-t border-[var(--color-border)] py-16">
+      <div class="container-content">
+        <div class="mb-3 text-xs uppercase tracking-[0.16em] text-[var(--color-accent)]">
+          Mobil
+        </div>
+        <h2 class="mb-4 text-[clamp(24px,3vw,34px)] font-bold tracking-[-0.02em] leading-[1.2]">
+          So sieht es auf dem Handy aus.
+        </h2>
+        <p class="mb-10 max-w-[640px] text-[17px] leading-[1.7] text-[var(--color-text-muted)]">
+          Jede Seite ist fürs Smartphone gebaut. Hier ein paar Ansichten aus dem
+          fertigen Projekt, so wie Besucher sie auf dem Handy sehen.
+        </p>
+        <div class="phone-row">
+          {phoneShots.map((shot) => (
+            <PhoneFrame
+              image={shot.image}
+              label={shot.label}
+              alt={`${ref.title} auf dem Smartphone: ${shot.label}`}
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
 
   {/* Zusätzliche Bilder — Flyer, Messestand, Details */}
   {story.extraImages && story.extraImages.length > 0 && (

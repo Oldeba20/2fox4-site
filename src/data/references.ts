@@ -46,6 +46,11 @@ export interface Reference {
    *  Lanczos + leichtes Nachschärfen). Wenn gesetzt, zeigt das
    *  Monitor-Mockup unten rechts ein kleines Smartphone. */
   mobileImage?: string;
+  /** Optional: weitere Handy-Screenshots von Unterseiten für den Abschnitt
+   *  „So sieht es auf dem Handy aus" auf der Detailseite. `image` ist wieder
+   *  ein Basis-Pfad ohne Endung (siehe lib/phone.ts). Die Startseite
+   *  (mobileImage) wird dort automatisch als erstes Handy gezeigt. */
+  mobileShots?: Array<{ image: string; label: string }>;
   /** Veröffentlichungsjahr als String, z. B. "2026". Bewusst nur Jahr,
    *  damit die Veröffentlichungs-Frequenz nicht abzählbar ist. */
   date: string;
@@ -72,6 +77,10 @@ export const references: Reference[] = [
     domain: "isolierklinker-zentral.de",
     image: "/images/referenzen/isolierklinker-zentral.jpg",
     mobileImage: "/images/referenzen/isolierklinker-zentral-mobile",
+    mobileShots: [
+      { image: "/images/referenzen/isolierklinker-zentral-mobile-klinkerauswahl", label: "Klinkerauswahl" },
+      { image: "/images/referenzen/isolierklinker-zentral-mobile-visualisierung", label: "Fassaden-Visualisierung" },
+    ],
     date: "2026",
     title: "Isolierklinker Zentralvertrieb Nord",
     meta: "Fassadensanierung & Klinker",
@@ -100,6 +109,10 @@ export const references: Reference[] = [
     domain: "muckundpipp.de",
     image: "/images/referenzen/muckundpipp.jpg",
     mobileImage: "/images/referenzen/muckundpipp-mobile",
+    mobileShots: [
+      { image: "/images/referenzen/muckundpipp-mobile-freunde", label: "Die beiden Freunde" },
+      { image: "/images/referenzen/muckundpipp-mobile-mitmachen", label: "Zum Mitmachen" },
+    ],
     date: "2026",
     title: "Muck & Pipp und das Mutfunkeln",
     meta: "Buch-Website & Kinderbuch",
@@ -127,6 +140,10 @@ export const references: Reference[] = [
     domain: "entdecke-stadthagen.de",
     image: "/images/referenzen/entdecke-stadthagen.jpg",
     mobileImage: "/images/referenzen/entdecke-stadthagen-mobile",
+    mobileShots: [
+      { image: "/images/referenzen/entdecke-stadthagen-mobile-renaissance", label: "Renaissance-Rallye" },
+      { image: "/images/referenzen/entdecke-stadthagen-mobile-kinder", label: "Kinder-Rallye" },
+    ],
     date: "2026",
     title: "Entdecke Stadthagen",
     meta: "Digitale Stadtrallye · Stadthagen",

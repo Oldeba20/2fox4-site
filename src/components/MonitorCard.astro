@@ -17,6 +17,8 @@
  * gerendert statt als CSS background-image. Damit kommt es in die Google-
  * Bildersuche und hat einen alt-Text für Screenreader.
  */
+import { phoneSrc, phoneSrcset } from "../lib/phone";
+
 interface Props {
   url: string;
   image: string;
@@ -44,10 +46,8 @@ const {
 const imageAlt = alt ?? `Vorschau der Website ${url}`;
 // Smartphone-Screenshot: drei vorab scharf skalierte Größen, damit der Browser
 // nie stark herunterrechnen muss (das machte die kleine Darstellung unscharf).
-const phoneSrc = mobileImage ? `${mobileImage}-360.webp` : undefined;
-const phoneSrcset = mobileImage
-  ? [240, 360, 540].map((w) => `${mobileImage}-${w}.webp ${w}w`).join(", ")
-  : undefined;
+const phoneImgSrc = mobileImage ? phoneSrc(mobileImage) : undefined;
+const phoneImgSrcset = mobileImage ? phoneSrcset(mobileImage) : undefined;
 ---
 
 {/*
@@ -92,8 +92,8 @@ const phoneSrcset = mobileImage
       <div class="phone" aria-hidden="true">
         <div class="phone-screen">
           <img
-            src={phoneSrc}
-            srcset={phoneSrcset}
+            src={phoneImgSrc}
+            srcset={phoneImgSrcset}
             sizes={phoneSizes}
             alt=""
             width="360"

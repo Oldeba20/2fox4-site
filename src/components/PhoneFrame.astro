@@ -1,0 +1,41 @@
+---
+/**
+ * PhoneFrame — großes, lesbares Smartphone-Mockup für die Case-Study-Seiten.
+ * (Das kleine Handy auf den Referenz-Karten steckt in MonitorCard.)
+ *
+ * Props:
+ *   image  — Basis-Pfad des Handy-Screenshots ohne Endung (siehe lib/phone.ts)
+ *   label  — Bildunterschrift, z. B. "Startseite"
+ *   alt    — Alt-Text
+ *   sizes  — sizes-Attribut; Default passt zur 3er-Reihe auf der Detailseite
+ */
+import { phoneSrc, phoneSrcset } from "../lib/phone";
+
+interface Props {
+  image: string;
+  label: string;
+  alt: string;
+  sizes?: string;
+}
+
+const { image, label, alt, sizes = "(min-width: 768px) 280px, 260px" } = Astro.props;
+---
+
+<figure class="phone-frame">
+  <div class="phone-frame__device">
+    <div class="phone-frame__screen">
+      <img
+        src={phoneSrc(image, 720)}
+        srcset={phoneSrcset(image)}
+        sizes={sizes}
+        alt={alt}
+        width="720"
+        height="1558"
+        loading="lazy"
+        decoding="async"
+      />
+      <span class="phone-frame__island" aria-hidden="true"></span>
+    </div>
+  </div>
+  <figcaption class="phone-frame__label">{label}</figcaption>
+</figure>
