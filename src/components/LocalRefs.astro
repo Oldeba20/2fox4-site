@@ -17,11 +17,15 @@ export interface LocalRef {
   description: string;
 }
 
+/** Zugehörige Referenz aus references.ts (über den Slug im href). */
+function findRef(href: string) {
+  const slug = href.replace(/^\/referenzen\//, "").replace(/\/$/, "");
+  return slug ? references.find((r) => r.slug === slug) : undefined;
+}
+
 /** Prüft, ob der Ref-Slug eine featured Case-Study hat. */
 function isFeatured(href: string): boolean {
-  const slug = href.replace(/^\/referenzen\//, "").replace(/\/$/, "");
-  const ref = references.find((r) => r.slug === slug);
-  return !!ref?.featured;
+  return !!findRef(href)?.featured;
 }
 
 interface Props {
@@ -53,6 +57,8 @@ const { city, refs } = Astro.props;
           alt={`Website-Vorschau: ${ref.title} (${ref.tag})`}
           href={isFeatured(ref.href) ? ref.href : undefined}
           variant="compact"
+          mobileImage={findRef(ref.href)?.mobileImage}
+          phoneSizes="(min-width: 768px) 125px, 85px"
         >
           <div class="mb-2 text-[11px] uppercase tracking-[0.12em] text-[var(--color-accent)]">
             {ref.tag}
@@ -61,6 +67,26 @@ const { city, refs } = Astro.props;
             {ref.title}
           </h3>
           <p class="text-sm text-[var(--color-text-muted)]">{ref.description}</p>
+          {(isFeatured(ref.href) || findRef(ref.href)?.liveUrl) && (
+            <div class="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-[13px] font-medium">
+              {isFeatured(ref.href) && (
+                <a href={ref.href} class="text-[var(--color-accent)] hover:underline">
+                  Case Study lesen →
+                </a>
+              )}
+              {findRef(ref.href)?.liveUrl && (
+                <a
+                  href={findRef(ref.href)!.liveUrl}
+                  target="_blank"
+                  rel="noopener"
+                  class="text-[var(--color-text-muted)] hover:text-[var(--color-text)]"
+                  aria-label={`${ref.title} live ansehen (öffnet in neuem Tab)`}
+                >
+                  Live ansehen ↗
+                </a>
+              )}
+            </div>
+          )}
         </MonitorCard>
       ))}
     </div>

@@ -139,31 +139,31 @@ export const cities: City[] = [
           "Rätsel-Rallye durch die Stadthagener Innenstadt — läuft im Browser, ganz ohne App.",
       },
       {
-        url: "renaissance-stadthagen.de",
+        url: "stadthagen-renaissance.de",
         image: "/images/referenzen/renaissance-stadthagen.jpg",
-        href: "/referenzen/",
+        href: "/referenzen/renaissance-stadthagen/",
         tag: "Vereins-Website · Stadthagen",
         title: "Renaissanceverein Stadthagen",
         description:
           "Webdesign und Wartung für den Verein, der die Renaissance-Geschichte Stadthagens lebendig hält.",
       },
       {
-        url: "tattoo-stadthagen.de",
+        url: "tattoo-studio-stadthagen.de",
         image: "/images/referenzen/tattoo-stadthagen.jpg",
-        href: "/referenzen/",
+        href: "/referenzen/tattoo-studio-stadthagen/",
         tag: "Studio-Website · Stadthagen",
         title: "Tattoo- & Piercing Studio Stadthagen",
         description:
-          "WordPress-Website mit lokaler SEO-Optimierung, Google-Business-Eintrag und Buchungs-Hinweisen.",
+          "Studio-Website mit lokaler SEO-Optimierung, Google-Business-Eintrag und Buchungs-Hinweisen.",
       },
       {
         url: "sad-sicherheit.de",
         image: "/images/referenzen/sad-sicherheit.jpg",
-        href: "/referenzen/",
+        href: "/referenzen/schule-fuer-sicherheitsmitarbeiter/",
         tag: "Bildungs-Website · Stadthagen",
         title: "Schule für Sicherheitsmitarbeiter",
         description:
-          "WordPress-Auftritt für die Stadthagener Schule, die Sicherheitsmitarbeiter ausbildet — mit Kursübersicht und Anmelde-Funnel.",
+          "Website für die Stadthagener Schule, die Sicherheitsmitarbeiter ausbildet — mit Kursübersicht und Anmelde-Funnel.",
       },
     ],
     faq: [
