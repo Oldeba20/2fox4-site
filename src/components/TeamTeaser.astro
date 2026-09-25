@@ -1,0 +1,63 @@
+---
+/**
+ * TeamTeaser — Vertrauens-Sektion auf der Startseite mit dem Teamfoto.
+ * Das Foto stand früher im Hero; seit der Scroll-Animation (25.09.2026)
+ * sitzt es hier, direkt unter Hero + TrustBar.
+ *
+ * Nutzt die Blob-Foto-Styles (.hero-photo-*) aus Hero.astro (is:global).
+ * Teammitglieder werden bewusst nicht namentlich genannt (siehe /ueber-uns/).
+ */
+const photoBase = "/images/hero/oliver-deppe-buero";
+---
+
+<section class="py-20 md:py-24">
+  <div class="container-content">
+    <div class="grid items-center gap-12 lg:grid-cols-[1fr_1.1fr] lg:gap-16">
+      <div class="hero-photo-wrap order-2 lg:order-1">
+        <span class="hero-photo-glow" aria-hidden="true"></span>
+        <span class="hero-photo-dot" aria-hidden="true"></span>
+        <div class="hero-photo-frame">
+          <picture>
+            <source type="image/avif" srcset={`${photoBase}.avif`} />
+            <source type="image/webp" srcset={`${photoBase}.webp`} />
+            <img
+              src={`${photoBase}.jpg`}
+              alt="Unser Team von 2FOX4 im Büro in Sachsenhagen bei der Arbeit."
+              width="800"
+              height="800"
+              loading="lazy"
+              decoding="async"
+            />
+          </picture>
+        </div>
+      </div>
+
+      <div class="order-1 lg:order-2">
+        <div class="mb-4 text-xs uppercase tracking-[0.15em] text-[var(--color-accent)]">
+          Wer hinter 2FOX4 steht
+        </div>
+        <h2 class="mb-5 text-[clamp(30px,3.8vw,46px)] font-bold leading-[1.1] tracking-[-0.03em]">
+          Echte Menschen statt Warteschleife.
+        </h2>
+        <p class="mb-5 max-w-[560px] text-lg leading-relaxed text-[var(--color-text-muted)]">
+          Bei uns sprichst du direkt mit den Leuten, die deine Website planen,
+          bauen und betreuen. Aus unserem Büro in Sachsenhagen, seit 2008 und
+          bei über 125 Websites.
+        </p>
+        <p class="mb-8 max-w-[560px] text-lg leading-relaxed text-[var(--color-text-muted)]">
+          Kein Ticketsystem, kein wechselnder Ansprechpartner: Du weißt immer,
+          wer an deinem Projekt arbeitet.
+        </p>
+        <a
+          href="/ueber-uns/"
+          class="inline-flex items-center gap-2 rounded-md border border-[var(--color-border-strong)] px-5 py-3 text-[15px] font-medium text-[var(--color-text)] transition-all hover:bg-[var(--color-bg-card)] hover:border-white/25"
+        >
+          Lern uns kennen
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M5 12h14M12 5l7 7-7 7" />
+          </svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
