@@ -8,6 +8,7 @@
  * Startseite vorbehalten.
  */
 import { site } from "../data/site";
+import HeroScrollSequence from "./HeroScrollSequence.astro";
 
 interface Props {
   eyebrow?: string;
@@ -19,6 +20,12 @@ interface Props {
   secondaryCta?: { label: string; href: string };
   /** Pfad zum Hero-Bild (optional — wenn weg, ein-spaltig zentriert) */
   photo?: { src: string; alt: string };
+  /** Scroll-Bildsequenz statt Foto (Startseite). false = Foto verwenden */
+  sequence?: false | {
+    alt: string;
+    desktop: { path: string; count: number; size: number };
+    mobile: { path: string; count: number; size: number };
+  };
 }
 
 const {
@@ -34,6 +41,11 @@ const {
     src: "/images/hero/oliver-deppe-buero.jpg",
     alt: "Unser Team von 2FOX4 im Büro in Sachsenhagen bei der Arbeit.",
   },
+  sequence = {
+    alt: "Laptop und Smartphone mit einer Website, die sich beim Scrollen in ihre Ebenen zerlegt: Layout, Bilder, Texte, Navigation sowie Code, Ladezeit und SEO.",
+    desktop: { path: "/images/hero/scroll/d", count: 96, size: 900 },
+    mobile: { path: "/images/hero/scroll/m", count: 60, size: 640 },
+  },
 } = Astro.props;
 
 /**
@@ -47,10 +59,17 @@ const photoSrcWebp = `${photoBase}.webp`;
 const photoSrcJpg = `${photoBase}.jpg`;
 ---
 
-<section class="relative pt-4 pb-14 md:pt-20 md:pb-20 overflow-hidden">
+<section
+  class:list={[
+    "relative",
+    sequence ? "hss-section pt-4 pb-14 md:pt-20 md:pb-20 lg:py-0" : "pt-4 pb-14 md:pt-20 md:pb-20 overflow-hidden",
+  ]}
+  style={sequence ? "overflow: clip;" : undefined}
+  data-hss-section={sequence ? "" : undefined}
+>
   <div class="hero-grid-bg"></div>
-
-  <div class="container-content relative z-10">
+  <div class={sequence ? "hss-pin" : undefined}>
+  <div class="container-content relative z-10 w-full">
     {photo ? (
       <div class="grid items-center gap-12 lg:grid-cols-[1.15fr_1fr] lg:gap-16">
         {/* Text-Spalte (links) */}
@@ -90,6 +109,9 @@ const photoSrcJpg = `${photoBase}.jpg`;
 
         {/* Foto-Spalte (rechts) — modernes Bildformat via <picture>. Browser
             wählt das beste verfügbare Format (AVIF → WebP → JPG-Fallback). */}
+        {sequence ? (
+          <HeroScrollSequence alt={sequence.alt} desktop={sequence.desktop} mobile={sequence.mobile} />
+        ) : (
         <div class="hero-photo-wrap">
           <span class="hero-photo-glow" aria-hidden="true"></span>
           <span class="hero-photo-dot" aria-hidden="true"></span>
@@ -109,6 +131,7 @@ const photoSrcJpg = `${photoBase}.jpg`;
             </picture>
           </div>
         </div>
+        )}
       </div>
     ) : (
       <div class="text-center">
@@ -133,6 +156,7 @@ const photoSrcJpg = `${photoBase}.jpg`;
         </div>
       </div>
     )}
+  </div>
   </div>
 </section>
 

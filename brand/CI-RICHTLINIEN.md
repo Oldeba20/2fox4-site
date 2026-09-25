@@ -86,3 +86,23 @@ Zusatz-Akzent in Grafiken auftauchen — nie im Logo, nie als Ersatz für Orange
 Öffentlich gezeigte Berichte (z. B. auf der Website) sind immer **anonymisierte
 Muster mit frei erfundenen Zahlen**. Echte Kundendaten werden vertraulich behandelt
 und nie öffentlich gezeigt. Muster sind als „Beispielbericht" zu kennzeichnen.
+
+---
+
+## 6. Angebote (verbindlich seit 21.09.2026)
+
+Alle Angebote werden im Angebotsdesign gesetzt, das mit dem Angebot für Schüßler & Sohn
+(September 2026) eingeführt wurde. Vorlage-Skripte:
+`Kunden/Naturstein-Schuessler/build_angebot.py` und
+`../Liederkranz/angebot/build_angebot.py` (mit Positions-Tabelle und Optionen).
+
+- ReportLab-PDF, A4, weißer Grund, Liberation Sans, Akzent `#c2410c`, Linien `#e2e2e2`
+- Logo `logo/2fox4-logo-dunkel.png` oben links (26 mm), rechts Angebotsnummer, Datum, Gültigkeit
+- Seite 1: Titel, Designentwurf/Mockup mit „Bitte beachten“-Hinweis, „Angebot an / von“
+- Nummerierte Abschnitte mit oranger Ziffer, Preis-Tabelle Netto/USt/Brutto,
+  Fachbegriffe-Glossar, Auftragserteilung mit Unterschriftszeile
+- Wird ein altes Angebot neu gesetzt: Positionen und Preise bleiben exakt gleich.
+- Formulare mit personenbezogenen oder Bankdaten (z. B. Online-Beitritt mit SEPA): Double-Opt-in
+  immer erwähnen – als Schutz vor Missbrauch, nicht als Rechtspflicht. Empfänger wird nur per
+  E-Mail benachrichtigt und ruft die Daten geschützt ab; Bankdaten nie unverschlüsselt per E-Mail.
+  Musterformulierung: Liederkranz-Angebot, Position O2.

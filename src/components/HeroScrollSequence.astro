@@ -1,0 +1,214 @@
+---
+/**
+ * HeroScrollSequence — Scroll-gesteuerte Bildsequenz für den Hero.
+ *
+ * Motiv: Laptop + Smartphone mit Website, die sich beim Scrollen in ihre
+ * Ebenen zerlegt (Layout, Bilder, Texte, Navigation, Code/Speed/SEO).
+ *
+ * Technik: Kein <video>, sondern WebP-Einzelbilder, die per Canvas passend
+ * zur Scrollposition gezeichnet werden (ruckelfrei, auch iOS).
+ * - Das erste Bild ist ein normales <img> (LCP, alt-Text, SEO).
+ * - Die restlichen Frames werden erst nach dem Laden der Seite nachgeladen.
+ * - Desktop: die Hero-Sektion wird "gepinnt" (sticky), siehe Hero.astro.
+ * - Mobil: kleinere Sequenz, Animation läuft beim normalen Durchscrollen.
+ * - prefers-reduced-motion oder Datensparmodus: nur das Standbild.
+ */
+interface Props {
+  alt: string;
+  desktop: { path: string; count: number; size: number };
+  mobile: { path: string; count: number; size: number };
+}
+const { alt, desktop, mobile } = Astro.props;
+const first = (p: string) => `${p}/0001.webp`;
+---
+
+<div
+  class="hss-wrap"
+  data-hss
+  data-d-path={desktop.path}
+  data-d-count={desktop.count}
+  data-m-path={mobile.path}
+  data-m-count={mobile.count}
+>
+  <span class="hss-glow" aria-hidden="true"></span>
+  <div class="hss-stage">
+    <picture>
+      <source media="(max-width: 1023px)" srcset={first(mobile.path)} />
+      <img
+        class="hss-poster"
+        src={first(desktop.path)}
+        alt={alt}
+        width={desktop.size}
+        height={desktop.size}
+        loading="eager"
+        decoding="async"
+        fetchpriority="high"
+      />
+    </picture>
+    <canvas class="hss-canvas" aria-hidden="true"></canvas>
+  </div>
+</div>
+
+<script>
+  function initHeroSequence(el: HTMLElement) {
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const saveData = (navigator as any).connection?.saveData === true;
+    if (reduce || saveData) return;
+
+    const isDesktop = window.matchMedia("(min-width: 1024px)").matches;
+    const path = isDesktop ? el.dataset.dPath! : el.dataset.mPath!;
+    const count = Number(isDesktop ? el.dataset.dCount : el.dataset.mCount);
+    const canvas = el.querySelector<HTMLCanvasElement>(".hss-canvas")!;
+    const ctx = canvas.getContext("2d");
+    if (!ctx || !count) return;
+
+    const section = el.closest<HTMLElement>("[data-hss-section]");
+    const frames: (HTMLImageElement | null)[] = new Array(count).fill(null);
+    let current = -1;
+    let ticking = false;
+
+    const src = (i: number) => `${path}/${String(i + 1).padStart(4, "0")}.webp`;
+
+    function sizeCanvas() {
+      const r = canvas.getBoundingClientRect();
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = Math.round(r.width * dpr);
+      canvas.height = Math.round(r.height * dpr);
+      current = -1;
+      render();
+    }
+
+    function progress(): number {
+      if (section && isDesktop) {
+        const r = section.getBoundingClientRect();
+        const dist = section.offsetHeight - window.innerHeight;
+        return dist > 0 ? Math.min(1, Math.max(0, -r.top / dist)) : 0;
+      }
+      // Mobil: Animation läuft, während der Stage-Bereich durch den Viewport scrollt
+      const r = el.getBoundingClientRect();
+      const start = window.innerHeight * 0.9;
+      const end = -r.height * 0.2;
+      return Math.min(1, Math.max(0, (start - r.top) / (start - end)));
+    }
+
+    function nearestLoaded(i: number) {
+      for (let d = 0; d < count; d++) {
+        if (frames[i - d]?.complete) return frames[i - d];
+        if (frames[i + d]?.complete) return frames[i + d];
+      }
+      return null;
+    }
+
+    function render() {
+      ticking = false;
+      const i = Math.round(progress() * (count - 1));
+      if (i === current) return;
+      const img = nearestLoaded(i);
+      if (!img) return;
+      current = frames[i]?.complete ? i : -1;
+      ctx!.clearRect(0, 0, canvas.width, canvas.height);
+      ctx!.drawImage(img, 0, 0, canvas.width, canvas.height);
+      el.classList.add("is-live");
+    }
+
+    function onScroll() {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(render);
+      }
+    }
+
+    // Frames nachladen: erst jedes 4., dann den Rest -> schnell grob scrubbar
+    function load() {
+      const order: number[] = [];
+      for (let i = 0; i < count; i += 4) order.push(i);
+      for (let i = 0; i < count; i++) if (i % 4) order.push(i);
+      let n = 0;
+      const next = () => {
+        const batch = order.slice(n, n + 6);
+        n += 6;
+        batch.forEach((i) => {
+          const im = new Image();
+          im.decoding = "async";
+          im.onload = () => {
+            if (i === 0) sizeCanvas();
+            else if (current === -1) render();
+          };
+          im.src = src(i);
+          frames[i] = im;
+        });
+        if (n < order.length) setTimeout(next, 60);
+      };
+      next();
+    }
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", () => requestAnimationFrame(sizeCanvas));
+    const start = () => ("requestIdleCallback" in window ? (window as any).requestIdleCallback(load) : setTimeout(load, 200));
+    if (document.readyState === "complete") start();
+    else window.addEventListener("load", start, { once: true });
+  }
+
+  document.querySelectorAll<HTMLElement>("[data-hss]").forEach(initHeroSequence);
+</script>
+
+<style is:global>
+  .hss-wrap {
+    position: relative;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    aspect-ratio: 1 / 1;
+    isolation: isolate;
+  }
+  .hss-stage {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    /* Schwarzen Bildrand weich in den Seitenhintergrund auslaufen lassen */
+    -webkit-mask-image: radial-gradient(closest-side, #000 78%, transparent 100%);
+    mask-image: radial-gradient(closest-side, #000 78%, transparent 100%);
+  }
+  .hss-poster,
+  .hss-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  .hss-poster { object-fit: cover; }
+  .hss-canvas { opacity: 0; }
+  .hss-wrap.is-live .hss-canvas { opacity: 1; }
+  .hss-wrap.is-live .hss-poster { visibility: hidden; }
+  .hss-glow {
+    position: absolute;
+    inset: 10% 5% 0 5%;
+    background: radial-gradient(circle at 50% 70%, rgba(255, 91, 31, 0.22) 0%, rgba(255, 91, 31, 0) 60%);
+    filter: blur(40px);
+    z-index: -1;
+    pointer-events: none;
+  }
+
+  /* Heller Modus: dunkle Bühne als abgerundete Karte statt weicher Maske */
+  html.a11y-light-mode .hss-stage {
+    -webkit-mask-image: none;
+    mask-image: none;
+    background: #000;
+    border-radius: 28px;
+    overflow: hidden;
+  }
+
+  /* Desktop: Hero wird gepinnt, solange die Sequenz läuft */
+  @media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+    .hss-section { height: 210vh; }
+    .hss-pin {
+      position: sticky;
+      top: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding-top: 4rem; /* Platz für den sticky Header */
+    }
+  }
+</style>
