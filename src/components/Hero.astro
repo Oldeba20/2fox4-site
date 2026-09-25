@@ -20,11 +20,11 @@ interface Props {
   secondaryCta?: { label: string; href: string };
   /** Pfad zum Hero-Bild (optional — wenn weg, ein-spaltig zentriert) */
   photo?: { src: string; alt: string };
-  /** Scroll-Bildsequenz statt Foto (Startseite). false = Foto verwenden */
+  /** Vollflächiger Scroll-Film als Hintergrund (Startseite). false = klassisches Layout mit Foto */
   sequence?: false | {
     alt: string;
-    desktop: { path: string; count: number; size: number };
-    mobile: { path: string; count: number; size: number };
+    desktop: { path: string; count: number; width: number; height: number };
+    mobile: { path: string; count: number; width: number; height: number };
   };
 }
 
@@ -42,9 +42,9 @@ const {
     alt: "Unser Team von 2FOX4 im Büro in Sachsenhagen bei der Arbeit.",
   },
   sequence = {
-    alt: "Laptop und Smartphone mit einer Website, die sich beim Scrollen in ihre Ebenen zerlegt: Layout, Bilder, Texte, Navigation sowie Code, Ladezeit und SEO.",
-    desktop: { path: "/images/hero/scroll/d", count: 96, size: 900 },
-    mobile: { path: "/images/hero/scroll/m", count: 60, size: 640 },
+    alt: "Kamerafahrt auf einen Laptop mit Quellcode, aus dem beim Scrollen eine fertige Website wird.",
+    desktop: { path: "/images/hero/film/d", count: 120, width: 1920, height: 1080 },
+    mobile: { path: "/images/hero/film/m", count: 90, width: 608, height: 1080 },
   },
 } = Astro.props;
 
@@ -59,17 +59,45 @@ const photoSrcWebp = `${photoBase}.webp`;
 const photoSrcJpg = `${photoBase}.jpg`;
 ---
 
-<section
-  class:list={[
-    "relative",
-    sequence ? "hss-section pt-4 pb-14 md:pt-20 md:pb-20 lg:py-0" : "pt-4 pb-14 md:pt-20 md:pb-20 overflow-hidden",
-  ]}
-  style={sequence ? "overflow: clip;" : undefined}
-  data-hss-section={sequence ? "" : undefined}
->
+{sequence ? (
+  <HeroScrollSequence alt={sequence.alt} desktop={sequence.desktop} mobile={sequence.mobile}>
+    <div class="max-w-[640px]">
+      <div class="inline-flex items-center gap-2 mb-7 px-3.5 py-1.5 rounded-full border border-[var(--color-border)] bg-black/30 backdrop-blur-sm text-[13px] text-[var(--color-text-muted)]">
+        <span class="pulse-dot inline-block w-1.5 h-1.5 rounded-full bg-[var(--color-teal)]" style="box-shadow: 0 0 8px var(--color-teal);"></span>
+        {eyebrow}
+      </div>
+      <h1 class="text-[clamp(38px,6vw,76px)] font-bold tracking-[-0.04em] leading-[1.03] mb-6">
+        <span class="text-gradient-light">{titleLine1}</span><br />
+        <span class="text-gradient-accent">{titleLine2}</span>
+      </h1>
+      <p class="text-lg text-[var(--color-text-muted)] max-w-[560px] mb-9 leading-relaxed">
+        {sub}
+      </p>
+      <div class="flex flex-wrap gap-3">
+        <a
+          href={primaryCta.href}
+          class="inline-flex items-center gap-2 rounded-md bg-white px-5 py-3 text-[15px] font-medium text-black transition-all hover:bg-white/85 hover:-translate-y-px"
+          style="text-shadow:none"
+        >
+          {primaryCta.label}
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M5 12h14M12 5l7 7-7 7" />
+          </svg>
+        </a>
+        <a
+          href={secondaryCta.href}
+          class="inline-flex items-center gap-2 rounded-md border border-[var(--color-border-strong)] bg-black/30 backdrop-blur-sm px-5 py-3 text-[15px] font-medium text-[var(--color-text)] transition-all hover:bg-black/50 hover:border-white/40"
+        >
+          {secondaryCta.label}
+        </a>
+      </div>
+    </div>
+  </HeroScrollSequence>
+) : (
+<section class="relative pt-4 pb-14 md:pt-20 md:pb-20 overflow-hidden">
   <div class="hero-grid-bg"></div>
-  <div class={sequence ? "hss-pin" : undefined}>
-  <div class="container-content relative z-10 w-full">
+
+  <div class="container-content relative z-10">
     {photo ? (
       <div class="grid items-center gap-12 lg:grid-cols-[1.15fr_1fr] lg:gap-16">
         {/* Text-Spalte (links) */}
@@ -109,9 +137,6 @@ const photoSrcJpg = `${photoBase}.jpg`;
 
         {/* Foto-Spalte (rechts) — modernes Bildformat via <picture>. Browser
             wählt das beste verfügbare Format (AVIF → WebP → JPG-Fallback). */}
-        {sequence ? (
-          <HeroScrollSequence alt={sequence.alt} desktop={sequence.desktop} mobile={sequence.mobile} />
-        ) : (
         <div class="hero-photo-wrap">
           <span class="hero-photo-glow" aria-hidden="true"></span>
           <span class="hero-photo-dot" aria-hidden="true"></span>
@@ -131,7 +156,6 @@ const photoSrcJpg = `${photoBase}.jpg`;
             </picture>
           </div>
         </div>
-        )}
       </div>
     ) : (
       <div class="text-center">
@@ -157,8 +181,8 @@ const photoSrcJpg = `${photoBase}.jpg`;
       </div>
     )}
   </div>
-  </div>
 </section>
+)}
 
 <style is:global>
   /* Künstlerisch verzerrter Foto-Container im Hero */

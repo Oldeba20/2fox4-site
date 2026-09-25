@@ -1,53 +1,62 @@
 ---
 /**
- * HeroScrollSequence — Scroll-gesteuerte Bildsequenz für den Hero.
+ * HeroScrollSequence — Vollflächiger Scroll-Film als Hero-Hintergrund.
  *
- * Motiv: Laptop + Smartphone mit Website, die sich beim Scrollen in ihre
- * Ebenen zerlegt (Layout, Bilder, Texte, Navigation, Code/Speed/SEO).
+ * Motiv: Kamerafahrt durch ein dunkles Studio auf einen Laptop mit
+ * Quellcode zu; beim Hineinfliegen wird aus dem Code eine fertige Website.
+ * Die linke Hälfte des Schlussbilds ist bewusst leer — dort steht dann die
+ * echte H1, als wäre sie die Überschrift dieser Website.
  *
- * Technik: Kein <video>, sondern WebP-Einzelbilder, die per Canvas passend
- * zur Scrollposition gezeichnet werden (ruckelfrei, auch iOS).
- * - Das erste Bild ist ein normales <img> (LCP, alt-Text, SEO).
- * - Die restlichen Frames werden erst nach dem Laden der Seite nachgeladen.
- * - Desktop: die Hero-Sektion wird "gepinnt" (sticky), siehe Hero.astro.
- * - Mobil: kleinere Sequenz, Animation läuft beim normalen Durchscrollen.
- * - prefers-reduced-motion oder Datensparmodus: nur das Standbild.
+ * Technik: WebP-Einzelbilder, per Canvas passend zur Scrollposition gezeichnet.
+ * - Text (Slot) ist echtes HTML über dem Film -> SEO, Barrierefreiheit.
+ * - Erstes Bild als <img> (LCP). Restliche Frames erst nach dem Laden.
+ * - Querformat: 16:9-Frames (1920 px). Hochformat: eigene, auf den Laptop
+ *   zugeschnittene Frames, damit am Handy nichts Wichtiges abgeschnitten wird.
+ * - Die Sektion ist höher als der Bildschirm; der Inhalt bleibt "gepinnt"
+ *   (sticky), bis der Film durch ist.
+ * - prefers-reduced-motion / Datensparmodus: nur das Standbild.
  */
 interface Props {
   alt: string;
-  desktop: { path: string; count: number; size: number };
-  mobile: { path: string; count: number; size: number };
+  desktop: { path: string; count: number; width: number; height: number };
+  mobile: { path: string; count: number; width: number; height: number };
 }
 const { alt, desktop, mobile } = Astro.props;
 const first = (p: string) => `${p}/0001.webp`;
 ---
 
-<div
-  class="hss-wrap"
+<section
+  class="hss-section"
   data-hss
   data-d-path={desktop.path}
   data-d-count={desktop.count}
   data-m-path={mobile.path}
   data-m-count={mobile.count}
 >
-  <span class="hss-glow" aria-hidden="true"></span>
-  <div class="hss-stage">
-    <picture>
-      <source media="(max-width: 1023px)" srcset={first(mobile.path)} />
-      <img
-        class="hss-poster"
-        src={first(desktop.path)}
-        alt={alt}
-        width={desktop.size}
-        height={desktop.size}
-        loading="eager"
-        decoding="async"
-        fetchpriority="high"
-      />
-    </picture>
-    <canvas class="hss-canvas" aria-hidden="true"></canvas>
+  <div class="hss-pin">
+    <div class="hss-bg" aria-hidden="false">
+      <picture>
+        <source media="(max-aspect-ratio: 1/1)" srcset={first(mobile.path)} width={mobile.width} height={mobile.height} />
+        <img
+          class="hss-poster"
+          src={first(desktop.path)}
+          alt={alt}
+          width={desktop.width}
+          height={desktop.height}
+          loading="eager"
+          decoding="async"
+          fetchpriority="high"
+        />
+      </picture>
+      <canvas class="hss-canvas" aria-hidden="true"></canvas>
+      <span class="hss-scrim" aria-hidden="true"></span>
+    </div>
+
+    <div class="hss-content container-content relative z-10 w-full">
+      <slot />
+    </div>
   </div>
-</div>
+</section>
 
 <script>
   function initHeroSequence(el: HTMLElement) {
@@ -55,18 +64,16 @@ const first = (p: string) => `${p}/0001.webp`;
     const saveData = (navigator as any).connection?.saveData === true;
     if (reduce || saveData) return;
 
-    const isDesktop = window.matchMedia("(min-width: 1024px)").matches;
-    const path = isDesktop ? el.dataset.dPath! : el.dataset.mPath!;
-    const count = Number(isDesktop ? el.dataset.dCount : el.dataset.mCount);
+    const portrait = window.matchMedia("(max-aspect-ratio: 1/1)").matches;
+    const path = portrait ? el.dataset.mPath! : el.dataset.dPath!;
+    const count = Number(portrait ? el.dataset.mCount : el.dataset.dCount);
     const canvas = el.querySelector<HTMLCanvasElement>(".hss-canvas")!;
     const ctx = canvas.getContext("2d");
     if (!ctx || !count) return;
 
-    const section = el.closest<HTMLElement>("[data-hss-section]");
     const frames: (HTMLImageElement | null)[] = new Array(count).fill(null);
     let current = -1;
     let ticking = false;
-
     const src = (i: number) => `${path}/${String(i + 1).padStart(4, "0")}.webp`;
 
     function sizeCanvas() {
@@ -79,16 +86,11 @@ const first = (p: string) => `${p}/0001.webp`;
     }
 
     function progress(): number {
-      if (section && isDesktop) {
-        const r = section.getBoundingClientRect();
-        const dist = section.offsetHeight - window.innerHeight;
-        return dist > 0 ? Math.min(1, Math.max(0, -r.top / dist)) : 0;
-      }
-      // Mobil: Animation läuft, während der Stage-Bereich durch den Viewport scrollt
       const r = el.getBoundingClientRect();
-      const start = window.innerHeight * 0.9;
-      const end = -r.height * 0.2;
-      return Math.min(1, Math.max(0, (start - r.top) / (start - end)));
+      const dist = el.offsetHeight - window.innerHeight;
+      if (dist <= 0) return 0;
+      // Film ist bei 90 % fertig, danach steht das Schlussbild noch kurz
+      return Math.min(1, Math.max(0, -r.top / dist / 0.9));
     }
 
     function nearestLoaded(i: number) {
@@ -99,6 +101,14 @@ const first = (p: string) => `${p}/0001.webp`;
       return null;
     }
 
+    // "object-fit: cover" für Canvas
+    function drawCover(img: HTMLImageElement) {
+      const cw = canvas.width, ch = canvas.height;
+      const s = Math.max(cw / img.naturalWidth, ch / img.naturalHeight);
+      const w = img.naturalWidth * s, h = img.naturalHeight * s;
+      ctx!.drawImage(img, (cw - w) / 2, (ch - h) / 2, w, h);
+    }
+
     function render() {
       ticking = false;
       const i = Math.round(progress() * (count - 1));
@@ -106,8 +116,7 @@ const first = (p: string) => `${p}/0001.webp`;
       const img = nearestLoaded(i);
       if (!img) return;
       current = frames[i]?.complete ? i : -1;
-      ctx!.clearRect(0, 0, canvas.width, canvas.height);
-      ctx!.drawImage(img, 0, 0, canvas.width, canvas.height);
+      drawCover(img);
       el.classList.add("is-live");
     }
 
@@ -118,7 +127,7 @@ const first = (p: string) => `${p}/0001.webp`;
       }
     }
 
-    // Frames nachladen: erst jedes 4., dann den Rest -> schnell grob scrubbar
+    // Erst jedes 4. Frame (grob scrubbar), dann den Rest
     function load() {
       const order: number[] = [];
       for (let i = 0; i < count; i += 4) order.push(i);
@@ -137,14 +146,15 @@ const first = (p: string) => `${p}/0001.webp`;
           im.src = src(i);
           frames[i] = im;
         });
-        if (n < order.length) setTimeout(next, 60);
+        if (n < order.length) setTimeout(next, 50);
       };
       next();
     }
 
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", () => requestAnimationFrame(sizeCanvas));
-    const start = () => ("requestIdleCallback" in window ? (window as any).requestIdleCallback(load) : setTimeout(load, 200));
+    const start = () =>
+      "requestIdleCallback" in window ? (window as any).requestIdleCallback(load) : setTimeout(load, 200);
     if (document.readyState === "complete") start();
     else window.addEventListener("load", start, { once: true });
   }
@@ -153,21 +163,23 @@ const first = (p: string) => `${p}/0001.webp`;
 </script>
 
 <style is:global>
-  .hss-wrap {
+  .hss-section {
     position: relative;
-    width: 100%;
-    max-width: 600px;
-    margin: 0 auto;
-    aspect-ratio: 1 / 1;
-    isolation: isolate;
+    /* Header (sticky, 69-73px) liegt über dem Film -> Hero zieht darunter */
+    margin-top: -73px;
+    background: #050505;
   }
-  .hss-stage {
+  .hss-pin {
     position: relative;
-    width: 100%;
-    height: 100%;
-    /* Schwarzen Bildrand weich in den Seitenhintergrund auslaufen lassen */
-    -webkit-mask-image: radial-gradient(closest-side, #000 78%, transparent 100%);
-    mask-image: radial-gradient(closest-side, #000 78%, transparent 100%);
+    min-height: 100svh;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    padding: 110px 0 80px;
+  }
+  .hss-bg {
+    position: absolute;
+    inset: 0;
   }
   .hss-poster,
   .hss-canvas {
@@ -179,36 +191,51 @@ const first = (p: string) => `${p}/0001.webp`;
   }
   .hss-poster { object-fit: cover; }
   .hss-canvas { opacity: 0; }
-  .hss-wrap.is-live .hss-canvas { opacity: 1; }
-  .hss-wrap.is-live .hss-poster { visibility: hidden; }
-  .hss-glow {
+  .hss-section.is-live .hss-canvas { opacity: 1; }
+  .hss-section.is-live .hss-poster { visibility: hidden; }
+
+  /* Lesbarkeit: links dunkel, unten weicher Übergang in die Seite */
+  .hss-scrim {
     position: absolute;
-    inset: 10% 5% 0 5%;
-    background: radial-gradient(circle at 50% 70%, rgba(255, 91, 31, 0.22) 0%, rgba(255, 91, 31, 0) 60%);
-    filter: blur(40px);
-    z-index: -1;
+    inset: 0;
     pointer-events: none;
+    background:
+      linear-gradient(90deg, rgba(5, 5, 5, 0.82) 0%, rgba(5, 5, 5, 0.55) 38%, rgba(5, 5, 5, 0) 68%),
+      linear-gradient(180deg, rgba(5, 5, 5, 0) 70%, var(--color-bg) 100%);
+  }
+  @media (max-aspect-ratio: 1/1) {
+    .hss-scrim {
+      background:
+        linear-gradient(180deg, rgba(5, 5, 5, 0.2) 0%, rgba(5, 5, 5, 0.62) 40%, rgba(5, 5, 5, 0.45) 78%, var(--color-bg) 100%);
+    }
   }
 
-  /* Heller Modus: dunkle Bühne als abgerundete Karte statt weicher Maske */
-  html.a11y-light-mode .hss-stage {
-    -webkit-mask-image: none;
-    mask-image: none;
-    background: #000;
-    border-radius: 28px;
-    overflow: hidden;
+  /* Text im Film bleibt immer hell — auch im hellen Modus */
+  .hss-content {
+    --color-text: #f2f2f2;
+    --color-text-muted: rgba(255, 255, 255, 0.78);
+    --color-border: rgba(255, 255, 255, 0.16);
+    --color-border-strong: rgba(255, 255, 255, 0.28);
+    --color-bg-card: rgba(255, 255, 255, 0.06);
+    text-shadow: 0 2px 24px rgba(0, 0, 0, 0.45);
   }
+  html.a11y-light-mode .hss-content .text-gradient-light {
+    background: linear-gradient(180deg, #ffffff 0%, #bbbbbb 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+  }
+  html.a11y-light-mode .hss-content { --color-accent: #ff6b35; }
 
-  /* Desktop: Hero wird gepinnt, solange die Sequenz läuft */
-  @media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
-    .hss-section { height: 210vh; }
-    .hss-pin {
+  /* Pinning nur mit Bewegung */
+  @media (prefers-reduced-motion: no-preference) {
+    .hss-section { height: 260vh; }
+    .hss-section .hss-pin {
       position: sticky;
       top: 0;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      padding-top: 4rem; /* Platz für den sticky Header */
+      height: 100svh;
     }
+  }
+  @media (prefers-reduced-motion: no-preference) and (max-aspect-ratio: 1/1) {
+    .hss-section { height: 220vh; }
   }
 </style>
