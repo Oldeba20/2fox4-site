@@ -51,6 +51,12 @@
     -webkit-font-smoothing: antialiased;
     line-height: 1.5;
     overflow-x: hidden;
+    overflow-x: clip;
+  }
+
+  /* Kein seitliches Verschieben auf dem Handy (iOS ignoriert body allein) */
+  html {
+    overflow-x: clip;
   }
 
   a {

@@ -15,7 +15,7 @@ import { site } from "../data/site";
       2FOX<span class="text-[var(--color-accent)]">4</span>
     </a>
 
-    <nav class="hidden md:flex gap-8 text-sm text-[var(--color-text-muted)]">
+    <nav class="hidden lg:flex gap-8 text-sm text-[var(--color-text-muted)]">
       {site.nav.map((item) => (
         <a
           href={item.href}
@@ -63,7 +63,7 @@ import { site } from "../data/site";
         aria-label="Menü öffnen"
         aria-expanded="false"
         aria-controls="mobile-menu"
-        class="md:hidden inline-flex items-center justify-center w-10 h-10 rounded-md border border-[var(--color-border)] text-[var(--color-text)] transition-colors hover:bg-white/5"
+        class="lg:hidden inline-flex items-center justify-center w-10 h-10 rounded-md border border-[var(--color-border)] text-[var(--color-text)] transition-colors hover:bg-white/5"
       >
         <svg id="mobile-menu-icon-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-5 h-5" aria-hidden="true">
           <line x1="3" y1="6" x2="21" y2="6"/>
@@ -81,7 +81,7 @@ import { site } from "../data/site";
   {/* Mobile-Menü-Overlay */}
   <div
     id="mobile-menu"
-    class="md:hidden hidden border-t border-[var(--color-border)] bg-[rgba(10,10,10,0.95)] backdrop-blur-xl"
+    class="lg:hidden hidden border-t border-[var(--color-border)] bg-[rgba(10,10,10,0.95)] backdrop-blur-xl"
   >
     <nav class="container-content flex flex-col py-4">
       <a
