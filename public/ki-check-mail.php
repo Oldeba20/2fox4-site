@@ -50,6 +50,21 @@ function kicheck_result_email_html(array $d, array $config): string {
     $scoreColor = kicheck_score_color($score);
     $barW       = max(3, $score);
 
+    // ---- Ergebnis je KI-Suche ----
+    $engList = is_array($d['engines'] ?? null) ? $d['engines'] : [];
+    $engineBlock = '';
+    if ($engList) {
+        $cells = '';
+        foreach ($engList as $es) {
+            $cells .= '<td style="padding:6px;"><table role="presentation" width="100%" style="background:#1b1b1b;border:1px solid #262626;border-radius:12px;"><tr><td style="padding:14px;text-align:center;">'
+                . '<div style="color:#9a9a9a;font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;">' . kic_h($es['label'] ?? '') . '</div>'
+                . '<div style="color:#ffffff;font-size:20px;font-weight:800;margin-top:4px;">' . (int)($es['mentions'] ?? 0) . ' <span style="color:#6f6f6f;font-size:14px;">/ ' . (int)($es['n'] ?? 0) . '</span></div>'
+                . '<div style="color:#8a8a8a;font-size:12px;">Antworten mit Nennung</div></td></tr></table></td>';
+        }
+        $engineBlock = '<tr><td style="padding:14px 26px 0;"><div style="color:#8a8a8a;font-size:12px;padding:0 6px 4px;">Befragte KI-Suchen</div>'
+            . '<table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>' . $cells . '</tr></table></td></tr>';
+    }
+
     // ---- Fragenliste ----
     $qRows = '';
     foreach ($questions as $q) {
@@ -67,8 +82,12 @@ function kicheck_result_email_html(array $d, array $config): string {
         $qRows .= '<tr><td style="padding:13px 0;border-bottom:1px solid #232323;">'
             . '<div style="color:#ededed;font-size:14px;line-height:1.5;">' . kic_h($q['question'] ?? '') . '</div>'
             . '<div style="margin-top:8px;">'
-            . $badge($mentioned, 'genannt', 'nicht genannt')
-            . $badge($cited, 'verlinkt', 'nicht verlinkt')
+            . (count($q['engines'] ?? []) > 1
+                ? implode('', array_map(fn($lab, $e) => '<div style="margin-top:4px;"><span style="display:inline-block;width:78px;color:#8a8a8a;font-size:12px;">' . kic_h($lab) . '</span>'
+                    . (!empty($e['error']) ? '<span style="color:#6f6f6f;font-size:11px;">keine Antwort</span>'
+                        : $badge(!empty($e['mentioned']), 'genannt', 'nicht genannt') . $badge(!empty($e['cited']), 'verlinkt', 'nicht verlinkt')) . '</div>',
+                    array_keys($q['engines']), $q['engines']))
+                : $badge($mentioned, 'genannt', 'nicht genannt') . $badge($cited, 'verlinkt', 'nicht verlinkt'))
             . '</div></td></tr>';
     }
 
@@ -142,6 +161,7 @@ function kicheck_result_email_html(array $d, array $config): string {
     ' . ($summary !== '' ? '<div style="color:#b6b6b6;font-size:14px;line-height:1.6;margin-top:16px;">' . kic_h($summary) . '</div>' : '') . '
   </td></tr>
 
+  ' . $engineBlock . '
   <!-- Stats -->
   <tr><td style="padding:18px 26px 6px;">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
@@ -149,7 +169,7 @@ function kicheck_result_email_html(array $d, array $config): string {
         <table role="presentation" width="100%" style="background:#1b1b1b;border:1px solid #262626;border-radius:12px;"><tr>
           <td style="padding:16px;text-align:center;">
             <div style="color:#ff6b35;font-size:24px;font-weight:800;">' . $mentions . ' <span style="color:#6f6f6f;font-size:15px;font-weight:600;">/ ' . $nChecked . '</span></div>
-            <div style="color:#9a9a9a;font-size:12px;margin-top:3px;">Anfragen, bei denen du <b style="color:#cfcfcf;">genannt</b> wirst</div>
+            <div style="color:#9a9a9a;font-size:12px;margin-top:3px;">KI-Antworten, in denen du <b style="color:#cfcfcf;">genannt</b> wirst</div>
           </td>
         </tr></table>
       </td>
@@ -157,7 +177,7 @@ function kicheck_result_email_html(array $d, array $config): string {
         <table role="presentation" width="100%" style="background:#1b1b1b;border:1px solid #262626;border-radius:12px;"><tr>
           <td style="padding:16px;text-align:center;">
             <div style="color:#ff6b35;font-size:24px;font-weight:800;">' . $citations . ' <span style="color:#6f6f6f;font-size:15px;font-weight:600;">/ ' . $nChecked . '</span></div>
-            <div style="color:#9a9a9a;font-size:12px;margin-top:3px;">Anfragen, bei denen du <b style="color:#cfcfcf;">verlinkt</b> wirst</div>
+            <div style="color:#9a9a9a;font-size:12px;margin-top:3px;">KI-Antworten, in denen du <b style="color:#cfcfcf;">verlinkt</b> wirst</div>
           </td>
         </tr></table>
       </td>
@@ -275,8 +295,11 @@ function kicheck_result_email_text(array $d, array $config): string {
     $l[] = 'Score: ' . $score . '% – ' . $level;
     if ($summary !== '') $l[] = $summary;
     $l[] = '';
-    $l[] = 'Genannt:  ' . $mentions . ' von ' . $nChecked . ' Anfragen';
-    $l[] = 'Verlinkt: ' . $citations . ' von ' . $nChecked . ' Anfragen';
+    $l[] = 'Genannt:  ' . $mentions . ' von ' . $nChecked . ' KI-Antworten';
+    $l[] = 'Verlinkt: ' . $citations . ' von ' . $nChecked . ' KI-Antworten';
+    foreach ((is_array($d['engines'] ?? null) ? $d['engines'] : []) as $es) {
+        $l[] = '  ' . ($es['label'] ?? '') . ': genannt in ' . (int)($es['mentions'] ?? 0) . ' von ' . (int)($es['n'] ?? 0) . ' Antworten';
+    }
     $l[] = '';
     $l[] = 'Was bedeutet das?';
     $l[] = '- "Genannt": Dein Unternehmen wird im Antworttext der KI namentlich erwähnt.';

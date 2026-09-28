@@ -204,33 +204,44 @@ function perplexity_ask_all(string $apiKey, string $model, array $questions): ar
     return $out;
 }
 
-/* ---------- Check ausführen (alle Fragen parallel) ---------- */
+/* ---------- Check ausführen: alle Fragen an alle aktiven KI-Suchen ---------- */
 @set_time_limit(180);
-$results = [];
-$apiErrors = 0;
-$responses = perplexity_ask_all($apiKey, $model, $questions);
+require_once __DIR__ . '/lib/ki-check-engines.php';
+$engines   = kic_engines($config);
+$responses = kic_ask_engines($engines, $questions, $region, 110.0);
 $contents  = []; // Antworttexte für die Mitbewerber-Auswertung
+$results   = []; // je Frage, mit Ergebnis je KI
+$engineStats = [];
+$answered = 0; $total = 0; $mentions = 0; $citations = 0; $points = 0;
 foreach ($questions as $i => $q) {
-    $resp = $responses[$i] ?? ['ok' => false];
-    if (empty($resp['ok'])) {
-        $apiErrors++;
-        $results[] = ['question' => $q, 'mentioned' => false, 'cited' => false,
-                      'snippet' => 'Diese Frage konnte gerade nicht geprüft werden.', 'error' => true];
-        continue;
+    $row = ['question' => $q, 'mentioned' => false, 'cited' => false, 'error' => true, 'engines' => []];
+    foreach ($engines as $en => $ecfg) {
+        $total++;
+        $label = $ecfg['label'];
+        $engineStats[$label] = $engineStats[$label] ?? ['label' => $label, 'mentions' => 0, 'citations' => 0, 'n' => 0];
+        $resp = $responses[$en][$i] ?? ['ok' => false];
+        if (empty($resp['ok'])) {
+            error_log('[2fox4 KI-Check] ' . $label . ' Frage ' . ($i + 1) . ': HTTP ' . ($resp['http'] ?? '?') . ' ' . ($resp['err'] ?? ''));
+            $row['engines'][$label] = ['mentioned' => false, 'cited' => false, 'error' => true];
+            continue;
+        }
+        $answered++;
+        $contents[] = (string)$resp['content'];
+        $d = kic_detect_mention($resp['content'], $resp['sources'], $detectCtx);
+        $row['engines'][$label] = ['mentioned' => $d['mentioned'], 'cited' => $d['cited'], 'error' => false];
+        $row['error'] = false;
+        $row['mentioned'] = $row['mentioned'] || $d['mentioned'];
+        $row['cited']     = $row['cited'] || $d['cited'];
+        $engineStats[$label]['n']++;
+        if ($d['mentioned']) { $mentions++; $points += 2; $engineStats[$label]['mentions']++; }
+        if ($d['cited'])     { $citations++; $points += 1; $engineStats[$label]['citations']++; }
     }
-    $contents[] = (string)$resp['content'];
-    $d = kic_detect_mention($resp['content'], $resp['sources'], $detectCtx);
-    $results[] = [
-        'question'  => $q,
-        'mentioned' => $d['mentioned'],
-        'cited'     => $d['cited'],
-        'snippet'   => $d['snippet'],
-        'error'     => false,
-    ];
+    $results[] = $row;
 }
+$engineStats = array_values(array_filter($engineStats, fn($s) => $s['n'] > 0));
 // Zu wenige Antworten → ehrlicher Fehler statt eines verzerrten Scores
-if ($apiErrors > intdiv(count($questions), 2)) {
-    error_log('[2fox4 KI-Check] Nur ' . (count($questions) - $apiErrors) . ' von ' . count($questions) . ' Antworten erhalten');
+if ($total === 0 || $answered * 2 < $total) {
+    error_log('[2fox4 KI-Check] Nur ' . $answered . ' von ' . $total . ' Antworten erhalten');
     fail('Die KI-Suche ist gerade nicht erreichbar. Bitte versuche es in ein paar Minuten erneut.', 502);
 }
 
@@ -240,13 +251,7 @@ try { $competitors = kic_top_competitors($contents, $detectCtx, $service, $regio
 catch (\Throwable $e) { error_log('[2fox4 KI-Check] Mitbewerber: ' . $e->getMessage()); }
 
 /* ---------- Score + Level + Empfehlung ---------- */
-$checked = array_filter($results, fn($r) => empty($r['error']));
-$nChecked = max(1, count($checked));
-$mentions = 0; $citations = 0; $points = 0;
-foreach ($checked as $r) {
-    if ($r['mentioned']) { $mentions++; $points += 2; }
-    if ($r['cited'])     { $citations++; $points += 1; }
-}
+$nChecked = max(1, $answered);   // Zahl der ausgewerteten Antworten (Fragen × KI-Suchen)
 $score = (int)round($points / ($nChecked * 3) * 100);
 // Wie viele Mitbewerber werden öfter genannt als die eigene Firma? (nur Zahl für die Vorschau)
 $competitorsAhead = count(array_filter($competitors, fn($c) => (int)$c['count'] > $mentions));
@@ -303,8 +308,9 @@ $logEntry = [
     'mentions'  => $mentions,
     'citations' => $citations,
     'competitors' => $competitors,
+    'engines'   => $engineStats,
     'questions' => array_map(fn($r) => [
-        'q' => $r['question'], 'mentioned' => $r['mentioned'], 'cited' => $r['cited'],
+        'q' => $r['question'], 'mentioned' => $r['mentioned'], 'cited' => $r['cited'], 'engines' => $r['engines'],
     ], $results),
     'ip'        => preg_replace('/\.\d+$/', '.0', $ip),
     'ua'        => substr($_SERVER['HTTP_USER_AGENT'] ?? '', 0, 180),
@@ -350,7 +356,9 @@ $mailData = [
         'question'  => $r['question'],
         'mentioned' => (bool)$r['mentioned'],
         'cited'     => (bool)$r['cited'],
+        'engines'   => $r['engines'],
     ], $results),
+    'engines'         => $engineStats,
     'recommendations' => $recs,
     'competitors'     => $competitors,
 ];
@@ -404,6 +412,7 @@ if (!empty($config['db_host']) && !empty($config['smtp_host'])) {
             'questions'       => $mailData['questions'],
             'recommendations' => $recs,
             'competitors'     => $competitors,
+            'engines'         => $engineStats,
         ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 
         // Adresse bereits per DOI bestätigt?
@@ -544,5 +553,6 @@ out_json([
     'result_emailed'    => $resultEmailed,
     'pending_updated'   => $pendingUpdated,
     'competitors_ahead' => $competitorsAhead,
+    'engines'           => array_map(fn($s) => ['label' => $s['label'], 'mentions' => $s['mentions'], 'n' => $s['n']], $engineStats),
     'mail_error'        => $mailError && !$confirmationSent && !$resultEmailed && !$pendingUpdated,
 ]);

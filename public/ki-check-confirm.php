@@ -40,6 +40,7 @@ function send_result_mail(array $config, array $lead, array $newsletter = []): b
         'questions'       => is_array($r['questions'] ?? null) ? $r['questions'] : [],
         'recommendations' => is_array($r['recommendations'] ?? null) ? $r['recommendations'] : [],
         'competitors'     => is_array($r['competitors'] ?? null) ? $r['competitors'] : [],
+        'engines'         => is_array($r['engines'] ?? null) ? $r['engines'] : [],
         'newsletter'      => $newsletter,
     ];
     return kicheck_send_result_mail($config, $data);

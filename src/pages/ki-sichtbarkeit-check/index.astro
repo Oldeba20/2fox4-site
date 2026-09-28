@@ -52,7 +52,7 @@ const faqItems = [
   {
     question: "Welche KI-Suchmaschinen werden geprüft?",
     answerText:
-      "Im aktuellen Stand prüfen wir die KI-Suche über Perplexity, die live im Web recherchiert und Quellen zitiert – ein starker Indikator dafür, wie KI-Systeme dich generell einordnen. ChatGPT, Gemini und Claude folgen als weitere Prüf-Engines.",
+      "Der Check fragt Perplexity und ChatGPT, beide mit Live-Websuche – also so, wie deine Kunden diese Dienste heute nutzen. In der Auswertung siehst du das Ergebnis für jede KI einzeln. Gemini ist als nächste Prüf-Engine geplant.",
   },
   {
     question: "Ist der Check wirklich kostenlos?",
@@ -342,7 +342,7 @@ const schema = [
       <h2 class="mt-14 text-[26px] font-bold md:text-[34px]">KI-Sichtbarkeit messen: So entsteht dein Score</h2>
       <div class="mt-6 grid gap-5 text-[16px] leading-relaxed text-[var(--color-text-muted)]">
         <p>
-          Der Check stellt der KI-Suche acht Fragen, wie sie Interessenten tatsächlich formulieren –
+          Der Check stellt Perplexity und ChatGPT je acht Fragen, wie sie Interessenten tatsächlich formulieren –
           etwa „Wer sind die besten Anbieter für Webdesign in Stadthagen?“. Jede Antwort wird
           auf zweierlei Weise ausgewertet:
         </p>
@@ -351,7 +351,7 @@ const schema = [
           <li><strong class="text-[var(--color-text)]">Verlinkt:</strong> Deine Website steht unter den Quellen, auf die sich die KI stützt. Mit Angabe deiner Domain erkennt der Check das besonders genau.</li>
         </ul>
         <p>
-          Aus allen acht Antworten ergibt sich ein Wert zwischen 0 und 100 Prozent. Weil KI-Antworten
+          Aus allen Antworten ergibt sich ein Wert zwischen 0 und 100 Prozent. Weil KI-Antworten
           von Abfrage zu Abfrage schwanken, ist das ein Indikator und keine exakte Messung. Wiederholst
           du den Check in ein paar Wochen, siehst du trotzdem gut, ob sich etwas bewegt. Welche
           weiteren Kennzahlen es gibt und wie du sie selbst verfolgst, steht im Leitfaden
@@ -659,6 +659,11 @@ const schema = [
         '<p class="mx-auto mt-1 max-w-md text-[14px] text-[var(--color-text-muted)]">' +
         esc(data.summary || "") +
         "</p>" +
+        (Array.isArray(data.engines) && data.engines.length
+          ? '<p class="mx-auto mt-3 max-w-md text-[13px] text-[var(--color-text-muted)]">Befragt: ' +
+            data.engines.map(function (e) { return esc(e.label) + ' <strong class="text-[var(--color-text)]">' + e.mentions + '/' + e.n + '</strong>'; }).join(' · ') +
+            ' Antworten mit Nennung</p>'
+          : '') +
         (data.competitors_ahead > 0
           ? '<p class="mx-auto mt-4 max-w-md rounded-lg border border-[var(--color-accent)] px-4 py-3 text-[14px] font-semibold text-[var(--color-text)]">' +
             (data.competitors_ahead === 1 ? '1 Mitbewerber wird' : data.competitors_ahead + ' Mitbewerber werden') +
