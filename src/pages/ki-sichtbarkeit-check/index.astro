@@ -576,6 +576,13 @@ const schema = [
           if (!data || data.ok !== true) {
             throw new Error((data && data.error) || "Der Check ist fehlgeschlagen.");
           }
+          // Meta-Pixel: Lead melden. fbq existiert nur nach Marketing-Zustimmung
+          // (FacebookPixel.astro), ohne Zustimmung passiert hier also nichts.
+          try {
+            if (typeof window.fbq === "function") {
+              window.fbq("track", "Lead", { content_name: "KI-Sichtbarkeits-Check" });
+            }
+          } catch (e) {}
           renderResult(data);
         })
         .catch(function (err) {
