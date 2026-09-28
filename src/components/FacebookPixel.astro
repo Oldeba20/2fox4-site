@@ -16,10 +16,16 @@
  *
  * Pixel-ID: 1478342186395325 (Datensatz "2fox4", Eigentümer Oliver Deppe).
  *
- * Konfiguration siehe Const PIXEL_ID weiter unten. Wenn du je das Pixel
- * tauschen willst, nur diese eine Stelle anpassen.
+ * Zweites Pixel (seit 28.09.2026): 2142392536109518 („2FOX4 Pixel") gehört zum
+ * Werbekonto „geiles-zeugx" (act_352663146), das nicht im 2FOX4-Portfolio liegt –
+ * dort lässt sich 1478342186395325 nicht verknüpfen. Damit Anzeigen aus diesem
+ * Konto Besuche/Leads messen können, feuern beide Pixel (gleicher Consent-Hook).
+ * Jedes fbq("track", …) geht automatisch an alle initialisierten Pixel.
+ *
+ * Konfiguration siehe PIXEL_ID / EXTRA_PIXEL_IDS weiter unten.
  */
 const PIXEL_ID = "1478342186395325";
+const EXTRA_PIXEL_IDS = ["2142392536109518"];
 ---
 
 {/* Noscript-Fallback: <img>-Pixel feuert PageView auch ohne JS,
@@ -36,7 +42,7 @@ const PIXEL_ID = "1478342186395325";
   />
 </noscript>
 
-<script is:inline define:vars={{ PIXEL_ID }}>
+<script is:inline define:vars={{ PIXEL_ID, EXTRA_PIXEL_IDS }}>
   (function () {
     var loaded = false;
 
@@ -70,6 +76,9 @@ const PIXEL_ID = "1478342186395325";
       );
 
       window.fbq("init", PIXEL_ID);
+      for (var i = 0; i < EXTRA_PIXEL_IDS.length; i++) {
+        window.fbq("init", EXTRA_PIXEL_IDS[i]);
+      }
       window.fbq("track", "PageView");
     }
 
