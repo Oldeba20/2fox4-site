@@ -72,6 +72,19 @@ function kicheck_result_email_html(array $d, array $config): string {
             . '</div></td></tr>';
     }
 
+    // ---- Mitbewerber, die die KI stattdessen nennt ----
+    $comps = is_array($d['competitors'] ?? null) ? $d['competitors'] : [];
+    $compRows = '';
+    foreach ($comps as $cp) {
+        $cnt = (int)($cp['count'] ?? 0);
+        $w = max(6, (int)round($cnt / $nChecked * 100));
+        $compRows .= '<tr><td style="padding:9px 0;border-bottom:1px solid #232323;">'
+            . '<div style="color:#ffffff;font-size:14px;font-weight:600;">' . kic_h($cp['name'] ?? '') . '</div>'
+            . '<div style="margin-top:6px;background:#262626;border-radius:4px;height:6px;"><div style="width:' . $w . '%;background:#ff6b35;height:6px;border-radius:4px;"></div></div>'
+            . '<div style="color:#8a8a8a;font-size:12px;margin-top:4px;">in ' . $cnt . ' von ' . $nChecked . ' Antworten genannt</div>'
+            . '</td></tr>';
+    }
+
     // ---- Empfehlungen ----
     $recRows = '';
     $rn = 0;
@@ -163,6 +176,17 @@ function kicheck_result_email_html(array $d, array $config): string {
       </td>
     </tr></table>
   </td></tr>
+
+  ' . ($compRows !== '' ? '<!-- Mitbewerber -->
+  <tr><td style="padding:22px 32px 6px;">
+    <table role="presentation" width="100%" style="background:#1b1b1b;border:1px solid #262626;border-radius:12px;"><tr>
+      <td style="padding:18px 22px;">
+        <div style="color:#ffffff;font-size:15px;font-weight:700;margin-bottom:4px;">Diese Anbieter nennt die KI-Suche</div>
+        <div style="color:#8a8a8a;font-size:13px;line-height:1.5;margin-bottom:8px;">Zum Vergleich: Dein Unternehmen wurde in ' . $mentions . ' von ' . $nChecked . ' Antworten genannt. Die Liste zeigt, was die KI bei diesem Check geantwortet hat – kein Ranking von 2FOX4.</div>
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0">' . $compRows . '</table>
+      </td>
+    </tr></table>
+  </td></tr>' : '') . '
 
   ' . ($qRows !== '' ? '<!-- Fragen -->
   <tr><td style="padding:16px 32px 4px;">
@@ -261,9 +285,15 @@ function kicheck_result_email_text(array $d, array $config): string {
     if ($questions) {
         $l[] = 'Geprüfte Fragen:';
         foreach ($questions as $q) {
-            $tag = !empty($q['cited']) ? 'genannt + verlinkt' : (!empty($q['mentioned']) ? 'genannt' : 'nicht genannt');
+            $tag = (!empty($q['mentioned']) && !empty($q['cited'])) ? 'genannt + verlinkt' : (!empty($q['mentioned']) ? 'genannt' : (!empty($q['cited']) ? 'nur verlinkt' : 'nicht genannt'));
             $l[] = ' [' . $tag . '] ' . (string)($q['question'] ?? '');
         }
+        $l[] = '';
+    }
+    $comps = is_array($d['competitors'] ?? null) ? $d['competitors'] : [];
+    if ($comps) {
+        $l[] = 'Diese Anbieter nennt die KI-Suche (Du: ' . $mentions . ' von ' . $nChecked . ' Antworten):';
+        foreach ($comps as $cp) $l[] = ' - ' . ($cp['name'] ?? '') . ': in ' . (int)($cp['count'] ?? 0) . ' von ' . $nChecked . ' Antworten';
         $l[] = '';
     }
     if ($recs) {

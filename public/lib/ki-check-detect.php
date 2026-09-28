@@ -212,4 +212,76 @@ function kic_detect_mention(string $content, array $sources, array $ctx): array 
     return ['mentioned' => $mentioned, 'cited' => $cited, 'snippet' => $snippet];
 }
 
+/**
+ * Aus einer KI-Antwort die genannten Anbieter herausziehen (fett markierte Namen
+ * und Listeneinträge). Adressen, Bewertungen, Preise und Floskeln fliegen raus.
+ * Gibt eindeutige Anzeigenamen zurück.
+ */
+function kic_extract_providers(string $content, string $service = '', string $region = ''): array {
+    $cands = [];
+    if (preg_match_all('/\*\*([^*\n]{3,80})\*\*/u', $content, $m)) $cands = array_merge($cands, $m[1]);
+    if (preg_match_all('/^\s*(?:\d+[.)]|[-•*])\s+(?!\*\*)([^:–—\n(\[]{3,70})/mu', $content, $m)) $cands = array_merge($cands, $m[1]);
+    $stopWords = ['anbieter','empfehl','adresse','preis','bewert','erfahr','seriös','sterne','jahre','projekte','konkret',
+        'bekannt','option','tipp','hinweis','fazit','kontakt','telefon','öffnungs','leistung','vorteil','bewertung',
+        'straße','strasse','str.','platz','weg ','allee','uhr','euro','€','google','kunden','qualität','service ',
+        'meisterbetrieb','tradition','geprüft','eintrag','ergebnis','quelle','zusammenfassung','kriterien','region','raum ',
+        'nähe','überblick','empfehlung','beispiel','auswahl','schwerpunkt','spezialis','angebot'];
+    $reg = kic_normalize_name($region); $svc = kic_normalize_name($service);
+    $out = [];
+    foreach ($cands as $c) {
+        $c = trim(preg_replace('/\[\d+\]/u', '', $c));
+        $c = trim($c, " \t,.;:–—-\"„“'()");
+        if ($c === '' || mb_strlen($c) < 3 || mb_strlen($c) > 70) continue;
+        if (!preg_match('/\p{L}{3,}/u', $c)) continue;
+        if (preg_match('/\d{5}|\d[.,]\d|\/\s*\d|\d+\s*(km|min|€|%)/u', $c)) continue;
+        $low = mb_strtolower($c, 'UTF-8');
+        $skip = false;
+        foreach ($stopWords as $w) { if (mb_strpos($low, $w) !== false) { $skip = true; break; } }
+        if ($skip) continue;
+        $n = kic_normalize_name($c);
+        if ($n === '' || $n === $reg || $n === $svc || $n === trim($svc . ' ' . $reg)) continue;
+        if (str_word_count($n) > 9) continue;
+        $out[$n] = $c;
+    }
+    return $out; // [normalisiert => Anzeige]
+}
+
+/**
+ * Über alle Antworten zählen, wie oft welcher Anbieter genannt wurde (max. 1× pro Antwort).
+ * Eigene Firma raus. Varianten („Michael Liebrecht Bau…" / „Liebrecht Michael Bau…") werden über
+ * die Wortmenge zusammengeführt. Rückgabe: [['name'=>..., 'count'=>n], …] absteigend.
+ */
+function kic_top_competitors(array $contents, array $ctx, string $service, string $region, int $limit = 5): array {
+    $own = $ctx[0] ?? '';
+    $groups = []; // key => [name, count, tokens]
+    foreach ($contents as $content) {
+        $seen = [];
+        foreach (kic_extract_providers((string)$content, $service, $region) as $norm => $disp) {
+            $det = kic_detect_mention($disp, [], $ctx);
+            if (!empty($det['mentioned'])) continue; // das ist die eigene Firma
+            $tok = array_values(array_filter(explode(' ', $norm), fn($x) => mb_strlen($x) >= 3));
+            if (!$tok) continue;
+            // Einzelwörter ohne Markenkern („Möbelbau", „Innenausbau") sind keine Anbieter
+            $core = kic_name_tokens($norm, $service, $region);
+            if (!$core || (count($tok) === 1 && preg_match('/(bau|ausbau|handwerk|betrieb|studio|salon)$/u', $tok[0]))) continue;
+            sort($tok);
+            // Zusammenführen: gleicher Markenkern (z. B. „liebrecht") oder Wortmenge ist Teilmenge
+            $dt = kic_distinct_token($norm, $service, $region);
+            $key = null;
+            foreach ($groups as $k => $g) {
+                if (($dt !== '' && $dt === $g['dt']) || !array_diff($g['tokens'], $tok) || !array_diff($tok, $g['tokens'])) { $key = $k; break; }
+            }
+            if ($key === null) { $key = implode(' ', $tok); $groups[$key] = ['name' => $disp, 'count' => 0, 'tokens' => $tok, 'dt' => $dt]; }
+            if (isset($seen[$key])) continue;
+            $seen[$key] = true;
+            $groups[$key]['count']++;
+            if (mb_strlen($disp) < mb_strlen($groups[$key]['name'])) $groups[$key]['name'] = $disp; // kürzeste Schreibweise
+        }
+    }
+    $list = array_values(array_filter($groups, fn($g) => $g['count'] >= 2));
+    usort($list, fn($x, $y) => $y['count'] <=> $x['count']);
+    return array_map(fn($g) => ['name' => $g['name'], 'count' => $g['count']], array_slice($list, 0, $limit));
+}
+
+
 }

@@ -659,6 +659,11 @@ const schema = [
         '<p class="mx-auto mt-1 max-w-md text-[14px] text-[var(--color-text-muted)]">' +
         esc(data.summary || "") +
         "</p>" +
+        (data.competitors_ahead > 0
+          ? '<p class="mx-auto mt-4 max-w-md rounded-lg border border-[var(--color-accent)] px-4 py-3 text-[14px] font-semibold text-[var(--color-text)]">' +
+            (data.competitors_ahead === 1 ? '1 Mitbewerber wird' : data.competitors_ahead + ' Mitbewerber werden') +
+            ' von der KI häufiger genannt als du. Wer das ist, steht in deiner Auswertung per E-Mail.</p>'
+          : '') +
         '<p class="mx-auto mt-2 max-w-md text-[12px] text-[var(--color-text-faint)]">Das ist eine kurze Vorschau. Die ausführliche Auswertung mit allen Fragen und Empfehlungen erhältst du per E-Mail.</p>' +
         "</div>" +
         '<div class="mt-6 rounded-xl border border-[var(--color-accent)] bg-[var(--color-bg)] p-5 text-center">' +

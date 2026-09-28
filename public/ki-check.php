@@ -184,14 +184,32 @@ function perplexity_ask_all(string $apiKey, string $model, array $questions): ar
         curl_close($ch);
     }
     curl_multi_close($mh);
+
+    // Nachholen, was an Perplexitys Ratenlimit gescheitert ist (HTTP 429) – einzeln,
+    // mit kurzer Pause. Festgestellt 28.09.2026: von 5 parallelen Anfragen kam nur
+    // 1 durch, der Score beruhte dann auf einer einzigen Antwort (daher „immer 100 %").
+    $deadline = microtime(true) + 60;
+    foreach ($questions as $i => $q) {
+        $tries = 0;
+        while (empty($out[$i]['ok']) && in_array((int)($out[$i]['http'] ?? 0), [0, 429, 500, 502, 503], true)
+               && $tries < 3 && microtime(true) < $deadline) {
+            $tries++;
+            usleep(($tries === 1 ? 700 : 1500) * 1000);
+            $ch  = perplexity_handle($apiKey, $model, $q);
+            $res = curl_exec($ch);
+            $out[$i] = perplexity_parse($res, (int)curl_getinfo($ch, CURLINFO_HTTP_CODE), curl_error($ch));
+            curl_close($ch);
+        }
+    }
     return $out;
 }
 
 /* ---------- Check ausführen (alle Fragen parallel) ---------- */
-@set_time_limit(150);
+@set_time_limit(180);
 $results = [];
 $apiErrors = 0;
 $responses = perplexity_ask_all($apiKey, $model, $questions);
+$contents  = []; // Antworttexte für die Mitbewerber-Auswertung
 foreach ($questions as $i => $q) {
     $resp = $responses[$i] ?? ['ok' => false];
     if (empty($resp['ok'])) {
@@ -200,6 +218,7 @@ foreach ($questions as $i => $q) {
                       'snippet' => 'Diese Frage konnte gerade nicht geprüft werden.', 'error' => true];
         continue;
     }
+    $contents[] = (string)$resp['content'];
     $d = kic_detect_mention($resp['content'], $resp['sources'], $detectCtx);
     $results[] = [
         'question'  => $q,
@@ -209,10 +228,16 @@ foreach ($questions as $i => $q) {
         'error'     => false,
     ];
 }
-// Alle Calls fehlgeschlagen → ehrlicher Fehler statt 0-Score
-if ($apiErrors === count($questions)) {
+// Zu wenige Antworten → ehrlicher Fehler statt eines verzerrten Scores
+if ($apiErrors > intdiv(count($questions), 2)) {
+    error_log('[2fox4 KI-Check] Nur ' . (count($questions) - $apiErrors) . ' von ' . count($questions) . ' Antworten erhalten');
     fail('Die KI-Suche ist gerade nicht erreichbar. Bitte versuche es in ein paar Minuten erneut.', 502);
 }
+
+/* ---------- Mitbewerber: wen nennt die KI stattdessen? ---------- */
+$competitors = [];
+try { $competitors = kic_top_competitors($contents, $detectCtx, $service, $region, 5); }
+catch (\Throwable $e) { error_log('[2fox4 KI-Check] Mitbewerber: ' . $e->getMessage()); }
 
 /* ---------- Score + Level + Empfehlung ---------- */
 $checked = array_filter($results, fn($r) => empty($r['error']));
@@ -223,6 +248,8 @@ foreach ($checked as $r) {
     if ($r['cited'])     { $citations++; $points += 1; }
 }
 $score = (int)round($points / ($nChecked * 3) * 100);
+// Wie viele Mitbewerber werden öfter genannt als die eigene Firma? (nur Zahl für die Vorschau)
+$competitorsAhead = count(array_filter($competitors, fn($c) => (int)$c['count'] > $mentions));
 
 if ($score >= 85)      { $level = 'Dominant in der KI-Suche (Stufe 3)'; }
 elseif ($score >= 60)  { $level = 'Stark sichtbar (obere Stufe 2)'; }
@@ -275,6 +302,7 @@ $logEntry = [
     'level'     => $level,
     'mentions'  => $mentions,
     'citations' => $citations,
+    'competitors' => $competitors,
     'questions' => array_map(fn($r) => [
         'q' => $r['question'], 'mentioned' => $r['mentioned'], 'cited' => $r['cited'],
     ], $results),
@@ -324,6 +352,7 @@ $mailData = [
         'cited'     => (bool)$r['cited'],
     ], $results),
     'recommendations' => $recs,
+    'competitors'     => $competitors,
 ];
 
 if (!empty($config['db_host']) && !empty($config['smtp_host'])) {
@@ -374,6 +403,7 @@ if (!empty($config['db_host']) && !empty($config['smtp_host'])) {
             'nChecked'        => $nChecked,
             'questions'       => $mailData['questions'],
             'recommendations' => $recs,
+            'competitors'     => $competitors,
         ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 
         // Adresse bereits per DOI bestätigt?
@@ -513,5 +543,6 @@ out_json([
     'already_confirmed' => $alreadyConfirmed,
     'result_emailed'    => $resultEmailed,
     'pending_updated'   => $pendingUpdated,
+    'competitors_ahead' => $competitorsAhead,
     'mail_error'        => $mailError && !$confirmationSent && !$resultEmailed && !$pendingUpdated,
 ]);
