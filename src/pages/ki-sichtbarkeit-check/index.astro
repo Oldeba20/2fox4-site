@@ -22,13 +22,28 @@ import SearchShiftInfographic from "../../components/SearchShiftInfographic.astr
 import { faqSchema, breadcrumbSchema } from "../../lib/schema";
 import { site } from "../../data/site";
 
-const title = "KI-Sichtbarkeits-Check: Wirst du von ChatGPT & Co. gefunden?";
+const title = "KI-Sichtbarkeit prüfen: kostenloser Check für ChatGPT & Co.";
 const description =
-  "Kostenloser Check: Wie gut wird dein Unternehmen in KI-Suchmaschinen wie ChatGPT, Perplexity, Gemini und Claude gefunden? Suchbegriff eingeben, Vorschau ansehen und die vollständige Auswertung per E-Mail erhalten.";
+  "Kostenloser KI-Sichtbarkeits-Check: Prüfe in einer Minute, ob ChatGPT, Perplexity & Co. dein Unternehmen empfehlen – mit Score und ausführlicher Auswertung per E-Mail.";
 
 const ogImage = "/uploads/ki-check/og.jpg";
 
 const faqItems = [
+  {
+    question: "Was ist KI-Sichtbarkeit?",
+    answerText:
+      "KI-Sichtbarkeit beschreibt, ob und wie oft ein Unternehmen in den Antworten von KI-Suchmaschinen wie ChatGPT, Perplexity, Gemini oder den KI-Übersichten bei Google genannt, empfohlen oder als Quelle verlinkt wird. Anders als beim klassischen Google-Ranking gibt es keine Liste mit zehn Plätzen: Entweder die KI nennt dich in ihrer Antwort – oder deine Kunden erfahren gar nicht, dass es dich gibt.",
+  },
+  {
+    question: "Wie kann ich meine KI-Sichtbarkeit prüfen?",
+    answerText:
+      "Am einfachsten mit diesem kostenlosen Check: Firmenname, Leistung und Region eingeben, und das Tool stellt der KI-Suche acht typische Käuferfragen. Du siehst sofort einen Score, die ausführliche Auswertung kommt per E-Mail. Von Hand geht es auch: Stell ChatGPT oder Perplexity die Fragen, die deine Kunden stellen würden, und notiere, ob du genannt wirst – das dauert aber deutlich länger und ist schwer vergleichbar.",
+  },
+  {
+    question: "Wie kann ich meine KI-Sichtbarkeit verbessern?",
+    answerText:
+      "Die wichtigsten Hebel: Leistungen klar und konkret beschreiben (was, für wen, wo, zu welchem Preis), Fragen deiner Kunden direkt auf der Website beantworten, strukturierte Daten einbauen, einheitliche Firmendaten in Verzeichnissen und im Google-Unternehmensprofil pflegen und Erwähnungen auf anderen Websites aufbauen. KI-Systeme empfehlen, was sie eindeutig zuordnen und in mehreren Quellen bestätigt finden.",
+  },
   {
     question: "Wie funktioniert der KI-Sichtbarkeits-Check?",
     answerText:
@@ -52,7 +67,7 @@ const faqItems = [
   {
     question: "Stimmt das Ergebnis exakt mit der ChatGPT-App überein?",
     answerText:
-      "Es ist ein sehr starker Indikator, aber keine hundertprozentige Kopie. Die KI-Antworten schwanken von Abfrage zu Abfrage und hängen von Personalisierung ab. Deshalb stellen wir jede Frage in mehreren Varianten und werten das Gesamtbild aus.",
+      "Es ist ein sehr starker Indikator, aber keine hundertprozentige Kopie. Die KI-Antworten schwanken von Abfrage zu Abfrage und hängen von Personalisierung ab. Deshalb stellen wir acht unterschiedlich formulierte Fragen und werten das Gesamtbild aus.",
   },
   {
     question: "Was passiert mit meinen Daten?",
@@ -103,14 +118,14 @@ const schema = [
         Kostenloser KI-Sichtbarkeits-Check
       </span>
       <h1 class="mt-5 text-[34px] font-bold leading-[1.1] md:text-[52px]">
-        Wirst du von <span class="text-[var(--color-accent)]">ChatGPT &amp; Co.</span>
-        überhaupt gefunden?
+        KI-Sichtbarkeit prüfen: Wirst du von
+        <span class="text-[var(--color-accent)]">ChatGPT &amp; Co.</span> gefunden?
       </h1>
       <p class="mx-auto mt-5 max-w-2xl text-[17px] leading-relaxed text-[var(--color-text-muted)] md:text-[19px]">
         Immer mehr Kunden suchen Anbieter nicht mehr bei Google, sondern fragen
-        KI-Suchmaschinen wie ChatGPT, Perplexity, Gemini und Claude. Prüfe in 60
-        Sekunden, ob dein Unternehmen dort empfohlen wird – inklusive konkreter
-        Handlungsempfehlung.
+        KI-Suchmaschinen wie ChatGPT, Perplexity, Gemini und Claude. Prüfe in einer
+        Minute, ob dein Unternehmen dort empfohlen wird – kostenlos, mit Score und
+        konkreter Handlungsempfehlung.
       </p>
     </div>
 
@@ -134,12 +149,12 @@ const schema = [
             />
           </label>
           <label class="block text-left">
-            <span class="text-[14px] font-medium">Deine Leistung / dein Suchbegriff</span>
+            <span class="text-[14px] font-medium">Was bietest du an?</span>
             <input
               type="text"
               name="service"
               required
-              placeholder="z. B. Steuerberater, Webdesign, Heizungsbau"
+              placeholder="z. B. Steuerberatung, Webdesign, Heizungsbau"
               class="mt-1 w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] px-4 py-3 text-[15px] outline-none focus:border-[var(--color-accent)]"
             />
           </label>
@@ -179,15 +194,18 @@ const schema = [
             type="submit"
             class="mt-1 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[var(--color-accent)] px-6 py-3.5 text-[15px] font-semibold text-black transition-all hover:-translate-y-px"
           >
-            Fragen anzeigen →
+            Weiter: Fragen ansehen →
           </button>
+          <p class="text-center text-[12px] text-[var(--color-text-muted)]">
+            Schritt 1 von 2 · Im nächsten Schritt siehst du die Fragen, bevor der Check startet.
+          </p>
         </div>
       </form>
 
       <!-- Schritt 2: Generierte Fragen + E-Mail-Schranke -->
       <div id="kic-step2" hidden class="mt-2">
         <p class="text-left text-[14px] text-[var(--color-text-muted)]">
-          Diese echten Käuferfragen stellen wir der KI-Suche in deinem Namen:
+          Schritt 2 von 2 · Diese Käuferfragen stellen wir der KI-Suche in deinem Namen:
         </p>
         <ol id="kic-questions" class="mt-3 grid gap-2 text-left"></ol>
 
@@ -199,11 +217,13 @@ const schema = [
             Auf der Seite siehst du gleich eine kurze Vorschau. Deine vollständige,
             aufbereitete Auswertung bekommst du per E-Mail – nach kurzer Bestätigung.
           </p>
+          <label for="kic-email" class="sr-only">E-Mail-Adresse für die Auswertung</label>
           <input
             id="kic-email"
             type="email"
             name="email"
             required
+            autocomplete="email"
             placeholder="deine@firma.de"
             class="mt-2 w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-bg-elevated)] px-4 py-3 text-[15px] outline-none focus:border-[var(--color-accent)]"
           />
@@ -232,7 +252,7 @@ const schema = [
             Auswertung kostenlos anfordern
           </button>
           <p class="mt-2 text-center text-[12px] text-[var(--color-text-muted)]">
-            Kostenlos · keine Verpflichtung · Vorschau in ~60 Sekunden, Details per E-Mail
+            Kostenlos · keine Verpflichtung · Vorschau in unter einer Minute, Details per E-Mail
           </p>
         </div>
         <button id="kic-back" type="button" class="mt-3 text-[13px] text-[var(--color-text-muted)] underline">
@@ -241,7 +261,7 @@ const schema = [
       </div>
 
       <!-- Lade-Zustand -->
-      <div id="kic-loading" hidden class="py-10 text-center">
+      <div id="kic-loading" hidden class="py-10 text-center" role="status" aria-live="polite">
         <div class="kic-spinner mx-auto"></div>
         <p id="kic-loading-text" class="mt-4 text-[15px] text-[var(--color-text-muted)]">
           Wir fragen gerade die KI-Suche …
@@ -252,7 +272,7 @@ const schema = [
       <div id="kic-result" hidden></div>
 
       <!-- Fehler -->
-      <div id="kic-error" hidden class="mt-4 rounded-lg border border-[var(--color-accent)] bg-[var(--color-bg)] p-4 text-[14px]"></div>
+      <div id="kic-error" role="alert" aria-live="assertive" hidden class="mt-4 rounded-lg border border-[var(--color-accent)] bg-[var(--color-bg)] p-4 text-[14px]"></div>
     </div>
 
     <p class="mx-auto mt-4 max-w-2xl text-center text-[12px] text-[var(--color-text-muted)]">
@@ -299,40 +319,64 @@ const schema = [
   <!-- ===================== RANKING-CONTENT ===================== -->
   <section class="border-t border-[var(--color-border)] py-16 md:py-20">
     <div class="container-content mx-auto max-w-3xl">
-      <h2 class="text-[26px] font-bold md:text-[34px]">
-        Warum KI-Sichtbarkeit über deine nächsten Aufträge entscheidet
-      </h2>
+      <h2 class="text-[26px] font-bold md:text-[34px]">Was ist KI-Sichtbarkeit?</h2>
       <div class="mt-6 grid gap-5 text-[16px] leading-relaxed text-[var(--color-text-muted)]">
         <p>
-          Die Suche verschiebt sich gerade fundamental. Statt bei Google zehn blaue
-          Links zu vergleichen, stellen immer mehr Menschen ihre Frage direkt einer
-          KI-Suchmaschine wie ChatGPT, Perplexity, Gemini oder Claude – und bekommen
-          eine fertige Empfehlung mit konkreten Namen. Steht dein Unternehmen dort
-          nicht drin, verlierst du Anfragen, von denen du nie erfährst.
+          <strong class="text-[var(--color-text)]">KI-Sichtbarkeit</strong> beschreibt, ob ein
+          Unternehmen in den Antworten von KI-Suchmaschinen wie ChatGPT, Perplexity, Gemini oder
+          den KI-Übersichten bei Google auftaucht – als Empfehlung mit Namen oder als verlinkte Quelle.
+          Statt zehn blauer Links zu vergleichen, stellen immer mehr Menschen ihre Frage direkt einer
+          KI und bekommen eine fertige Antwort mit zwei, drei Anbietern. Stehst du dort nicht drin,
+          verlierst du Anfragen, von denen du nie erfährst.
         </p>
         <p>
-          Diese KI-Sichtbarkeit nennt man <strong class="text-[var(--color-text)]">GEO – Generative Engine
-          Optimization</strong>. Sie ist die Weiterentwicklung der klassischen
-          Suchmaschinenoptimierung: Es geht nicht mehr nur um Platz 1 bei Google,
-          sondern darum, in den Antworten der KI-Systeme als Empfehlung aufzutauchen.
-          Wie das im Detail funktioniert und welche drei Stufen der KI-Sichtbarkeit es
-          gibt, erklären wir im Beitrag
-          <a href="/blog/geo-ki-suche-marketing-3-stufen-sichtbarkeit/" class="text-[var(--color-accent)] underline">
-            GEO: die 3 Stufen der KI-Sichtbarkeit</a>.
+          Die Arbeit daran heißt <strong class="text-[var(--color-text)]">GEO – Generative Engine
+          Optimization</strong>. Sie baut auf klassischer Suchmaschinenoptimierung auf, hat aber ein
+          anderes Ziel: nicht Platz 1 in einer Trefferliste, sondern die Nennung in der Antwort selbst.
+          Welche drei Stufen der KI-Sichtbarkeit es gibt, erklären wir im Beitrag
+          <a href="/blog/geo-ki-suche-marketing-3-stufen-sichtbarkeit/" class="text-[var(--color-accent)] underline">GEO: die 3 Stufen der KI-Sichtbarkeit</a>.
         </p>
+      </div>
+
+      <h2 class="mt-14 text-[26px] font-bold md:text-[34px]">KI-Sichtbarkeit messen: So entsteht dein Score</h2>
+      <div class="mt-6 grid gap-5 text-[16px] leading-relaxed text-[var(--color-text-muted)]">
         <p>
-          Parallel entsteht eine völlig neue Käuferschicht: KI-Agenten, die selbständig
-          Anbieter recherchieren, vergleichen und sogar anfragen – noch bevor ein Mensch
-          deine Website öffnet. Warum deine Seite dafür
-          <a href="/blog/ki-agenten-als-kaeufer-website-maschinenlesbar/" class="text-[var(--color-accent)] underline">
-            maschinenlesbar sein muss</a>, liest du in unserem aktuellen Beitrag.
+          Der Check stellt der KI-Suche acht Fragen, wie sie Interessenten tatsächlich formulieren –
+          etwa „Wer sind die besten Anbieter für Webdesign in Stadthagen?“. Jede Antwort wird
+          auf zweierlei Weise ausgewertet:
         </p>
+        <ul class="grid gap-3 pl-5" style="list-style: disc;">
+          <li><strong class="text-[var(--color-text)]">Genannt:</strong> Dein Firmenname taucht im Antworttext auf. Das zählt am meisten, denn so sieht der Kunde dich.</li>
+          <li><strong class="text-[var(--color-text)]">Verlinkt:</strong> Deine Website steht unter den Quellen, auf die sich die KI stützt. Mit Angabe deiner Domain erkennt der Check das besonders genau.</li>
+        </ul>
         <p>
-          Der KI-Sichtbarkeits-Check macht den Status sichtbar: Er zeigt dir schwarz auf
-          weiß, ob die KI dich heute schon empfiehlt. Willst du anschließend gezielt
-          nach oben, ist unsere
+          Aus allen acht Antworten ergibt sich ein Wert zwischen 0 und 100 Prozent. Weil KI-Antworten
+          von Abfrage zu Abfrage schwanken, ist das ein Indikator und keine exakte Messung. Wiederholst
+          du den Check in ein paar Wochen, siehst du trotzdem gut, ob sich etwas bewegt. Welche
+          weiteren Kennzahlen es gibt und wie du sie selbst verfolgst, steht im Leitfaden
+          <a href="/blog/sichtbarkeit-in-ki-suchmaschinen-messen/" class="text-[var(--color-accent)] underline">KI-Sichtbarkeit messen: Kennzahlen und Tools</a>.
+        </p>
+      </div>
+
+      <h2 class="mt-14 text-[26px] font-bold md:text-[34px]">KI-Sichtbarkeit verbessern: die wichtigsten Hebel</h2>
+      <ol class="mt-6 grid gap-4 pl-5 text-[16px] leading-relaxed text-[var(--color-text-muted)]" style="list-style: decimal;">
+        <li><strong class="text-[var(--color-text)]">Klar sagen, was du anbietest.</strong> Leistung, Zielgruppe, Einzugsgebiet und ungefähre Preise gehören ausdrücklich auf die Website – KI-Systeme empfehlen, was sie eindeutig zuordnen können.</li>
+        <li><strong class="text-[var(--color-text)]">Fragen deiner Kunden beantworten.</strong> Eine gut gepflegte FAQ und Seiten, die typische Fragen direkt beantworten, liefern der KI zitierfähige Sätze.</li>
+        <li><strong class="text-[var(--color-text)]">Strukturierte Daten einbauen.</strong> Schema.org-Angaben zu Unternehmen, Leistungen und Standort machen deine Seite maschinenlesbar.</li>
+        <li><strong class="text-[var(--color-text)]">Einheitliche Firmendaten im Netz.</strong> Name, Adresse und Telefonnummer sollten im Google-Unternehmensprofil, in Branchenverzeichnissen und auf der Website identisch sein.</li>
+        <li><strong class="text-[var(--color-text)]">Erwähnungen auf anderen Seiten.</strong> Bewertungen, Presseartikel und Fachbeiträge bestätigen der KI, dass du eine relevante Adresse bist.</li>
+      </ol>
+      <div class="mt-6 grid gap-5 text-[16px] leading-relaxed text-[var(--color-text-muted)]">
+        <p>
+          Dazu kommt eine neue Käuferschicht: KI-Agenten, die Anbieter selbständig recherchieren und
+          vergleichen, bevor ein Mensch deine Website öffnet. Warum deine Seite dafür
+          <a href="/blog/ki-agenten-als-kaeufer-website-maschinenlesbar/" class="text-[var(--color-accent)] underline">maschinenlesbar sein muss</a>,
+          liest du in unserem Beitrag dazu. Willst du gezielt sichtbarer werden, ist unsere
           <a href="/leistungen/seo/" class="text-[var(--color-accent)] underline">SEO- &amp; KI-Sichtbarkeits-Leistung</a>
           der nächste Schritt.
+        </p>
+        <p>
+          <a href="#ki-tool" class="font-semibold text-[var(--color-accent)] underline">Jetzt KI-Sichtbarkeit kostenlos prüfen ↑</a>
         </p>
       </div>
     </div>
@@ -421,31 +465,31 @@ const schema = [
       });
     }
 
-    // Fragen-Generator — IDENTISCH zur Logik in ki-check.php
+    // Fragen-Generator — IDENTISCH zu kic_build_questions() in public/lib/ki-check-detect.php
     function buildQuestions(service, region) {
       var s = service.trim();
       var r = region.trim();
       if (r) {
         return [
           "Wer sind die besten Anbieter für " + s + " in " + r + "?",
-          "Welche " + s + "-Dienstleister kannst du mir in " + r + " empfehlen?",
+          "Welche Firmen für " + s + " kannst du mir in " + r + " empfehlen?",
           "Ich suche " + s + " in " + r + " – wen würdest du empfehlen?",
           "Was ist eine gute Adresse für " + s + " im Raum " + r + "?",
           "Nenne mir seriöse Anbieter für " + s + " in " + r + ".",
-          "Welcher " + s + "-Anbieter in " + r + " wird besonders gut bewertet?",
-          "Wer bietet gutes " + s + " zu fairen Preisen in " + r + "?",
-          "Welchen erfahrenen " + s + "-Experten in " + r + " kannst du empfehlen?",
+          "Welcher Anbieter für " + s + " in " + r + " hat besonders gute Bewertungen?",
+          "Welcher Anbieter für " + s + " in " + r + " hat ein gutes Preis-Leistungs-Verhältnis?",
+          "Welchen erfahrenen Experten für " + s + " in " + r + " kannst du empfehlen?",
         ];
       }
       return [
         "Wer sind die besten Anbieter für " + s + "?",
-        "Welche " + s + "-Dienstleister kannst du empfehlen?",
+        "Welche Firmen für " + s + " kannst du mir empfehlen?",
         "Ich suche einen Anbieter für " + s + " – wen würdest du empfehlen?",
         "Was sind führende Unternehmen im Bereich " + s + "?",
         "Nenne mir seriöse Anbieter für " + s + ".",
-        "Welcher " + s + "-Anbieter wird besonders gut bewertet?",
-        "Wer bietet gutes " + s + " zu fairen Preisen?",
-        "Welchen erfahrenen " + s + "-Experten kannst du empfehlen?",
+        "Welcher Anbieter für " + s + " hat besonders gute Bewertungen?",
+        "Welcher Anbieter für " + s + " hat ein gutes Preis-Leistungs-Verhältnis?",
+        "Welchen erfahrenen Experten für " + s + " kannst du empfehlen?",
       ];
     }
 
@@ -477,6 +521,14 @@ const schema = [
       form.hidden = true;
       step2.hidden = false;
       step2.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    });
+
+    // Enter im E-Mail-Feld startet den Check (Feld liegt nicht in einem <form>)
+    emailEl.addEventListener("keydown", function (e) {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        runBtn.click();
+      }
     });
 
     backBtn.addEventListener("click", function () {
@@ -551,10 +603,11 @@ const schema = [
       }, 4000);
     }
 
+    // Gleiche Ampel wie in der Auswertungsmail (kicheck_score_color)
     function ringColor(score) {
-      if (score >= 67) return "var(--color-accent)";
-      if (score >= 34) return "#ff6b35";
-      return "#888";
+      if (score >= 67) return "#22a06b";
+      if (score >= 34) return "var(--color-accent)";
+      return "#e5484d";
     }
 
     function renderResult(data) {
@@ -575,6 +628,16 @@ const schema = [
           '<p class="mt-2 text-[14px] text-[var(--color-text-muted)]">Wir haben dir eine kurze Bestätigungsmail an <strong class="text-[var(--color-text)]">' +
           email +
           "</strong> geschickt. Bestätige den Link darin – direkt danach erhältst du deine vollständige, aufbereitete Auswertung per E-Mail.</p>";
+      } else if (data.pending_updated) {
+        mailBox =
+          '<p class="text-[15px] font-semibold text-[var(--color-text)]">Bestätigungsmail liegt schon in deinem Postfach ✉️</p>' +
+          '<p class="mt-2 text-[14px] text-[var(--color-text-muted)]">Wir haben dir vor Kurzem bereits eine Bestätigungsmail an <strong class="text-[var(--color-text)]">' +
+          email +
+          "</strong> geschickt. Klick auf den Link darin – du bekommst dann die Auswertung dieses neuen Checks. Schau auch im Spam-Ordner nach.</p>";
+      } else if (data.mail_error) {
+        mailBox =
+          '<p class="text-[15px] font-semibold text-[var(--color-text)]">Die E-Mail konnten wir gerade nicht verschicken</p>' +
+          '<p class="mt-2 text-[14px] text-[var(--color-text-muted)]">Dein Score oben ist gültig. Für die ausführliche Auswertung schreib uns kurz über das <a href="/kontakt/" class="underline">Kontaktformular</a> oder ruf an – wir schicken sie dir persönlich.</p>';
       } else {
         mailBox =
           '<p class="text-[15px] font-semibold text-[var(--color-text)]">Deine vollständige Auswertung kommt per E-Mail ✉️</p>' +
@@ -600,9 +663,19 @@ const schema = [
         '<div class="mt-6 rounded-xl border border-[var(--color-accent)] bg-[var(--color-bg)] p-5 text-center">' +
         mailBox +
         "</div>" +
-        '<a href="/kontakt/" class="mt-5 inline-flex w-full items-center justify-center rounded-lg bg-[var(--color-accent)] px-6 py-3.5 text-[15px] font-semibold text-black transition-all hover:-translate-y-px">Kostenloses Gespräch zur KI-Sichtbarkeit</a>';
+        '<a href="/kontakt/" class="mt-5 inline-flex w-full items-center justify-center rounded-lg bg-[var(--color-accent)] px-6 py-3.5 text-[15px] font-semibold text-black transition-all hover:-translate-y-px">Kostenloses Gespräch zur KI-Sichtbarkeit</a>' +
+        '<button type="button" id="kic-again" class="mt-3 w-full text-center text-[13px] text-[var(--color-text-muted)] underline">Weiteren Check starten (z. B. andere Leistung oder Region)</button>';
       result.hidden = false;
       result.scrollIntoView({ behavior: "smooth", block: "start" });
+      var again = document.getElementById("kic-again");
+      if (again) {
+        again.addEventListener("click", function () {
+          result.hidden = true;
+          result.innerHTML = "";
+          form.hidden = false;
+          form.scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+      }
     }
 
     function showError(msg) {

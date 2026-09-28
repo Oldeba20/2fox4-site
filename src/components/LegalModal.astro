@@ -3,9 +3,14 @@
  * LegalModal — eine zentrale Modal-Komponente für Impressum, Datenschutz, AGB.
  *
  * Wird einmal pro Seite gerendert (am besten direkt vor dem Footer im BaseLayout).
- * Enthält drei `<dialog>`-Elemente, eines pro Dokument — alle vorgerendert, kein
- * Fetch nötig. Native `<dialog>` bringt Focus-Trap, ESC-Schließen und
- * Backdrop-Handling out of the box.
+ * Enthält drei `<dialog>`-Elemente, eines pro Dokument. Native `<dialog>` bringt
+ * Focus-Trap, ESC-Schließen und Backdrop-Handling out of the box.
+ *
+ * Seit 28.09.2026 wird der TEXT erst beim Öffnen von der jeweiligen Seite
+ * (/impressum/, /datenschutz/, /agb/) nachgeladen. Vorher stand der komplette
+ * Rechtstext (~2.100 Wörter) in JEDER Seite – auf dem KI-Sichtbarkeits-Check
+ * war das mehr als die Hälfte des gesamten Textes. Für Suchmaschinen und
+ * KI-Crawler verwässert das jede Seite. Die Titel bleiben bewusst ohne h2.
  *
  * Trigger: Jeder Link mit `data-legal="impressum|datenschutz|agb"` öffnet den
  * jeweiligen Dialog. Das wird im Footer und überall verwendet, wo ein
@@ -25,9 +30,9 @@ import { legalList } from "../data/legal";
       <header class="legal-modal__header">
         <div>
           <div class="legal-modal__kicker">{doc.kicker}</div>
-          <h2 id={`legal-modal-${doc.slug}-title`} class="legal-modal__title">
+          <div id={`legal-modal-${doc.slug}-title`} class="legal-modal__title">
             {doc.title}
-          </h2>
+          </div>
         </div>
         <div class="legal-modal__actions">
           <a
@@ -58,7 +63,9 @@ import { legalList } from "../data/legal";
         </div>
       </header>
 
-      <div class="legal-modal__body legal-content" set:html={doc.html} />
+      <div class="legal-modal__body legal-content" data-legal-src={`/${doc.slug}/`}>
+        <p class="legal-modal__loading">Wird geladen …</p>
+      </div>
 
       <footer class="legal-modal__footer">
         <div>Letzte Aktualisierung: {doc.lastUpdated}</div>
@@ -170,6 +177,10 @@ import { legalList } from "../data/legal";
   }
 
   /* ---------- Body ---------- */
+  .legal-modal__loading {
+    color: var(--color-text-muted);
+    font-size: 14px;
+  }
   .legal-modal__body {
     padding: 24px 28px 32px;
     overflow-y: auto;
@@ -285,6 +296,27 @@ import { legalList } from "../data/legal";
    * Globale Modal-Logik. Wird einmal pro Seite ausgeführt — egal wie viele
    * Trigger-Links der Footer enthält.
    */
+  /** Rechtstext beim ersten Öffnen von der eigenen Seite nachladen. */
+  async function loadLegalBody(dialog: HTMLDialogElement, trigger: HTMLElement) {
+    const body = dialog.querySelector<HTMLElement>("[data-legal-src]");
+    if (!body || body.dataset.loaded === "1") return;
+    const src = body.dataset.legalSrc || "";
+    try {
+      const res = await fetch(src, { credentials: "same-origin" });
+      if (!res.ok) throw new Error(String(res.status));
+      const doc = new DOMParser().parseFromString(await res.text(), "text/html");
+      const content = doc.querySelector(".legal-content:not([data-legal-src])");
+      if (!content) throw new Error("kein Inhalt");
+      body.innerHTML = content.innerHTML;
+      body.dataset.loaded = "1";
+    } catch {
+      // Fallback: die eigene Seite öffnen
+      dialog.close();
+      document.documentElement.style.overflow = "";
+      window.location.href = (trigger as HTMLAnchorElement).href || src;
+    }
+  }
+
   function setupLegalModals() {
     // Öffnen: alle Links mit data-legal="..."
     document.addEventListener("click", (e) => {
@@ -299,6 +331,7 @@ import { legalList } from "../data/legal";
       if (!dialog) return;
       e.preventDefault();
       dialog.showModal();
+      loadLegalBody(dialog, trigger);
       // Scroll-Position des Body fixieren, damit der Backdrop nicht "ruckelt"
       document.documentElement.style.overflow = "hidden";
     });

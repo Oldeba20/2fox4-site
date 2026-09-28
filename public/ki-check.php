@@ -99,91 +99,15 @@ if ($ip !== '') {
     @file_put_contents($rl, implode("\n", $stamps), LOCK_EX);
 }
 
-/* ---------- Fragen generieren (identisch zur JS-Logik im Frontend) ---------- */
-function build_questions(string $service, string $region): array {
-    $s = trim($service); $r = trim($region);
-    if ($r !== '') {
-        return [
-            "Wer sind die besten Anbieter für {$s} in {$r}?",
-            "Welche {$s}-Dienstleister kannst du mir in {$r} empfehlen?",
-            "Ich suche {$s} in {$r} – wen würdest du empfehlen?",
-            "Was ist eine gute Adresse für {$s} im Raum {$r}?",
-            "Nenne mir seriöse Anbieter für {$s} in {$r}.",
-            "Welcher {$s}-Anbieter in {$r} wird besonders gut bewertet?",
-            "Wer bietet gutes {$s} zu fairen Preisen in {$r}?",
-            "Welchen erfahrenen {$s}-Experten in {$r} kannst du empfehlen?",
-        ];
-    }
-    return [
-        "Wer sind die besten Anbieter für {$s}?",
-        "Welche {$s}-Dienstleister kannst du empfehlen?",
-        "Ich suche einen Anbieter für {$s} – wen würdest du empfehlen?",
-        "Was sind führende Unternehmen im Bereich {$s}?",
-        "Nenne mir seriöse Anbieter für {$s}.",
-        "Welcher {$s}-Anbieter wird besonders gut bewertet?",
-        "Wer bietet gutes {$s} zu fairen Preisen?",
-        "Welchen erfahrenen {$s}-Experten kannst du empfehlen?",
-    ];
-}
-$questions = array_slice(build_questions($service, $region), 0, $qCount);
-
-/* ---------- Namens-Normalisierung für die Treffer-Erkennung ---------- */
-function normalize_name(string $name): string {
-    $n = mb_strtolower($name, 'UTF-8');
-    // gängige Rechtsformen entfernen
-    $n = preg_replace('/\b(gmbh|ug|mbh|ag|kg|ohg|gbr|e\.?\s?k\.?|e\.?\s?kfm\.?|& co\.? kg|& co|haftungsbeschr\w*)\b/u', ' ', $n);
-    $n = preg_replace('/[^a-z0-9äöüß ]+/u', ' ', $n);
-    $n = trim(preg_replace('/\s+/u', ' ', $n));
-    return $n;
-}
-$normName = normalize_name($business);
-$nameNoSpace = str_replace(' ', '', $normName);
-// Distinktives Marken-Token: das längste Wort aus dem Firmennamen, das NICHT
-// zur Leistung/Region gehört. Wichtig, damit z. B. bei „2fox4 Webdesign" nicht
-// das generische „webdesign" (steht ohnehin in jeder Frage) als Treffer zählt,
-// sondern die eigentliche Marke „2fox4".
-$stopTokens = [];
-foreach (explode(' ', normalize_name($service . ' ' . $region)) as $t) {
-    if ($t !== '') $stopTokens[$t] = true;
-}
-// Deutsche Firmennamen führen meist mit der Marke ("Mustermann Steuerberatung",
-// "2fox4 Webdesign") → erstes bedeutsames Token bevorzugen; sonst längstes.
-$distinctToken = '';
-foreach (explode(' ', $normName) as $t) {
-    if (mb_strlen($t) >= 4 && !isset($stopTokens[$t])) { $distinctToken = $t; break; }
-}
-if ($distinctToken === '') {
-    $tokens = array_filter(
-        explode(' ', $normName),
-        fn($t) => mb_strlen($t) >= 4 && !isset($stopTokens[$t])
-    );
-    usort($tokens, fn($a, $b) => mb_strlen($b) <=> mb_strlen($a));
-    $distinctToken = $tokens[0] ?? '';
-}
-
-/* ---------- Domain (optional) für präzise „verlinkt"-Erkennung ---------- */
-function normalize_domain(string $raw): string {
-    $d = mb_strtolower(trim($raw), 'UTF-8');
-    if ($d === '') return '';
-    $d = preg_replace('#^https?://#u', '', $d);   // Schema entfernen
-    $d = preg_replace('#[/?\#].*$#u', '', $d);     // Pfad/Query/Anker entfernen
-    $d = preg_replace('#^www\.#u', '', $d);        // führendes www. entfernen
-    $d = trim($d, " \t.");
-    // Nur plausible Domains akzeptieren (mind. ein Punkt + TLD)
-    if (!preg_match('/^[a-z0-9äöüß][a-z0-9äöüß.\-]*\.[a-z]{2,}$/u', $d)) return '';
-    return $d;
-}
-$domain = normalize_domain($domainRaw);
-// Marken-Label aus der Domain (z. B. 2fox4.de → „2fox4") als ZUSÄTZLICHES Token
-// für die Text-Nennung – aber nur, wenn es kein generisches Leistungs-/Regionwort ist.
-$domainToken = '';
-if ($domain !== '') {
-    $labels = explode('.', $domain);
-    $label  = preg_replace('/[^a-z0-9äöüß]/u', '', $labels[count($labels) - 2] ?? '');
-    if (mb_strlen($label) >= 4 && !isset($stopTokens[$label])) {
-        $domainToken = $label;
-    }
-}
+/* ---------- Fragen + Treffer-Erkennung (ausgelagert, siehe lib/ki-check-detect.php) ---------- */
+require_once __DIR__ . '/lib/ki-check-detect.php';
+$questions = array_slice(kic_build_questions($service, $region), 0, $qCount);
+$normName      = kic_normalize_name($business);
+$nameNoSpace   = str_replace(' ', '', $normName);
+$distinctToken = kic_distinct_token($normName, $service, $region);
+$domain        = kic_normalize_domain($domainRaw);
+$domainToken   = kic_domain_token($domain, $service, $region);
+$detectCtx     = [$normName, $nameNoSpace, $distinctToken, $domain, $domainToken];
 
 /* ---------- Perplexity-Calls (parallel via curl_multi) ---------- */
 // Ein cURL-Handle für eine Frage aufbauen.
@@ -262,59 +186,6 @@ function perplexity_ask_all(string $apiKey, string $model, array $questions): ar
     return $out;
 }
 
-/* ---------- Treffer-Erkennung pro Frage ---------- */
-function detect_mention(string $content, array $sources, string $normName, string $nameNoSpace, string $distinctToken, string $domain = '', string $domainToken = ''): array {
-    $hay = mb_strtolower($content, 'UTF-8');
-    $mentioned = false;
-    if ($normName !== '' && mb_strlen($normName) >= 4 && mb_strpos($hay, $normName) !== false) {
-        $mentioned = true;
-    } elseif ($distinctToken !== '' && mb_strpos($hay, $distinctToken) !== false) {
-        $mentioned = true;
-    } elseif ($domainToken !== '' && mb_strlen($domainToken) >= 4 && mb_strpos($hay, $domainToken) !== false) {
-        $mentioned = true;
-    }
-    // zitiert? Bevorzugt: exakter Host-Abgleich mit der angegebenen Domain.
-    // Fallback: Name/Token taucht in Quellen-Titel/URL auf.
-    $cited = false;
-    foreach ($sources as $s) {
-        $url = trim((string)($s['url'] ?? ''));
-        if ($domain !== '' && $url !== '') {
-            $host = (string)(parse_url(stripos($url, 'http') === 0 ? $url : 'http://' . $url, PHP_URL_HOST) ?: '');
-            $host = preg_replace('#^www\.#u', '', mb_strtolower($host, 'UTF-8'));
-            if ($host === $domain
-                || ($host !== '' && mb_substr($host, -(mb_strlen($domain) + 1)) === '.' . $domain)) {
-                $cited = true;
-                break;
-            }
-        }
-        $blob = mb_strtolower(($s['title'] ?? '') . ' ' . $url, 'UTF-8');
-        $hostToken = preg_replace('/[^a-z0-9äöüß]/u', '', $blob);
-        if (($nameNoSpace !== '' && mb_strlen($nameNoSpace) >= 6 && mb_strpos($hostToken, $nameNoSpace) !== false)
-            || ($distinctToken !== '' && mb_strpos($blob, $distinctToken) !== false)) {
-            $cited = true;
-            break;
-        }
-    }
-    // Snippet
-    $snippet = '';
-    if ($mentioned) {
-        $needle = '';
-        foreach ([$normName, $distinctToken, $domainToken] as $cand) {
-            if ($cand !== '' && mb_strpos($hay, $cand) !== false) { $needle = $cand; break; }
-        }
-        $pos = $needle !== '' ? mb_strpos($hay, $needle) : false;
-        if ($pos !== false) {
-            $start = max(0, $pos - 60);
-            $snippet = trim(mb_substr($content, $start, 180));
-            $snippet = ($start > 0 ? '… ' : '') . $snippet . ' …';
-        }
-    } else {
-        $first = trim(mb_substr($content, 0, 150));
-        if ($first !== '') $snippet = 'KI-Antwort (Auszug): ' . $first . ' …';
-    }
-    return ['mentioned' => $mentioned, 'cited' => $cited, 'snippet' => $snippet];
-}
-
 /* ---------- Check ausführen (alle Fragen parallel) ---------- */
 @set_time_limit(150);
 $results = [];
@@ -328,7 +199,7 @@ foreach ($questions as $i => $q) {
                       'snippet' => 'Diese Frage konnte gerade nicht geprüft werden.', 'error' => true];
         continue;
     }
-    $d = detect_mention($resp['content'], $resp['sources'], $normName, $nameNoSpace, $distinctToken, $domain, $domainToken);
+    $d = kic_detect_mention($resp['content'], $resp['sources'], $detectCtx);
     $results[] = [
         'question'  => $q,
         'mentioned' => $d['mentioned'],
@@ -353,9 +224,9 @@ foreach ($checked as $r) {
 $score = (int)round($points / ($nChecked * 3) * 100);
 
 if ($score >= 85)      { $level = 'Dominant in der KI-Suche (Stufe 3)'; }
-elseif ($score >= 60)  { $level = 'Stark sichtbar (oberes Stufe 2)'; }
+elseif ($score >= 60)  { $level = 'Stark sichtbar (obere Stufe 2)'; }
 elseif ($score >= 34)  { $level = 'Teilweise sichtbar (Stufe 2)'; }
-elseif ($score > 0)    { $level = 'Erste Signale (unteres Stufe 2)'; }
+elseif ($score > 0)    { $level = 'Erste Signale (untere Stufe 2)'; }
 else                   { $level = 'Aktuell unsichtbar (Stufe 1)'; }
 
 if ($mentions === 0 && $citations === 0) {
@@ -430,6 +301,8 @@ require_once __DIR__ . '/ki-check-mail.php';
 $confirmationSent = false;   // neue Bestätigungsmail wurde verschickt
 $alreadyConfirmed = false;   // Adresse hatte DOI bereits durchlaufen
 $resultEmailed    = false;   // Auswertung wurde direkt zugestellt
+$mailError        = false;   // DB/SMTP-Problem → ehrlicher Hinweis statt „schau ins Postfach“
+$pendingUpdated   = false;   // Bestätigung steht noch aus, Ergebnis aktualisiert
 
 // Einheitliche Datenstruktur für die Auswertungsmail
 $mailData = [
@@ -573,11 +446,30 @@ if (!empty($config['db_host']) && !empty($config['smtp_host'])) {
                 $cm->send();
                 @file_put_contents($mailLock, (string)time(), LOCK_EX);
                 $confirmationSent = true;
+            } else {
+                // Bestätigungsmail ging in den letzten 24 h schon raus: keine zweite Mail,
+                // aber den offenen Eintrag auf das NEUE Ergebnis aktualisieren – sonst
+                // bekäme die Person nach dem Klick die Auswertung des älteren Checks.
+                $upd = $pdo->prepare(
+                    "UPDATE ki_check_leads
+                        SET business=?, service=?, region=?, result_score=?, result_level=?, result_json=?,
+                            marketing=GREATEST(marketing, ?)
+                      WHERE email=? AND status='pending'
+                      ORDER BY signup_at DESC LIMIT 1"
+                );
+                $upd->execute([
+                    $business, $service, ($region !== '' ? $region : null),
+                    $score, $level, $resultSnapshot, ($newsletter ? 1 : 0), $email,
+                ]);
+                $pendingUpdated = $upd->rowCount() > 0;
             }
         }
     } catch (\Throwable $e) {
+        $mailError = true;
         error_log('[2fox4 KI-Check] DOI/Mail-Fehler: ' . $e->getMessage());
     }
+} else {
+    $mailError = true;
 }
 
 /* ---------- Invariante: NIE beides in derselben Anfrage ----------
@@ -602,4 +494,6 @@ out_json([
     'confirmation_sent' => $confirmationSent,
     'already_confirmed' => $alreadyConfirmed,
     'result_emailed'    => $resultEmailed,
+    'pending_updated'   => $pendingUpdated,
+    'mail_error'        => $mailError && !$confirmationSent && !$resultEmailed && !$pendingUpdated,
 ]);
