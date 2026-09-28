@@ -83,6 +83,37 @@ $rows = $pdo->query(
       LIMIT 1000"
 )->fetchAll(PDO::FETCH_ASSOC);
 
+
+/* ---------- Statistik: alle durchgeführten Checks (aus ki-check-data/log.jsonl) ----------
+ * Jeder erfolgreich ausgewertete Check steht dort mit Zeitpunkt, Firma, Score.
+ * Abgebrochene/fehlgeschlagene Checks werden nicht protokolliert.
+ * Interne Tests (Adressen @2fox4.de) werden getrennt gezählt. */
+$st = ['all' => 0, 'today' => 0, 'd7' => 0, 'd30' => 0, 'intern' => 0, 'scoreSum' => 0, 'emails' => [], 'days' => []];
+$logFile = __DIR__ . '/ki-check-data/log.jsonl';
+if (is_readable($logFile)) {
+    $now = time(); $today = date('Y-m-d');
+    $fh = fopen($logFile, 'r');
+    while ($fh && ($line = fgets($fh)) !== false) {
+        $d = json_decode($line, true);
+        if (!is_array($d) || empty($d['ts'])) continue;
+        $email = strtolower((string)($d['email'] ?? ''));
+        if (str_ends_with($email, '@2fox4.de')) { $st['intern']++; continue; }
+        $t = strtotime((string)$d['ts']); if (!$t) continue;
+        $st['all']++;
+        $st['scoreSum'] += (int)($d['score'] ?? 0);
+        if ($email !== '') $st['emails'][$email] = true;
+        if (date('Y-m-d', $t) === $today) $st['today']++;
+        if ($t >= $now - 7 * 86400) $st['d7']++;
+        if ($t >= $now - 30 * 86400) { $st['d30']++; $st['days'][date('Y-m-d', $t)] = ($st['days'][date('Y-m-d', $t)] ?? 0) + 1; }
+    }
+    if ($fh) fclose($fh);
+}
+$confirmedReal = (int)$pdo->query("SELECT COUNT(DISTINCT LOWER(email)) FROM ki_check_leads WHERE status='confirmed' AND LOWER(email) NOT LIKE '%@2fox4.de'")->fetchColumn();
+$uniqReal = count($st['emails']);
+$doiRate = $uniqReal > 0 ? round(100 * $confirmedReal / $uniqReal) : 0;
+$avgScore = $st['all'] > 0 ? round($st['scoreSum'] / $st['all']) : 0;
+krsort($st['days']);
+
 function h($s): string { return htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8'); }
 header('Content-Type: text/html; charset=utf-8');
 header('X-Robots-Tag: noindex, nofollow');
@@ -108,10 +139,34 @@ $key = urlencode((string)($_GET['key'] ?? ''));
   .pill.pending { background:#2a2a2a; color:#9a9a9a; }
   .ip { color:#666; font-size:12px; font-family:ui-monospace,monospace; }
   .note { color:#999; font-size:12px; max-width:760px; }
+  .stats { display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:10px; margin:14px 0 8px; }
+  .stat { background:#141414; border:1px solid #222; border-radius:10px; padding:12px 14px; }
+  .stat b { display:block; font-size:24px; color:#ff6b35; }
+  .stat span { color:#999; font-size:12px; }
+  .days { font-size:12px; color:#999; margin-top:6px; }
 </style>
 </head>
 <body>
-  <h1>Newsletter-Abonnenten (KI-Check)</h1>
+  <h1>KI-Check: Statistik</h1>
+  <div class="stats">
+    <div class="stat"><b><?= $st['all'] ?></b><span>Checks gesamt</span></div>
+    <div class="stat"><b><?= $st['today'] ?></b><span>heute</span></div>
+    <div class="stat"><b><?= $st['d7'] ?></b><span>letzte 7 Tage</span></div>
+    <div class="stat"><b><?= $st['d30'] ?></b><span>letzte 30 Tage</span></div>
+    <div class="stat"><b><?= $uniqReal ?></b><span>verschiedene E-Mail-Adressen</span></div>
+    <div class="stat"><b><?= $confirmedReal ?></b><span>davon bestätigt (<?= $doiRate ?> %)</span></div>
+    <div class="stat"><b><?= $nlCount ?></b><span>Newsletter-Abonnenten</span></div>
+    <div class="stat"><b><?= $avgScore ?> %</b><span>Ø Score</span></div>
+  </div>
+  <?php if ($st['days']): ?>
+  <p class="days">Checks pro Tag (30 Tage):
+    <?php foreach ($st['days'] as $day => $n): ?><?= h(date('d.m.', strtotime($day))) ?>&nbsp;<strong style="color:#ededed"><?= $n ?></strong> &nbsp; <?php endforeach; ?>
+  </p>
+  <?php endif; ?>
+  <p class="note">Gezählt werden fertig ausgewertete Checks. Interne Tests mit @2fox4.de-Adressen sind nicht enthalten (<?= $st['intern'] ?> Stück).
+     „Bestätigt“ = Double-Opt-in-Link geklickt (Adressen außer @2fox4.de, seit Start).</p>
+
+  <h1 style="margin-top:36px">Newsletter-Abonnenten (KI-Check)</h1>
   <p class="meta"><strong style="color:#ff6b35"><?= $nlCount ?></strong> angemeldet ·
      CleverReach-Übergabe: <?= $crOn ? 'automatisch aktiv' : 'aus – bitte CSV importieren' ?></p>
   <a class="btn" href="?key=<?= $key ?>&amp;export=csv">Abonnenten als CSV (für CleverReach)</a>
