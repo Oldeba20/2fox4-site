@@ -35,7 +35,13 @@ return [
     'db_user'  => '',                            // z. B. 'd0202caa_1'
     'db_pass'  => '',                            // DB-Passwort
     'site_base_url'   => 'https://www.2fox4.de', // für den Bestätigungslink (DOI)
-    'consent_version' => '2026-06-11',           // Version des Einwilligungstextes (Nachweis)
+    'consent_version' => '2026-09-28',           // Version des Einwilligungstextes (Nachweis)
+
+    // Optional: Newsletter-Anmeldungen automatisch an CleverReach (REST API v3) übergeben.
+    // Leer lassen = nur CSV-Export unter /ki-check-leads.php.
+    'cleverreach_client_id'     => '',
+    'cleverreach_client_secret' => '',
+    'cleverreach_group_id'      => 0,   // ID der Empfängerliste im 2FOX4-Konto
 
     // ---- Lead-Benachrichtigung per SMTP (optional, gleiche Daten wie Kontaktformular) ----
     'smtp_host'      => 'w0202caa.kasserver.com',

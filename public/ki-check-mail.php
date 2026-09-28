@@ -43,6 +43,10 @@ function kicheck_result_email_html(array $d, array $config): string {
 
     $base       = rtrim((string)($config['site_base_url'] ?? 'https://www.2fox4.de'), '/');
     $contactUrl = $base . '/kontakt/';
+    $nl         = is_array($d['newsletter'] ?? null) ? $d['newsletter'] : [];
+    $nlSub      = !empty($nl['subscribed']);
+    $optinUrl   = (string)($nl['optin_url'] ?? '');
+    $unsubUrl   = (string)($nl['unsub_url'] ?? '');
     $scoreColor = kicheck_score_color($score);
     $barW       = max(3, $score);
 
@@ -192,6 +196,18 @@ function kicheck_result_email_html(array $d, array $config): string {
     </tr></table>
   </td></tr>
 
+' . (!$nlSub && $optinUrl !== '' ? '
+  <!-- Newsletter-Angebot (freiwillig, eigener Klick + Bestätigungsbutton) -->
+  <tr><td style="padding:22px 32px 0;">
+    <table role="presentation" width="100%" style="background:#1b1b1b;border:1px solid #262626;border-radius:12px;"><tr>
+      <td style="padding:18px 22px;">
+        <div style="color:#ffffff;font-size:15px;font-weight:700;margin-bottom:6px;">Auf dem Laufenden bleiben?</div>
+        <div style="color:#a8a8a8;font-size:14px;line-height:1.6;margin-bottom:12px;">Etwa einmal im Monat Neuigkeiten und Tipps zur KI-Sichtbarkeit – kostenlos und jederzeit abbestellbar.</div>
+        <a href="' . kic_h($optinUrl) . '" style="color:#ff6b35;font-size:14px;font-weight:700;text-decoration:underline;">Ja, ich möchte Neuigkeiten erhalten →</a>
+      </td>
+    </tr></table>
+  </td></tr>' : '') . '
+
   <!-- Disclaimer -->
   <tr><td style="padding:22px 32px 8px;">
     <div style="color:#6f6f6f;font-size:12px;line-height:1.6;border-top:1px solid #232323;padding-top:16px;">
@@ -203,7 +219,9 @@ function kicheck_result_email_html(array $d, array $config): string {
   <tr><td style="padding:8px 32px 28px;">
     <div style="color:#6f6f6f;font-size:12px;line-height:1.6;">
       Du erhältst diese E-Mail, weil du beim KI-Sichtbarkeits-Check auf 2fox4.de deine Auswertung angefordert und per Bestätigungslink (Double-Opt-in) bestätigt hast.
-      Möchtest du keine weiteren E-Mails? Antworte einfach mit „Abmelden“.<br><br>
+ ' . ($nlSub && $unsubUrl !== ''
+        ? 'Du hast außerdem unsere Neuigkeiten abonniert. <a href="' . kic_h($unsubUrl) . '" style="color:#9a9a9a;">Hier abmelden</a>.'
+        : 'Weitere E-Mails bekommst du nur, wenn du dich ausdrücklich für unsere Neuigkeiten anmeldest.') . '<br><br>
       2fox4 · <a href="' . kic_h($base) . '" style="color:#9a9a9a;">www.2fox4.de</a>
     </div>
   </td></tr>
@@ -225,6 +243,7 @@ function kicheck_result_email_text(array $d, array $config): string {
     $questions = is_array($d['questions'] ?? null) ? $d['questions'] : [];
     $recs      = is_array($d['recommendations'] ?? null) ? $d['recommendations'] : [];
     $base      = rtrim((string)($config['site_base_url'] ?? 'https://www.2fox4.de'), '/');
+    $nl        = is_array($d['newsletter'] ?? null) ? $d['newsletter'] : [];
 
     $l = [];
     $l[] = 'Deine KI-Sichtbarkeits-Auswertung' . ($business !== '' ? ' für ' . $business : '');
@@ -258,7 +277,12 @@ function kicheck_result_email_text(array $d, array $config): string {
     $l[] = 'Hinweis: Das Ergebnis ist ein starker Indikator, keine garantierte 1:1-Abbildung der jeweiligen App.';
     $l[] = '';
     $l[] = 'Du erhältst diese E-Mail, weil du deine Auswertung angefordert und per Double-Opt-in bestätigt hast.';
-    $l[] = 'Abmelden jederzeit per Antwort mit „Abmelden". · 2fox4 · ' . $base;
+    if (!empty($nl['subscribed']) && !empty($nl['unsub_url'])) {
+        $l[] = 'Neuigkeiten abbestellen: ' . $nl['unsub_url'];
+    } elseif (!empty($nl['optin_url'])) {
+        $l[] = 'Etwa einmal im Monat Neuigkeiten zur KI-Sichtbarkeit erhalten: ' . $nl['optin_url'];
+    }
+    $l[] = '2fox4 · ' . $base;
     return implode("\r\n", $l);
 }
 
@@ -395,6 +419,11 @@ function kicheck_send_result_mail(array $config, array $data): bool {
     // Antworten sollen bei Oliver landen, nicht im No-Reply-Postfach.
     if (!empty($config['mail_to'])) {
         $mail->addReplyTo($config['mail_to'], '2fox4');
+    }
+    $nl = is_array($data['newsletter'] ?? null) ? $data['newsletter'] : [];
+    if (!empty($nl['subscribed']) && !empty($nl['unsub_url'])) {
+        $mail->addCustomHeader('List-Unsubscribe', '<' . $nl['unsub_url'] . '>');
+        $mail->addCustomHeader('List-Unsubscribe-Post', 'List-Unsubscribe=One-Click');
     }
     $mail->Subject = 'Deine KI-Sichtbarkeits-Auswertung: ' . $score . '%';
     $mail->isHTML(true);

@@ -381,6 +381,23 @@ if (!empty($config['db_host']) && !empty($config['smtp_host'])) {
         $alreadyConfirmed = ((int)$st->fetchColumn() > 0);
 
         if ($alreadyConfirmed) {
+            // Newsletter: Adresse hat DOI schon durchlaufen. Checkbox jetzt angehakt →
+            // Einwilligung direkt speichern; sonst Anmelde-Angebot in die Auswertungsmail.
+            try {
+                require_once __DIR__ . '/lib/ki-check-newsletter-lib.php';
+                kicnl_ensure_table($pdo);
+                if ($newsletter) {
+                    kicnl_subscribe($pdo, $email, 'check-form-dc',
+                        (string)($config['consent_version'] ?? date('Y-m-d')), preg_replace('/\.\d+$/', '.0', $ip),
+                        $config, ['business' => $business]);
+                }
+                $tk = $pdo->prepare("SELECT token FROM ki_check_leads WHERE email=? AND status='confirmed' ORDER BY confirmed_at DESC LIMIT 1");
+                $tk->execute([$email]);
+                $mailData['newsletter'] = kicnl_mail_links($pdo, $email, (string)($tk->fetchColumn() ?: ''),
+                    (string)($config['site_base_url'] ?? 'https://www.2fox4.de'));
+            } catch (\Throwable $e) {
+                error_log('[2fox4 KI-Check] Newsletter (direkt): ' . $e->getMessage());
+            }
             // DOI lag bereits vor → Auswertung direkt zustellen (Flut-Schutz: 1/Adresse/Stunde)
             $sendLock = sys_get_temp_dir() . '/2fox4_kicres_' . hash('sha256', mb_strtolower($email)) . '.txt';
             $recently = is_file($sendLock) && (time() - (int)@file_get_contents($sendLock)) < 3600;

@@ -95,8 +95,8 @@ function e(string $s): string { return htmlspecialchars($s, ENT_QUOTES, 'UTF-8')
     <h1>2fox4 · Admin</h1>
     <p class="sub">KI-Sichtbarkeits-Check</p>
     <a class="tile" href="/ki-check-leads.php?key=<?= $k ?>">
-      <b>Newsletter-Leads →</b>
-      <span>Bestätigte Anmeldungen ansehen &amp; als CSV exportieren</span>
+      <b>Newsletter &amp; Leads →</b>
+      <span>Abonnenten ansehen, CSV für CleverReach, alle Check-Anfragen</span>
     </a>
     <a class="tile" href="/ki-check-log.php?key=<?= $k ?>">
       <b>Check-Protokoll →</b>

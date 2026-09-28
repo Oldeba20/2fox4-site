@@ -339,27 +339,32 @@ const datenschutzHtml = `
   <p>
     <strong>Durchführung des Checks:</strong> Wenn Sie unseren
     KI-Sichtbarkeits-Check nutzen, verarbeiten wir Ihre Eingaben (Firmenname,
-    Leistung, ggf. Region) und Ihre E-Mail-Adresse, um den Check durchzuführen.
-    Dazu stellen wir automatisiert Suchanfragen an den Dienst Perplexity
-    (Perplexity AI, Inc., USA); Ihre eingegebenen Begriffe werden dabei an
-    Perplexity übermittelt. Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO
-    (Durchführung der von Ihnen angeforderten Leistung). Das Ergebnis wird
-    Ihnen direkt am Bildschirm angezeigt; eine Ergebnis-E-Mail an Sie
-    versenden wir nicht. Zur Nachvollziehbarkeit protokollieren wir die
-    Anfrage mit gekürzter IP-Adresse.
+    Leistung, ggf. Region und Website-Domain) und Ihre E-Mail-Adresse, um den
+    Check durchzuführen und Ihnen die Auswertung zuzusenden. Dazu stellen wir
+    automatisiert Suchanfragen an den Dienst Perplexity (Perplexity AI, Inc.,
+    USA); Ihre eingegebenen Begriffe werden dabei an Perplexity übermittelt.
+    Am Bildschirm sehen Sie eine kurze Vorschau. Die ausführliche Auswertung
+    senden wir per E-Mail, und zwar erst, nachdem Sie Ihre Adresse über einen
+    Bestätigungslink bestätigt haben (Double-Opt-in). So kann niemand eine
+    fremde Adresse eintragen. Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO
+    (Durchführung der von Ihnen angeforderten Leistung). Zur
+    Nachvollziehbarkeit protokollieren wir die Anfrage mit gekürzter
+    IP-Adresse. Nicht bestätigte Anfragen löschen wir automatisch nach 30 Tagen.
   </p>
   <p>
-    <strong>Tipps &amp; Angebote per E-Mail (optional, Double-Opt-in):</strong>
-    Nur wenn Sie die entsprechende Checkbox aktiv anhaken, speichern wir Ihre
-    E-Mail-Adresse, um Ihnen gelegentlich Informationen und Angebote rund um
-    Ihre KI-Sichtbarkeit zu senden. Wir versenden zunächst eine neutrale
-    Bestätigungs-E-Mail; erst nach Ihrem Klick auf den Bestätigungslink
-    (Double-Opt-in) wird Ihre Adresse für den Versand gespeichert.
-    Rechtsgrundlage ist Ihre Einwilligung (Art. 6 Abs. 1 lit. a DSGVO
-    i. V. m. § 7 Abs. 2 UWG). Sie können Ihre Einwilligung jederzeit mit
-    Wirkung für die Zukunft widerrufen, z. B. formlos per E-Mail an
-    <a href="mailto:info@2fox4.de">info@2fox4.de</a>. Nicht bestätigte
-    Anmeldungen löschen wir automatisch nach 30 Tagen.
+    <strong>Neuigkeiten per E-Mail (freiwillig):</strong> Nur wenn Sie dem
+    ausdrücklich zustimmen – über die gesonderte Checkbox im Check, über den
+    Button nach der Bestätigung oder über den Link in der Auswertungsmail –,
+    senden wir Ihnen etwa einmal im Monat Neuigkeiten, Tipps und Angebote rund
+    um KI-Sichtbarkeit. Die Einwilligung ist keine Voraussetzung für den Check.
+    Wir speichern Zeitpunkt, gekürzte IP-Adresse und den Wortlaut Ihrer
+    Einwilligung als Nachweis. Für den Versand nutzen wir den Dienst
+    CleverReach (CleverReach GmbH &amp; Co. KG, Deutschland), mit dem ein
+    Vertrag zur Auftragsverarbeitung besteht. Rechtsgrundlage ist Ihre
+    Einwilligung (Art. 6 Abs. 1 lit. a DSGVO i. V. m. § 7 Abs. 2 UWG). Sie
+    können sie jederzeit mit Wirkung für die Zukunft widerrufen – über den
+    Abmeldelink in jeder E-Mail oder formlos per E-Mail an
+    <a href="mailto:info@2fox4.de">info@2fox4.de</a>.
   </p>
 </section>
 
@@ -687,7 +692,7 @@ export const legalDocs: Record<LegalDoc["slug"], LegalDoc> = {
     slug: "datenschutz",
     title: "Datenschutzerklärung",
     kicker: "Wie wir mit deinen Daten umgehen",
-    lastUpdated: "15. Mai 2026",
+    lastUpdated: "28. September 2026",
     html: datenschutzHtml,
   },
   agb: {
