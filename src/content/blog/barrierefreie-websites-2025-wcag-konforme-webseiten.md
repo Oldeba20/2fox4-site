@@ -11,11 +11,6 @@ categoryNames: ["Webdesign"]
 ---
 
 <!-- wp:html -->
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Barrierefreie Websites erstellen - Ihr Leitfaden für 2025</title>
     <meta name="description" content="Barrierefreie Websites nach WCAG 2.2 Standards erstellen. Praktische Tipps für WordPress-Entwicklung und mehr Reichweite durch Accessibility.">
     <meta name="keywords" content="barrierefreiheit, accessibility, wcag, webdesign, wordpress, inklusion, behinderung, screenreader, usability, ux, seo, webentwicklung, standards, compliance, digital">
@@ -139,8 +134,6 @@ categoryNames: ["Webdesign"]
             font-weight: 600;
         }
     </style>
-</head>
-<body class="bg-gray-50">
     <div class="max-w-4xl mx-auto px-4 py-8">
         <article class="bg-white rounded-lg shadow-lg p-8">
             
@@ -656,8 +649,6 @@ a:focus, button:focus, input:focus, textarea:focus, select:focus {<br>
             
         </article>
     </div>
-</body>
-</html>
 
 <!-- /wp:html -->
 <!-- 2fox4-service-cta -->

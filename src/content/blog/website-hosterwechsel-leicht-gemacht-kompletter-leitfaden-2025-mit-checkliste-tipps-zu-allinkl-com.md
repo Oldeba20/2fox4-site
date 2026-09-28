@@ -13,11 +13,6 @@ seoDescription: "Webhosting wechseln in 2026: Schritt-für-Schritt-Anleitung mit
 ---
 
 <!-- wp:html -->
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Website Hosterwechsel 2025: Der komplette Leitfaden</title>
     <meta name="description" content="Website Hosterwechsel leicht gemacht! Kompletter Leitfaden 2025 mit Checkliste, Tipps zu allinkl.com und Schritt-für-Schritt-Anleitung. Jetzt lesen!">
     <meta name="keywords" content="Website Hosterwechsel, Hosting wechseln, Webhost Migration, allinkl, Server umziehen, Domain Transfer, WordPress umziehen, Website Migration, Hosting Provider, Webhosting Wechsel">
@@ -91,8 +86,6 @@ seoDescription: "Webhosting wechseln in 2026: Schritt-für-Schritt-Anleitung mit
             border-radius: 0 5px 5px 0;
         }
     </style>
-</head>
-<body class="bg-white">
     <article class="max-w-4xl mx-auto p-6">
         
         <h1 class="text-4xl font-bold text-gray-800 mb-6">Website Hosterwechsel 2025: Der komplette Leitfaden für einen reibungslosen Umzug</h1>
@@ -526,8 +519,6 @@ seoDescription: "Webhosting wechseln in 2026: Schritt-für-Schritt-Anleitung mit
             }
         }
     </script>
-</body>
-</html>
 <!-- /wp:html -->
 <!-- 2fox4-service-cta -->
 <div style="margin-top:2.5rem;padding:1.25rem 1.5rem;border-left:4px solid #ffe600;background:#161616;border-radius:12px;"><p style="margin:0;"><strong>Passende Leistung von 2fox4:</strong> <a href="/leistungen/digitalisierungsberatung/">KI- &amp; Digitalisierungsberatung</a> – wir bringen KI praxisnah in deinen Betrieb – Use-Case-Analyse, Automatisierung mit KI-Agenten und Team-Schulungen.</p></div>

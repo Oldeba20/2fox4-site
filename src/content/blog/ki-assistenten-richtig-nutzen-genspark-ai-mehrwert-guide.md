@@ -11,11 +11,6 @@ categoryNames: ["KI / AI"]
 ---
 
 <!-- wp:html -->
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KI-Assistenten richtig nutzen: Der Mehrwert am Beispiel von Genspark.ai</title>
     <meta name="description" content="Erfahren Sie, wie KI-Assistenten Ihrem Unternehmen helfen können. Praktische Tipps für den Umgang mit Genspark.ai und maximalen Mehrwert für Ihr Business.">
     <meta name="keywords" content="KI-Assistenten, Genspark.ai, Künstliche Intelligenz, Business Automation, digitale Transformation, AI-Tools, Produktivitätssteigerung">
@@ -249,8 +244,6 @@ categoryNames: ["KI / AI"]
             color: #1976d2;
         }
     </style>
-</head>
-<body>
     <div class="container">
         <article>
             <h1>KI-Assistenten richtig nutzen: Der Mehrwert am Beispiel von Genspark.ai</h1>
@@ -535,8 +528,6 @@ categoryNames: ["KI / AI"]
             }
         }
     </script>
-</body>
-</html>
 
 <!-- /wp:html -->
 <!-- 2fox4-service-cta -->

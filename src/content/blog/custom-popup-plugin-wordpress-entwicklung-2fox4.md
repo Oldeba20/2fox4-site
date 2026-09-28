@@ -14,11 +14,6 @@ seoDescription: "Entdecken Sie das Custom Popup Plugin von 2fox4 – Exit-Intent
 
 <p><img src="/uploads/blog/headers-2026/custom-popup-plugin.svg" alt="Custom Popup-Plugin von 2FOX4 — Browser-Mockup mit individuellem Popup für maßgeschneiderte WordPress-Lösungen" width="1200" height="630"></p>
 <!-- wp:html -->
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         .blogpost-container {
             width: 80%;
@@ -210,8 +205,6 @@ seoDescription: "Entdecken Sie das Custom Popup Plugin von 2fox4 – Exit-Intent
             }
         }
     </style>
-</head>
-<body>
     <article class="blogpost-container">
         
         
@@ -547,8 +540,6 @@ seoDescription: "Entdecken Sie das Custom Popup Plugin von 2fox4 – Exit-Intent
             });
         });
     </script>
-</body>
-</html>
 <!-- /wp:html -->
 <!-- 2fox4-service-cta -->
 <div style="margin-top:2.5rem;padding:1.25rem 1.5rem;border-left:4px solid #ffe600;background:#161616;border-radius:12px;"><p style="margin:0;"><strong>Passende Leistung von 2fox4:</strong> <a href="/leistungen/webdesign/">WordPress-Webdesign</a> – schnelle, SEO-fertige WordPress-Websites ohne Pagebuilder-Ballast.</p></div>

@@ -11,11 +11,6 @@ categoryNames: ["E-Commerce"]
 ---
 
 <!-- wp:html -->
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WooCommerce Subscriptions: Wiederkehrende Umsätze aufbauen</title>
     <meta name="description" content="Erfahren Sie, wie Sie mit WooCommerce Subscriptions wiederkehrende Umsätze aufbauen. Retention-Strategien, Churn-Reduktion und optimale Pricing-Modelle für nachhaltigen Erfolg.">
     <meta name="keywords" content="WooCommerce Subscriptions, wiederkehrende Umsätze, Subscription Commerce, Retention-Strategien, Churn-Reduktion, Pricing-Modelle, Abonnement-E-Commerce, WordPress Subscriptions, automatische Zahlungen, Abo-Modell">
@@ -89,8 +84,6 @@ categoryNames: ["E-Commerce"]
             margin: 20px 0;
         }
     </style>
-</head>
-<body class="bg-gray-50">
     <article class="max-w-4xl mx-auto bg-white p-8 shadow-lg">
         <h1 class="text-4xl font-bold mb-6 text-left">WooCommerce Subscriptions: Wiederkehrende Umsätze aufbauen</h1>
         
@@ -491,8 +484,6 @@ categoryNames: ["E-Commerce"]
             }
         }
     </script>
-</body>
-</html>
 
 <!-- /wp:html -->
 <!-- 2fox4-service-cta -->

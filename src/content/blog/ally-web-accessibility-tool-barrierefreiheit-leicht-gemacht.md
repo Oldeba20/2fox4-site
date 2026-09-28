@@ -11,11 +11,6 @@ categoryNames: ["Webdesign"]
 ---
 
 <!-- wp:html -->
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ally Web Accessibility Tool: Barrierefreiheit einfach gemacht</title>
     <meta name="description" content="Das Ally Web Accessibility Tool macht WordPress-Websites BFSG-konform. Alle Features, Vorschriften ab 2025 und Implementierung für bessere Reichweite und SEO.">
     <meta name="keywords" content="Ally Web Accessibility Tool, WordPress Barrierefreiheit, BFSG, WCAG, Elementor Plugin, Website Accessibility, Barrierefreie Website, Web Design, SEO">
@@ -267,8 +262,6 @@ categoryNames: ["Webdesign"]
             }
         }
     </style>
-</head>
-<body>
 <div class="container">
     <article>
         <div class="prose prose-lg max-w-none">
@@ -707,8 +700,6 @@ document.querySelectorAll('a[target="_blank"]').forEach(link => {
 });
 </script>
 
-</body>
-</html>
 
 <!-- /wp:html -->
 <!-- 2fox4-service-cta -->

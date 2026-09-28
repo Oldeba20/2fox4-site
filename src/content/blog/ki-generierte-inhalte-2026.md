@@ -2,14 +2,14 @@
 title: "KI-generierte Inhalte 2026: Rechtssicher für Websites nutzen"
 date: "2026-01-26T15:12:39"
 modified: "2026-01-26T15:20:17"
-description: "KI-generierte Inhalte bieten 2026 große Chancen für Websites. Erfahren Sie, wie Sie KI-Content rechtssicher und suchmaschinenoptimiert.\\n\\n"
+description: "KI-generierte Inhalte bieten 2026 große Chancen für Websites. Erfahren Sie, wie Sie KI-Content rechtssicher und suchmaschinenoptimiert einsetzen."
 cover:
   src: "/uploads/wp-archive/2026/01/KI-generierte-Inhalte-1024x572.png"
   alt: "KI-generierte Inhalte Websites 2026 künstliche Intelligenz Content Erstellung"
 categories: ["ki"]
 categoryNames: ["KI / AI"]
 seoTitle: "KI-generierte Inhalte 2026: Rechtssicher für Websites nutzen"
-seoDescription: "KI-generierte Inhalte bieten 2026 große Chancen für Websites. Erfahren Sie, wie Sie KI-Content rechtssicher und suchmaschinenoptimiert.\\n\\n"
+seoDescription: "KI-generierte Inhalte bieten 2026 große Chancen für Websites. Erfahren Sie, wie Sie KI-Content rechtssicher und suchmaschinenoptimiert einsetzen."
 ---
 
 <style>

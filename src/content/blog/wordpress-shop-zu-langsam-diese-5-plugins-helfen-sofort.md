@@ -11,11 +11,6 @@ categoryNames: ["WordPress"]
 ---
 
 <!-- wp:html -->
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WordPress-Shop zu langsam? Diese 5 Plugins helfen sofort!</title>
     <meta name="description" content="WordPress-Shop zu langsam? Entdecken Sie die 5 besten Performance-Plugins 2025 für schnellere Ladezeiten. WP Rocket führt den Vergleich an. Jetzt optimieren!">
     <meta name="keywords" content="WordPress Performance, WP Rocket, LiteSpeed Cache, WP-Optimize, NitroPack, Autoptimize, WordPress Speed, Website Optimierung, E-Commerce Performance, WooCommerce Speed, Caching Plugin, Website Ladezeit, SEO Optimierung, WordPress Plugins, Performance Tuning">
@@ -61,8 +56,6 @@ categoryNames: ["WordPress"]
             margin: 0.5rem 0;
         }
     </style>
-</head>
-<body class="bg-gray-50 text-gray-800 leading-relaxed">
     <article class="max-w-4xl mx-auto px-4 py-8">
         <div class="bg-white rounded-lg shadow-lg p-8">
             
@@ -642,8 +635,6 @@ CDN: Aktiviert (falls verfügbar)
         }
     }
     </script>
-</body>
-</html>
 
 <!-- /wp:html -->
 <!-- 2fox4-service-cta -->

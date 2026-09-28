@@ -13,11 +13,6 @@ seoDescription: "Entdecke, wie Schema Markup lokale Unternehmen bei Google sicht
 ---
 
 <!-- wp:html -->
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         .blogpost-container {
             width: 80%;
@@ -189,8 +184,6 @@ seoDescription: "Entdecke, wie Schema Markup lokale Unternehmen bei Google sicht
             }
         }
     </style>
-</head>
-<body>
 
 <article class="blogpost-container" itemscope itemtype="https://schema.org/BlogPosting">
     <meta itemprop="headline" content="Schema Markup: Der unterschätzte SEO & Local-SEO Booster">
@@ -598,8 +591,6 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
-</body>
-</html>
 
 <!-- /wp:html -->
 <!-- 2fox4-service-cta -->

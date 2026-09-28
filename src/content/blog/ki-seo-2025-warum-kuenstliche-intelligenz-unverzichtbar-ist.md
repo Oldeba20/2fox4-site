@@ -11,11 +11,6 @@ categoryNames: ["SEO"]
 ---
 
 <!-- wp:html -->
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KI-SEO 2025: Warum künstliche Intelligenz unverzichtbar ist</title>
     <meta name="description" content="KI-SEO 2025 revolutioniert Suchmaschinenoptimierung. Erfahren Sie, warum künstliche Intelligenz für Ihr Website-Ranking unverzichtbar geworden ist.">
     <meta name="keywords" content="KI-SEO, künstliche Intelligenz SEO, AI SEO 2025, Suchmaschinenoptimierung, Website-Optimierung, Google AI Overviews, Voice Search, Zero-Click-Searches, RankBrain, maschinelles Lernen, SEO-Automation, Content-Optimierung, lokales SEO, WordPress SEO">
@@ -131,8 +126,6 @@ categoryNames: ["SEO"]
             text-decoration: underline;
         }
     </style>
-</head>
-<body class="bg-gray-50">
     <div class="max-w-4xl mx-auto bg-white shadow-lg">
         <!-- Hauptinhalt -->
         <article class="p-8">
@@ -509,8 +502,6 @@ const aiSeoMonitor = {
             }
         }
     </script>
-</body>
-</html>
 <!-- /wp:html -->
 <!-- 2fox4-service-cta -->
 <div style="margin-top:2.5rem;padding:1.25rem 1.5rem;border-left:4px solid #ffe600;background:#161616;border-radius:12px;"><p style="margin:0;"><strong>Passende Leistung von 2fox4:</strong> <a href="/leistungen/seo/">SEO &amp; Lokale Auffindbarkeit</a> – technisches und lokales SEO, das deine Auffindbarkeit messbar verbessert.</p></div>

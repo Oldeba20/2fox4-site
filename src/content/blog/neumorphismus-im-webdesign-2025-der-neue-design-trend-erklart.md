@@ -11,11 +11,6 @@ categoryNames: ["Webdesign"]
 ---
 
 <!-- wp:html -->
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Neumorphismus im Webdesign 2025: Der neue Design-Trend erklärt</title>
     <meta name="description" content="Neumorphismus revolutioniert 2025 das Webdesign. Entdecken Sie Vor- und Nachteile, Implementierung und praktische Beispiele für moderne WordPress-Websites.">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
@@ -293,8 +288,6 @@ categoryNames: ["Webdesign"]
             overflow-x: auto;
         }
     </style>
-</head>
-<body class="bg-gray-50 font-sans leading-relaxed">
     <article itemscope itemtype="https://schema.org/BlogPosting" class="max-w-4xl mx-auto bg-white shadow-lg">
         <meta itemprop="headline" content="Neumorphismus im Webdesign 2025: Der neue Design-Trend erklärt">
         <meta itemprop="description" content="Neumorphismus revolutioniert 2025 das Webdesign. Entdecken Sie Vor- und Nachteile, Implementierung und praktische Beispiele für moderne WordPress-Websites.">
@@ -982,8 +975,6 @@ add_shortcode('neomorphism_button', 'neomorphism_button_shortcode');
 
         </div>
     </article>
-</body>
-</html>
 <!-- /wp:html -->
 <!-- 2fox4-service-cta -->
 <div style="margin-top:2.5rem;padding:1.25rem 1.5rem;border-left:4px solid #ffe600;background:#161616;border-radius:12px;"><p style="margin:0;"><strong>Passende Leistung von 2fox4:</strong> <a href="/leistungen/webdesign/">WordPress-Webdesign</a> – schnelle, SEO-fertige WordPress-Websites ohne Pagebuilder-Ballast.</p></div>

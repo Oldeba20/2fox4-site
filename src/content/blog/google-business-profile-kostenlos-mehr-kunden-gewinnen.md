@@ -13,11 +13,6 @@ seoDescription: "Optimieren Sie Ihr Google Business Profile kostenlos und steige
 ---
 
 <!-- wp:html -->
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         .blogpost-container {
             width: 80%;
@@ -211,8 +206,6 @@ seoDescription: "Optimieren Sie Ihr Google Business Profile kostenlos und steige
             }
         }
     </style>
-</head>
-<body>
 
 <div class="blogpost-container">
 
@@ -640,8 +633,6 @@ seoDescription: "Optimieren Sie Ihr Google Business Profile kostenlos und steige
 
 </div>
 
-</body>
-</html>
 <!-- /wp:html -->
 <!-- 2fox4-service-cta -->
 <div style="margin-top:2.5rem;padding:1.25rem 1.5rem;border-left:4px solid #ffe600;background:#161616;border-radius:12px;"><p style="margin:0;"><strong>Passende Leistung von 2fox4:</strong> <a href="/leistungen/seo/">SEO &amp; Lokale Auffindbarkeit</a> – technisches und lokales SEO, das deine Auffindbarkeit messbar verbessert.</p></div>

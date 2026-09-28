@@ -11,11 +11,6 @@ categoryNames: ["WordPress"]
 ---
 
 <!-- wp:html -->
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WordPress Besuchertracking: Die besten Plugins für Analytics 2025</title>
     <meta name="description" content="Entdecken Sie die besten WordPress Analytics Plugins 2025. MonsterInsights, WP Statistics & DSGVO-konforme Alternativen im Vergleich. Features & Preise!">
     <meta name="keywords" content="WordPress Analytics, MonsterInsights, WP Statistics, Matomo, DSGVO, Besuchertracking">
@@ -178,8 +173,6 @@ categoryNames: ["WordPress"]
             border-radius: 3px;
         }
     </style>
-</head>
-<body>
     <article>
         <h1>WordPress Besuchertracking: Die besten Plugins für Analytics 2025</h1>
         
@@ -477,8 +470,6 @@ _paq.push(['enableLinkTracking']);
             }
         }
     </script>
-</body>
-</html>
 
 <!-- /wp:html -->
 <!-- 2fox4-service-cta -->

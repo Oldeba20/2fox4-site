@@ -11,11 +11,6 @@ categoryNames: ["Tools"]
 ---
 
 <!-- wp:html -->
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>E-Mail-Automatisierung mit Zapier & PDF.co: 98% weniger Aufwand</title>
     <meta name="description" content="Automatisieren Sie Ihre E-Mail-Bearbeitung mit Zapier & PDF.co. ROI von 19.000% im ersten Jahr. Implementierung in nur 3-5 Tagen. ✓ Jetzt starten!">
     <meta name="keywords" content="E-Mail-Automatisierung, Zapier, PDF.co, Website-Formulare, Angebotserstellung, Workflow-Automatisierung, Business-Automatisierung, Zapier Integration, PDF-Generierung, E-Mail-Marketing, Prozessoptimierung, Geschäftsautomatisierung, Workflow-Tools, Automatisierung Software, E-Mail-Verarbeitung">
@@ -111,8 +106,6 @@ categoryNames: ["Tools"]
         "image": "https://cdn1.genspark.ai/user-upload-image/4_generated/f5688115-9d4d-4b7e-ba12-fa80217ad6d1"
     }
     </script>
-</head>
-<body class="bg-gray-50">
     <article class="max-w-4xl mx-auto px-4 py-8">
         <div class="bg-white rounded-lg shadow-lg p-8">
             <div class="text-center mb-8">
@@ -553,8 +546,6 @@ const validateData = (data) => {
             </div>
         </div>
     </article>
-</body>
-</html>
 
 <!-- /wp:html -->
 <!-- 2fox4-service-cta -->

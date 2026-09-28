@@ -11,11 +11,6 @@ categoryNames: ["E-Commerce"]
 ---
 
 <!-- wp:html -->
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>No-Code E-Commerce: Grenzen und Möglichkeiten 2025</title>
     <meta name="description" content="No-Code E-Commerce Lösungen im Vergleich: Webflow vs WordPress, Bubble.io für komplexe Apps. Erfahren Sie Grenzen und Möglichkeiten für Ihr Unternehmen.">
     <meta name="keywords" content="No-Code E-Commerce, Webflow Commerce, WordPress, Bubble.io, E-Commerce ohne Code, Online-Shop erstellen, Website-Builder">
@@ -158,8 +153,6 @@ categoryNames: ["E-Commerce"]
             }
         }
     </style>
-</head>
-<body class="bg-gray-50">
     <div class="max-w-4xl mx-auto px-4 py-8 bg-white shadow-lg">
         <article>
             <h1 class="text-4xl font-bold mb-6 text-gray-800">No-Code E-Commerce: Grenzen und Möglichkeiten für Unternehmen 2025</h1>
@@ -542,8 +535,6 @@ When Button "Kaufen" is clicked:<br>
             icon.classList.toggle('rotate');
         }
     </script>
-</body>
-</html>
 <!-- /wp:html -->
 <!-- 2fox4-service-cta -->
 <div style="margin-top:2.5rem;padding:1.25rem 1.5rem;border-left:4px solid #ffe600;background:#161616;border-radius:12px;"><p style="margin:0;"><strong>Passende Leistung von 2fox4:</strong> <a href="/leistungen/webdesign/">WordPress-Webdesign</a> – schnelle, SEO-fertige WordPress-Websites ohne Pagebuilder-Ballast.</p></div>

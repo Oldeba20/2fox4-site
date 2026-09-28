@@ -11,11 +11,6 @@ categoryNames: ["KI / AI"]
 ---
 
 <!-- wp:html -->
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KI Assistent Systeme für Unternehmen - Implementierung 2025</title>
     <meta name="description" content="KI Assistent Systeme revolutionieren Unternehmen 2025. Erfahren Sie alles über Vorteile, Implementierung und praktische Einsatzmöglichkeiten von AI-Assistenten für Ihren Geschäftserfolg.">
     <meta name="keywords" content="KI Assistent Systeme, AI Assistenten Unternehmen, Künstliche Intelligenz Business, Chatbots, Automatisierung, Digitale Transformation, KI Tools, Virtual Assistant, Machine Learning, WordPress AI">
@@ -219,8 +214,6 @@ categoryNames: ["KI / AI"]
             }
         }
     </style>
-</head>
-<body>
     <article>
         <h1>KI Assistent Systeme für Unternehmen: Der ultimative Leitfaden für die Implementierung in 2025</h1>
         
@@ -652,8 +645,6 @@ window.aiAssistant = {
         }
         </script>
     </article>
-</body>
-</html>
 <!-- /wp:html -->
 <!-- 2fox4-service-cta -->
 <div style="margin-top:2.5rem;padding:1.25rem 1.5rem;border-left:4px solid #ffe600;background:#161616;border-radius:12px;"><p style="margin:0;"><strong>Passende Leistung von 2fox4:</strong> <a href="/leistungen/digitalisierungsberatung/">KI- &amp; Digitalisierungsberatung</a> – wir bringen KI praxisnah in deinen Betrieb – Use-Case-Analyse, Automatisierung mit KI-Agenten und Team-Schulungen.</p></div>

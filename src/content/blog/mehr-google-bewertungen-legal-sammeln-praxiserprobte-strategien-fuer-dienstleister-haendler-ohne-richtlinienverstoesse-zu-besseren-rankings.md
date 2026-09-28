@@ -11,11 +11,6 @@ categoryNames: ["SEO"]
 ---
 
 <!-- wp:html -->
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Google Bewertungen legal sammeln: So geht's richtig 2025</title>
     <meta name="description" content="Mehr Google Bewertungen legal sammeln: Praxiserprobte Strategien für Dienstleister & Händler. Ohne Richtlinienverstöße zu besseren Rankings.">
     <meta name="keywords" content="Google Bewertungen, Google Reviews, Online Reputation, Google My Business, Local SEO, Kundenbewertungen, Bewertungsmanagement, Google Richtlinien, Kundenservice, Digital Marketing, Online Marketing, Reputation Management, Google Maps, Bewertungsstrategie, Suchmaschinenoptimierung">
@@ -168,8 +163,6 @@ categoryNames: ["SEO"]
             color: white;
         }
     </style>
-</head>
-<body class="bg-gray-50">
     <div class="max-w-4xl mx-auto p-6 bg-white shadow-lg">
         <article>
             <h1 class="text-4xl font-bold mb-6 text-gray-900">Google Bewertungen legal sammeln: So geht's richtig 2025</h1>
@@ -587,8 +580,6 @@ kontaktieren Sie uns unter [Kontaktdaten]."
             }
         }
     </script>
-</body>
-</html>
 
 <!-- /wp:html -->
 

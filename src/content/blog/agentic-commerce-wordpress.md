@@ -13,11 +13,6 @@ seoDescription: "Agentic Commerce verändert 2026 den Online-Handel grundlegend.
 ---
 
 <!-- wp:html -->
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Agentic Commerce: KI-Agenten revolutionieren Online-Shops 2026</title>
     <style>
         body {
@@ -282,8 +277,6 @@ seoDescription: "Agentic Commerce verändert 2026 den Online-Handel grundlegend.
             width: 1.5em;
         }
     </style>
-</head>
-<body>
     <div class="content-wrapper">
         <script type="application/ld+json">
         {
@@ -752,8 +745,6 @@ seoDescription: "Agentic Commerce verändert 2026 den Online-Handel grundlegend.
             });
         });
     </script>
-</body>
-</html>
 
 <!-- /wp:html -->
 

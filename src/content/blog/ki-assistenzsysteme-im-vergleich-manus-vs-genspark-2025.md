@@ -11,11 +11,6 @@ categoryNames: ["KI / AI"]
 ---
 
 <!-- wp:html -->
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KI-Assistenzsysteme im Vergleich: Manus vs Genspark 2025</title>
     <meta name="description" content="Manus vs Genspark: Detaillierter Vergleich der KI-Assistenzsysteme für Business, E-Commerce und digitale Transformation. Welches System passt zu Ihnen?">
     <meta name="keywords" content="KI-Assistenten, Manus AI, Genspark AI, Business Automatisierung, E-Commerce Tools, Digitale Transformation, AI Tools, Produktivitätstools, Content Creation">
@@ -70,8 +65,6 @@ categoryNames: ["KI / AI"]
             text-align: left;
         }
     </style>
-</head>
-<body class="bg-gray-50 text-gray-800">
     <article class="max-w-4xl mx-auto bg-white shadow-lg">
         <header class="gradient-bg text-white p-8">
             <h1 class="text-2xl font-bold mb-4">KI-Assistenzsysteme im Vergleich: Manus vs Genspark – Der ultimative Guide 2025</h1>
@@ -729,8 +722,6 @@ categoryNames: ["KI / AI"]
             });
         });
     </script>
-</body>
-</html>
 <!-- /wp:html -->
 <!-- 2fox4-service-cta -->
 <div style="margin-top:2.5rem;padding:1.25rem 1.5rem;border-left:4px solid #ffe600;background:#161616;border-radius:12px;"><p style="margin:0;"><strong>Passende Leistung von 2fox4:</strong> <a href="/leistungen/digitalisierungsberatung/">KI- &amp; Digitalisierungsberatung</a> – wir bringen KI praxisnah in deinen Betrieb – Use-Case-Analyse, Automatisierung mit KI-Agenten und Team-Schulungen.</p></div>

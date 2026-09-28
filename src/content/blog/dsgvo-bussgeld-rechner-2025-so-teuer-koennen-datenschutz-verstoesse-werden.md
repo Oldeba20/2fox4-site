@@ -11,17 +11,10 @@ categoryNames: ["Tools"]
 ---
 
 <!-- wp:html -->
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DSGVO-Bußgeld-Rechner 2025: So teuer können Datenschutz-Verstöße werden</title>
     <meta name="description" content="DSGVO-Bußgeld-Rechner 2025: Berechnen Sie potentielle Strafen bei Datenschutz-Verstößen. Interaktiver Calculator + Compliance-Checkliste für rechtssichere Websites.">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
-</head>
-<body>
 
 <article itemscope itemtype="https://schema.org/BlogPosting">
 <meta itemprop="headline" content="DSGVO-Bußgeld-Rechner 2025: So teuer können Datenschutz-Verstöße werden">
@@ -1220,8 +1213,6 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 </article>
 
-</body>
-</html>
 
 <!-- /wp:html -->
 <!-- 2fox4-service-cta -->

@@ -13,11 +13,6 @@ seoDescription: "Erfahren Sie, wie wir als Agentur Rank Math SEO nutzen, um Ihre
 ---
 
 <!-- wp:html -->
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         .blogpost-container {
             width: 80%;
@@ -270,8 +265,6 @@ seoDescription: "Erfahren Sie, wie wir als Agentur Rank Math SEO nutzen, um Ihre
             }
         }
     </style>
-</head>
-<body>
     <div class="blogpost-container">
         
         <div class="intro-section">
@@ -923,8 +916,6 @@ seoDescription: "Erfahren Sie, wie wir als Agentur Rank Math SEO nutzen, um Ihre
             });
         });
     </script>
-</body>
-</html>
 
 <!-- /wp:html -->
 

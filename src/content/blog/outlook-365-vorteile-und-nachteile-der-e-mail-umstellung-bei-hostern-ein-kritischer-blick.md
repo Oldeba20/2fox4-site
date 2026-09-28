@@ -13,11 +13,6 @@ seoDescription: "All-Inkl, IONOS & Co. drängen zu Outlook 365: Was kostet die U
 ---
 
 <!-- wp:html -->
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Outlook 365: Vorteile und Nachteile der E-Mail-Umstellung bei Hostern - Ein kritischer Blick</title>
     <meta name="description" content="Erfahren Sie, welche Vor- und Nachteile die Umstellung auf Outlook 365 bei Hostern wie Host Europe und Domainfactory mit sich bringt und welche Alternativen es für Ihr Unternehmen gibt.">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
@@ -150,8 +145,6 @@ seoDescription: "All-Inkl, IONOS & Co. drängen zu Outlook 365: Was kostet die U
         }
     }
     </script>
-</head>
-<body class="bg-gray-50">
     <div class="container py-8">
         <article class="bg-white p-6 shadow-md rounded-lg">
             <h1 class="text-3xl font-bold text-gray-800 mb-6">Outlook 365: Vorteile und Nachteile der E-Mail-Umstellung bei Hostern - Ein kritischer Blick</h1>
@@ -568,8 +561,6 @@ seoDescription: "All-Inkl, IONOS & Co. drängen zu Outlook 365: Was kostet die U
             }
         }
     </script>
-</body>
-</html>
 
 <!-- /wp:html -->
 <!-- 2fox4-service-cta -->

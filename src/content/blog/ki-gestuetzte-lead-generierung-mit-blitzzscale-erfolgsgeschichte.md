@@ -12,11 +12,6 @@ seoDescription: "Entdecken Sie, wie 2fox4.de und Blitzscale durch KI-gestützte 
 ---
 
 <!-- wp:html -->
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         * {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -157,8 +152,6 @@ seoDescription: "Entdecken Sie, wie 2fox4.de und Blitzscale durch KI-gestützte 
             text-decoration: underline;
         }
     </style>
-</head>
-<body>
 
 <article itemscope itemtype="https://schema.org/BlogPosting">
     <meta itemprop="headline" content="KI-gestützte Lead-Generierung mit BlitzzScale – Erfolgsgeschichte">
@@ -494,8 +487,6 @@ function send_to_blitzzscale_automation($contact_form) {
     </div>
 </article>
 
-</body>
-</html>
 <!-- /wp:html -->
 <!-- 2fox4-service-cta -->
 <div style="margin-top:2.5rem;padding:1.25rem 1.5rem;border-left:4px solid #ffe600;background:#161616;border-radius:12px;"><p style="margin:0;"><strong>Passende Leistung von 2fox4:</strong> <a href="/leistungen/digitalisierungsberatung/">KI- &amp; Digitalisierungsberatung</a> – wir bringen KI praxisnah in deinen Betrieb – Use-Case-Analyse, Automatisierung mit KI-Agenten und Team-Schulungen.</p></div>

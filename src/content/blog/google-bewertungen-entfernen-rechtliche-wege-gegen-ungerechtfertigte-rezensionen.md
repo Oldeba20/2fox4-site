@@ -11,11 +11,6 @@ categoryNames: ["SEO"]
 ---
 
 <!-- wp:html -->
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -225,8 +220,6 @@ categoryNames: ["SEO"]
             }
         }
     </script>
-</head>
-<body>
     <article class="container" itemscope itemtype="https://schema.org/BlogPosting">
         <meta itemprop="datePublished" content="2025-10-14">
         <meta itemprop="author" content="2fox4.de">
@@ -492,8 +485,6 @@ categoryNames: ["SEO"]
             </div>
         </div>
     </article>
-</body>
-</html>
 <!-- /wp:html -->
 
 <!-- wp:paragraph -->

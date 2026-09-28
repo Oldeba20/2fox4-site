@@ -70,6 +70,7 @@ export const GET: APIRoute = async () => {
     ["/ueber-uns/", "src/pages/ueber-uns/index.astro", 0.6, "yearly"],
     ["/blog/", "src/pages/blog/index.astro", 0.8, "daily"],
     ["/kontakt/", "src/pages/kontakt/index.astro", 0.7, "yearly"],
+    ["/ki-sichtbarkeit-check/", "src/pages/ki-sichtbarkeit-check/index.astro", 0.8, "monthly"],
     ["/barrierefreiheit/", "src/pages/barrierefreiheit/index.astro", 0.4, "yearly"],
   ];
   for (const [loc, file, priority, changefreq] of staticPages) {

@@ -11,11 +11,6 @@ categoryNames: ["SEO"]
 ---
 
 <!-- wp:html -->
-<!DOCTYPE html>
-<html lang="de" data-theme="light">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
       content="Erfahren Sie, wie Voice Search Optimierung Ihr lokales Unternehmen bei Sprachsuche sichtbarer macht. Praktische SEO-Tipps für 2025."
@@ -267,8 +262,6 @@ categoryNames: ["SEO"]
         font-weight: 600;
       }
     </style>
-  </head>
-  <body>
     <div class="blog-content">
     <h1>Voice Search Optimierung für lokale Unternehmen: Wie Sie 2025 von der Sprachsuche profitieren</h1>
 
@@ -774,8 +767,6 @@ categoryNames: ["SEO"]
       });
     </script>
     </div>
-  </body>
-</html>
 
 <!-- /wp:html -->
 <!-- 2fox4-service-cta -->

@@ -11,11 +11,6 @@ categoryNames: ["Tools"]
 ---
 
 <!-- wp:html -->
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="NordVPN Test 2025: Umfassende Analyse zu Sicherheit, Features & Preisen. Perfekter VPN-Schutz für Unternehmen & Websites. Jetzt informieren!">
     <meta name="keywords" content="NordVPN, VPN Test, Cybersicherheit, Datenschutz, VPN Anbieter, Online Sicherheit, Unternehmenssicherheit, Website Schutz, Verschlüsselung, Digital Privacy, VPN Vergleich, Internet Sicherheit, Business VPN, Threat Protection">
     <title>NordVPN Test 2025: Sicherheit & Schutz für Ihr Unternehmen - 2fox4.de</title>
@@ -244,8 +239,6 @@ categoryNames: ["Tools"]
             color: #059669;
         }
     </style>
-</head>
-<body class="bg-gray-50">
     <div class="content-wrapper">
         <!-- Header Image -->
         <div class="mb-12">
@@ -789,8 +782,6 @@ categoryNames: ["Tools"]
             });
         });
     </script>
-</body>
-</html>
 
 <!-- /wp:html -->
 <!-- 2fox4-service-cta -->

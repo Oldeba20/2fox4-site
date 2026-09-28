@@ -11,11 +11,6 @@ categoryNames: ["WordPress"]
 ---
 
 <!-- wp:html -->
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WordPress Reparatur 2025: Die wirkungsvollsten Lösungsansätze</title>
     <meta name="description" content="WordPress Reparatur leicht gemacht: Professionelle Lösungsansätze für häufige Probleme. Schritt-für-Schritt-Anleitungen und Profi-Tipps von 2fox4.de für Ihre Website.">
     <meta name="keywords" content="WordPress Reparatur, WordPress Fehlerbehebung, Website Wartung, WordPress Support, Plugin Probleme">
@@ -132,9 +127,7 @@ categoryNames: ["WordPress"]
             margin: 20px 0;
         }
     </style>
-</head>
 
-<body class="bg-white">
     <main class="max-w-4xl mx-auto px-4 py-8">
         
         <article>
@@ -538,8 +531,6 @@ OPTIMIZE TABLE wp_posts, wp_postmeta, wp_options, wp_comments;
             }
         }
     </script>
-</body>
-</html>
 
 <!-- /wp:html -->
 <!-- 2fox4-service-cta -->

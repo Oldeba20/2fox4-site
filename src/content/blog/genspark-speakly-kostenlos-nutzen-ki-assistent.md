@@ -13,11 +13,6 @@ seoDescription: "Entdecken Sie, wie Genspark Speakly kostenlos Ihr Business opti
 ---
 
 <!-- wp:html -->
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         .blogpost-container {
             width: 80%;
@@ -208,8 +203,6 @@ seoDescription: "Entdecken Sie, wie Genspark Speakly kostenlos Ihr Business opti
             color: #FF6B35;
         }
     </style>
-</head>
-<body>
     <article class="blogpost-container">
         <div class="highlight-box">
             <p>
@@ -622,8 +615,6 @@ seoDescription: "Entdecken Sie, wie Genspark Speakly kostenlos Ihr Business opti
             </p>
         </div>
     </article>
-</body>
-</html>
 
 <!-- /wp:html -->
 <!-- 2fox4-service-cta -->

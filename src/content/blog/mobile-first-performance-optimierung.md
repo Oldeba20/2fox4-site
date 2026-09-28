@@ -13,11 +13,6 @@ seoDescription: "Mobile-First Performance-Optimierung 2026: Core Web Vitals meis
 ---
 
 <!-- wp:html -->
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
@@ -245,8 +240,6 @@ seoDescription: "Mobile-First Performance-Optimierung 2026: Core Web Vitals meis
             border-top: 1px solid #e0e0e0;
         }
     </style>
-</head>
-<body>
 <article itemscope itemtype="https://schema.org/BlogPosting">
     <meta itemprop="headline" content="Mobile-First Performance-Optimierung 2026: So steigern Sie Ihre Conversion-Rate">
     <meta itemprop="datePublished" content="2026-01-06">
@@ -705,8 +698,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
-</body>
-</html>
 <!-- /wp:html -->
 <!-- 2fox4-service-cta -->
 <div style="margin-top:2.5rem;padding:1.25rem 1.5rem;border-left:4px solid #ffe600;background:#161616;border-radius:12px;"><p style="margin:0;"><strong>Passende Leistung von 2fox4:</strong> <a href="/leistungen/webdesign/">WordPress-Webdesign</a> – schnelle, SEO-fertige WordPress-Websites ohne Pagebuilder-Ballast.</p></div>

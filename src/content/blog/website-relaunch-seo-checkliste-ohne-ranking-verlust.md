@@ -11,11 +11,6 @@ categoryNames: ["SEO"]
 ---
 
 <!-- wp:html -->
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Website-Relaunch SEO: Checkliste ohne Ranking-Verlust</title>
     <meta name="description" content="Website-Relaunch SEO Checkliste: Umfassender Guide für erfolgreichen Relaunch ohne Ranking-Verluste. 301-Weiterleitungen, Performance & Monitoring.">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
@@ -77,8 +72,6 @@ categoryNames: ["SEO"]
             margin-right: 10px;
         }
     </style>
-</head>
-<body class="bg-white text-gray-800">
     <article class="max-w-4xl mx-auto px-4 py-8">
         <h1 class="text-3xl font-bold text-left mb-6">Website-Relaunch SEO Checkliste: So vermeiden Sie Ranking-Verluste garantiert</h1>
         
@@ -578,8 +571,6 @@ categoryNames: ["SEO"]
         }
         </script>
     </article>
-</body>
-</html>
 <!-- /wp:html -->
 <!-- 2fox4-service-cta -->
 <div style="margin-top:2.5rem;padding:1.25rem 1.5rem;border-left:4px solid #ffe600;background:#161616;border-radius:12px;"><p style="margin:0;"><strong>Passende Leistung von 2fox4:</strong> <a href="/leistungen/seo/">SEO &amp; Lokale Auffindbarkeit</a> – technisches und lokales SEO, das deine Auffindbarkeit messbar verbessert.</p></div>

@@ -11,11 +11,6 @@ categoryNames: ["E-Commerce"]
 ---
 
 <!-- wp:html -->
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Headless WordPress Commerce: Die Zukunft des E-Commerce 2025</title>
     <meta name="description" content="Entdecken Sie Headless WordPress Commerce als Zukunft des E-Commerce 2025. Mehr Performance, Flexibilität und Sicherheit für Ihren Online-Shop.">
     <meta name="keywords" content="Headless WordPress Commerce, Headless WooCommerce, E-Commerce 2025, WordPress Performance, Online-Shop Zukunft">
@@ -106,8 +101,6 @@ categoryNames: ["E-Commerce"]
             text-align: left;
         }
     </style>
-</head>
-<body class="bg-gray-50">
     <div class="max-w-4xl mx-auto bg-white p-8 shadow-lg">
         <article>
             <h1 class="text-4xl font-bold text-gray-900 mb-6">Headless WordPress Commerce: Die Zukunft des E-Commerce für 2025</h1>
@@ -470,8 +463,6 @@ https://ihr-shop.de/wp-json/wc/v3/products
             }
         }
     </script>
-</body>
-</html>
 <!-- /wp:html -->
 <!-- 2fox4-service-cta -->
 <div style="margin-top:2.5rem;padding:1.25rem 1.5rem;border-left:4px solid #ffe600;background:#161616;border-radius:12px;"><p style="margin:0;"><strong>Passende Leistung von 2fox4:</strong> <a href="/leistungen/webdesign/">WordPress-Webdesign</a> – schnelle, SEO-fertige WordPress-Websites ohne Pagebuilder-Ballast.</p></div>

@@ -13,11 +13,6 @@ seoDescription: "Macht KI den Webdesigner überflüssig? Nach 20 Jahren Praxis: 
 ---
 
 <!-- wp:html -->
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         .blogpost-container {
             width: 80%;
@@ -195,8 +190,6 @@ seoDescription: "Macht KI den Webdesigner überflüssig? Nach 20 Jahren Praxis: 
             }
         }
     </style>
-</head>
-<body>
 
 <div class="blogpost-container">
 
@@ -477,8 +470,6 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
-</body>
-</html>
 <!-- /wp:html -->
 <!-- 2fox4-service-cta -->
 <div style="margin-top:2.5rem;padding:1.25rem 1.5rem;border-left:4px solid #ffe600;background:#161616;border-radius:12px;"><p style="margin:0;"><strong>Passende Leistung von 2fox4:</strong> <a href="/leistungen/webdesign/">WordPress-Webdesign</a> – schnelle, SEO-fertige WordPress-Websites ohne Pagebuilder-Ballast.</p></div>

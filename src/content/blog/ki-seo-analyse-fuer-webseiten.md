@@ -11,11 +11,6 @@ categoryNames: ["SEO"]
 ---
 
 <!-- wp:html -->
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KI-SEO-Analyser: Wie KI-tauglich ist meine Website?</title>
     <meta name="description" content="Testen Sie kostenlos, wie KI-optimiert Ihre Website ist! Unser KI-SEO-Analyser prüft 10 wichtige Faktoren für bessere Rankings in 2025.">
     <meta name="keywords" content="KI-SEO, Website-Analyse, SEO-Tool, künstliche Intelligenz, Suchmaschinenoptimierung">
@@ -108,8 +103,6 @@ categoryNames: ["SEO"]
         .score-fair { background: linear-gradient(135deg, #f59e0b, #fbbf24); color: white; }
         .score-poor { background: linear-gradient(135deg, #ef4444, #f87171); color: white; }
     </style>
-</head>
-<body class="bg-gray-50 text-gray-900">
     <div class="max-w-4xl mx-auto p-6">
         <article>
             <header class="mb-8">
@@ -792,8 +785,6 @@ categoryNames: ["SEO"]
             return 'Verbesserungsbedarf';
         }
     </script>
-</body>
-</html>
 
 <!-- /wp:html -->
 <!-- 2fox4-service-cta -->

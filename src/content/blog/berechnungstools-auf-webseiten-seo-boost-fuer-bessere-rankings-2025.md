@@ -11,11 +11,6 @@ categoryNames: ["SEO"]
 ---
 
 <!-- wp:html -->
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Berechnungstools SEO: Wie interaktive Rechner Rankings steigern</title>
     <meta name="description" content="Berechnungstools SEO: Steigern Sie Ihre Rankings mit interaktiven Rechnern. Mehr User Engagement, Backlinks und Conversion-Rate für bessere SEO-Performance.">
     <meta name="keywords" content="Berechnungstools SEO, interaktive Rechner, Website Ranking, SEO Optimierung, User Engagement, Backlinks generieren, WordPress Webdesign, E-Commerce SEO, Conversion Rate, Dwell Time, ROI Rechner, Kostenrechner, Website Tools, SEO Performance, Suchmaschinenoptimierung">
@@ -175,8 +170,6 @@ categoryNames: ["SEO"]
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
         }
     </style>
-</head>
-<body class="bg-gray-50 text-gray-800">
     <article class="max-w-4xl mx-auto px-4 py-8">
         <img src="https://cdn1.genspark.ai/user-upload-image/5_generated/831390b0-9cf5-4f07-be11-56aa5b230d9c" alt="Interaktive Berechnungstools für bessere SEO-Performance" class="featured-image">
         
@@ -605,8 +598,6 @@ categoryNames: ["SEO"]
             });
         });
     </script>
-</body>
-</html>
 <!-- /wp:html -->
 
 <!-- wp:paragraph -->

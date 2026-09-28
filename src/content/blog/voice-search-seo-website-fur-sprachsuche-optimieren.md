@@ -12,11 +12,6 @@ categoryNames: ["SEO"]
 
 <!-- wp:html -->
 
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Voice Search SEO: Website für Sprachsuche optimieren</title>
     <meta name="description" content="Voice Search SEO: Optimieren Sie Ihre Website für Sprachsuche. Praktische Tipps und Strategien für bessere Rankings bei Google Assistant, Alexa & Siri.">
     <meta name="keywords" content="Voice Search SEO, Sprachsuche Optimierung, SEO für Sprachassistenten, Google Assistant SEO, Alexa SEO, Siri SEO, lokale Sprachsuche, conversational SEO, featured snippets, long-tail keywords, mobile SEO, WordPress SEO, Webdesign, Website Optimierung">
@@ -216,8 +211,6 @@ categoryNames: ["SEO"]
             font-size: 1.2rem;
         }
     </style>
-</head>
-<body class="bg-gray-50">
     <article class="max-w-4xl mx-auto px-6 py-8 bg-white shadow-lg rounded-lg mt-8">
         
         <!-- Einleitung -->
@@ -549,8 +542,6 @@ categoryNames: ["SEO"]
     }
     </script>
 
-</body>
-</html>
     <script id="html_badge_script1">
         window.__genspark_remove_badge_link = "https://www.genspark.ai/api/html_badge/" +
             "remove_badge?token=To%2FBnjzloZ3UfQdcSaYfDmfPkyaBjP%2FknUkf8mmaacnlis8zkgzAMuOxP5Gt2PikoAiqv0bhEOmZalbzPu9REjrZTrQhtOB8vMuwT7SnBoIV8uimF9PKqY3TFga1gkIOl%2F6E3fkhz%2FqFCryEoTaaFQYThIHW3OPXm2jIE%2BBjI1Aqxu2T5Ewyrpimjsl9ZWq1TBiYS1o2Rn%2FD3UPFkLFVoi8VSygkT%2FZIl%2FvfkgXMtH3dgnU5RT%2Fwb9QP7TPK8nXqvjezTQqt0%2Bu0b6EhuXwDZ0xLp4f70qu127uyvLq1C%2F1ShJkChcWMxxgEeGR1mLWYqBQ2MDEP0mA160uWh8kebfyHpU3Tz5D8IuagDYSLOLJSh3oawPluYGmPmdV%2BXTZsFhGVn6lKfq%2FKDpikIJJgA8NwCDExLBg%2B94pmaddwqS1%2BHOpCmVErDZzhVN95USgBTnOjvZMbJZyRC39TNZm41uaeH%2FViwqbnWo6gHz0%2FAZKh414NMhzJ8YkjcGHb0haWdthf6jlABN53i4h%2BDuDFkhLyTRVIrvupjADkAL%2Bm7M0%3D";

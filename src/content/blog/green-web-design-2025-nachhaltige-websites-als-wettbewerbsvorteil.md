@@ -11,11 +11,6 @@ categoryNames: ["Webdesign"]
 ---
 
 <!-- wp:html -->
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Green Web Design 2025: Nachhaltige Websites als Wettbewerbsvorteil</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
@@ -225,8 +220,6 @@ categoryNames: ["Webdesign"]
             border-radius: 6px;
         }
     </style>
-</head>
-<body class="bg-gray-50 font-sans text-gray-800 leading-relaxed">
     <article itemscope itemtype="https://schema.org/BlogPosting" class="max-w-6xl mx-auto bg-white p-8">
         <meta itemprop="headline" content="Green Web Design 2025: Nachhaltige Websites als Wettbewerbsvorteil">
         <meta itemprop="description" content="Green Web Design reduziert CO2-Emissionen, senkt Kosten und verbessert SEO-Rankings. Erfahren Sie, wie nachhaltige Websites 2025 zum Wettbewerbsvorteil werden.">
@@ -1009,8 +1002,6 @@ categoryNames: ["Webdesign"]
             </section>
         </div>
     </article>
-</body>
-</html>
 
 <!-- /wp:html -->
 <!-- 2fox4-service-cta -->

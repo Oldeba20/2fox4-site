@@ -11,11 +11,6 @@ categoryNames: ["Webdesign"]
 ---
 
 <!-- wp:html -->
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CMS-Vergleich 2025: WordPress vs Webflow vs Drupal - Der ultimative Guide</title>
     <meta name="description" content="Umfassender CMS-Vergleich 2025: WordPress, Webflow, Drupal & mehr analysiert. Vergleichstabelle, Vor-/Nachteile & Praxistipps für die richtige Wahl.">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
@@ -312,8 +307,6 @@ categoryNames: ["Webdesign"]
             padding: 40px 20px;
         }
     </style>
-</head>
-<body class="bg-gray-50">
 
 <div class="container">
     
@@ -732,8 +725,6 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 });
 </script>
 
-</body>
-</html>
 <!-- /wp:html -->
 <!-- 2fox4-service-cta -->
 <div style="margin-top:2.5rem;padding:1.25rem 1.5rem;border-left:4px solid #ffe600;background:#161616;border-radius:12px;"><p style="margin:0;"><strong>Passende Leistung von 2fox4:</strong> <a href="/leistungen/webdesign/">WordPress-Webdesign</a> – schnelle, SEO-fertige WordPress-Websites ohne Pagebuilder-Ballast.</p></div>
