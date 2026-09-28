@@ -83,23 +83,45 @@ function kic_common_prefix(string $a, string $b): int {
     return $i;
 }
 
+/** Häufige deutsche Vornamen – als alleiniges Marken-Token zu unsicher („Claudia" steht in vielen Antworten). */
+function kic_first_names(): array {
+    static $n = null;
+    if ($n !== null) return $n;
+    $list = 'alexander andreas anja anna andrea angelika anke antje axel barbara bernd birgit bettina björn carsten christian christina christine christoph claudia cornelia daniel daniela david dennis dieter dirk doris elke elisabeth erika eva frank franz friedrich fritz gabriele georg gerhard gisela günter günther hans harald heike heiko heinrich heinz helga helmut herbert holger horst ingrid jan jana jens jessica joachim johann johannes jonas josef jörg jürgen julia karin karl katharina kathrin katrin kerstin klaus kristin lars laura lena lukas manfred manuela marc marcel marco maria marie marina mario markus martin martina matthias max melanie michael michaela monika nadine nicole niklas nina norbert olaf oliver patrick paul peter petra philipp rainer ralf ralph regina reinhard renate robert roland rolf sabine sabrina sandra sarah sascha sebastian simon sonja stefan stefanie stephan susanne sven swen thomas thorsten tim tobias torsten udo ulrich ulrike ursula ute uwe volker walter werner wilhelm wolfgang yvonne emidio';
+    $n = array_fill_keys(explode(' ', $list), true);
+    return $n;
+}
+
 /**
- * Distinktives Marken-Token aus dem Firmennamen.
+ * Alle aussagekräftigen Wörter des Firmennamens.
  * Ausgeschlossen: < 4 Zeichen, generische Wörter, Wörter, die in einem
  * Leistungs-/Regionswort stecken („haus" in „hausmeisterservice"), und
  * Wörter mit demselben Stamm wie die Leistung („steuerberatung" ↔ „steuerberater").
- * Deutsche Firmennamen führen meist mit der Marke → erster Treffer gewinnt.
  */
-function kic_distinct_token(string $normName, string $service, string $region): string {
+function kic_name_tokens(string $normName, string $service, string $region): array {
     $stop = array_filter(explode(' ', kic_normalize_name($service . ' ' . $region)));
     $generic = kic_generic_words();
+    $out = [];
     foreach (explode(' ', $normName) as $t) {
         if (mb_strlen($t) < 4 || isset($generic[$t])) continue;
         $bad = false;
         foreach ($stop as $s) {
             if ($t === $s || mb_strpos($s, $t) !== false || kic_common_prefix($t, $s) >= 6) { $bad = true; break; }
         }
-        if (!$bad) return $t;
+        if (!$bad) $out[] = $t;
+    }
+    return array_values(array_unique($out));
+}
+
+/**
+ * Distinktives Marken-Token: das erste aussagekräftige Wort, das KEIN Vorname ist
+ * („Tischlerei Friedrich Wackerhahn" → „wackerhahn", nicht „friedrich").
+ * Leer, wenn der Name nur aus Vornamen besteht – dann müssen alle Wörter vorkommen.
+ */
+function kic_distinct_token(string $normName, string $service, string $region): string {
+    $first = kic_first_names();
+    foreach (kic_name_tokens($normName, $service, $region) as $t) {
+        if (!isset($first[$t])) return $t;
     }
     return '';
 }
@@ -133,10 +155,11 @@ function kic_domain_token(string $domain, string $service, string $region): stri
 
 /**
  * Wird das Unternehmen in der KI-Antwort genannt bzw. als Quelle verlinkt?
- * $ctx = [normName, nameNoSpace, distinctToken, domain, domainToken]
+ * $ctx = [normName, nameNoSpace, distinctToken, domain, domainToken, nameTokens?]
  */
 function kic_detect_mention(string $content, array $sources, array $ctx): array {
     [$normName, $nameNoSpace, $distinctToken, $domain, $domainToken] = $ctx;
+    $nameTokens = $ctx[5] ?? [];
     $hay = kic_normalize_name($content);
 
     $mentioned = false;
@@ -145,6 +168,12 @@ function kic_detect_mention(string $content, array $sources, array $ctx): array 
         if ($cand !== '' && mb_strlen($cand) >= 4 && kic_contains_word($hay, $cand)) {
             $mentioned = true; $needle = $cand; break;
         }
+    }
+    // Name nur aus Vornamen (z. B. „Heinrich Matthias"): alle Wörter müssen vorkommen.
+    if (!$mentioned && $distinctToken === '' && count($nameTokens) >= 2) {
+        $all = true;
+        foreach ($nameTokens as $nt) { if (!kic_contains_word($hay, $nt)) { $all = false; break; } }
+        if ($all) { $mentioned = true; $needle = $nameTokens[0]; }
     }
 
     $cited = false;

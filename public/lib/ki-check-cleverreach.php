@@ -83,10 +83,12 @@ function kiccr_subscribe(array $config, string $email, array $extra = []): bool 
         [$code] = kiccr_http('POST', 'https://rest.cleverreach.com/v3/groups.json/' . $gid . '/receivers',
             ['Authorization: Bearer ' . $tok, 'Content-Type: application/json'],
             json_encode($receiver, JSON_UNESCAPED_UNICODE));
-        if ($code === 409) {
-            // gibt es schon (z. B. früher abgemeldet) → wieder aktivieren
-            [$code] = kiccr_http('PUT', 'https://rest.cleverreach.com/v3/groups.json/' . $gid . '/receivers/'
-                . rawurlencode($email) . '/setactive', ['Authorization: Bearer ' . $tok]);
+        if ($code === 400 || $code === 409) {
+            // Adresse steht schon in der Liste (z. B. früher abgemeldet) → wieder aktivieren.
+            // Getestet 28.09.2026: PUT auf den Empfänger mit activated/deactivated.
+            [$code] = kiccr_http('PUT', 'https://rest.cleverreach.com/v3/groups.json/' . $gid . '/receivers/' . rawurlencode($email),
+                ['Authorization: Bearer ' . $tok, 'Content-Type: application/json'],
+                json_encode(['activated' => $now, 'deactivated' => 0]));
         }
         if ($code >= 400) throw new RuntimeException('HTTP ' . $code);
         return true;
@@ -100,8 +102,12 @@ function kiccr_unsubscribe(array $config, string $email): bool {
     if (!kiccr_enabled($config)) return false;
     try {
         $tok = kiccr_token($config);
+        // Abmelden = deactivated setzen (der Endpunkt …/setinactive existiert in v3 nicht, 404).
+        // 404 heißt: Adresse steht nicht in der Liste → nichts zu tun.
         [$code] = kiccr_http('PUT', 'https://rest.cleverreach.com/v3/groups.json/' . (int)$config['cleverreach_group_id']
-            . '/receivers/' . rawurlencode($email) . '/setinactive', ['Authorization: Bearer ' . $tok]);
+            . '/receivers/' . rawurlencode($email),
+            ['Authorization: Bearer ' . $tok, 'Content-Type: application/json'],
+            json_encode(['deactivated' => time()]));
         if ($code >= 400 && $code !== 404) throw new RuntimeException('HTTP ' . $code);
         return true;
     } catch (\Throwable $e) {

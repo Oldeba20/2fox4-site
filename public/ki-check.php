@@ -107,7 +107,8 @@ $nameNoSpace   = str_replace(' ', '', $normName);
 $distinctToken = kic_distinct_token($normName, $service, $region);
 $domain        = kic_normalize_domain($domainRaw);
 $domainToken   = kic_domain_token($domain, $service, $region);
-$detectCtx     = [$normName, $nameNoSpace, $distinctToken, $domain, $domainToken];
+$detectCtx     = [$normName, $nameNoSpace, $distinctToken, $domain, $domainToken,
+                  kic_name_tokens($normName, $service, $region)];
 
 /* ---------- Perplexity-Calls (parallel via curl_multi) ---------- */
 // Ein cURL-Handle für eine Frage aufbauen.
