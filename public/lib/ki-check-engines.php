@@ -38,8 +38,14 @@ function kic_engine_handle(string $engine, array $cfg, string $question, string 
         $tool = ['type' => 'web_search'];
         $tool['user_location'] = array_filter(['type' => 'approximate', 'country' => 'DE',
             'city' => $region !== '' ? $region : null]);
+        // Reasoning-Modelle (gpt-5*, o*) verbrauchen Tokens fürs Nachdenken – bei 900 blieb die
+        // Antwort leer (status incomplete, max_output_tokens). Deshalb Denkaufwand niedrig + mehr Luft.
         $payload = ['model' => $cfg['model'], 'instructions' => KIC_SYSTEM_PROMPT,
-            'input' => $question, 'tools' => [$tool], 'max_output_tokens' => 900];
+            'input' => $question, 'tools' => [$tool], 'max_output_tokens' => 1200];
+        if (preg_match('/^(gpt-5|o\d)/', $cfg['model'])) {
+            $payload['reasoning'] = ['effort' => 'low'];
+            $payload['max_output_tokens'] = 6000;
+        }
         $url = 'https://api.openai.com/v1/responses';
     } else {
         $payload = ['model' => $cfg['model'], 'messages' => [

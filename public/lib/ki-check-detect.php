@@ -238,6 +238,8 @@ function kic_extract_providers(string $content, string $service = '', string $re
         $skip = false;
         foreach ($stopWords as $w) { if (mb_strpos($low, $w) !== false) { $skip = true; break; } }
         if ($skip) continue;
+        // Aufzählungen („Möbelbau, Innenausbau oder Türen") sind keine Firmennamen
+        if (mb_strpos($c, ',') !== false || preg_match('/\s(oder|bzw\.?|sowie)\s/u', $low)) continue;
         $n = kic_normalize_name($c);
         if ($n === '' || $n === $reg || $n === $svc || $n === trim($svc . ' ' . $reg)) continue;
         if (str_word_count($n) > 9) continue;
