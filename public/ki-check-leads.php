@@ -66,7 +66,7 @@ if (($_GET['export'] ?? '') === 'csv') {
 }
 
 $nlRows = $pdo->query(
-    "SELECT email, status, source, subscribed_at, unsubscribed_at FROM ki_check_newsletter
+    "SELECT email, status, source, subscribed_at, subscribed_ip, consent_version, unsubscribed_at FROM ki_check_newsletter
       ORDER BY (status='subscribed') DESC, COALESCE(unsubscribed_at, subscribed_at) DESC LIMIT 500"
 )->fetchAll(PDO::FETCH_ASSOC);
 $nlCount = 0;
@@ -77,7 +77,7 @@ $crOn = function_exists('kiccr_enabled') && kiccr_enabled($config);
 $confirmed = (int)$pdo->query("SELECT COUNT(DISTINCT email) FROM ki_check_leads WHERE status='confirmed'")->fetchColumn();
 $pending   = (int)$pdo->query("SELECT COUNT(*) FROM ki_check_leads WHERE status='pending'")->fetchColumn();
 $rows = $pdo->query(
-    "SELECT email, business, service, region, status, signup_at, confirmed_at
+    "SELECT email, business, service, region, status, signup_at, signup_ip, confirmed_at, confirmed_ip, consent_version
        FROM ki_check_leads
       ORDER BY (status='confirmed') DESC, COALESCE(confirmed_at, signup_at) DESC
       LIMIT 1000"
@@ -106,6 +106,8 @@ $key = urlencode((string)($_GET['key'] ?? ''));
   .pill { font-size:11px; font-weight:600; padding:2px 8px; border-radius:999px; }
   .pill.confirmed { background:#ff6b35; color:#fff; }
   .pill.pending { background:#2a2a2a; color:#9a9a9a; }
+  .ip { color:#666; font-size:12px; font-family:ui-monospace,monospace; }
+  .note { color:#999; font-size:12px; max-width:760px; }
 </style>
 </head>
 <body>
@@ -114,27 +116,30 @@ $key = urlencode((string)($_GET['key'] ?? ''));
      CleverReach-Übergabe: <?= $crOn ? 'automatisch aktiv' : 'aus – bitte CSV importieren' ?></p>
   <a class="btn" href="?key=<?= $key ?>&amp;export=csv">Abonnenten als CSV (für CleverReach)</a>
   <table>
-    <thead><tr><th>Status</th><th>E-Mail</th><th>Quelle</th><th>Angemeldet</th><th>Abgemeldet</th></tr></thead>
+    <thead><tr><th>Status</th><th>E-Mail</th><th>Quelle</th><th>Angemeldet (Zeit · IP gekürzt)</th><th>Text-Version</th><th>Abgemeldet</th></tr></thead>
     <tbody>
     <?php foreach ($nlRows as $n): ?>
       <tr>
         <td><span class="pill <?= $n['status'] === 'subscribed' ? 'confirmed' : 'pending' ?>"><?= $n['status'] === 'subscribed' ? 'angemeldet' : 'abgemeldet' ?></span></td>
         <td><?= h($n['email']) ?></td>
         <td style="color:#999"><?= h($n['source']) ?></td>
-        <td style="color:#999"><?= h(substr((string)$n['subscribed_at'], 0, 16)) ?></td>
+        <td style="color:#999"><?= h(substr((string)$n['subscribed_at'], 0, 16)) ?><br><span class="ip"><?= h($n['subscribed_ip']) ?></span></td>
+        <td style="color:#999"><?= h($n['consent_version']) ?></td>
         <td style="color:#999"><?= h(substr((string)($n['unsubscribed_at'] ?? ''), 0, 16)) ?></td>
       </tr>
     <?php endforeach; ?>
-    <?php if (!$nlRows): ?><tr><td colspan="5" style="color:#777">Noch keine Anmeldungen.</td></tr><?php endif; ?>
+    <?php if (!$nlRows): ?><tr><td colspan="6" style="color:#777">Noch keine Anmeldungen.</td></tr><?php endif; ?>
     </tbody>
   </table>
 
   <h1 style="margin-top:40px">Alle Check-Anfragen</h1>
+  <p class="note">Nachweis Double-Opt-in: Zeitpunkt + IP beim Abschicken des Checks und beim Klick auf den Bestätigungslink.
+     IP-Adressen werden gekürzt gespeichert (letzter Block = 0). Zeiten in Serverzeit (Europe/Berlin).</p>
   <p class="meta"><?= $confirmed ?> Adressen bestätigt (nur für die Auswertung, <strong>keine</strong> Werbe-Einwilligung) ·
      <?= $pending ?> offen</p>
   <table>
     <thead>
-      <tr><th>Status</th><th>E-Mail</th><th>Firma</th><th>Suchbegriff / Region</th><th>Angemeldet</th><th>Bestätigt</th></tr>
+      <tr><th>Status</th><th>E-Mail</th><th>Firma</th><th>Suchbegriff / Region</th><th>Check abgeschickt (Zeit · IP)</th><th>Link bestätigt (Zeit · IP)</th><th>Text-Version</th></tr>
     </thead>
     <tbody>
     <?php foreach ($rows as $r): $st = $r['status']; ?>
@@ -143,12 +148,13 @@ $key = urlencode((string)($_GET['key'] ?? ''));
         <td><?= h($r['email']) ?></td>
         <td><?= h($r['business']) ?></td>
         <td><?= h($r['service']) ?><?php if (!empty($r['region'])): ?><br><span style="color:#777"><?= h($r['region']) ?></span><?php endif; ?></td>
-        <td style="color:#999"><?= h(substr((string)$r['signup_at'], 0, 16)) ?></td>
-        <td style="color:#999"><?= h(substr((string)($r['confirmed_at'] ?? ''), 0, 16)) ?></td>
+        <td style="color:#999"><?= h(substr((string)$r['signup_at'], 0, 16)) ?><br><span class="ip"><?= h($r['signup_ip']) ?></span></td>
+        <td style="color:#999"><?= h(substr((string)($r['confirmed_at'] ?? ''), 0, 16)) ?><br><span class="ip"><?= h($r['confirmed_ip'] ?? '') ?></span></td>
+        <td style="color:#999"><?= h($r['consent_version']) ?></td>
       </tr>
     <?php endforeach; ?>
     <?php if (!$rows): ?>
-      <tr><td colspan="6" style="color:#777">Noch keine Anmeldungen.</td></tr>
+      <tr><td colspan="7" style="color:#777">Noch keine Anmeldungen.</td></tr>
     <?php endif; ?>
     </tbody>
   </table>
