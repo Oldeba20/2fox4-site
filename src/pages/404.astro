@@ -6,22 +6,30 @@
  * Pointer-Lock + Pitch-Maussteuerung, WASD-Bewegung, Doppelläufiger
  * Schrotflinte mit Händen, optionalen Sounds.
  *
+ * Seit 30.09.2026 zweites Spiel „Fuchs & Federn“ (Schießbude mit dem
+ * 2FOX4-Fuchs, components/arcade/FoxGame.astro) und davor eine
+ * Spielauswahl (components/arcade/GamePicker.astro). Umschaltung über
+ * data-game an .lost-page ("none" | "zombie" | "fox"), Direktlink per
+ * #zombie bzw. #fuchs.
+ *
  * Apache liefert /404.html bei nicht gefundenen URLs aus (ErrorDocument
  * 404 /404.html steht in der Server-.htaccess).
  */
 import BaseLayout from "../layouts/BaseLayout.astro";
+import GamePicker from "../components/arcade/GamePicker.astro";
+import FoxGame from "../components/arcade/FoxGame.astro";
 
 const title = "Ups, verlaufen! — 2fox4";
 const description =
-  "Die gesuchte Seite gibt es nicht — aber dafür ein kleines Spiel zum Zeitvertreib.";
+  "Diese Seite gibt es nicht. Dafür warten zwei kleine Spiele auf dich: Zombie-Welle und Fuchs & Federn.";
 ---
 
 <BaseLayout title={title} description={description} noindex={true}>
-  <section class="lost-page">
+  <section class="lost-page" data-game="none">
     <header class="lost-hero">
       <h1 class="lost-title">Ups, verlaufen.</h1>
       <p class="lost-hint">
-        <kbd>WASD</kbd> laufen · Maus umsehen · <kbd>Klick</kbd> Feuer
+        Diese Seite gibt es nicht. Zum Trost haben wir zwei Spiele für dich.
       </p>
       <div class="hero-actions">
         <a class="btn btn-primary btn-sm" href="/">← Zurück zur Startseite</a>
@@ -31,6 +39,13 @@ const description =
       </div>
     </header>
 
+    <GamePicker />
+
+    <div class="game-view" data-view="zombie">
+      <div class="game-bar">
+        <button class="bar-back" type="button" data-arcade-back>← Spielauswahl</button>
+        <p class="bar-hint"><kbd>WASD</kbd> laufen · Maus umsehen · <kbd>Klick</kbd> Feuer</p>
+      </div>
     <div class="game-wrapper">
       <div class="game-frame" id="game-frame">
         <canvas id="fps-canvas" width="480" height="300"></canvas>
@@ -120,6 +135,7 @@ const description =
               <button class="btn btn-primary" id="btn-restart" type="button">
                 ↻ Nochmal
               </button>
+              <button class="btn btn-ghost" type="button" data-arcade-back>Anderes Spiel</button>
               <a class="btn btn-ghost" href="/">Zurück zur Startseite</a>
             </div>
           </div>
@@ -129,8 +145,21 @@ const description =
         <div class="mobile-note" id="mobile-note" hidden>
           <p>📱 Auf dem Handy nicht spielbar — komm gerne mit Maus + Tastatur wieder.</p>
           <a href="/" class="btn btn-primary">← Zur Startseite</a>
+          <button class="btn btn-ghost bar-back-light" type="button" data-arcade-back>Anderes Spiel</button>
         </div>
       </div>
+    </div>
+    </div>
+
+    <div class="game-view" data-view="fox">
+      <div class="game-bar">
+        <button class="bar-back" type="button" data-arcade-back>← Spielauswahl</button>
+        <p class="bar-hint">
+          <span class="hint-fine"><kbd>Klick</kbd>: schießen · <kbd>Rechtsklick</kbd>: nachladen · Maus an den Rand: Ansicht schwenken</span>
+          <span class="hint-coarse">Tippen: schießen · Patronen antippen: nachladen</span>
+        </p>
+      </div>
+      <FoxGame />
     </div>
   </section>
 </BaseLayout>
@@ -161,9 +190,50 @@ const description =
     font-weight: 800;
   }
   .lost-hint {
-    font-size: 0.82rem;
-    color: #6b7280;
+    font-size: 0.92rem;
+    color: var(--color-text-muted);
     margin: 0;
+  }
+
+  /* Spielauswahl / Ansichten */
+  .game-view { display: none; flex-direction: column; gap: 0.5rem; }
+  .lost-page[data-game="zombie"] .game-view[data-view="zombie"],
+  .lost-page[data-game="fox"] .game-view[data-view="fox"] { display: flex; }
+  .lost-page:not([data-game="none"]) :global([data-arcade-picker]) { display: none; }
+  .game-bar {
+    width: 100%;
+    max-width: 960px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+  }
+  .bar-back {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.32rem 0.85rem;
+    border-radius: 999px;
+    border: 1px solid var(--color-border-strong);
+    background: var(--color-bg-card);
+    color: var(--color-text);
+    font: inherit;
+    font-size: 0.84rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: border-color 0.15s, color 0.15s;
+  }
+  .bar-back:hover, .bar-back:focus-visible { border-color: var(--color-accent); color: var(--color-accent); }
+  .bar-hint { margin: 0; font-size: 0.8rem; color: var(--color-text-muted); }
+  .hint-coarse { display: none; }
+  @media (pointer: coarse) {
+    .hint-fine { display: none; }
+    .hint-coarse { display: inline; }
+  }
+  .mobile-note .bar-back-light {
+    color: #fef3c7;
+    border-color: rgba(252, 211, 77, 0.4);
   }
   kbd {
     font-family: "JetBrains Mono Variable", monospace;
@@ -1527,5 +1597,81 @@ const description =
 
     // Initiales Bild zeichnen
     render();
+  })();
+</script>
+
+<script is:inline>
+  /* Spielauswahl: schaltet zwischen Auswahl, Zombie-Welle und Fuchs & Federn um. */
+  (function () {
+    "use strict";
+    const page = document.querySelector(".lost-page");
+    if (!page) return;
+    const HASH = { zombie: "#zombie", fox: "#fuchs" };
+    const FROM_HASH = { "#zombie": "zombie", "#fuchs": "fox" };
+
+    function showBest() {
+      let best = 0;
+      try { best = parseInt(localStorage.getItem("foxhunt_best_v1") || "0", 10) || 0; } catch (e) {}
+      document.querySelectorAll("[data-fox-best]").forEach((el) => {
+        el.hidden = best <= 0;
+        const b = el.querySelector("b");
+        if (b) b.textContent = String(best);
+      });
+    }
+
+    function select(game, silent) {
+      if (game !== "zombie" && document.pointerLockElement) document.exitPointerLock();
+      page.dataset.game = game;
+      window.dispatchEvent(new CustomEvent("arcade:select", { detail: game }));
+      try {
+        history.replaceState(null, "", location.pathname + location.search + (HASH[game] || ""));
+      } catch (e) {}
+      showBest();
+      if (silent) return;
+      if (game === "none") {
+        const picker = page.querySelector("[data-arcade-picker]");
+        picker && picker.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        const first = page.querySelector("[data-pick]");
+        first && first.focus({ preventScroll: true });
+      } else {
+        const view = page.querySelector('.game-view[data-view="' + game + '"]');
+        view && view.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        const btn = view && view.querySelector('#btn-start, [data-fx-action="start"]');
+        btn && btn.focus({ preventScroll: true });
+      }
+    }
+
+    page.addEventListener("click", (e) => {
+      const pick = e.target.closest("[data-pick]");
+      if (pick) { select(pick.dataset.pick); return; }
+      if (e.target.closest("[data-arcade-back]")) select("none");
+    });
+
+    window.addEventListener("keydown", (e) => {
+      if (page.dataset.game !== "none" || e.altKey || e.ctrlKey || e.metaKey) return;
+      if (e.key === "1") select("zombie");
+      if (e.key === "2") select("fox");
+    });
+
+    // Karten leicht kippen, wenn die Maus darüber fährt
+    page.querySelectorAll("[data-pick]").forEach((card) => {
+      card.addEventListener("pointermove", (e) => {
+        if (e.pointerType !== "mouse") return;
+        const r = card.getBoundingClientRect();
+        const x = (e.clientX - r.left) / r.width - 0.5;
+        const y = (e.clientY - r.top) / r.height - 0.5;
+        card.style.setProperty("--ry", (x * 10).toFixed(2) + "deg");
+        card.style.setProperty("--rx", (-y * 8).toFixed(2) + "deg");
+      });
+      card.addEventListener("pointerleave", () => {
+        card.style.removeProperty("--rx");
+        card.style.removeProperty("--ry");
+      });
+    });
+
+    window.addEventListener("fox:record", showBest);
+    showBest();
+    const initial = FROM_HASH[location.hash];
+    if (initial) select(initial, true);
   })();
 </script>

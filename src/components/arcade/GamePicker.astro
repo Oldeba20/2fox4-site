@@ -1,0 +1,449 @@
+---
+/**
+ * Spielauswahl der 404-Seite („404-Arcade“).
+ * Buttons mit data-pick="zombie|fox" — die Umschaltung macht das Skript in 404.astro.
+ */
+import { foxSVG } from "../../scripts/arcade/fox-svg.js";
+const fox = foxSVG("normal", true);
+
+// kleines Huhn für die Vorschau-Szene (gleicher Stil wie im Spiel)
+const hen = `<svg viewBox="-60 -45 118 80" xmlns="http://www.w3.org/2000/svg"><g stroke="#2b1d14" stroke-width="3" stroke-linejoin="round"><path d="M-26 -4 L-50 -22 L-44 -6 L-54 2 L-42 8 L-24 8Z" fill="#e2d6bf"/><ellipse cx="0" cy="2" rx="32" ry="23" fill="#fbf6ec"/><circle cx="28" cy="-16" r="14" fill="#fbf6ec"/><path d="M40 -20 L53 -15 L40 -11Z" fill="#ffae2b"/><path class="hen-wing" d="M-4 -2 Q-12 -36 -34 -42 Q-28 -28 -34 -20 Q-22 -12 -28 -4 Q-14 0 -4 -2Z" fill="#e9dfcc"/></g><g fill="#e0342b"><circle cx="22" cy="-31" r="5"/><circle cx="29" cy="-33" r="5.5"/><circle cx="36" cy="-29" r="4.5"/></g><circle cx="32" cy="-19" r="5" fill="#fff"/><circle cx="33.5" cy="-19" r="2.6" fill="#1d1410"/></svg>`;
+
+// Pixel-Zombie (12×16 Raster)
+const Z = [
+  "....GGGG....",
+  "...GGGGGG...",
+  "...GRGGRG...",
+  "...GGGGGG...",
+  "...GGBBGG...",
+  "....GGGG....",
+  "..TTTTTTTT..",
+  ".GGTTTTTTGGG",
+  ".GGTTTTTT.GG",
+  "...TTTTTT...",
+  "...PPPPPP...",
+  "...PP..PP...",
+  "...PP..PP...",
+  "...PP..PP...",
+  "..SSS..SSS..",
+];
+const colors: Record<string, string> = { G: "#7fbf5a", R: "#ff3b3b", B: "#2a1a14", T: "#4b5a8a", P: "#3a3140", S: "#1d1410" };
+const zombie =
+  `<svg viewBox="0 0 12 15" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">` +
+  Z.flatMap((row, y) =>
+    [...row].map((c, x) => (c === "." ? "" : `<rect x="${x}" y="${y}" width="1.02" height="1.02" fill="${colors[c]}"/>`)),
+  ).join("") +
+  `</svg>`;
+---
+
+<div class="arcade" data-arcade-picker>
+  <div class="arcade-bg" aria-hidden="true">
+    <div class="arcade-sun"></div>
+    <div class="arcade-floor"></div>
+  </div>
+
+  <div class="arcade-head">
+    <p class="arcade-marquee"><span class="arcade-num">404</span> ARCADE</p>
+    <p class="arcade-blink">Wähle dein Spiel</p>
+  </div>
+
+  <div class="arcade-cards">
+    <button class="cart cart-zombie" type="button" data-pick="zombie">
+      <span class="cart-key" aria-hidden="true">1</span>
+      <span class="cart-scene scene-zombie" aria-hidden="true">
+        <span class="z-moon"></span>
+        <span class="z-grave g1"></span>
+        <span class="z-grave g2"></span>
+        <span class="z-fog"></span>
+        <span class="z-walker w1" set:html={zombie} />
+        <span class="z-walker w2" set:html={zombie} />
+        <span class="z-walker w3" set:html={zombie} />
+        <span class="z-cross"></span>
+      </span>
+      <span class="cart-body">
+        <span class="cart-title">Zombie-Welle</span>
+        <span class="cart-desc">Ego-Shooter im Retro-Look. Halte so viele Wellen durch, wie du kannst.</span>
+        <span class="cart-tags"><span>Maus + Tastatur</span><span>Endlos</span></span>
+      </span>
+      <span class="cart-cta"><span aria-hidden="true">▶</span> Spielen</span>
+    </button>
+
+    <button class="cart cart-fox" type="button" data-pick="fox">
+      <span class="cart-key" aria-hidden="true">2</span>
+      <span class="cart-new">Neu</span>
+      <span class="cart-scene scene-fox" aria-hidden="true">
+        <span class="f-sun"></span>
+        <span class="f-hill h1"></span>
+        <span class="f-hill h2"></span>
+        <span class="f-hen n1" set:html={hen} />
+        <span class="f-hen n2" set:html={hen} />
+        <span class="f-hen n3" set:html={hen} />
+        <span class="f-fox" set:html={fox} />
+        <span class="f-bale"></span>
+      </span>
+      <span class="cart-body">
+        <span class="cart-title">Fuchs &amp; Federn</span>
+        <span class="cart-desc">Schießbude wie früher, mit unserem Fuchs. 90&nbsp;Sekunden, jeder Treffer zählt.</span>
+        <span class="cart-tags"><span>90 Sekunden</span><span>Auch am Handy</span></span>
+        <span class="cart-best" data-fox-best hidden>Dein Rekord: <b>0</b> Punkte</span>
+      </span>
+      <span class="cart-cta"><span aria-hidden="true">▶</span> Spielen</span>
+    </button>
+  </div>
+
+  <p class="arcade-foot">Tipp: Drück einfach Taste <kbd>1</kbd> oder <kbd>2</kbd>.</p>
+</div>
+
+<style>
+  .arcade {
+    position: relative;
+    width: 100%;
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 1.4rem 1.2rem 1.2rem;
+    border-radius: 16px;
+    overflow: hidden;
+    isolation: isolate;
+    background: linear-gradient(180deg, #0b0718 0%, #1c0f33 55%, #2a0f2e 100%);
+    box-shadow: 0 25px 60px -20px rgba(0, 0, 0, 0.6), inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+    color: #f5efe6;
+  }
+  .arcade-bg { position: absolute; inset: 0; z-index: -1; pointer-events: none; }
+  .arcade-sun {
+    position: absolute;
+    left: 50%;
+    top: 34%;
+    width: 260px;
+    height: 260px;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: linear-gradient(180deg, #ffe600 0%, #ff6b35 60%, #d43a6a 100%);
+    opacity: 0.22;
+    -webkit-mask: repeating-linear-gradient(180deg, #000 0 14px, transparent 14px 18px);
+    mask: repeating-linear-gradient(180deg, #000 0 14px, transparent 14px 18px);
+  }
+  .arcade-floor {
+    position: absolute;
+    left: -50%;
+    right: -50%;
+    bottom: -10%;
+    height: 55%;
+    background-image:
+      linear-gradient(rgba(255, 107, 53, 0.45) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 107, 53, 0.45) 1px, transparent 1px);
+    background-size: 44px 44px;
+    transform: perspective(300px) rotateX(62deg);
+    transform-origin: 50% 0;
+    animation: arcade-floor 1.6s linear infinite;
+    -webkit-mask: linear-gradient(180deg, transparent, #000 45%);
+    mask: linear-gradient(180deg, transparent, #000 45%);
+  }
+  @keyframes arcade-floor { to { background-position: 0 44px; } }
+
+  .arcade-head { text-align: center; margin-bottom: 1rem; }
+  .arcade-marquee {
+    margin: 0;
+    font-family: "JetBrains Mono Variable", ui-monospace, monospace;
+    font-weight: 900;
+    font-size: clamp(1.5rem, 4.2vw, 2.4rem);
+    letter-spacing: 0.14em;
+    color: #fff;
+    text-shadow: 0 0 6px rgba(255, 255, 255, 0.5), 0 0 22px rgba(255, 107, 53, 0.7);
+  }
+  .arcade-num { color: #ff6b35; text-shadow: 0 0 8px rgba(255, 107, 53, 0.9), 0 0 26px rgba(255, 107, 53, 0.8); }
+  .arcade-blink {
+    margin: 0.15rem 0 0;
+    font-family: "JetBrains Mono Variable", ui-monospace, monospace;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: #ffe600;
+    animation: arcade-blink 1.1s steps(2, start) infinite;
+  }
+  @keyframes arcade-blink { to { visibility: hidden; } }
+
+  .arcade-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.1rem;
+    perspective: 900px;
+  }
+
+  .cart {
+    --glow: 255, 107, 53;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    padding: 0;
+    border-radius: 14px;
+    border: 2px solid rgba(var(--glow), 0.45);
+    background: #120d1c;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+    overflow: hidden;
+    transform-style: preserve-3d;
+    transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+    transition: transform 0.15s ease-out, box-shadow 0.2s, border-color 0.2s;
+    box-shadow: 0 10px 30px -12px rgba(0, 0, 0, 0.8);
+  }
+  .cart-zombie { --glow: 127, 191, 90; }
+  .cart:hover,
+  .cart:focus-visible {
+    border-color: rgba(var(--glow), 1);
+    box-shadow: 0 0 0 3px rgba(var(--glow), 0.25), 0 0 34px -4px rgba(var(--glow), 0.75), 0 18px 40px -14px rgba(0, 0, 0, 0.9);
+    outline: none;
+  }
+  .cart:active { transform: scale(0.98); }
+
+  .cart-key {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 3;
+    width: 28px;
+    height: 28px;
+    display: grid;
+    place-items: center;
+    border-radius: 7px;
+    background: rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    border-bottom-width: 3px;
+    font-family: "JetBrains Mono Variable", ui-monospace, monospace;
+    font-weight: 800;
+    font-size: 0.85rem;
+    color: #fff;
+  }
+  .cart-new {
+    position: absolute;
+    top: 12px;
+    right: -34px;
+    z-index: 3;
+    width: 130px;
+    padding: 3px 0;
+    transform: rotate(35deg);
+    background: #ffe600;
+    color: #111;
+    text-align: center;
+    font-weight: 900;
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  }
+
+  .cart-scene {
+    position: relative;
+    display: block;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+  }
+  .cart-body { display: flex; flex-direction: column; gap: 0.35rem; padding: 0.85rem 1rem 0.4rem; }
+  .cart-title { font-size: 1.25rem; font-weight: 900; letter-spacing: -0.01em; color: #fff; }
+  .cart-desc { font-size: 0.86rem; color: #cfc4d6; line-height: 1.4; }
+  .cart-tags { display: flex; flex-wrap: wrap; gap: 0.3rem; margin-top: 0.15rem; }
+  .cart-tags span {
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.12rem 0.55rem;
+    border-radius: 999px;
+    background: rgba(var(--glow), 0.14);
+    color: rgb(var(--glow));
+    border: 1px solid rgba(var(--glow), 0.35);
+  }
+  .cart-best { font-size: 0.8rem; color: #ffd89a; }
+  .cart-best[hidden] { display: none; }
+  .cart-best b { color: #ff6b35; }
+  .cart-cta {
+    margin: 0.5rem 1rem 1rem;
+    align-self: flex-start;
+    padding: 0.45rem 1rem;
+    border-radius: 999px;
+    font-weight: 800;
+    font-size: 0.9rem;
+    background: rgb(var(--glow));
+    color: #111;
+    transition: transform 0.15s;
+  }
+  .cart:hover .cart-cta { transform: translateX(4px); }
+
+  /* ---------- Szene Zombie ---------- */
+  .scene-zombie {
+    background: linear-gradient(180deg, #05060d 0%, #101a24 60%, #1b2a1c 60.5%, #0f1a10 100%);
+  }
+  .z-moon {
+    position: absolute;
+    top: 12%;
+    right: 14%;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #f3f0d8;
+    box-shadow: 0 0 30px 6px rgba(243, 240, 216, 0.35);
+  }
+  .z-grave {
+    position: absolute;
+    bottom: 34%;
+    width: 22px;
+    height: 30px;
+    border-radius: 11px 11px 2px 2px;
+    background: #3a4250;
+    box-shadow: inset -4px 0 0 rgba(0, 0, 0, 0.3);
+  }
+  .z-grave.g1 { left: 12%; }
+  .z-grave.g2 { left: 70%; height: 24px; }
+  .z-fog {
+    position: absolute;
+    left: -20%;
+    right: -20%;
+    bottom: 22%;
+    height: 30%;
+    background: radial-gradient(ellipse at center, rgba(160, 200, 170, 0.22), transparent 70%);
+    animation: z-fog 6s ease-in-out infinite alternate;
+  }
+  @keyframes z-fog { to { transform: translateX(12%); } }
+  .z-walker {
+    position: absolute;
+    bottom: 12%;
+    width: 44px;
+    animation: z-walk 7s linear infinite, z-bob 0.5s ease-in-out infinite alternate;
+  }
+  .z-walker :global(svg) { width: 100%; height: auto; display: block; }
+  .z-walker.w1 { left: 8%; }
+  .z-walker.w2 { left: 44%; width: 36px; bottom: 20%; animation-duration: 9s, 0.6s; animation-delay: -3s, 0s; opacity: 0.8; }
+  .z-walker.w3 { left: 72%; width: 30px; bottom: 25%; animation-duration: 11s, 0.55s; animation-delay: -5s, 0s; opacity: 0.6; }
+  @keyframes z-walk {
+    0% { translate: 0 0; }
+    50% { translate: 18px 0; }
+    100% { translate: 0 0; }
+  }
+  @keyframes z-bob { to { transform: translateY(-3px) rotate(3deg); } }
+  .z-cross {
+    position: absolute;
+    left: 50%;
+    top: 52%;
+    width: 30px;
+    height: 30px;
+    margin: -15px 0 0 -15px;
+    border: 2px solid rgba(255, 255, 255, 0.8);
+    border-radius: 50%;
+    animation: z-aim 4s ease-in-out infinite;
+  }
+  .z-cross::before,
+  .z-cross::after {
+    content: "";
+    position: absolute;
+    background: rgba(255, 255, 255, 0.8);
+  }
+  .z-cross::before { left: 50%; top: -8px; bottom: -8px; width: 2px; margin-left: -1px; }
+  .z-cross::after { top: 50%; left: -8px; right: -8px; height: 2px; margin-top: -1px; }
+  @keyframes z-aim {
+    0%, 100% { transform: translate(-60px, 20px); }
+    35% { transform: translate(-20px, 26px); }
+    70% { transform: translate(40px, 12px); }
+  }
+
+  /* ---------- Szene Fuchs ---------- */
+  .scene-fox {
+    background: linear-gradient(180deg, #1f1d42 0%, #6b3160 38%, #ff8c5a 70%, #ffc27a 100%);
+  }
+  .f-sun {
+    position: absolute;
+    left: 60%;
+    top: 34%;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: #ffd89a;
+    box-shadow: 0 0 40px 14px rgba(255, 214, 140, 0.5);
+  }
+  .f-hill { position: absolute; left: -10%; right: -10%; border-radius: 50% 50% 0 0; }
+  .f-hill.h1 { bottom: 8%; height: 30%; background: #5a4270; border-radius: 60% 40% 0 0; }
+  .f-hill.h2 { bottom: -20%; height: 50%; background: #3e5a26; border-radius: 45% 55% 0 0; }
+  .f-hen { position: absolute; width: 48px; animation: f-fly 6s linear infinite; }
+  .f-hen :global(svg) { width: 100%; height: auto; display: block; overflow: visible; }
+  .f-hen :global(.hen-wing) { transform-origin: -4px -2px; animation: f-flap 0.22s ease-in-out infinite alternate; }
+  .f-hen.n1 { top: 14%; }
+  .f-hen.n2 { top: 30%; width: 30px; animation-duration: 8s; animation-delay: -4s; }
+  .f-hen.n3 { top: 8%; width: 22px; animation-duration: 10s; animation-delay: -7s; opacity: 0.85; }
+  @keyframes f-fly {
+    0% { left: -18%; transform: translateY(0); }
+    25% { transform: translateY(-10px); }
+    50% { transform: translateY(6px); }
+    75% { transform: translateY(-6px); }
+    100% { left: 108%; transform: translateY(0); }
+  }
+  @keyframes f-flap { from { transform: rotate(10deg); } to { transform: rotate(-40deg); } }
+  .f-fox {
+    position: absolute;
+    left: 50%;
+    bottom: 12%;
+    width: 64px;
+    margin-left: -52px;
+    animation: f-peek 4s ease-in-out infinite;
+  }
+  .f-fox :global(svg) { width: 100%; height: auto; display: block; }
+  @keyframes f-peek {
+    0%, 15% { transform: translateY(70%); }
+    30%, 80% { transform: translateY(0); }
+    92%, 100% { transform: translateY(70%); }
+  }
+  .f-bale {
+    position: absolute;
+    left: 50%;
+    bottom: -4%;
+    width: 120px;
+    height: 48px;
+    margin-left: -70px;
+    border-radius: 22px;
+    background:
+      repeating-linear-gradient(80deg, transparent 0 10px, rgba(122, 85, 32, 0.45) 10px 12px),
+      #d9a54a;
+    border: 3px solid #7a5520;
+  }
+  .f-bale::after {
+    content: "";
+    position: absolute;
+    right: 6px;
+    top: 3px;
+    width: 34px;
+    height: 36px;
+    border-radius: 50%;
+    background: repeating-radial-gradient(circle, #e8bb62 0 4px, #c9953f 4px 6px);
+    border: 2px solid #7a5520;
+  }
+
+  .arcade-foot {
+    margin: 0.9rem 0 0;
+    text-align: center;
+    font-size: 0.78rem;
+    color: #a99fb4;
+  }
+  .arcade-foot kbd {
+    font-family: "JetBrains Mono Variable", ui-monospace, monospace;
+    font-size: 0.8em;
+    padding: 0 6px;
+    border-radius: 4px;
+    border: 1px solid #4a4150;
+    border-bottom-width: 2px;
+    background: #2a2330;
+    color: #fff;
+  }
+
+  @media (max-width: 700px) {
+    .arcade { padding: 1rem 0.75rem 0.9rem; }
+    .arcade-cards { grid-template-columns: 1fr; gap: 0.8rem; }
+    .cart-fox { order: -1; }
+  }
+  @media (pointer: coarse) {
+    .arcade-foot, .cart-key { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .arcade-floor, .arcade-blink, .z-walker, .z-fog, .z-cross, .f-hen, .f-hen :global(.hen-wing), .f-fox { animation: none; }
+    .f-hen.n1 { left: 20%; }
+    .f-hen.n2 { left: 60%; }
+    .f-hen.n3 { left: 80%; }
+  }
+</style>
