@@ -1,7 +1,7 @@
 ---
 /**
  * Spielauswahl der 404-Seite („404-Arcade“).
- * Buttons mit data-pick="zombie|fox" — die Umschaltung macht das Skript in 404.astro.
+ * Buttons mit data-pick="zombie|fox|krawumm" — die Umschaltung macht das Skript in 404.astro.
  */
 import { foxSVG } from "../../scripts/arcade/fox-svg.js";
 const fox = foxSVG("normal", true);
@@ -70,7 +70,6 @@ const zombie =
 
     <button class="cart cart-fox" type="button" data-pick="fox">
       <span class="cart-key" aria-hidden="true">2</span>
-      <span class="cart-new">Neu</span>
       <span class="cart-scene scene-fox" aria-hidden="true">
         <span class="f-sun"></span>
         <span class="f-hill h1"></span>
@@ -89,9 +88,23 @@ const zombie =
       </span>
       <span class="cart-cta"><span aria-hidden="true">▶</span> Spielen</span>
     </button>
+    <button class="cart cart-krawumm" type="button" data-pick="krawumm">
+      <span class="cart-key" aria-hidden="true">3</span>
+      <span class="cart-new">Neu</span>
+      <span class="cart-scene scene-krawumm" aria-hidden="true">
+        <img src="/images/arcade/krawumm-karte.webp" alt="" width="640" height="358" loading="lazy" decoding="async" />
+      </span>
+      <span class="cart-body">
+        <span class="cart-title">Krawumm!</span>
+        <span class="cart-desc">Action-Plattformer wie in den 90ern. Drei Level, ein Endgegner und ein Held mit großer Klappe.</span>
+        <span class="cart-tags"><span>3 Level + Boss</span><span>Mit Sprachausgabe</span><span>Auch am Handy</span></span>
+        <span class="cart-best" data-krawumm-best hidden>Dein Rekord: <b>0</b> Punkte</span>
+      </span>
+      <span class="cart-cta"><span aria-hidden="true">▶</span> Spielen</span>
+    </button>
   </div>
 
-  <p class="arcade-foot">Tipp: Drück einfach Taste <kbd>1</kbd> oder <kbd>2</kbd>.</p>
+  <p class="arcade-foot">Tipp: Drück einfach Taste <kbd>1</kbd>, <kbd>2</kbd> oder <kbd>3</kbd>.</p>
 </div>
 
 <style>
@@ -165,7 +178,7 @@ const zombie =
 
   .arcade-cards {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 1.1rem;
     perspective: 900px;
   }
@@ -190,6 +203,7 @@ const zombie =
     box-shadow: 0 10px 30px -12px rgba(0, 0, 0, 0.8);
   }
   .cart-zombie { --glow: 127, 191, 90; }
+  .cart-krawumm { --glow: 255, 194, 58; }
   .cart:hover,
   .cart:focus-visible {
     border-color: rgba(var(--glow), 1);
@@ -345,6 +359,19 @@ const zombie =
     70% { transform: translate(40px, 12px); }
   }
 
+  /* ---------- Szene Krawumm ---------- */
+  .scene-krawumm { background: #07060d; }
+  .scene-krawumm img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    image-rendering: pixelated;
+    transform-origin: 30% 40%;
+    animation: k-zoom 9s ease-in-out infinite alternate;
+  }
+  @keyframes k-zoom { from { transform: scale(1); } to { transform: scale(1.12) translateX(2%); } }
+
   /* ---------- Szene Fuchs ---------- */
   .scene-fox {
     background: linear-gradient(180deg, #1f1d42 0%, #6b3160 38%, #ff8c5a 70%, #ffc27a 100%);
@@ -432,16 +459,18 @@ const zombie =
     color: #fff;
   }
 
+  @media (max-width: 860px) {
+    .arcade-cards { grid-template-columns: minmax(0, 1fr); gap: 0.8rem; }
+  }
   @media (max-width: 700px) {
     .arcade { padding: 1rem 0.75rem 0.9rem; }
-    .arcade-cards { grid-template-columns: 1fr; gap: 0.8rem; }
     .cart-fox { order: -1; }
   }
   @media (pointer: coarse) {
     .arcade-foot, .cart-key { display: none; }
   }
   @media (prefers-reduced-motion: reduce) {
-    .arcade-floor, .arcade-blink, .z-walker, .z-fog, .z-cross, .f-hen, .f-hen :global(.hen-wing), .f-fox { animation: none; }
+    .arcade-floor, .arcade-blink, .z-walker, .z-fog, .z-cross, .f-hen, .f-hen :global(.hen-wing), .f-fox, .scene-krawumm img { animation: none; }
     .f-hen.n1 { left: 20%; }
     .f-hen.n2 { left: 60%; }
     .f-hen.n3 { left: 80%; }

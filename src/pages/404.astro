@@ -12,6 +12,11 @@
  * data-game an .lost-page ("none" | "zombie" | "fox"), Direktlink per
  * #zombie bzw. #fuchs.
  *
+ * Drittes Spiel „Krawumm!“ (Retro-Plattformer, 30.09.2026): liegt statisch
+ * unter public/spiele/krawumm/ und wird erst bei Auswahl per iframe geladen
+ * (data-game="krawumm", Direktlink #krawumm). Beim Zurück wird das iframe
+ * geleert, damit Musik und Spiel sofort stoppen.
+ *
  * Apache liefert /404.html bei nicht gefundenen URLs aus (ErrorDocument
  * 404 /404.html steht in der Server-.htaccess).
  */
@@ -21,7 +26,7 @@ import FoxGame from "../components/arcade/FoxGame.astro";
 
 const title = "Ups, verlaufen! — 2fox4";
 const description =
-  "Diese Seite gibt es nicht. Dafür warten zwei kleine Spiele auf dich: Zombie-Welle und Fuchs & Federn.";
+  "Diese Seite gibt es nicht. Dafür warten drei kleine Spiele auf dich: Zombie-Welle, Fuchs & Federn und Krawumm!";
 ---
 
 <BaseLayout title={title} description={description} noindex={true}>
@@ -29,7 +34,7 @@ const description =
     <header class="lost-hero">
       <h1 class="lost-title">Ups, verlaufen.</h1>
       <p class="lost-hint">
-        Diese Seite gibt es nicht. Zum Trost haben wir zwei Spiele für dich.
+        Diese Seite gibt es nicht. Zum Trost haben wir drei Spiele für dich.
       </p>
       <div class="hero-actions">
         <a class="btn btn-primary btn-sm" href="/">← Zurück zur Startseite</a>
@@ -161,6 +166,19 @@ const description =
       </div>
       <FoxGame />
     </div>
+
+    <div class="game-view" data-view="krawumm">
+      <div class="game-bar">
+        <button class="bar-back" type="button" data-arcade-back>← Spielauswahl</button>
+        <p class="bar-hint">
+          <span class="hint-fine"><kbd>A</kbd>&thinsp;<kbd>D</kbd> laufen · <kbd>Leertaste</kbd> springen · <kbd>X</kbd> ballern · <kbd>P</kbd> Pause · <kbd>M</kbd> Musik</span>
+          <span class="hint-coarse">Tasten im Bild: laufen, springen, feuern</span>
+        </p>
+      </div>
+      <div class="krawumm-frame">
+        <iframe data-krawumm title="Krawumm! – Retro-Plattformer" allow="autoplay; fullscreen"></iframe>
+      </div>
+    </div>
   </section>
 </BaseLayout>
 
@@ -198,7 +216,19 @@ const description =
   /* Spielauswahl / Ansichten */
   .game-view { display: none; flex-direction: column; gap: 0.5rem; }
   .lost-page[data-game="zombie"] .game-view[data-view="zombie"],
-  .lost-page[data-game="fox"] .game-view[data-view="fox"] { display: flex; }
+  .lost-page[data-game="fox"] .game-view[data-view="fox"],
+  .lost-page[data-game="krawumm"] .game-view[data-view="krawumm"] { display: flex; }
+  .krawumm-frame {
+    width: 100%;
+    max-width: 960px;
+    margin: 0 auto;
+    aspect-ratio: 16 / 9;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #07060d;
+    box-shadow: 0 25px 60px -20px rgba(0, 0, 0, 0.6), inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+  }
+  .krawumm-frame iframe { display: block; width: 100%; height: 100%; border: 0; }
   .lost-page:not([data-game="none"]) :global([data-arcade-picker]) { display: none; }
   .game-bar {
     width: 100%;
@@ -1606,8 +1636,25 @@ const description =
     "use strict";
     const page = document.querySelector(".lost-page");
     if (!page) return;
-    const HASH = { zombie: "#zombie", fox: "#fuchs" };
-    const FROM_HASH = { "#zombie": "zombie", "#fuchs": "fox" };
+    const HASH = { zombie: "#zombie", fox: "#fuchs", krawumm: "#krawumm" };
+    const FROM_HASH = { "#zombie": "zombie", "#fuchs": "fox", "#krawumm": "krawumm" };
+    const kFrame = page.querySelector("[data-krawumm]");
+    const K_SRC = "/spiele/krawumm/";
+
+    function krawumm(on) {
+      if (!kFrame) return;
+      if (on) {
+        if (kFrame.getAttribute("src") !== K_SRC) {
+          kFrame.setAttribute("src", K_SRC);
+          kFrame.addEventListener("load", () => { try { kFrame.contentWindow.focus(); } catch (e) {} }, { once: true });
+        }
+        kFrame.focus();
+      } else if (kFrame.getAttribute("src")) {
+        kFrame.removeAttribute("src");
+        kFrame.src = "about:blank";
+        kFrame.removeAttribute("src");
+      }
+    }
 
     function showBest() {
       let best = 0;
@@ -1617,11 +1664,19 @@ const description =
         const b = el.querySelector("b");
         if (b) b.textContent = String(best);
       });
+      let kBest = 0;
+      try { kBest = parseInt(localStorage.getItem("krawumm_hi") || "0", 10) || 0; } catch (e) {}
+      document.querySelectorAll("[data-krawumm-best]").forEach((el) => {
+        el.hidden = kBest <= 0;
+        const b = el.querySelector("b");
+        if (b) b.textContent = String(kBest);
+      });
     }
 
     function select(game, silent) {
       if (game !== "zombie" && document.pointerLockElement) document.exitPointerLock();
       page.dataset.game = game;
+      krawumm(game === "krawumm");
       window.dispatchEvent(new CustomEvent("arcade:select", { detail: game }));
       try {
         history.replaceState(null, "", location.pathname + location.search + (HASH[game] || ""));
@@ -1651,6 +1706,7 @@ const description =
       if (page.dataset.game !== "none" || e.altKey || e.ctrlKey || e.metaKey) return;
       if (e.key === "1") select("zombie");
       if (e.key === "2") select("fox");
+      if (e.key === "3") select("krawumm");
     });
 
     // Karten leicht kippen, wenn die Maus darüber fährt

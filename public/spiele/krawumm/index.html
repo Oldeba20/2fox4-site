@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Krawumm! – 2fox4 Arcade</title>
+<meta name="robots" content="noindex">
+<style>
+@font-face { font-family: "Press Start 2P"; src: url("fonts/press-start-2p-latin-400-normal.woff2") format("woff2"); font-display: swap; }
+@font-face { font-family: "VT323"; src: url("fonts/vt323-latin-400-normal.woff2") format("woff2"); font-display: swap; }
+/* Layout: one arcade cabinet screen, centered, letterboxed on near-black; control legend as a slim strip below. Single dark look by design. */
+:root {
+  --bg: #07060d; --panel: #120f1f; --ink: #e8e2ff; --muted: #7d76a3; --accent: #ff6b35; --gold: #ffc23a;
+  --pixel: "Press Start 2P", "Courier New", monospace; --term: "VT323", "Courier New", monospace;
+  color-scheme: dark;
+}
+html, body { height: 100%; }
+body { background: var(--bg); color: var(--ink); font-family: var(--term); font-size: 20px; margin: 0; overflow: hidden; }
+.wrap { height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding-inline: 16px; box-sizing: border-box; }
+.screen { position: relative; width: min(100%, calc((100vh - 70px) * 16 / 9)); max-width: 100%; aspect-ratio: 16 / 9; background: #000; box-shadow: 0 0 0 2px #1d1830, 0 0 0 4px #000, 0 18px 60px rgba(255,107,53,0.12); }
+@supports (height: 100dvh) { .screen { width: min(100%, calc((100dvh - 70px) * 16 / 9)); } }
+canvas { display: block; width: 100%; height: 100%; image-rendering: pixelated; image-rendering: crisp-edges; touch-action: none; cursor: pointer; }
+.crt .screen::after { content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: repeating-linear-gradient(to bottom, rgba(0,0,0,0) 0, rgba(0,0,0,0) 2px, rgba(0,0,0,0.22) 3px), radial-gradient(ellipse at center, rgba(255,255,255,0.03) 0%, rgba(0,0,0,0.25) 100%);
+  mix-blend-mode: multiply; }
+.legend { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 18px; color: var(--muted); font-size: 18px; line-height: 1.1; max-width: 100%; }
+.legend b { color: var(--gold); font-weight: 400; }
+kbd { font-family: var(--term); font-size: 18px; line-height: 1; color: var(--ink); background: var(--panel); border: 1px solid #2c2544; border-bottom-width: 3px; padding: 2px 5px; border-radius: 3px; margin-right: 4px; }
+.touch { display: none; position: absolute; inset: 0; pointer-events: none; }
+.touch button { pointer-events: auto; position: absolute; bottom: 4%; width: 13%; aspect-ratio: 1; border-radius: 50%; border: 2px solid rgba(255,255,255,0.25); background: rgba(20,16,36,0.35); color: rgba(255,255,255,0.8); font-family: var(--pixel); font-size: clamp(8px, 1.6vw, 14px); touch-action: none; -webkit-user-select: none; user-select: none; }
+.touch button.on { background: rgba(255,107,53,0.5); }
+.touch .l { left: 2%; } .touch .r { left: 17%; } .touch .j { right: 17%; } .touch .f { right: 2%; bottom: 20%; }
+.touch .p { top: 10%; bottom: auto; right: 2%; width: 8%; font-size: 8px; }
+.embed .legend { display: none; }
+.embed .wrap { padding-inline: 0; }
+.embed .screen { width: min(100%, calc(100vh * 16 / 9)); box-shadow: none; }
+@media (pointer: coarse) { .touch { display: block; } .legend { display: none; } .screen { width: min(100%, calc(100dvh * 16 / 9)); } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="screen">
+    <canvas id="screen" width="640" height="360" aria-label="Spielfeld von Krawumm"></canvas>
+    <div class="touch" aria-hidden="true">
+      <button class="l" data-key="left">◀</button>
+      <button class="r" data-key="right">▶</button>
+      <button class="j" data-key="jump">JUMP</button>
+      <button class="f" data-key="fire">FIRE</button>
+      <button class="p" data-key="pause">II</button>
+    </div>
+  </div>
+  <div class="legend">
+    <span><kbd>A</kbd><kbd>D</kbd> / Pfeile laufen</span>
+    <span><kbd>LEER</kbd> / <kbd>W</kbd> springen</span>
+    <span><kbd>X</kbd> / <kbd>J</kbd> ballern</span>
+    <span><kbd>S</kbd>+<kbd>LEER</kbd> durchfallen</span>
+    <span><kbd>P</kbd> Pause</span>
+    <span><kbd>M</kbd> Musik</span>
+    <span><kbd>C</kbd> Röhrenlook</span>
+    <span><b>Tipp:</b> Fässer ballern, Kisten knacken, Schlüsselkarten suchen.</span>
+  </div>
+</div>
+<script>if (window.self !== window.top) document.documentElement.classList.add("embed");</script>
+<script src="levels.js"></script>
+<script src="game.js"></script>
+</body>
+</html>
