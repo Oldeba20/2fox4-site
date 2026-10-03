@@ -13,6 +13,7 @@ import { ZombieTemplate, ZombieManager } from './zombies.js';
 import { Arsenal, DEFS, ORDER, MAX_GRENADES } from './weapons.js';
 import { Projectiles } from './projectiles.js';
 import { AudioEngine } from './audio.js';
+import VOICELINES from './voicelines.json';
 
 const $ = (id) => document.getElementById(id);
 const store = {
@@ -28,22 +29,9 @@ function writeSound(on) {
   try { localStorage.setItem('fps_sound_v1', on ? '1' : '0'); } catch (e) { /* egal */ }
 }
 
-// ---------------- Sprüche ----------------
-const QUIPS = {
-  kill: [
-    'Feierabend.', 'Nächster!', '404 – Zombie nicht gefunden.', 'Ab in den Papierkorb.', 'Deine Sitzung ist abgelaufen.',
-    'Weiterleitung ins Jenseits.', 'Gelöscht. Ohne Backup.', 'Und tschüss.', 'Abgemeldet.', 'Bounce-Rate: hundert Prozent.',
-    'Keine Rückerstattung.', 'Der Nächste bitte.', 'Cache geleert.',
-  ],
-  head: ['Kopfsache.', 'Volltreffer im Oberstübchen.', 'Hirn? Brauchst du nicht mehr.', 'Kopf hoch! … ach nee.', 'Da war wohl nicht viel drin.'],
-  gib: ['In Einzelteilen geliefert.', 'Das kriegt keiner mehr zusammen.', 'Konfetti!', 'Zerlegt wie ein schlechter Relaunch.', 'Bitte nicht wischen.'],
-  shotgun: ['Hallo, Nachbar.', 'Aus nächster Nähe.', 'Schrot und Korn.'],
-  multi: ['Doppelt hält besser!', 'Zwei auf einen Streich.'],
-  streak: ['Das ist ein Massaker!', 'Ich bin warmgelaufen.', 'Wer will noch mal?'],
-  hurt: ['Das gibt Abzüge in der B-Note.', 'Autsch. Okay. Jetzt bin ich sauer.'],
-  wave: ['Da kommen noch mehr.', 'Es wird voller.', 'Pause vorbei.'],
-  barrel: ['Vorsicht, Fass!', 'Das war mal ein Fass.'],
-};
+// ---------------- Sprüche (mit Sprachausgabe, siehe voicelines.json) ----------------
+const QUIPS = Object.fromEntries(Object.entries(VOICELINES).map(([k, v]) => [k, v.map(([id, t]) => ({ id, t }))]));
+const VOICE_IDS = Object.values(VOICELINES).flat().map((l) => l[0]);
 const pick = (a) => a[(Math.random() * a.length) | 0];
 
 const PICKUP = {
@@ -435,6 +423,7 @@ class Game {
     ['ov-start', 'ov-over', 'ov-pause'].forEach((id) => { $(id).hidden = true; });
     this.lock();
     this.audio.startAmbience();
+    this.audio.loadVoices('voice/', VOICE_IDS);
     this.nextWave();
   }
 
@@ -484,7 +473,9 @@ class Game {
       a.grenades = Math.min(MAX_GRENADES, a.grenades + 1);
       this.level.resetBarrels();
     }
-    this.banner(`WELLE ${w}`, w === 1 ? 'Sie kommen …' : pick(QUIPS.wave) + ' · Nachschub erhalten');
+    const wl = w === 1 ? QUIPS.start[0] : pick(QUIPS.wave);
+    this.banner(`WELLE ${w}`, w === 1 ? wl.t : wl.t + ' · Nachschub erhalten');
+    setTimeout(() => this.state === 'play' && this.quip(wl, true), 900);
     this.audio.waveHorn();
     this.updateHUD();
   }
@@ -506,11 +497,12 @@ class Game {
     t.classList.add('show');
   }
 
-  quip(text, force = false) {
+  quip(line, force = false) {
     if (!force && this.quipCD > 0) return;
     this.quipCD = 5.5;
+    this.audio.voice(line.id);
     const q = $('quip');
-    q.textContent = '„' + text + '“';
+    q.textContent = '„' + line.t + '“';
     q.classList.add('show');
     clearTimeout(this._quipT);
     this._quipT = setTimeout(() => q.classList.remove('show'), 2200);
@@ -591,6 +583,7 @@ class Game {
     if (k === 'shotgun') { this.audio.shotgun(); this.shootHitscan(d); }
     if (k === 'rocket') {
       this.audio.rocketFire();
+      if (Math.random() < 0.3) this.quip(pick(QUIPS.rocket));
       const cam = this.camera;
       const o = new THREE.Vector3(0.18, -0.12, -0.6).applyMatrix4(cam.matrixWorld);
       const dir = new THREE.Vector3(0, 0, -1).applyQuaternion(cam.quaternion);
@@ -657,7 +650,7 @@ class Game {
   throwGrenade() {
     if (this.player.dead) return;
     if (this.arsenal.grenades <= 0) { this.flashSlot('nade'); return; }
-    if (this.arsenal.throwGrenade()) this.audio.pin();
+    if (this.arsenal.throwGrenade()) { this.audio.pin(); if (Math.random() < 0.45) this.quip(pick(QUIPS.nade)); }
   }
 
   releaseGrenade() {
@@ -826,7 +819,7 @@ class Game {
     if (p.hp <= 0) {
       p.dead = true;
       p.deadT = 0;
-      this.quip(pick(['Das … war … unprofessionell.', 'Ich komme wieder. Als Zombie.']), true);
+      this.quip(pick(QUIPS.death), true);
     } else if (p.hp < 30 && Math.random() < 0.3) this.quip(pick(QUIPS.hurt));
     this.updateHUD();
   }
@@ -870,6 +863,7 @@ class Game {
         this.waveState = 'break';
         this.breakT = 5.5;
         this.banner(`WELLE ${this.wave} ÜBERSTANDEN`, 'Kurz durchatmen …', 3);
+        setTimeout(() => this.state === 'play' && this.quip(pick(QUIPS.clear), true), 1200);
         this.audio.waveClear();
         this.player.hp = Math.min(100, this.player.hp + 15);
         this.updateHUD();

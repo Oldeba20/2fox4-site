@@ -134,7 +134,7 @@ export class Arsenal {
     // Hülsen
     this.shells = [];
     const pg = new THREE.CylinderGeometry(0.0045, 0.0045, 0.019, 10);
-    const sg = new THREE.CylinderGeometry(0.0095, 0.0095, 0.05, 12);
+    const sg = new THREE.CylinderGeometry(0.0115, 0.0115, 0.065, 12);
     for (let i = 0; i < 10; i++) {
       const shot = i >= 5;
       const s = new THREE.Mesh(shot ? sg : pg, shot ? M.shellRed : M.brass);
@@ -289,36 +289,57 @@ export class Arsenal {
   }
 
   buildShotgun() {
+    // Schwere Pump-Action: dicker Lauf, Hitzeschild, gerippter Vorderschaft, Patronenhalter
     const M = this.m, add = (...a) => this._add(...a);
     const gun = new THREE.Group();
+    const poly = M.poly;
     // Gehäuse
-    add(gun, new RoundedBoxGeometry(0.044, 0.056, 0.2, 3, 0.006), M.steel, 0, 0.004, -0.03);
-    add(gun, new THREE.BoxGeometry(0.0045, 0.02, 0.06), M.dark, 0.0222, 0.012, -0.03);   // Auswurf
-    add(gun, new THREE.BoxGeometry(0.03, 0.006, 0.18), M.steelLight, 0, 0.034, -0.03);    // Schiene oben
-    // Lauf + Magazinrohr
-    const barrel = add(gun, new THREE.CylinderGeometry(0.0115, 0.0115, 0.5, 18), M.steel, 0, 0.018, -0.38); barrel.rotation.x = Math.PI / 2;
-    const tube = add(gun, new THREE.CylinderGeometry(0.0105, 0.0105, 0.4, 16), M.steel, 0, -0.008, -0.33); tube.rotation.x = Math.PI / 2;
-    const bore = add(gun, new THREE.CircleGeometry(0.0085, 16), M.black, 0, 0.018, -0.6305); bore.rotation.y = Math.PI;
-    const cap = add(gun, new THREE.CylinderGeometry(0.012, 0.012, 0.02, 16), M.steelLight, 0, -0.008, -0.535); cap.rotation.x = Math.PI / 2;
-    add(gun, new THREE.SphereGeometry(0.003, 10, 10), M.steelLight, 0, 0.032, -0.615);   // Korn
-    const band = add(gun, new THREE.BoxGeometry(0.012, 0.03, 0.012), M.steel, 0, 0.005, -0.5);
-    void band;
-    // Vorderschaft (beweglich)
+    add(gun, new RoundedBoxGeometry(0.066, 0.088, 0.27, 4, 0.01), M.steel, 0, 0.012, -0.045);
+    add(gun, new RoundedBoxGeometry(0.068, 0.05, 0.2, 2, 0.006), M.steelLight, 0, 0.0, -0.045).scale.set(1, 1, 1);
+    add(gun, new THREE.BoxGeometry(0.004, 0.034, 0.09), M.dark, 0.0335, 0.022, -0.05);          // Auswurf rechts
+    add(gun, new THREE.BoxGeometry(0.004, 0.024, 0.07), M.steelLight, 0.0325, 0.022, -0.05);    // Verschluss
+    // Patronenhalter links mit 4 Schrotpatronen
+    add(gun, new RoundedBoxGeometry(0.012, 0.06, 0.12, 2, 0.004), poly, -0.039, 0.01, -0.06);
+    for (let i = 0; i < 4; i++) {
+      const sh = add(gun, new THREE.CylinderGeometry(0.0115, 0.0115, 0.07, 14), M.shellRed, -0.05, 0.01, -0.105 + i * 0.03);
+      const cap = add(gun, new THREE.CylinderGeometry(0.0118, 0.0118, 0.016, 14), M.brass, -0.05, 0.047, -0.105 + i * 0.03);
+      void sh; void cap;
+    }
+    // Lauf (dick) + Mündung
+    const barrel = add(gun, new THREE.CylinderGeometry(0.021, 0.021, 0.56, 24), M.steel, 0, 0.038, -0.45); barrel.rotation.x = Math.PI / 2;
+    const muzzle = add(gun, new THREE.CylinderGeometry(0.025, 0.025, 0.045, 24), M.steelLight, 0, 0.038, -0.71); muzzle.rotation.x = Math.PI / 2;
+    const bore = add(gun, new THREE.CircleGeometry(0.016, 20), M.black, 0, 0.038, -0.7326); bore.rotation.y = Math.PI;
+    // Hitzeschild mit Lüftungsschlitzen
+    add(gun, new RoundedBoxGeometry(0.05, 0.026, 0.4, 2, 0.006), poly, 0, 0.062, -0.39);
+    for (let i = 0; i < 8; i++) {
+      add(gun, new THREE.BoxGeometry(0.052, 0.01, 0.022), M.dark, 0, 0.062, -0.24 - i * 0.042);
+    }
+    // Visier: Lochkimme hinten, Korn vorn
+    for (const x of [-0.016, 0.016]) add(gun, new THREE.BoxGeometry(0.008, 0.03, 0.02), M.steel, x, 0.07, 0.06);
+    const ring = add(gun, new THREE.TorusGeometry(0.011, 0.0035, 8, 18), M.steel, 0, 0.083, 0.06); void ring;
+    add(gun, new THREE.BoxGeometry(0.006, 0.024, 0.018), M.steel, 0, 0.083, -0.66);
+    add(gun, new THREE.SphereGeometry(0.0035, 8, 8), M.red, 0, 0.096, -0.66);
+    // Magazinrohr + Laufschelle
+    const tube = add(gun, new THREE.CylinderGeometry(0.019, 0.019, 0.5, 20), M.steel, 0, -0.012, -0.42); tube.rotation.x = Math.PI / 2;
+    const tcap = add(gun, new THREE.CylinderGeometry(0.022, 0.022, 0.03, 20), M.steelLight, 0, -0.012, -0.675); tcap.rotation.x = Math.PI / 2;
+    add(gun, new RoundedBoxGeometry(0.05, 0.085, 0.03, 2, 0.008), M.steel, 0, 0.013, -0.63);
+    // Vorderschaft (beweglich), dick und gerippt
     const pump = new THREE.Group();
-    pump.position.set(0, -0.006, -0.3);
+    pump.position.set(0, -0.01, -0.38);
     gun.add(pump);
-    add(pump, new RoundedBoxGeometry(0.054, 0.048, 0.17, 3, 0.012), M.wood, 0, 0, 0);
-    for (let i = 0; i < 6; i++) add(pump, new THREE.BoxGeometry(0.056, 0.003, 0.006), M.dark, 0, -0.012 + (i % 2) * 0.024, -0.05 + i * 0.02);
-    this.supportHand(pump, 0, -0.004, 0.0, 0.03);
-    // Abzug + Griff + Schaft
-    const tg = add(gun, new THREE.TorusGeometry(0.019, 0.0035, 8, 20, Math.PI), M.steel, 0, -0.03, 0.012); tg.rotation.set(Math.PI, Math.PI / 2, 0); tg.scale.set(1, 1.15, 1);
-    const tr = add(gun, new THREE.BoxGeometry(0.006, 0.018, 0.005), M.steel, 0, -0.036, 0.012); tr.rotation.x = 0.25;
-    const gr = add(gun, new RoundedBoxGeometry(0.034, 0.115, 0.054, 3, 0.01), M.wood, 0, -0.082, 0.07); gr.rotation.x = 0.28;
-    const stock = add(gun, new RoundedBoxGeometry(0.04, 0.075, 0.32, 3, 0.012), M.wood, 0, -0.03, 0.28); stock.rotation.x = -0.12;
+    add(pump, new RoundedBoxGeometry(0.08, 0.072, 0.25, 4, 0.02), M.wood, 0, 0, 0);
+    for (let i = 0; i < 8; i++) add(pump, new THREE.BoxGeometry(0.082, 0.074, 0.007), M.dark, 0, 0, -0.1 + i * 0.028).scale.set(1, 0.92, 1);
+    this.supportHand(pump, 0, -0.004, 0.01, 0.042);
+    // Abzug, Pistolengriff, Schaft
+    const tg = add(gun, new THREE.TorusGeometry(0.024, 0.005, 8, 20, Math.PI), M.steel, 0, -0.034, 0.016); tg.rotation.set(Math.PI, Math.PI / 2, 0); tg.scale.set(1, 1.15, 1);
+    const tr = add(gun, new THREE.BoxGeometry(0.008, 0.022, 0.006), M.steel, 0, -0.042, 0.016); tr.rotation.x = 0.25;
+    const gr = add(gun, new RoundedBoxGeometry(0.04, 0.125, 0.062, 3, 0.012), M.grip, 0, -0.085, 0.072); gr.rotation.x = 0.28;
+    const stock = add(gun, new RoundedBoxGeometry(0.052, 0.1, 0.34, 3, 0.016), poly, 0, -0.025, 0.3); stock.rotation.x = -0.12;
+    add(gun, new RoundedBoxGeometry(0.056, 0.11, 0.03, 2, 0.01), M.knuckle, 0, -0.045, 0.47);
     this.rightHand(gun);
-    const flash = this.makeFlash(gun, 0, 0.018, -0.645, 0.1);
-    const eject = new THREE.Object3D(); eject.position.set(0.024, 0.014, -0.03); gun.add(eject);
-    return { group: gun, pump, flash, eject, rigBase: new THREE.Vector3(0.15, -0.14, -0.42), rot: new THREE.Euler(0, 0.12, -0.04) };
+    const flash = this.makeFlash(gun, 0, 0.038, -0.76, 0.14);
+    const eject = new THREE.Object3D(); eject.position.set(0.036, 0.022, -0.05); gun.add(eject);
+    return { group: gun, pump, pumpZ: -0.38, pumpTravel: 0.1, flash, eject, rigBase: new THREE.Vector3(0.17, -0.15, -0.56), rot: new THREE.Euler(0, 0.12, -0.04) };
   }
 
   buildLauncher() {
@@ -507,12 +528,12 @@ export class Arsenal {
         const p = 1 - Math.max(0, this.pumpT) / total; // 0..1 (erste 0.18 s Wartezeit)
         if (this.pumpT < total) {
           const q = Math.min(1, Math.max(0, p));
-          mdl.pump.position.z = -0.3 + Math.sin(q * Math.PI) * 0.085;
+          mdl.pump.position.z = mdl.pumpZ + Math.sin(q * Math.PI) * mdl.pumpTravel;
           roll = Math.sin(q * Math.PI) * 0.25;
           if (before >= total * 0.62 && this.pumpT < total * 0.62) { this.eject('shotgun'); events.push('pumpBack'); }
           if (before >= total * 0.2 && this.pumpT < total * 0.2) events.push('pumpFwd');
         }
-        if (this.pumpT <= 0) { this.pumpT = 0; mdl.pump.position.z = -0.3; }
+        if (this.pumpT <= 0) { this.pumpT = 0; mdl.pump.position.z = mdl.pumpZ; }
       }
       if (this.sgReload) {
         const r = this.sgReload;

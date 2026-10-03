@@ -28,10 +28,12 @@ export class AudioEngine {
     this.reverb.buffer = this._impulse(2.6, 2.4);
     this.reverbSend = ctx.createGain();
     this.reverbSend.gain.value = 0.55;
-    this.reverbSend.connect(this.reverb).connect(this.master);
+    this.duck = ctx.createGain();
+    this.duck.connect(this.master);
+    this.reverbSend.connect(this.reverb).connect(this.duck);
 
     this.dry = ctx.createGain();
-    this.dry.connect(this.master);
+    this.dry.connect(this.duck);
 
     this.noiseBuf = this._noise(2);
     this.brownBuf = this._brown(4);
@@ -593,5 +595,38 @@ export class AudioEngine {
     if (!this.ready) return;
     const t = this.t;
     this._click(t, 1500, 0.4); this._click(t + 0.06, 2600, 0.35); this._click(t + 0.12, 1200, 0.3);
+  }
+
+  // ---------- Sprachausgabe (vorab erzeugte Sprüche) ----------
+  async loadVoices(base, ids) {
+    if (!this.ready || this.voices) return;
+    this.voices = {};
+    await Promise.all(ids.map(async (id) => {
+      try {
+        const r = await fetch(`${base}${id}.mp3`);
+        if (!r.ok) return;
+        const buf = await r.arrayBuffer();
+        this.voices[id] = await new Promise((res, rej) => this.ctx.decodeAudioData(buf, res, rej));
+      } catch (e) { /* fehlt eben */ }
+    }));
+  }
+  voice(id) {
+    if (!this.ready || !this.voices || !this.voices[id]) return false;
+    const ctx = this.ctx, t = this.t;
+    if (this.voiceSrc) { try { this.voiceSrc.stop(); } catch (e) { /* */ } }
+    const src = ctx.createBufferSource();
+    src.buffer = this.voices[id];
+    const lo = ctx.createBiquadFilter(); lo.type = 'lowshelf'; lo.frequency.value = 180; lo.gain.value = 3;
+    const g = ctx.createGain(); g.gain.value = 1.25;
+    src.connect(lo).connect(g).connect(this.master);
+    src.start(t + 0.05);
+    this.voiceSrc = src;
+    // Effekte kurz leiser, damit man den Spruch versteht
+    if (this.duck) {
+      this.duck.gain.cancelScheduledValues(t);
+      this.duck.gain.setTargetAtTime(0.55, t, 0.05);
+      this.duck.gain.setTargetAtTime(1, t + src.buffer.duration, 0.25);
+    }
+    return true;
   }
 }
