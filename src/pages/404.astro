@@ -137,6 +137,32 @@ const description =
     box-shadow: 0 25px 60px -20px rgba(0, 0, 0, 0.6), inset 0 0 0 1px rgba(255, 255, 255, 0.06);
   }
   .krawumm-frame iframe { display: block; width: 100%; height: 100%; border: 0; }
+  /* Fuchs-Flitzer auf dem Handy: Vollbild-Ebene über der ganzen Seite, nichts scrollt */
+  @media (pointer: coarse) {
+    .lost-page[data-game="flitzer"] .game-view[data-view="flitzer"] {
+      position: fixed;
+      inset: 0;
+      z-index: 2147483000;
+      width: 100vw;
+      height: 100vh;
+      height: 100dvh;
+      padding: 0;
+      gap: 0;
+      background: #8cc8ff;
+      touch-action: none;
+      overscroll-behavior: none;
+    }
+    .game-view[data-view="flitzer"] .game-bar { display: none; }
+    .game-view[data-view="flitzer"] .krawumm-frame {
+      max-width: none;
+      width: 100%;
+      height: 100%;
+      aspect-ratio: auto;
+      border-radius: 0;
+      box-shadow: none;
+    }
+  }
+  :global(html.flitzer-lock), :global(html.flitzer-lock body) { overflow: hidden !important; overscroll-behavior: none; height: 100%; }
   .lost-page:not([data-game="none"]) :global([data-arcade-picker]) { display: none; }
   .game-bar {
     width: 100%;
@@ -283,6 +309,28 @@ const description =
       }
     }
 
+    // Handy: Rennspiel als Vollbild (Android: echtes Vollbild + Querformat, iPhone: Ebene über der Seite,
+    // das Spiel selbst stellt im Hochformat gedreht dar)
+    const coarse = window.matchMedia("(pointer: coarse)").matches;
+    function mobileFull(on) {
+      if (!coarse) return;
+      document.documentElement.classList.toggle("flitzer-lock", on);
+      const view = page.querySelector('.game-view[data-view="flitzer"]');
+      try {
+        if (on && view && view.requestFullscreen && !document.fullscreenElement) {
+          view.requestFullscreen({ navigationUI: "hide" }).then(() => {
+            try { screen.orientation && screen.orientation.lock && screen.orientation.lock("landscape").catch(() => {}); } catch (e) {}
+          }).catch(() => {});
+        } else if (!on && document.fullscreenElement) {
+          document.exitFullscreen().catch(() => {});
+        }
+      } catch (e) {}
+      if (on) window.scrollTo(0, 0);
+    }
+    window.addEventListener("message", (e) => {
+      if (e.origin !== location.origin || !e.data) return;
+      if (e.data.type === "fuchsflitzer:close") select("none");
+    });
     function showBest() {
       let best = 0;
       try { best = parseInt(localStorage.getItem("foxhunt_best_v1") || "0", 10) || 0; } catch (e) {}
@@ -311,6 +359,7 @@ const description =
       page.dataset.game = game;
       frame(kFrame, K_SRC, game === "krawumm");
       frame(page.querySelector("[data-flitzer]"), F_SRC, game === "flitzer");
+      mobileFull(game === "flitzer");
       window.dispatchEvent(new CustomEvent("arcade:select", { detail: game }));
       try {
         history.replaceState(null, "", location.pathname + location.search + (HASH[game] || ""));
@@ -324,7 +373,7 @@ const description =
         first && first.focus({ preventScroll: true });
       } else {
         const view = page.querySelector('.game-view[data-view="' + game + '"]');
-        view && view.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        if (!(coarse && game === "flitzer")) view && view.scrollIntoView({ behavior: "smooth", block: "nearest" });
         const btn = view && view.querySelector('#btn-start, [data-fx-action="start"]');
         btn && btn.focus({ preventScroll: true });
       }

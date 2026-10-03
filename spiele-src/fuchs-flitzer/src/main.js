@@ -72,6 +72,7 @@ class Game {
     sun.shadow.normalBias = 0.04;
     s.add(sun, sun.target);
     window.addEventListener('resize', () => this.resize());
+    window.addEventListener('applayout', () => this.resize());
   }
 
   setupComposer() {
@@ -119,7 +120,8 @@ class Game {
   }
 
   resize() {
-    const w = innerWidth, h = innerHeight;
+    const A = window.__app;
+    const w = A ? A.w : innerWidth, h = A ? A.h : innerHeight;
     this.camera.aspect = w / h;
     this.camera.updateProjectionMatrix();
     const pr = Math.min(devicePixelRatio || 1, this.touch ? 1.5 : 1.75) * this.dynScale;
@@ -191,6 +193,13 @@ class Game {
     this.paintSnd = paint;
     this.toggleSound = () => { this.audio.resume(); this.audio.setEnabled(!this.audio.enabled); setSoundPref(this.audio.enabled); paint(); };
     sb.addEventListener('click', (e) => { e.stopPropagation(); this.toggleSound(); sb.blur(); });
+    $('close').addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (this.state === 'race' || this.state === 'count') this.pause(true);
+      try { if (document.fullscreenElement) document.exitFullscreen(); } catch (err) { /* */ }
+      if (window.parent !== window) { try { parent.postMessage({ type: 'fuchsflitzer:close' }, location.origin); } catch (err) { /* */ } }
+      else location.href = '/';
+    });
     $('fs').addEventListener('click', (e) => {
       e.stopPropagation();
       const d = document;
@@ -320,6 +329,7 @@ class Game {
   }
 
   startRace() {
+    this.landscape();
     this.audio.resume();
     this.audio.click();
     ['title', 'results', 'pause'].forEach((s) => $(s).classList.remove('show'));
@@ -345,6 +355,17 @@ class Game {
     setTimeout(() => { if (this.state === 'intro') this.audio.voice('start'); }, 300);
     document.body.classList.add('racing');
     try { window.focus(); } catch (e) { /* */ }
+  }
+
+  // Handy: echtes Vollbild + Querformat anfordern (Android). iPhone kann das nicht – dort dreht das Layout selbst.
+  landscape() {
+    if (!this.touch) return;
+    try {
+      const d = document, el = d.documentElement;
+      const lock = () => { try { screen.orientation && screen.orientation.lock && screen.orientation.lock('landscape').catch(() => {}); } catch (e) { /* */ } };
+      if (!d.fullscreenElement && el.requestFullscreen) el.requestFullscreen({ navigationUI: 'hide' }).then(lock).catch(lock);
+      else lock();
+    } catch (e) { /* */ }
   }
 
   pause(on) {
