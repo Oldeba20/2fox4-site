@@ -100,6 +100,27 @@ function makeHoleTexture() {
   return t;
 }
 
+function makeScorchTexture() {
+  const S = 256;
+  const [c, g] = canvas(S);
+  const r = rng(77);
+  for (let i = 0; i < 40; i++) {
+    const a = r() * Math.PI * 2, d = r() * 70;
+    const x = S / 2 + Math.cos(a) * d, y = S / 2 + Math.sin(a) * d, rad = 20 + r() * 60;
+    const gr = g.createRadialGradient(x, y, 0, x, y, rad);
+    gr.addColorStop(0, 'rgba(5,4,3,0.55)'); gr.addColorStop(1, 'rgba(5,4,3,0)');
+    g.fillStyle = gr; g.beginPath(); g.arc(x, y, rad, 0, Math.PI * 2); g.fill();
+  }
+  for (let i = 0; i < 26; i++) {
+    const a = r() * Math.PI * 2, len = 60 + r() * 60;
+    g.strokeStyle = 'rgba(0,0,0,0.35)'; g.lineWidth = 2 + r() * 5;
+    g.beginPath(); g.moveTo(S / 2, S / 2); g.lineTo(S / 2 + Math.cos(a) * len, S / 2 + Math.sin(a) * len); g.stroke();
+  }
+  const t = new THREE.CanvasTexture(c);
+  t.colorSpace = THREE.SRGBColorSpace;
+  return t;
+}
+
 export function makeSoftDot() {
   const S = 64;
   const [c, g] = canvas(S);
@@ -292,15 +313,18 @@ export class FX {
     this.mist = new ParticlePool(300, { texture: smoke, gravity: -0.6, drag: 2.2, opacity: 0.55 });
     this.sparks = new ParticlePool(500, { texture: dot, additive: true, gravity: -9, drag: 1.2 });
     this.dust = new ParticlePool(300, { texture: smoke, gravity: 0.15, drag: 2.6, opacity: 0.8 });
-    this.embers = new ParticlePool(300, { texture: dot, additive: true, gravity: 0.6, drag: 1.4 });
-    this.pools = [this.drops, this.mist, this.sparks, this.dust, this.embers];
+    this.embers = new ParticlePool(400, { texture: dot, additive: true, gravity: 0.6, drag: 1.4 });
+    this.fire = new ParticlePool(400, { texture: smoke, additive: true, gravity: 1.2, drag: 3.2 });
+    this.smoke = new ParticlePool(400, { texture: smoke, gravity: 0.5, drag: 1.6, opacity: 0.9 });
+    this.pools = [this.drops, this.mist, this.sparks, this.dust, this.embers, this.fire, this.smoke];
     this.pools.forEach((p) => scene.add(p.points));
 
     this.floorDecals = new DecalSet([makeSplatTexture(11), makeSplatTexture(23), makeSplatTexture(37)], 90, { color: 0xb01010, roughness: 0.18 });
     this.dripDecals = new DecalSet([makeSplatTexture(5, 'drip'), makeSplatTexture(9, 'drip')], 220, { color: 0xa00c0c, roughness: 0.2 });
     this.wallDecals = new DecalSet([makeWallSplatTexture(3), makeWallSplatTexture(8)], 70, { color: 0xb01010, roughness: 0.22 });
     this.holes = new DecalSet([makeHoleTexture()], 120, { color: 0xffffff, roughness: 0.9, wet: false, renderOrder: 1 });
-    this.decals = [this.floorDecals, this.dripDecals, this.wallDecals, this.holes];
+    this.scorch = new DecalSet([makeScorchTexture()], 40, { color: 0xffffff, roughness: 0.95, wet: false, renderOrder: 1 });
+    this.decals = [this.floorDecals, this.dripDecals, this.wallDecals, this.holes, this.scorch];
     this.decals.forEach((d) => d.addTo(scene));
 
     this.drops.onLand = (x, z, s) => {
@@ -309,13 +333,19 @@ export class FX {
 
     // Gibs (Brocken)
     this.gibGeo = new THREE.DodecahedronGeometry(0.05, 0);
-    this.gibMat = new THREE.MeshStandardMaterial({ color: 0x6a0a08, roughness: 0.35, metalness: 0.0 });
-    this.gibs = new THREE.InstancedMesh(this.gibGeo, this.gibMat, 80);
+    this.gibMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.3, metalness: 0.0, envMapIntensity: 0.6 });
+    this.gibs = new THREE.InstancedMesh(this.gibGeo, this.gibMat, 200);
+    const gc = new THREE.Color();
+    for (let i = 0; i < 200; i++) {
+      const k = Math.random();
+      if (k < 0.06) gc.setRGB(0.5, 0.44, 0.36); else if (k < 0.4) gc.setRGB(0.36, 0.06, 0.05); else gc.setRGB(0.22, 0.015, 0.01);
+      this.gibs.setColorAt(i, gc);
+    }
     this.gibs.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
     this.gibs.frustumCulled = false;
     this.gibs.castShadow = true;
     this.gibData = [];
-    for (let i = 0; i < 80; i++) this.gibData.push({ p: new THREE.Vector3(0, -10, 0), v: new THREE.Vector3(), r: new THREE.Euler(), w: new THREE.Vector3(), s: 1, life: 0, rest: false });
+    for (let i = 0; i < 200; i++) this.gibData.push({ p: new THREE.Vector3(0, -10, 0), v: new THREE.Vector3(), r: new THREE.Euler(), w: new THREE.Vector3(), s: 1, life: 0, rest: false });
     this.gibCursor = 0;
     scene.add(this.gibs);
 
@@ -375,15 +405,16 @@ export class FX {
     if (headshot) this.spawnGibs(p, dir, 12);
   }
 
-  spawnGibs(p, dir, n) {
+  spawnGibs(p, dir, n, power = 1, big = 1) {
     if (!this.blood) return;
     for (let i = 0; i < n; i++) {
       const g = this.gibData[this.gibCursor];
       this.gibCursor = (this.gibCursor + 1) % this.gibData.length;
       g.p.copy(p);
-      g.v.set(dir.x * (2 + Math.random() * 3) + (Math.random() - 0.5) * 3, 2 + Math.random() * 3, dir.z * (2 + Math.random() * 3) + (Math.random() - 0.5) * 3);
+      if (big > 1) g.p.add(this._sv.set((Math.random() - 0.5) * 0.5, (Math.random() - 0.3) * 0.9, (Math.random() - 0.5) * 0.5));
+      g.v.set(dir.x * (2 + Math.random() * 3) * power + (Math.random() - 0.5) * 3 * power, (2 + Math.random() * 3) * Math.sqrt(power), dir.z * (2 + Math.random() * 3) * power + (Math.random() - 0.5) * 3 * power);
       g.w.set(Math.random() * 20, Math.random() * 20, Math.random() * 20);
-      g.s = 0.6 + Math.random() * 1.2;
+      g.s = (0.6 + Math.random() * 1.2) * (big > 1 ? 0.8 + Math.random() * big : 1);
       g.life = 40;
       g.rest = false;
     }
@@ -428,6 +459,75 @@ export class FX {
       c.setRGB(1, 0.35 + Math.random() * 0.2, 0.08);
       this.embers.emit(q.set(p.x + (Math.random() - 0.5) * 1.1, 0.05, p.z + (Math.random() - 0.5) * 1.1), v, 0.025 + Math.random() * 0.03, 0.8 + Math.random(), c);
     }
+  }
+
+  // Explosion: Feuerball, Rauch, Funken, Brandfleck
+  explosion(p, nrm, scale = 1) {
+    const c = this._c, v = this._v, q = new THREE.Vector3();
+    for (let i = 0; i < 46 * scale; i++) {
+      v.set(Math.random() - 0.5, Math.random() - 0.3, Math.random() - 0.5).normalize().multiplyScalar(2 + Math.random() * 7 * scale);
+      if (nrm) v.addScaledVector(nrm, 2.5);
+      const k = Math.random();
+      if (k < 0.3) c.setRGB(3.2, 2.6, 1.6); else if (k < 0.7) c.setRGB(2.6, 1.1, 0.25); else c.setRGB(1.6, 0.35, 0.05);
+      this.fire.emit(q.copy(p).add(this._sv.set((Math.random() - 0.5) * 0.4, (Math.random() - 0.5) * 0.4, (Math.random() - 0.5) * 0.4)), v, (0.5 + Math.random() * 0.7) * scale, 0.25 + Math.random() * 0.4, c, 2.4 * scale);
+    }
+    for (let i = 0; i < 26 * scale; i++) {
+      v.set(Math.random() - 0.5, Math.random() * 0.8, Math.random() - 0.5).normalize().multiplyScalar(1 + Math.random() * 3.5 * scale);
+      const g = 0.05 + Math.random() * 0.06;
+      c.setRGB(g, g * 0.95, g * 0.9);
+      this.smoke.emit(q.copy(p), v, (0.7 + Math.random() * 0.8) * scale, 1.8 + Math.random() * 1.6, c, 1.5 * scale);
+    }
+    for (let i = 0; i < 70 * scale; i++) {
+      v.set(Math.random() - 0.5, Math.random() - 0.2, Math.random() - 0.5).normalize().multiplyScalar(5 + Math.random() * 12);
+      c.setRGB(1, 0.6 + Math.random() * 0.3, 0.25);
+      this.sparks.emit(p, v, 0.03 + Math.random() * 0.04, 0.4 + Math.random() * 0.7, c);
+    }
+    for (let i = 0; i < 30 * scale; i++) {
+      v.set(Math.random() - 0.5, Math.random() * 0.6 + 0.2, Math.random() - 0.5).normalize().multiplyScalar(1 + Math.random() * 3);
+      c.setRGB(1, 0.4, 0.1);
+      this.embers.emit(q.copy(p), v, 0.03 + Math.random() * 0.03, 1 + Math.random() * 1.5, c);
+    }
+    // Brandfleck
+    const ray = this._ray;
+    ray.set(q.copy(p).addScaledVector(nrm || UP, 0.3), this._sv.copy(nrm || UP).negate());
+    ray.far = 1.6;
+    const hit = ray.intersectObjects(this.level.colliders, false)[0];
+    if (hit && hit.face) {
+      const n = hit.face.normal.clone().transformDirection(hit.object.matrixWorld);
+      this.scorch.add(hit.point.clone().addScaledVector(n, 0.012), n, (2.6 + Math.random()) * scale);
+    } else if (p.y < 1.5) {
+      this.scorch.add(new THREE.Vector3(p.x, 0.011, p.z), UP, (2.6 + Math.random()) * scale);
+    }
+  }
+
+  // Zombie zerplatzt
+  gibExplode(p, dir) {
+    if (!this.blood) { this.puff(p, UP, 0x8a8f78, 2); return; }
+    const c = this._c, v = this._v;
+    for (let i = 0; i < 220; i++) {
+      v.set(Math.random() - 0.5, Math.random() * 0.9, Math.random() - 0.5).normalize().multiplyScalar(2 + Math.random() * 7).addScaledVector(dir, 2);
+      c.setRGB(0.4 + Math.random() * 0.2, 0, 0);
+      this.drops.emit(this._sv.copy(p).add(new THREE.Vector3((Math.random() - 0.5) * 0.4, (Math.random() - 0.5) * 1.2, (Math.random() - 0.5) * 0.4)), v, 0.05 + Math.random() * 0.1, 1.3 + Math.random(), c, 0, 1);
+    }
+    for (let i = 0; i < 14; i++) {
+      v.set(Math.random() - 0.5, Math.random() * 0.6, Math.random() - 0.5).multiplyScalar(2.5);
+      c.setRGB(0.22, 0.01, 0.01);
+      this.mist.emit(p, v, 0.35 + Math.random() * 0.4, 0.6 + Math.random() * 0.5, c, 1.4);
+    }
+    this.spawnGibs(p, dir, 26, 1.3, 1.5);
+    // Spritzer ringsum
+    const ray = this._ray;
+    for (let i = 0; i < 7; i++) {
+      const a = Math.random() * Math.PI * 2;
+      ray.set(p, this._sv.set(Math.cos(a), (Math.random() - 0.6) * 0.5, Math.sin(a)).normalize());
+      ray.far = 4;
+      const hit = ray.intersectObjects(this.level.colliders, false)[0];
+      if (!hit || !hit.face) continue;
+      const n = hit.face.normal.clone().transformDirection(hit.object.matrixWorld);
+      if (Math.abs(n.y) < 0.5) this.wallDecals.add(hit.point.clone().addScaledVector(n, 0.01), n, 1.2 + Math.random() * 0.8, (Math.random() - 0.5) * 0.4);
+      else if (n.y > 0.5) this.floorDecals.add(hit.point.clone().setY(hit.point.y + 0.013), UP, 1 + Math.random() * 0.8);
+    }
+    this.pool(p.x, p.z, 2.6);
   }
 
   update(dt) {

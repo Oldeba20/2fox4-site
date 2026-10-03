@@ -19,12 +19,19 @@ npm run build
 
 | Datei | Inhalt |
 | --- | --- |
-| `src/main.js` | Spielablauf, Renderer, Postprocessing, Spieler, Wellen, HUD |
-| `src/level.js` | Karte (ASCII-Raster), Wände/Boden/Decke, Lichter, Kollision, Wegfindung |
-| `src/zombies.js` | Zombie-Modell, Animationen, KI, Trefferzonen (Kopf/Körper/Glieder) |
-| `src/weapon.js` | Pistole mit Hand (prozedural), Rückstoß, Nachladen, Mündungsfeuer |
-| `src/fx.js` | Blut, Spritzer an Wand/Boden, Einschusslöcher, Funken, Rauch |
+| `src/main.js` | Spielablauf, Renderer, Postprocessing, Spieler (inkl. Springen), Wellen, Explosionen, Pickups, HUD |
+| `src/level.js` | Karte (ASCII-Raster), Wände/Boden/Decke, Würfel, explosive Fässer, Lichter, Kollision, Wegfindung |
+| `src/zombies.js` | Zombie-Modell, Animationen, KI, Trefferzonen (Kopf/Körper/Glieder), Zerfetzen |
+| `src/weapons.js` | Pistole, Pump-Action, Raketenwerfer, Granaten-Hand (alles prozedural), Waffenwechsel, Nachladen |
+| `src/projectiles.js` | Raketen und Granaten (Flug, Abprallen, Zünder) |
+| `src/fx.js` | Blut, Spritzer, Einschusslöcher, Funken, Rauch, Explosionen, Brandflecken |
 | `src/audio.js` | Sämtliche Sounds prozedural per WebAudio (keine Audiodateien) |
+| `tools/genmap.py` | Erzeugt die Karte (Räume + Gänge) und prüft die Erreichbarkeit; Ausgabe in `level.js` einsetzen |
+
+## Steuerung
+
+WASD laufen · Shift rennen · Leertaste springen · Klick schießen · R nachladen ·
+1/2/3 oder Mausrad Waffe · Q letzte Waffe · G oder rechte Maustaste Granate · F Vollbild · Esc Pause
 
 ## Assets (alle CC0)
 

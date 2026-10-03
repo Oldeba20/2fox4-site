@@ -183,6 +183,8 @@ export class Zombie {
 
   spawn(pos, opts) {
     this.active = true;
+    this.gibbed = false;
+    this.push = 0;
     this.state = 'rise';
     this.dead = false;
     this.root.position.copy(pos);
@@ -196,6 +198,7 @@ export class Zombie {
     this.height = 1.78 * s;
     this.walkClip = Math.random() < 0.3 ? "walk" : "walk2";
     this.flinch = 0; this.flinchSide = 0;
+    this.knock = 0; this.knockDir = new THREE.Vector3();
     this.flash = 0;
     this.stagger = 0;
     this.groanT = 1 + Math.random() * 4;
@@ -343,15 +346,16 @@ export class ZombieManager {
     for (const z of this.pool) { z.active = false; z.root.visible = false; z.mixer.stopAllAction(); }
   }
 
-  damage(z, amount, zone, point, dir) {
+  damage(z, amount, zone, point, dir, push = 0, gibIfKill = false) {
     if (z.dead) return false;
     z.hp -= amount;
     z.flash = 1;
     const g = this.game;
     if (z.hp <= 0) {
-      this.kill(z, zone, point, dir);
+      this.kill(z, gibIfKill && g.fx.blood ? 'gib' : zone, point, dir, push);
       return true;
     }
+    if (push > 0) { z.knock = push * 0.6; z.knockDir = dir.clone().setY(0).normalize(); }
     // Zucken + kurz stolpern
     z.flinch = Math.min(1.2, z.flinch + (zone === 'head' ? 1.1 : 0.7));
     z.flinchSide = (Math.random() - 0.5) * 2;
@@ -365,12 +369,24 @@ export class ZombieManager {
     return false;
   }
 
-  kill(z, zone, point, dir) {
+  kill(z, zone, point, dir, push = 0) {
     const g = this.game;
     z.dead = true;
     z.state = 'dead';
     z.deadT = 0;
     z.flinch = 0;
+    z.push = push;
+    z.pushDir = dir.clone().setY(0).normalize();
+    if (zone === 'gib') {
+      // zerfetzt: Modell verschwindet, Brocken fliegen
+      z.gibbed = true;
+      z.root.visible = false;
+      z.pooled = true;
+      g.fx.gibExplode(z.root.position.clone().setY(0.95), z.pushDir);
+      g.audio.headshot(z.root.position.clone().setY(1));
+      g.onKill(z, zone);
+      return;
+    }
     const a = z.actions.die;
     a.reset();
     a.timeScale = 1.15;
@@ -410,6 +426,12 @@ export class ZombieManager {
 
       if (z.dead) {
         z.deadT += dt;
+        if (z.gibbed) { if (z.deadT > 0.5) { z.active = false; z.gibbed = false; } continue; }
+        if (z.push > 0.05) {
+          p.addScaledVector(z.pushDir, z.push * dt);
+          z.push *= Math.exp(-dt * 4);
+          lvl.collide(p, 0.3);
+        }
         if (z.deadT > 1.9 && !z.pooled) {
           z.pooled = true;
           const hips = z.bones.Hips.getWorldPosition(this._d);
@@ -457,7 +479,7 @@ export class ZombieManager {
         const hits = this.tpl.attackHits[z.attackClip];
         while (z.nextHit < hits.length && frac >= hits[z.nextHit]) {
           z.nextHit++;
-          if (dist < 1.75 && !player.dead) g.hurtPlayer(z.dmg, p);
+          if (dist < 1.75 + (player.y > 0.4 ? 0.4 : 0) && player.y < 1.3 && !player.dead) g.hurtPlayer(z.dmg, p);
         }
         if (!a.isRunning() || frac > 0.97 || (dist > 2.6 && frac > (hits[hits.length - 1] || 0.5) + 0.05)) {
           z.state = 'chase';
@@ -469,7 +491,7 @@ export class ZombieManager {
 
       // ---- Verfolgen ----
       z.attackCD -= dt;
-      if (dist < 1.35 && z.attackCD <= 0 && !player.dead) {
+      if (dist < 1.35 + (player.y > 0.4 ? 0.45 : 0) && z.attackCD <= 0 && !player.dead) {
         z.state = 'attack';
         z.attackClip = ['attack', 'attack2', 'attack3'][(Math.random() * 3) | 0];
         z.nextHit = 0;
@@ -503,6 +525,7 @@ export class ZombieManager {
       z.stagger = Math.max(0, z.stagger - dt);
       const base = (this.tpl.speed[z.walkClip] || 0.9);
       const sp = base * WALK_RATE * z.speedMul * (z.stagger > 0 ? 0.25 : 1) * (dist < 1.1 ? 0 : 1);
+      if (z.knock > 0.05) { p.addScaledVector(z.knockDir, z.knock * dt); z.knock *= Math.exp(-dt * 6); }
       const fwd = z.root.rotation.y;
       p.x += Math.sin(fwd) * sp * dt;
       p.z += Math.cos(fwd) * sp * dt;

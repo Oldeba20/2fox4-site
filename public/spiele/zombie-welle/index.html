@@ -81,6 +81,18 @@
 
   @keyframes pulse { 50% { opacity: .45; } }
 
+  .slots { position: absolute; right: 2.6vw; bottom: calc(3vh + clamp(64px, 11vh, 110px)); display: flex; gap: 6px; font-family: var(--ui); font-weight: 800; font-size: clamp(9px, 1.25vh, 12px); letter-spacing: .06em; text-transform: uppercase; }
+  .slot { padding: 4px 8px; border-radius: 6px; background: rgba(0,0,0,.45); color: rgba(244,239,232,.55); box-shadow: inset 0 0 0 1px rgba(255,255,255,.12); white-space: nowrap; }
+  .slot b { display: inline-block; margin-right: 5px; color: rgba(244,239,232,.8); }
+  .slot i { font-style: normal; color: #fff; margin-left: 3px; }
+  .slot.on { color: #fff; background: rgba(227,36,27,.55); box-shadow: inset 0 0 0 1px rgba(255,107,53,.9); }
+  .slot.off { opacity: .35; }
+  .slot.nope { animation: nope .4s; }
+  @keyframes nope { 0%,100% { transform: none; } 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
+  .toast { position: absolute; left: 50%; bottom: 23vh; transform: translateX(-50%); font-family: var(--font); letter-spacing: .06em; font-size: clamp(14px, 2.4vh, 22px); color: #7dff8a; text-shadow: 0 2px 0 #000; opacity: 0; }
+  .toast.show { animation: toast 1.4s forwards; }
+  @keyframes toast { 0% { opacity: 0; transform: translate(-50%, 8px); } 15% { opacity: 1; transform: translate(-50%, 0); } 75% { opacity: 1; } 100% { opacity: 0; transform: translate(-50%, -10px); } }
+
   /* ---------- Overlays ---------- */
   .ov { position: fixed; inset: 0; display: grid; place-items: center; background: radial-gradient(ellipse at center, rgba(20,6,4,.55), rgba(0,0,0,.88)); z-index: 5; padding: 3vh 3vw; }
   .ov[hidden] { display: none; }
@@ -135,7 +147,14 @@
     <div class="banner" id="banner"><div class="big" id="banner-big"></div><div class="small" id="banner-small"></div></div>
     <div class="quip" id="quip"></div>
     <div class="hud-hp" id="h-hpbox"><div class="cross"></div><div><div class="num" id="h-hp">100</div><div class="bar"><i id="h-hpbar"></i></div></div></div>
-    <div class="hud-ammo" id="h-ammobox"><div class="wname">Pistole</div><div class="num"><span id="h-ammo">12</span> <small>/ ∞</small></div><div class="hint">R – Nachladen</div></div>
+    <div class="hud-ammo" id="h-ammobox"><div class="wname" id="h-wname">Pistole</div><div class="num"><span id="h-ammo">12</span> <small>/ <span id="h-reserve">∞</span></small></div><div class="hint">R – Nachladen</div></div>
+    <div class="slots">
+      <div class="slot" data-w="pistol"><b>1</b>Pistole</div>
+      <div class="slot" data-w="shotgun"><b>2</b>Pump-Action</div>
+      <div class="slot" data-w="rocket"><b>3</b>Raketen</div>
+      <div class="slot nade" data-w="nade"><b>G</b>Granaten <i id="h-nades">3</i></div>
+    </div>
+    <div class="toast" id="toast"></div>
   </div>
 
   <button id="fsbtn" type="button" title="Vollbild (F)">⛶ Vollbild</button>
@@ -152,9 +171,10 @@
       <div id="ready" hidden>
         <div class="keys">
           <span><kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd></span><span>laufen · <kbd>Shift</kbd> rennen</span>
-          <span>Maus</span><span>umsehen</span>
-          <span><kbd>Klick</kbd></span><span>schießen</span>
-          <span><kbd>R</kbd></span><span>nachladen</span>
+          <span><kbd>Leertaste</kbd></span><span>springen (auch auf Würfel)</span>
+          <span><kbd>Klick</kbd></span><span>schießen · <kbd>R</kbd> nachladen</span>
+          <span><kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd></span><span>Pistole · Pump-Action · Raketenwerfer (oder Mausrad)</span>
+          <span><kbd>G</kbd></span><span>Granate werfen (oder rechte Maustaste)</span>
           <span><kbd>Esc</kbd></span><span>Pause</span>
         </div>
         <button class="btn" id="btn-start" type="button">▶ SPIELEN</button>

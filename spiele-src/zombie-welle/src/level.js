@@ -8,36 +8,49 @@ import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js
 //  O  Säule             L  Deckenlampe (Boden)
 //  R  rote Lampe        S  Spawnpunkt (Gitter, rotes Licht)
 //  @  Spielerstart      K  Lampe mit Schatten (Boden)
+//  W  Würfel (draufspringen möglich)   B = explosive Fässer
 export const MAP = [
-  '############################',
-  '#S....L......#MM#......L..S#',
-  '#............#..#..........#',
-  '#..CC....B...M..M...B...CC.#',
-  '#..C.....................C.#',
-  '#......PPPPP......PPPPP....#',
-  '##M##..PO.OP......PO.OP..#M#',
-  '#...#..PPPPP..R...PPPPP..#.#',
-  '#.R.M.........PP.........M.#',
-  '#...#....L....PP....L....#.#',
-  '#..........................#',
-  '###MM...OO....@.....OO...MM#',
-  '#S......O..........K.O....S#',
-  '#............PPPP..........#',
-  '#..B...K.....PPPP.......C..#',
-  '#....###M##........##M###..#',
-  '#....#....#...L....#....#..#',
-  '#.L..M..R.M........M..R.M.L#',
-  '#....#....#..C..C..#....#..#',
-  '#..........................#',
-  '#S.....L.......S.......L..S#',
-  '############################',
+  '########################################',
+  '########################################',
+  '##........######........######........##',
+  '##.S...CC.######.....WS.MMMMMM...L..S.##',
+  '##......C.MMMMMM..L.....PPPLPP........##',
+  '##....L...PPRPPP........MMMMMM.....W..##',
+  '##..W.....MMMMMM........######.CC.....##',
+  '##.B......########MPPM####MMMM......B.##',
+  '##........########MPLM###MPPPP........##',
+  '####MPMMMMMMMMMMMMMWPM###MPMMM###MPM####',
+  '####MPPPPLPPPPPPRPPPPM###MLM#####MRM####',
+  '####MLMMMMMMPMMMMMMPPM###MPPM####MPM####',
+  '####MPM#####M#............MPM##.......##',
+  '##.......#####....W.R.....MPMMM.CC..C.##',
+  '##..C..B.#####..O......O..PPLPP....C..##',
+  '##.......MMMMM...K........MMMMM...WC..##',
+  '##.S.L...PPRPP......@.K...#####.C...B.##',
+  '##.......MMMMM..O......O..MMMMM..C....##',
+  '##....W..#####.....W.W....PPLPP...R...##',
+  '##.......#####............MMMMM.W...S.##',
+  '####MPM#########MPM##MPM#######.......##',
+  '####MPM#########MPM##MRM#########MPM####',
+  '####MLM#########MLM##MPM#########MLM####',
+  '####MPM#########MPM##MPM#########MPM####',
+  '##.........###...........###..........##',
+  '##..CC...B.###.....K.....MMM..W.......##',
+  '##....L....MMM..W.....W..PRP....L.....##',
+  '##.........PLP...........MMM..........##',
+  '##.S....W..MMM.C...S...B.###..B..CC.S.##',
+  '##.........###...........###..........##',
+  '########################################',
+  '########################################',
 ];
 
 export const CELL = 2;
 export const WALL_H = 4.4;
 
 const WALLS = new Set(['#', 'M']);
-const BLOCK = new Set(['#', 'M', 'C', 'B', 'O']);
+const BLOCK = new Set(['#', 'M', 'C', 'B', 'O', 'W']);
+export const CUBE_H = 0.9;
+const CRATE_H = 1.7;
 
 export class Level {
   constructor(textures) {
@@ -57,6 +70,8 @@ export class Level {
     this.blocked = new Uint8Array(this.rows * this.cols);
     this.flow = new Float32Array(this.rows * this.cols);
     this.flowCell = -1;
+    this.barrels = [];
+    this.heap = new Int32Array(this.rows * this.cols * 8);
 
     for (let r = 0; r < this.rows; r++)
       for (let c = 0; c < this.cols; c++) {
@@ -190,9 +205,8 @@ export class Level {
     g.add(beamMesh);
 
     // ---------- Requisiten ----------
-    const crateGeos = [], barrelGeos = [], pillarGeos = [];
+    const crateGeos = [], pillarGeos = [], cubeGeos = [], cubeEdgeGeos = [];
     const glowMat = new THREE.MeshStandardMaterial({ color: 0x0a1a05, emissive: 0x7dff3a, emissiveIntensity: 3.2 });
-    const glowGeos = [];
     const lampFixtureGeos = [];
     const lampPanelGeos = [];
     const redPanelGeos = [];
@@ -204,33 +218,44 @@ export class Level {
       const ch = MAP[r][c];
       const x = (c + 0.5) * CELL, z = (r + 0.5) * CELL;
       if (ch === 'C') {
-        const s = 1.55 + rnd() * 0.2;
+        const s = CRATE_H;
         const bg = new THREE.BoxGeometry(s, s, s);
         setBoxUV(bg, s);
-        bg.rotateY((rnd() - 0.5) * 0.35);
+        bg.rotateY((rnd() - 0.5) * 0.12);
         bg.translate(x, s / 2, z);
         crateGeos.push(bg);
-        if (rnd() < 0.5) {
-          const s2 = 1.0 + rnd() * 0.2;
-          const b2 = new THREE.BoxGeometry(s2, s2, s2);
-          setBoxUV(b2, s2);
-          b2.rotateY(rnd() * 1.5);
-          b2.translate(x + (rnd() - 0.5) * 0.3, s + s2 / 2, z + (rnd() - 0.5) * 0.3);
-          crateGeos.push(b2);
+      } else if (ch === 'W') {
+        const cg = new THREE.BoxGeometry(1.8, CUBE_H, 1.8);
+        setBoxUV(cg, 1.8);
+        cg.translate(x, CUBE_H / 2, z);
+        cubeGeos.push(cg);
+        // Warnkante oben
+        for (const [w, d, ox, oz] of [[1.82, 0.08, 0, 0.87], [1.82, 0.08, 0, -0.87], [0.08, 1.82, 0.87, 0], [0.08, 1.82, -0.87, 0]]) {
+          const e = new THREE.BoxGeometry(w, 0.1, d);
+          e.translate(x + ox, CUBE_H - 0.045, z + oz);
+          cubeEdgeGeos.push(e);
         }
       } else if (ch === 'B') {
+        const geos = [], tops = [];
         for (let i = 0; i < 3; i++) {
           const ox = x + (i === 0 ? -0.35 : i === 1 ? 0.4 : 0.05), oz = z + (i === 2 ? 0.5 : -0.15);
           const cg = new THREE.CylinderGeometry(0.36, 0.36, 1.15, 20, 1, false);
           cg.translate(ox, 0.575, oz);
-          barrelGeos.push(cg);
+          geos.push(cg);
           const top = new THREE.CircleGeometry(0.3, 20);
           top.rotateX(-Math.PI / 2);
           top.translate(ox, 1.152, oz);
-          glowGeos.push(top);
+          tops.push(top);
         }
-        this.circles.push({ x, z, r: 0.9 });
-        this.addLight(x, 1.6, z, 0x6dff2a, 6, 7, false);
+        const bm = new THREE.Mesh(mergeGeometries(geos), null);
+        const tm = new THREE.Mesh(mergeGeometries(tops), glowMat);
+        bm.castShadow = true; bm.receiveShadow = true;
+        const circle = { x, z, r: 0.9 };
+        const light = this.addLight(x, 1.6, z, 0x6dff2a, 6, 7, false);
+        const barrel = { c, r, x, z, mesh: bm, top: tm, circle, light, hp: 25, alive: false };
+        bm.userData.barrel = barrel;
+        tm.userData.barrel = barrel;
+        this.barrels.push(barrel);
       } else if (ch === 'O') {
         const pg = new THREE.CylinderGeometry(0.7, 0.8, H, 16, 1, true);
         pg.translate(x, H / 2, z);
@@ -291,8 +316,9 @@ export class Level {
       return m;
     };
     add(crateGeos, this.mat('rust', { color: 0x8f7f6a }));
-    add(barrelGeos, mats.hazard);
-    add(glowGeos, glowMat, false);
+    add(cubeGeos, this.mat('plate', { color: 0x9aa0a6 }));
+    add(cubeEdgeGeos, mats.hazard, false, false);
+    for (const b of this.barrels) { b.mesh.material = mats.hazard; this.restoreBarrel(b); }
     add(pillarGeos, mats.metal);
     add(lampFixtureGeos, new THREE.MeshStandardMaterial({ color: 0x222222, roughness: 0.5, metalness: 0.8 }), false, false);
     add(lampPanelGeos, new THREE.MeshStandardMaterial({ color: 0x000000, emissive: 0xffe2b8, emissiveIntensity: 6 }), false, false);
@@ -381,20 +407,24 @@ export class Level {
   }
 
   // -------- Kollision (Kreis gegen Raster + runde Hindernisse) --------
-  collide(pos, radius) {
+  // feet = Fußhöhe: Würfel sind nur Hindernis, solange man nicht darüber ist.
+  collide(pos, radius, feet = 0) {
     for (let it = 0; it < 2; it++) {
       const c0 = this.cx(pos.x), r0 = this.cz(pos.z);
       for (let r = r0 - 1; r <= r0 + 1; r++) for (let c = c0 - 1; c <= c0 + 1; c++) {
-        if (!this.isBlocked(c, r)) continue;
         const ch = (c >= 0 && r >= 0 && c < this.cols && r < this.rows) ? MAP[r][c] : '#';
-        if (ch === 'O' || ch === 'B') continue; // rund, unten
-        const minX = c * CELL, maxX = minX + CELL, minZ = r * CELL, maxZ = minZ + CELL;
+        let inset = 0;
+        if (ch === '#' || ch === 'M') inset = 0;
+        else if (ch === 'C') inset = 0.12;
+        else if (ch === 'W') { if (feet > CUBE_H - 0.32) continue; inset = 0.1; }
+        else continue;
+        const minX = c * CELL + inset, maxX = (c + 1) * CELL - inset, minZ = r * CELL + inset, maxZ = (r + 1) * CELL - inset;
         const qx = Math.max(minX, Math.min(pos.x, maxX));
         const qz = Math.max(minZ, Math.min(pos.z, maxZ));
-        let dx = pos.x - qx, dz = pos.z - qz;
+        const dx = pos.x - qx, dz = pos.z - qz;
         const d2 = dx * dx + dz * dz;
         if (d2 < radius * radius) {
-          if (d2 < 1e-8) { // Mittelpunkt in der Zelle – nach außen schieben
+          if (d2 < 1e-8) {
             const ex = [pos.x - minX, maxX - pos.x, pos.z - minZ, maxZ - pos.z];
             const m = Math.min(...ex), i = ex.indexOf(m);
             if (i === 0) pos.x = minX - radius; else if (i === 1) pos.x = maxX + radius;
@@ -417,6 +447,44 @@ export class Level {
     }
   }
 
+  // Bodenhöhe unter dem Spieler (Würfel)
+  groundAt(x, z, radius, feet) {
+    let g = 0;
+    const c0 = this.cx(x), r0 = this.cz(z), rr = radius * 0.55;
+    for (let r = r0 - 1; r <= r0 + 1; r++) for (let c = c0 - 1; c <= c0 + 1; c++) {
+      if (c < 0 || r < 0 || c >= this.cols || r >= this.rows || MAP[r][c] !== 'W') continue;
+      if (feet < CUBE_H - 0.35) continue;
+      const minX = c * CELL + 0.1, maxX = (c + 1) * CELL - 0.1, minZ = r * CELL + 0.1, maxZ = (r + 1) * CELL - 0.1;
+      const qx = Math.max(minX, Math.min(x, maxX)), qz = Math.max(minZ, Math.min(z, maxZ));
+      if ((x - qx) ** 2 + (z - qz) ** 2 < rr * rr) g = Math.max(g, CUBE_H);
+    }
+    return g;
+  }
+
+  // -------- Explosive Fässer --------
+  restoreBarrel(b) {
+    if (b.alive) return;
+    b.alive = true;
+    b.hp = 25;
+    this.group.add(b.mesh, b.top);
+    this.colliders.push(b.mesh);
+    this.circles.push(b.circle);
+    this.blocked[b.r * this.cols + b.c] = 1;
+    if (!this.virtual.includes(b.light)) this.virtual.push(b.light);
+    this.flowCell = -1;
+  }
+  removeBarrel(b) {
+    if (!b.alive) return;
+    b.alive = false;
+    this.group.remove(b.mesh, b.top);
+    this.colliders = this.colliders.filter((m) => m !== b.mesh);
+    this.circles = this.circles.filter((o) => o !== b.circle);
+    this.blocked[b.r * this.cols + b.c] = 0;
+    this.virtual = this.virtual.filter((v) => v !== b.light);
+    this.flowCell = -1;
+  }
+  resetBarrels() { for (const b of this.barrels) this.restoreBarrel(b); }
+
   // Sichtlinie im Raster (DDA). Liefert true, wenn frei.
   los(ax, az, bx, bz, ignoreLow = false) {
     let x = ax / CELL, z = az / CELL;
@@ -436,39 +504,48 @@ export class Level {
     return true;
   }
 
-  // Dijkstra-Flussfeld zum Spieler
+  // Dijkstra-Flussfeld zum Spieler (binärer Heap)
   updateFlow(px, pz) {
-    const c0 = this.cx(px), r0 = this.cz(pz);
+    const c0 = Math.max(0, Math.min(this.cols - 1, this.cx(px))), r0 = Math.max(0, Math.min(this.rows - 1, this.cz(pz)));
     const idx = r0 * this.cols + c0;
     if (idx === this.flowCell) return;
     this.flowCell = idx;
-    const N = this.rows * this.cols;
-    const dist = this.flow;
+    const dist = this.flow, heap = this.heap, cols = this.cols;
     dist.fill(1e9);
-    if (this.isBlocked(c0, r0)) return;
     dist[idx] = 0;
-    const open = [idx];
-    const nb = [[1, 0, 1], [-1, 0, 1], [0, 1, 1], [0, -1, 1], [1, 1, 1.414], [1, -1, 1.414], [-1, 1, 1.414], [-1, -1, 1.414]];
-    while (open.length) {
-      // kleinstes Element (Liste ist klein)
-      let bi = 0;
-      for (let i = 1; i < open.length; i++) if (dist[open[i]] < dist[open[bi]]) bi = i;
-      const cur = open[bi];
-      open[bi] = open[open.length - 1]; open.pop();
-      const c = cur % this.cols, r = (cur / this.cols) | 0;
-      for (const [dc, dr, w] of nb) {
+    let n = 0;
+    const push = (i) => {
+      let k = n++; heap[k] = i;
+      while (k > 0) { const p = (k - 1) >> 1; if (dist[heap[p]] <= dist[heap[k]]) break; const t = heap[p]; heap[p] = heap[k]; heap[k] = t; k = p; }
+    };
+    const pop = () => {
+      const top = heap[0]; heap[0] = heap[--n];
+      let k = 0;
+      for (;;) {
+        const l = 2 * k + 1, r = l + 1; let m = k;
+        if (l < n && dist[heap[l]] < dist[heap[m]]) m = l;
+        if (r < n && dist[heap[r]] < dist[heap[m]]) m = r;
+        if (m === k) break;
+        const t = heap[m]; heap[m] = heap[k]; heap[k] = t; k = m;
+      }
+      return top;
+    };
+    push(idx);
+    const nb = NB;
+    while (n > 0) {
+      const cur = pop();
+      const c = cur % cols, r = (cur / cols) | 0;
+      const dc0 = dist[cur];
+      for (let q = 0; q < 8; q++) {
+        const dc = nb[q * 3], dr = nb[q * 3 + 1], w = nb[q * 3 + 2];
         const nc = c + dc, nr = r + dr;
         if (this.isBlocked(nc, nr)) continue;
         if (dc && dr && (this.isBlocked(c + dc, r) || this.isBlocked(c, r + dr))) continue;
-        const ni = nr * this.cols + nc;
-        const nd = dist[cur] + w;
-        if (nd < dist[ni]) {
-          if (dist[ni] >= 1e9) open.push(ni);
-          dist[ni] = nd;
-        }
+        const ni = nr * cols + nc;
+        const nd = dc0 + w;
+        if (nd < dist[ni] - 1e-6) { dist[ni] = nd; if (n < heap.length) push(ni); }
       }
     }
-    void N;
   }
 
   // Richtung entlang des Flussfelds
@@ -492,6 +569,8 @@ export class Level {
 }
 
 // ---------- Geometrie-Helfer ----------
+const NB = [1, 0, 1, -1, 0, 1, 0, 1, 1, 0, -1, 1, 1, 1, 1.414, 1, -1, 1.414, -1, 1, 1.414, -1, -1, 1.414];
+
 function quad(a, b, y0, y1, n, uvScale, vSize) {
   const geo = new THREE.BufferGeometry();
   const p = [a[0], y0, a[1], b[0], y0, b[1], b[0], y1, b[1], a[0], y1, a[1]];

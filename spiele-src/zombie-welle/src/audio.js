@@ -454,4 +454,144 @@ export class AudioEngine {
     o.connect(bp); o2.connect(bp); bp.connect(g).connect(out);
     o.start(t); o2.start(t); o.stop(t + 1); o2.stop(t + 1);
   }
+
+  // ---------- Etappe 2: weitere Waffen ----------
+  shotgun() {
+    if (!this.ready) return;
+    const ctx = this.ctx, t = this.t;
+    const out = this._out(null, 0.65, 1);
+    const n = this._noiseSrc();
+    const lp = ctx.createBiquadFilter(); lp.type = 'lowpass';
+    lp.frequency.setValueAtTime(6000, t); lp.frequency.exponentialRampToValueAtTime(400, t + 0.3);
+    const ng = ctx.createGain();
+    this._env(ng.gain, t, 0.001, 1.5, 0.32);
+    n.connect(lp).connect(ng).connect(out);
+    n.start(t, Math.random()); n.stop(t + 0.4);
+    const o = ctx.createOscillator(); o.type = 'sine';
+    o.frequency.setValueAtTime(120, t); o.frequency.exponentialRampToValueAtTime(32, t + 0.3);
+    const og = ctx.createGain();
+    this._env(og.gain, t, 0.002, 1.8, 0.32);
+    o.connect(og).connect(out); o.start(t); o.stop(t + 0.36);
+    const n2 = this._noiseSrc();
+    const bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 1800; bp.Q.value = 0.6;
+    const g2 = ctx.createGain();
+    this._env(g2.gain, t, 0.0005, 1.1, 0.06);
+    n2.connect(bp).connect(g2).connect(out); n2.start(t, Math.random()); n2.stop(t + 0.08);
+  }
+  pump(back = true) {
+    if (!this.ready) return;
+    const ctx = this.ctx, t = this.t;
+    const out = this._out(null, 0.15, 1);
+    const n = this._noiseSrc();
+    const bp = ctx.createBiquadFilter(); bp.type = 'bandpass';
+    bp.frequency.setValueAtTime(back ? 2200 : 1500, t); bp.frequency.linearRampToValueAtTime(back ? 1300 : 2400, t + 0.09); bp.Q.value = 2;
+    const g = ctx.createGain();
+    this._env(g.gain, t, 0.01, 0.35, 0.08);
+    n.connect(bp).connect(g).connect(out); n.start(t, Math.random()); n.stop(t + 0.12);
+    this._click(t + 0.09, back ? 1200 : 900, 0.6);
+    this._click(t + 0.1, 3000, 0.3);
+  }
+  shellIn() {
+    if (!this.ready) return;
+    const t = this.t;
+    this._click(t, 1700, 0.35);
+    this._click(t + 0.05, 900, 0.3);
+  }
+  rocketFire() {
+    if (!this.ready) return;
+    const ctx = this.ctx, t = this.t;
+    const out = this._out(null, 0.6, 1);
+    const n = this._noiseSrc();
+    const bp = ctx.createBiquadFilter(); bp.type = 'bandpass';
+    bp.frequency.setValueAtTime(400, t); bp.frequency.exponentialRampToValueAtTime(2600, t + 0.5); bp.Q.value = 0.7;
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(1.2, t + 0.03); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.9);
+    n.connect(bp).connect(g).connect(out); n.start(t, Math.random()); n.stop(t + 1);
+    const o = ctx.createOscillator(); o.type = 'sine';
+    o.frequency.setValueAtTime(90, t); o.frequency.exponentialRampToValueAtTime(40, t + 0.25);
+    const og = ctx.createGain();
+    this._env(og.gain, t, 0.003, 1.4, 0.3);
+    o.connect(og).connect(out); o.start(t); o.stop(t + 0.35);
+  }
+  rocketLoad() {
+    if (!this.ready) return;
+    const t = this.t;
+    this._click(t + 0.5, 700, 0.5); this._click(t + 0.56, 1400, 0.35); this._click(t + 1.2, 2200, 0.4);
+  }
+  explosion(pos, big = 1) {
+    if (!this.ready) return;
+    const ctx = this.ctx, t = this.t;
+    const out = this._out(pos, 0.9, 1.6 * big);
+    const n = this._noiseSrc(this.brownBuf);
+    const lp = ctx.createBiquadFilter(); lp.type = 'lowpass';
+    lp.frequency.setValueAtTime(3000, t); lp.frequency.exponentialRampToValueAtTime(180, t + 1.2);
+    const g = ctx.createGain();
+    this._env(g.gain, t, 0.004, 2.2, 1.6);
+    n.connect(lp).connect(g).connect(out); n.start(t, Math.random() * 2); n.stop(t + 1.8);
+    const n2 = this._noiseSrc();
+    const lp2 = ctx.createBiquadFilter(); lp2.type = 'lowpass';
+    lp2.frequency.setValueAtTime(8000, t); lp2.frequency.exponentialRampToValueAtTime(600, t + 0.4);
+    const g2 = ctx.createGain();
+    this._env(g2.gain, t, 0.001, 1.4, 0.45);
+    n2.connect(lp2).connect(g2).connect(out); n2.start(t, Math.random()); n2.stop(t + 0.5);
+    const o = ctx.createOscillator(); o.type = 'sine';
+    o.frequency.setValueAtTime(70, t); o.frequency.exponentialRampToValueAtTime(22, t + 0.9);
+    const og = ctx.createGain();
+    this._env(og.gain, t, 0.005, 2.4, 1.0);
+    o.connect(og).connect(out); o.start(t); o.stop(t + 1.1);
+    // Trümmer
+    for (let i = 0; i < 6; i++) this._click(t + 0.25 + Math.random() * 0.8, 600 + Math.random() * 2500, 0.15, pos);
+  }
+  grenadeBounce(pos, v = 1) {
+    if (!this.ready) return;
+    const ctx = this.ctx, t = this.t;
+    const out = this._out(pos, 0.2, Math.min(1, v));
+    const o = ctx.createOscillator(); o.type = 'triangle'; o.frequency.value = 520 + Math.random() * 200;
+    const g = ctx.createGain();
+    this._env(g.gain, t, 0.001, 0.35, 0.09);
+    o.connect(g).connect(out); o.start(t); o.stop(t + 0.12);
+    this._click(t, 1800, 0.3, pos);
+  }
+  pin() {
+    if (!this.ready) return;
+    const t = this.t;
+    this._ting(t, 3800, 0.08, null);
+    this._click(t + 0.02, 2600, 0.3);
+    this._click(t + 0.22, 1400, 0.25);
+  }
+  throwWhoosh() {
+    if (!this.ready) return;
+    const ctx = this.ctx, t = this.t;
+    const out = this._out(null, 0.1, 1);
+    const n = this._noiseSrc();
+    const bp = ctx.createBiquadFilter(); bp.type = 'bandpass';
+    bp.frequency.setValueAtTime(500, t); bp.frequency.exponentialRampToValueAtTime(1800, t + 0.15); bp.Q.value = 1.2;
+    const g = ctx.createGain();
+    this._env(g.gain, t, 0.04, 0.3, 0.15);
+    n.connect(bp).connect(g).connect(out); n.start(t, Math.random()); n.stop(t + 0.25);
+  }
+  switchWeapon() {
+    if (!this.ready) return;
+    const t = this.t;
+    this._click(t, 1100, 0.3); this._click(t + 0.07, 2400, 0.25);
+  }
+  jump() {
+    if (!this.ready) return;
+    this.step(0.1);
+  }
+  land(h = 1) {
+    if (!this.ready) return;
+    const ctx = this.ctx, t = this.t;
+    const out = this._out(null, 0.15, 1);
+    const n = this._noiseSrc(this.brownBuf);
+    const lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 300;
+    const g = ctx.createGain();
+    this._env(g.gain, t, 0.003, 0.5 * Math.min(1.5, h), 0.14);
+    n.connect(lp).connect(g).connect(out); n.start(t, Math.random() * 3); n.stop(t + 0.2);
+  }
+  ammo() {
+    if (!this.ready) return;
+    const t = this.t;
+    this._click(t, 1500, 0.4); this._click(t + 0.06, 2600, 0.35); this._click(t + 0.12, 1200, 0.3);
+  }
 }
