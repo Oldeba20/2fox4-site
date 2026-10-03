@@ -1,7 +1,7 @@
 ---
 /**
  * Spielauswahl der 404-Seite („404-Arcade“).
- * Buttons mit data-pick="fox|krawumm" — die Umschaltung macht das Skript in 404.astro.
+ * Buttons mit data-pick="fox|krawumm|flitzer" — die Umschaltung macht das Skript in 404.astro.
  * (Zombie-Welle am 03.10.2026 entfernt – Jugendschutz.)
  */
 import { foxSVG } from "../../scripts/arcade/fox-svg.js";
@@ -46,7 +46,6 @@ const hen = `<svg viewBox="-60 -45 118 80" xmlns="http://www.w3.org/2000/svg"><g
     </button>
     <button class="cart cart-krawumm" type="button" data-pick="krawumm">
       <span class="cart-key" aria-hidden="true">2</span>
-      <span class="cart-new">Neu</span>
       <span class="cart-scene scene-krawumm" aria-hidden="true">
         <img src="/images/arcade/krawumm-karte.webp" alt="" width="640" height="358" loading="lazy" decoding="async" />
       </span>
@@ -58,9 +57,23 @@ const hen = `<svg viewBox="-60 -45 118 80" xmlns="http://www.w3.org/2000/svg"><g
       </span>
       <span class="cart-cta"><span aria-hidden="true">▶</span> Spielen</span>
     </button>
+    <button class="cart cart-flitzer" type="button" data-pick="flitzer">
+      <span class="cart-key" aria-hidden="true">3</span>
+      <span class="cart-new">Neu</span>
+      <span class="cart-scene scene-flitzer" aria-hidden="true">
+        <img src="/images/arcade/fuchsflitzer-karte.webp" alt="" width="640" height="358" loading="lazy" decoding="async" />
+      </span>
+      <span class="cart-body">
+        <span class="cart-title">Fuchs-Flitzer</span>
+        <span class="cart-desc">3D-Kartrennen gegen fünf Tiere. Driften, Turbo zünden, Fuchsrakete abfeuern – drei Runden auf dem Fuchsbau-Ring.</span>
+        <span class="cart-tags"><span>3D</span><span>6 Fahrer</span><span>Mit Sprecher</span><span>Auch am Handy</span></span>
+        <span class="cart-best" data-flitzer-best hidden>Deine Bestzeit: <b>0:00</b></span>
+      </span>
+      <span class="cart-cta"><span aria-hidden="true">▶</span> Spielen</span>
+    </button>
   </div>
 
-  <p class="arcade-foot">Tipp: Drück einfach Taste <kbd>1</kbd> oder <kbd>2</kbd>.</p>
+  <p class="arcade-foot">Tipp: Drück einfach Taste <kbd>1</kbd>, <kbd>2</kbd> oder <kbd>3</kbd>.</p>
 </div>
 
 <style>
@@ -134,8 +147,8 @@ const hen = `<svg viewBox="-60 -45 118 80" xmlns="http://www.w3.org/2000/svg"><g
 
   .arcade-cards {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    max-width: 760px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    max-width: 960px;
     margin: 0 auto;
     gap: 1.1rem;
     perspective: 900px;
@@ -161,6 +174,7 @@ const hen = `<svg viewBox="-60 -45 118 80" xmlns="http://www.w3.org/2000/svg"><g
     box-shadow: 0 10px 30px -12px rgba(0, 0, 0, 0.8);
   }
   .cart-krawumm { --glow: 255, 194, 58; }
+  .cart-flitzer { --glow: 92, 196, 255; }
   .cart:hover,
   .cart:focus-visible {
     border-color: rgba(var(--glow), 1);
@@ -252,6 +266,17 @@ const hen = `<svg viewBox="-60 -45 118 80" xmlns="http://www.w3.org/2000/svg"><g
     animation: k-zoom 9s ease-in-out infinite alternate;
   }
   @keyframes k-zoom { from { transform: scale(1); } to { transform: scale(1.12) translateX(2%); } }
+
+  /* ---------- Szene Fuchs-Flitzer ---------- */
+  .scene-flitzer { background: #8cc8ff; }
+  .scene-flitzer img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform-origin: 50% 60%;
+    animation: k-zoom 7s ease-in-out infinite alternate;
+  }
 
   /* ---------- Szene Fuchs ---------- */
   .scene-fox {
@@ -351,7 +376,7 @@ const hen = `<svg viewBox="-60 -45 118 80" xmlns="http://www.w3.org/2000/svg"><g
     .arcade-foot, .cart-key { display: none; }
   }
   @media (prefers-reduced-motion: reduce) {
-    .arcade-floor, .arcade-blink, .f-hen, .f-hen :global(.hen-wing), .f-fox, .scene-krawumm img { animation: none; }
+    .arcade-floor, .arcade-blink, .f-hen, .f-hen :global(.hen-wing), .f-fox, .scene-krawumm img, .scene-flitzer img { animation: none; }
     .f-hen.n1 { left: 20%; }
     .f-hen.n2 { left: 60%; }
     .f-hen.n3 { left: 80%; }

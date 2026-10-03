@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Fuchs-Flitzer – 2FOX4 Arcade</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<style>
+  :root {
+    --o: #ff6b35; --o2: #e2531f; --cream: #fff5ea; --ink: #1d1410; --y: #ffd23a; --b: #3d7cff;
+    --font: "Arial Black", "Arial Bold", Impact, system-ui, sans-serif;
+    --ui: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; overflow: hidden; background: #8cc8ff; color: #fff; font-family: var(--ui); user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent; touch-action: none; }
+  #stage { position: fixed; inset: 0; }
+  #stage canvas { display: block; width: 100%; height: 100%; }
+  .outline { text-shadow: -2px -2px 0 var(--ink), 2px -2px 0 var(--ink), -2px 2px 0 var(--ink), 2px 2px 0 var(--ink), 0 4px 0 var(--ink); }
+  button { font: inherit; cursor: pointer; }
+
+  /* ---------- HUD ---------- */
+  .hud { position: fixed; inset: 0; pointer-events: none; opacity: 0; transition: opacity .3s; }
+  body.racing .hud { opacity: 1; }
+  .lapbox { position: absolute; left: max(2vw, env(safe-area-inset-left)); top: 2.2vh; font-family: var(--font); line-height: 1; }
+  .lapbox .lap { font-size: clamp(18px, 4vh, 40px); }
+  .lapbox .lap small { font-size: .5em; color: var(--y); letter-spacing: .08em; }
+  .lapbox .time { font-size: clamp(13px, 2.5vh, 24px); margin-top: .35em; color: var(--cream); font-variant-numeric: tabular-nums; }
+  .lapbox .laps { font-family: var(--ui); font-weight: 800; font-size: clamp(10px, 1.5vh, 14px); margin-top: .5em; color: rgba(255,255,255,.85); text-shadow: 0 1px 0 var(--ink), 0 0 4px var(--ink); font-variant-numeric: tabular-nums; }
+  .lapbox .laps div { animation: pop .4s; }
+  .place { position: absolute; right: max(2.4vw, env(safe-area-inset-right)); bottom: 2.6vh; font-family: var(--font); line-height: .85; text-align: right; }
+  .place .n { font-size: clamp(54px, 15vh, 150px); color: var(--y); display: inline-block; transform-origin: 70% 80%; }
+  .place .n.bump { animation: bump .35s; }
+  .place .n.p1 { color: var(--y); } .place .n.p2 { color: #e9eef5; } .place .n.p3 { color: #ffb36b; } .place .n.pX { color: #fff; }
+  .place .s { font-size: clamp(18px, 4.5vh, 44px); color: #fff; }
+  .speedo { position: absolute; right: max(2.4vw, env(safe-area-inset-right)); bottom: calc(2.6vh + clamp(54px, 15vh, 150px)); font-family: var(--font); font-size: clamp(12px, 2.2vh, 22px); text-align: right; color: var(--cream); font-variant-numeric: tabular-nums; }
+  .speedo small { font-size: .55em; color: var(--y); }
+  .itembox { position: absolute; left: 50%; top: 1.6vh; transform: translateX(-50%); width: clamp(64px, 11vh, 108px); height: clamp(64px, 11vh, 108px); border-radius: 22%; background: radial-gradient(circle at 50% 35%, rgba(255,255,255,.35), rgba(255,255,255,.1) 60%), rgba(29,20,16,.45); border: 4px solid #fff; box-shadow: 0 0 0 3px var(--ink), 0 6px 0 var(--ink), inset 0 0 18px rgba(255,107,53,.6); display: grid; place-items: center; }
+  .itembox svg { width: 78%; height: 78%; filter: drop-shadow(0 3px 0 rgba(0,0,0,.35)); }
+  .itembox.rolling svg { animation: wob .12s infinite; }
+  .itembox.ready { animation: glow 1s infinite; }
+  .itembox .key { position: absolute; bottom: -1.7em; left: 50%; transform: translateX(-50%); font-family: var(--ui); font-weight: 800; font-size: clamp(9px, 1.3vh, 12px); white-space: nowrap; color: #fff; text-shadow: 0 1px 0 var(--ink), 0 0 4px var(--ink); opacity: 0; }
+  .itembox.ready .key { opacity: 1; }
+  #minimap { position: absolute; left: max(1.6vw, env(safe-area-inset-left)); bottom: 2vh; width: clamp(110px, 24vh, 220px); height: clamp(110px, 24vh, 220px); }
+  body.touch #minimap { bottom: auto; top: 19vh; width: 18vh; height: 18vh; }
+  .banner { position: absolute; left: 0; right: 0; top: 24vh; text-align: center; font-family: var(--font); pointer-events: none; }
+  .banner .big { display: inline-block; font-size: clamp(48px, 16vh, 170px); line-height: 1; color: #fff; opacity: 0; }
+  .banner .big.show { animation: count .9s ease-out forwards; }
+  .banner .big.go { color: var(--y); }
+  .banner .big.stay { animation: popin .5s ease-out forwards; }
+  .banner .sub { font-size: clamp(14px, 3vh, 30px); color: var(--y); margin-top: .3em; opacity: 0; transition: opacity .3s; }
+  .banner .sub.show { opacity: 1; }
+  .quip { position: absolute; left: 0; right: 0; top: 16vh; text-align: center; font-family: var(--font); font-size: clamp(16px, 3.6vh, 36px); color: #fff; opacity: 0; transform: scale(.7); transition: opacity .2s, transform .2s; }
+  .quip.show { opacity: 1; transform: none; }
+  .wrongway { position: absolute; left: 0; right: 0; top: 40vh; text-align: center; font-family: var(--font); font-size: clamp(18px, 4vh, 40px); color: #ff4a3a; opacity: 0; }
+  .wrongway.show { opacity: 1; animation: blink .5s infinite; }
+
+  @keyframes count { 0% { opacity: 0; transform: scale(2.2); } 20% { opacity: 1; transform: scale(1); } 80% { opacity: 1; transform: scale(.95); } 100% { opacity: 0; transform: scale(.6); } }
+  @keyframes popin { 0% { opacity: 0; transform: scale(2); } 60% { opacity: 1; transform: scale(.92); } 100% { opacity: 1; transform: scale(1); } }
+  @keyframes bump { 0% { transform: scale(1.5) rotate(-6deg); } 100% { transform: none; } }
+  @keyframes pop { 0% { transform: scale(1.4); color: var(--y); } 100% { transform: none; } }
+  @keyframes wob { 0% { transform: translateY(-4px) rotate(-8deg); } 50% { transform: translateY(4px) rotate(8deg); } 100% { transform: translateY(-4px) rotate(-8deg); } }
+  @keyframes glow { 50% { box-shadow: 0 0 0 3px var(--ink), 0 6px 0 var(--ink), inset 0 0 26px rgba(255,210,58,.9), 0 0 24px rgba(255,210,58,.8); } }
+  @keyframes blink { 50% { opacity: .3; } }
+
+  /* ---------- Menüs ---------- */
+  .screen { position: fixed; inset: 0; display: none; align-items: center; justify-content: center; padding: 3vh 4vw; }
+  .screen.show { display: flex; }
+  #title { background: linear-gradient(180deg, rgba(29,20,16,0) 30%, rgba(29,20,16,.55)); flex-direction: column; justify-content: flex-end; padding-bottom: 6vh; }
+  .logo-wrap { position: absolute; top: 5vh; left: 0; right: 0; text-align: center; }
+  .logo-wrap .brand { width: clamp(120px, 22vw, 240px); filter: drop-shadow(0 4px 0 var(--ink)); }
+  .gtitle { font-family: var(--font); font-size: clamp(38px, 11vh, 110px); line-height: .9; letter-spacing: -.01em; margin: .1em 0 0; color: #fff; transform: rotate(-3deg); }
+  .gtitle span { color: var(--o); }
+  .gsub { font-family: var(--font); font-size: clamp(12px, 2.4vh, 22px); color: var(--y); margin-top: .7em; }
+  .panel { background: rgba(29,20,16,.78); border: 3px solid rgba(255,255,255,.9); border-radius: 18px; box-shadow: 0 6px 0 var(--ink); padding: clamp(12px, 2.2vh, 22px) clamp(14px, 2.5vw, 28px); backdrop-filter: blur(6px); text-align: center; max-width: 640px; width: 100%; }
+  .cls { display: flex; gap: 10px; justify-content: center; margin-bottom: 1.6vh; flex-wrap: wrap; }
+  .cls button { flex: 1; min-width: 120px; padding: .6em .4em; border-radius: 12px; border: 3px solid rgba(255,255,255,.35); background: rgba(255,255,255,.08); color: #fff; font-family: var(--font); font-size: clamp(13px, 2.1vh, 19px); }
+  .cls button small { display: block; font-family: var(--ui); font-weight: 600; font-size: .62em; opacity: .75; margin-top: .25em; }
+  .cls button.on { border-color: var(--o); background: rgba(255,107,53,.28); box-shadow: 0 0 0 2px var(--o) inset; }
+  .go { display: block; width: 100%; padding: .55em; border: 0; border-radius: 14px; background: linear-gradient(var(--o), var(--o2)); color: #fff; font-family: var(--font); font-size: clamp(20px, 3.8vh, 34px); box-shadow: 0 5px 0 #8a2e0f, 0 0 0 3px var(--ink); text-shadow: 0 2px 0 rgba(0,0,0,.35); transition: transform .1s; }
+  .go:hover { transform: translateY(-2px) scale(1.01); }
+  .go:active { transform: translateY(3px); box-shadow: 0 2px 0 #8a2e0f, 0 0 0 3px var(--ink); }
+  .keys { display: flex; flex-wrap: wrap; gap: 6px 16px; justify-content: center; font-size: clamp(11px, 1.6vh, 14px); color: rgba(255,255,255,.85); margin-top: 1.6vh; }
+  .keys b { display: inline-block; min-width: 1.8em; padding: 1px 6px; border-radius: 5px; background: #fff; color: var(--ink); font-weight: 800; margin-right: 4px; box-shadow: 0 2px 0 rgba(0,0,0,.4); }
+  .best { margin-top: 1.2vh; font-weight: 800; color: var(--y); font-size: clamp(11px, 1.6vh, 15px); min-height: 1.2em; }
+  .loading { font-family: var(--font); color: #fff; font-size: 18px; }
+  .bar { width: 260px; height: 10px; border-radius: 6px; background: rgba(0,0,0,.3); overflow: hidden; margin: 12px auto 0; border: 2px solid #fff; }
+  .bar i { display: block; height: 100%; width: 0; background: var(--o); transition: width .2s; }
+
+  #results { background: rgba(29,20,16,.35); }
+  #results h2 { font-family: var(--font); font-size: clamp(26px, 6vh, 56px); margin: 0 0 .3em; color: var(--y); }
+  .res { width: 100%; border-collapse: collapse; font-weight: 800; font-size: clamp(12px, 2vh, 18px); margin-bottom: 1.6vh; }
+  .res td { padding: .35em .5em; border-bottom: 1px solid rgba(255,255,255,.15); text-align: left; }
+  .res td:first-child { font-family: var(--font); width: 2.2em; color: var(--y); }
+  .res td:last-child { text-align: right; font-variant-numeric: tabular-nums; }
+  .res tr.me td { background: rgba(255,107,53,.3); }
+  .res .dot { display: inline-block; width: .8em; height: .8em; border-radius: 50%; margin-right: .5em; vertical-align: -.05em; box-shadow: 0 0 0 2px var(--ink); }
+  .row2 { display: flex; gap: 10px; }
+  .row2 .go { font-size: clamp(16px, 2.8vh, 26px); }
+  .go.alt { background: rgba(255,255,255,.12); box-shadow: 0 5px 0 rgba(0,0,0,.4), 0 0 0 3px rgba(255,255,255,.5); }
+  .newbest { color: var(--y); font-family: var(--font); font-size: clamp(14px, 2.4vh, 22px); margin-bottom: 1vh; animation: pop .6s; }
+
+  #pause { background: rgba(29,20,16,.55); }
+  #pause h2 { font-family: var(--font); font-size: clamp(30px, 7vh, 64px); margin: 0 0 .4em; }
+
+  .corner { position: fixed; top: 1.4vh; right: max(1.4vw, env(safe-area-inset-right)); display: flex; gap: 8px; z-index: 20; }
+  .corner button { width: 40px; height: 40px; border-radius: 12px; border: 2px solid rgba(255,255,255,.8); background: rgba(29,20,16,.5); color: #fff; display: grid; place-items: center; padding: 0; }
+  .corner button svg { width: 22px; height: 22px; }
+  body.racing .corner { opacity: .7; }
+
+  /* ---------- Touch ---------- */
+  .tpad { position: fixed; inset: auto 0 0 0; height: 40vh; display: none; pointer-events: none; }
+  body.touch.racing .tpad { display: block; }
+  .tbtn { position: absolute; pointer-events: auto; border-radius: 50%; border: 3px solid rgba(255,255,255,.85); background: rgba(29,20,16,.35); color: #fff; font-family: var(--font); display: grid; place-items: center; font-size: 14px; touch-action: none; }
+  .tbtn.on { background: rgba(255,107,53,.65); }
+  .tbtn svg { width: 46%; height: 46%; }
+  #tl { left: max(3vw, env(safe-area-inset-left)); bottom: 4vh; width: 19vh; height: 19vh; }
+  #tr { left: calc(max(3vw, env(safe-area-inset-left)) + 21vh); bottom: 4vh; width: 19vh; height: 19vh; }
+  #td { right: max(3vw, env(safe-area-inset-right)); bottom: 4vh; width: 21vh; height: 21vh; }
+  #ti { right: calc(max(3vw, env(safe-area-inset-right)) + 22vh); bottom: 15vh; width: 14vh; height: 14vh; }
+  #tb { right: calc(max(3vw, env(safe-area-inset-right)) + 22vh); bottom: 2vh; width: 11vh; height: 11vh; font-size: 11px; }
+  body.touch .place { bottom: auto; top: 13vh; }
+  body.touch .place .n { font-size: 11vh; }
+  body.touch .speedo { display: none; }
+  body.touch .itembox { left: auto; right: calc(max(2vw, env(safe-area-inset-right)) + 104px); transform: none; }
+</style>
+</head>
+<body>
+<div id="stage"></div>
+
+<div class="hud">
+  <div class="lapbox outline">
+    <div class="lap">RUNDE <span id="lap">1</span><small>/3</small></div>
+    <div class="time" id="time">0:00.00</div>
+    <div class="laps" id="laps"></div>
+  </div>
+  <div class="itembox" id="itembox"><span class="key" id="itemkey">E / X</span></div>
+  <canvas id="minimap" width="440" height="440"></canvas>
+  <div class="speedo outline"><span id="kmh">0</span> <small>KM/H</small></div>
+  <div class="place outline"><span class="n" id="place">6</span><span class="s">.</span></div>
+  <div class="banner outline"><div class="big" id="big"></div><div class="sub" id="sub"></div></div>
+  <div class="quip outline" id="quip"></div>
+  <div class="wrongway outline" id="wrong">FALSCHE RICHTUNG!</div>
+</div>
+
+<div class="tpad">
+  <div class="tbtn" id="tl"><svg viewBox="0 0 24 24"><path d="M15 4 7 12l8 8" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tbtn" id="tr"><svg viewBox="0 0 24 24"><path d="m9 4 8 8-8 8" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tbtn" id="td">DRIFT</div>
+  <div class="tbtn" id="ti">ITEM</div>
+  <div class="tbtn" id="tb">BREMSE</div>
+</div>
+
+<div class="screen show" id="loading"><div><div class="loading outline">Fuchs-Flitzer lädt …</div><div class="bar"><i id="loadbar"></i></div></div></div>
+
+<div class="screen" id="title">
+  <div class="logo-wrap">
+    <img class="brand" src="logo.svg" alt="2FOX4">
+    <h1 class="gtitle outline">FUCHS-<span>FLITZER</span></h1>
+    <div class="gsub outline">Fuchsbau-Ring · 3 Runden · 6 Fahrer</div>
+  </div>
+  <div class="panel">
+    <div class="cls" id="cls">
+      <button data-c="0">Gemütlich<small>entspannt cruisen</small></button>
+      <button data-c="1" class="on">Flott<small>der Standard</small></button>
+      <button data-c="2">Rasant<small>für Profis</small></button>
+    </div>
+    <button class="go" id="start">LOS GEHT'S!</button>
+    <div class="keys" id="keyhelp">
+      <span><b>W</b><b>↑</b>Gas</span><span><b>S</b><b>↓</b>Bremse</span><span><b>A</b><b>D</b>Lenken</span><span><b>Leertaste</b>Hüpfen &amp; Driften</span><span><b>E</b><b>X</b>Item</span><span><b>P</b>Pause</span>
+    </div>
+    <div class="best" id="bestline"></div>
+  </div>
+</div>
+
+<div class="screen" id="pause"><div class="panel"><h2 class="outline">PAUSE</h2>
+  <div class="row2"><button class="go" id="resume">WEITER</button><button class="go alt" id="quit">MENÜ</button></div></div></div>
+
+<div class="screen" id="results"><div class="panel">
+  <h2 class="outline" id="restitle">ZIEL!</h2>
+  <div class="newbest" id="newbest" hidden>NEUE BESTZEIT!</div>
+  <table class="res" id="restable"></table>
+  <div class="row2"><button class="go" id="again">NOCHMAL</button><button class="go alt" id="menu">MENÜ</button></div>
+</div></div>
+
+<div class="corner">
+  <button id="snd" title="Ton an/aus (M)" aria-label="Ton an/aus"></button>
+  <button id="fs" title="Vollbild" aria-label="Vollbild"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+</div>
+
+<script type="module" src="game.js"></script>
+</body>
+</html>
