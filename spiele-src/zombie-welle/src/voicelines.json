@@ -1,0 +1,275 @@
+{
+ "kill": [
+  [
+   "k01",
+   "Feierabend.",
+   "Feierabend."
+  ],
+  [
+   "k02",
+   "Nächster!",
+   "Nächster!"
+  ],
+  [
+   "k03",
+   "404 – Zombie nicht gefunden.",
+   "Vier null vier. Zombie nicht gefunden."
+  ],
+  [
+   "k04",
+   "Ab in den Papierkorb.",
+   "Ab in den Papierkorb."
+  ],
+  [
+   "k05",
+   "Deine Sitzung ist abgelaufen.",
+   "Deine Sitzung ist abgelaufen."
+  ],
+  [
+   "k06",
+   "Weiterleitung ins Jenseits.",
+   "Weiterleitung ins Jenseits."
+  ],
+  [
+   "k07",
+   "Gelöscht. Ohne Backup.",
+   "Gelöscht. Ohne Backup."
+  ],
+  [
+   "k08",
+   "Und tschüss.",
+   "Und tschüss."
+  ],
+  [
+   "k09",
+   "Abgemeldet.",
+   "Abgemeldet."
+  ],
+  [
+   "k10",
+   "Absprungrate: hundert Prozent.",
+   "Absprungrate: hundert Prozent."
+  ],
+  [
+   "k11",
+   "Keine Rückerstattung.",
+   "Keine Rückerstattung."
+  ],
+  [
+   "k12",
+   "Der Nächste bitte.",
+   "Der Nächste, bitte."
+  ],
+  [
+   "k13",
+   "Zwischenspeicher geleert.",
+   "Zwischenspeicher geleert."
+  ],
+  [
+   "k14",
+   "Seite nicht gefunden – du auch nicht mehr.",
+   "Seite nicht gefunden. Du auch nicht mehr."
+  ]
+ ],
+ "head": [
+  [
+   "h01",
+   "Kopfsache.",
+   "Kopfsache."
+  ],
+  [
+   "h02",
+   "Volltreffer im Oberstübchen.",
+   "Volltreffer im Oberstübchen."
+  ],
+  [
+   "h03",
+   "Oberstübchen geräumt.",
+   "Oberstübchen geräumt."
+  ],
+  [
+   "h04",
+   "Kopf hoch! … ach nee.",
+   "Kopf hoch! ... Ach, nee."
+  ],
+  [
+   "h05",
+   "Da war wohl nicht viel drin.",
+   "Da war wohl nicht viel drin."
+  ]
+ ],
+ "gib": [
+  [
+   "g01",
+   "In Einzelteilen geliefert.",
+   "In Einzelteilen geliefert."
+  ],
+  [
+   "g02",
+   "Das kriegt keiner mehr zusammen.",
+   "Das kriegt keiner mehr zusammen."
+  ],
+  [
+   "g03",
+   "Konfetti!",
+   "Konfetti!"
+  ],
+  [
+   "g04",
+   "Bitte nicht wischen.",
+   "Bitte nicht wischen."
+  ],
+  [
+   "g05",
+   "Das gibt Ärger mit der Putzkolonne.",
+   "Das gibt Ärger mit der Putzkolonne."
+  ]
+ ],
+ "shotgun": [
+  [
+   "s01",
+   "Hallo, Nachbar.",
+   "Hallo, Nachbar."
+  ],
+  [
+   "s02",
+   "Aus nächster Nähe.",
+   "Aus nächster Nähe."
+  ],
+  [
+   "s03",
+   "Schrot und Korn.",
+   "Schrot und Korn."
+  ]
+ ],
+ "multi": [
+  [
+   "m01",
+   "Doppelt hält besser!",
+   "Doppelt hält besser!"
+  ],
+  [
+   "m02",
+   "Zwei auf einen Streich.",
+   "Zwei auf einen Streich!"
+  ]
+ ],
+ "streak": [
+  [
+   "r01",
+   "Das ist ein Massaker!",
+   "Das ist ein Massaker!"
+  ],
+  [
+   "r02",
+   "Ich bin warmgelaufen.",
+   "Ich bin warmgelaufen."
+  ],
+  [
+   "r03",
+   "Wer will noch mal?",
+   "Wer will noch mal?"
+  ]
+ ],
+ "hurt": [
+  [
+   "u01",
+   "Das gibt Abzüge in der B-Note.",
+   "Das gibt Abzüge in der B-Note."
+  ],
+  [
+   "u02",
+   "Autsch. Okay. Jetzt bin ich sauer.",
+   "Autsch. Okay. Jetzt bin ich sauer."
+  ]
+ ],
+ "wave": [
+  [
+   "w01",
+   "Da kommen noch mehr.",
+   "Da kommen noch mehr."
+  ],
+  [
+   "w02",
+   "Es wird voller.",
+   "Es wird voller."
+  ],
+  [
+   "w03",
+   "Pause vorbei.",
+   "Pause vorbei."
+  ]
+ ],
+ "start": [
+  [
+   "a01",
+   "Sie kommen …",
+   "Sie kommen."
+  ]
+ ],
+ "barrel": [
+  [
+   "b01",
+   "Vorsicht, Fass!",
+   "Vorsicht, Fass!"
+  ],
+  [
+   "b02",
+   "Das war mal ein Fass.",
+   "Das war mal ein Fass."
+  ]
+ ],
+ "nade": [
+  [
+   "n01",
+   "Fang!",
+   "Fang!"
+  ],
+  [
+   "n02",
+   "Kleines Geschenk!",
+   "Kleines Geschenk!"
+  ],
+  [
+   "n03",
+   "Granate!",
+   "Granate!"
+  ]
+ ],
+ "rocket": [
+  [
+   "x01",
+   "Post für dich.",
+   "Post für dich."
+  ],
+  [
+   "x02",
+   "Express-Lieferung.",
+   "Express-Lieferung."
+  ]
+ ],
+ "death": [
+  [
+   "d01",
+   "Das … war … unprofessionell.",
+   "Das ... war ... unprofessionell."
+  ],
+  [
+   "d02",
+   "Ich komme wieder. Als Zombie.",
+   "Ich komme wieder. Als Zombie."
+  ]
+ ],
+ "clear": [
+  [
+   "c01",
+   "Welle überstanden. Wer ist der Nächste?",
+   "Welle überstanden. Wer ist der Nächste?"
+  ],
+  [
+   "c02",
+   "Durchatmen. Nachladen. Weiter.",
+   "Durchatmen. Nachladen. Weiter."
+  ]
+ ]
+}

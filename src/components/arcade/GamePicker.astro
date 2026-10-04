@@ -1,8 +1,8 @@
 ---
 /**
  * Spielauswahl der 404-Seite („404-Arcade“).
- * Buttons mit data-pick="fox|krawumm|flitzer|orbit" — die Umschaltung macht das Skript in 404.astro.
- * (Zombie-Welle am 03.10.2026 entfernt – Jugendschutz.)
+ * Buttons mit data-pick="fox|krawumm|flitzer|orbit|zombie" — die Umschaltung macht das Skript in 404.astro.
+ * Zombie-Welle: seit 04.10.2026 jugendfreie Version (Glitch-Darstellung), nur Desktop – auf Touch-Geräten ausgeblendet.
  */
 import { foxSVG } from "../../scripts/arcade/fox-svg.js";
 const fox = foxSVG("normal", true);
@@ -72,7 +72,6 @@ const hen = `<svg viewBox="-60 -45 118 80" xmlns="http://www.w3.org/2000/svg"><g
     </button>
     <button class="cart cart-orbit" type="button" data-pick="orbit">
       <span class="cart-key" aria-hidden="true">4</span>
-      <span class="cart-new">Neu</span>
       <span class="cart-scene scene-orbit" aria-hidden="true">
         <img src="/images/arcade/orbitfuchs-karte.webp" alt="" width="640" height="358" loading="lazy" decoding="async" />
       </span>
@@ -84,9 +83,22 @@ const hen = `<svg viewBox="-60 -45 118 80" xmlns="http://www.w3.org/2000/svg"><g
       </span>
       <span class="cart-cta"><span aria-hidden="true">▶</span> Spielen</span>
     </button>
+    <button class="cart cart-zombie" type="button" data-pick="zombie">
+      <span class="cart-key" aria-hidden="true">5</span>
+      <span class="cart-new">Neu</span>
+      <span class="cart-scene scene-zombie" aria-hidden="true">
+        <img src="/images/arcade/zombiewelle-karte.webp" alt="" width="640" height="358" loading="lazy" decoding="async" />
+      </span>
+      <span class="cart-body">
+        <span class="cart-title">Zombie-Welle</span>
+        <span class="cart-desc">3D-Ego-Shooter gegen Glitch-Zombies. Nach jeder Welle wählst du ein Upgrade, mit der Zeit kommen Sprinter, Bit-Bomben und die zähe Firewall dazu.</span>
+        <span class="cart-tags"><span>3D</span><span>Endlos-Wellen</span><span>Upgrades</span><span>Nur am Rechner</span></span>
+      </span>
+      <span class="cart-cta"><span aria-hidden="true">▶</span> Spielen</span>
+    </button>
   </div>
 
-  <p class="arcade-foot">Tipp: Drück einfach Taste <kbd>1</kbd> bis <kbd>4</kbd>.</p>
+  <p class="arcade-foot">Tipp: Drück einfach Taste <kbd>1</kbd> bis <kbd>5</kbd>.</p>
 </div>
 
 <style>
@@ -189,6 +201,18 @@ const hen = `<svg viewBox="-60 -45 118 80" xmlns="http://www.w3.org/2000/svg"><g
   .cart-krawumm { --glow: 255, 194, 58; }
   .cart-flitzer { --glow: 92, 196, 255; }
   .cart-orbit { --glow: 200, 130, 255; }
+  .cart-zombie { --glow: 53, 224, 255; }
+  /* 5. Karte: auf dem Desktop quer über beide Spalten */
+  @media (min-width: 861px) {
+    .cart-zombie { grid-column: 1 / -1; flex-direction: row; flex-wrap: wrap; }
+    .cart-zombie .cart-scene { flex: 0 0 50%; }
+    .cart-zombie .cart-body { flex: 1 1 0; min-width: 0; padding-top: 1.1rem; padding-bottom: 3.6rem; }
+    .cart-zombie .cart-cta { position: absolute; right: 0; bottom: 0; }
+  }
+  /* braucht Maus + Tastatur */
+  @media (pointer: coarse) {
+    .cart-zombie { display: none; }
+  }
   .cart:hover,
   .cart:focus-visible {
     border-color: rgba(var(--glow), 1);
@@ -280,6 +304,17 @@ const hen = `<svg viewBox="-60 -45 118 80" xmlns="http://www.w3.org/2000/svg"><g
     animation: k-zoom 9s ease-in-out infinite alternate;
   }
   @keyframes k-zoom { from { transform: scale(1); } to { transform: scale(1.12) translateX(2%); } }
+
+  /* ---------- Szene Zombie-Welle ---------- */
+  .scene-zombie { background: #050506; }
+  .scene-zombie img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    animation: z-push 10s ease-in-out infinite alternate;
+  }
+  @keyframes z-push { from { transform: scale(1); } to { transform: scale(1.1) translateY(2%); } }
 
   /* ---------- Szene Orbit-Fuchs ---------- */
   .scene-orbit { background: #04030c; }
@@ -402,7 +437,7 @@ const hen = `<svg viewBox="-60 -45 118 80" xmlns="http://www.w3.org/2000/svg"><g
     .arcade-foot, .cart-key { display: none; }
   }
   @media (prefers-reduced-motion: reduce) {
-    .arcade-floor, .arcade-blink, .f-hen, .f-hen :global(.hen-wing), .f-fox, .scene-krawumm img, .scene-flitzer img, .scene-orbit img { animation: none; }
+    .arcade-floor, .arcade-blink, .f-hen, .f-hen :global(.hen-wing), .f-fox, .scene-krawumm img, .scene-flitzer img, .scene-orbit img, .scene-zombie img { animation: none; }
     .f-hen.n1 { left: 20%; }
     .f-hen.n2 { left: 60%; }
     .f-hen.n3 { left: 80%; }

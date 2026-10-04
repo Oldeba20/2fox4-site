@@ -2,9 +2,12 @@
 /**
  * 404 — "Ups, verlaufen!"
  *
- * Die Zombie-Welle wurde am 03.10.2026 entfernt (Jugendschutz: realistische
- * Gewalt ohne Altersprüfung). Quellcode liegt außerhalb des Repos im Ordner
- * „Zombie-Welle-Archiv“.
+ * Zombie-Welle (3D-Ego-Shooter): am 03.10.2026 wegen Jugendschutz entfernt,
+ * seit 04.10.2026 als v2 zurück – in der jugendfreien Glitch-Darstellung
+ * (kein Blut, Gegner zerfallen in Pixel). Der Hart-Modus ist auf der Website
+ * gesperrt (<body data-hardmode="off"> in public/spiele/zombie-welle/index.html).
+ * Quellcode: spiele-src/zombie-welle/ (Build: npm run build), Direktlink
+ * #zombie, Taste 5, nur Desktop.
  *
  * Seit 30.09.2026 zweites Spiel „Fuchs & Federn“ (Schießbude mit dem
  * 2FOX4-Fuchs, components/arcade/FoxGame.astro) und davor eine
@@ -34,7 +37,7 @@ import FoxGame from "../components/arcade/FoxGame.astro";
 
 const title = "Ups, verlaufen! — 2fox4";
 const description =
-  "Diese Seite gibt es nicht. Dafür warten vier kleine Spiele auf dich: Fuchs & Federn, Krawumm!, Fuchs-Flitzer und Orbit-Fuchs.";
+  "Diese Seite gibt es nicht. Dafür warten fünf kleine Spiele auf dich: Fuchs & Federn, Krawumm!, Fuchs-Flitzer, Orbit-Fuchs und Zombie-Welle.";
 ---
 
 <BaseLayout title={title} description={description} noindex={true}>
@@ -42,7 +45,7 @@ const description =
     <header class="lost-hero">
       <h1 class="lost-title">Ups, verlaufen.</h1>
       <p class="lost-hint">
-        Diese Seite gibt es nicht. Zum Trost haben wir vier Spiele für dich.
+        Diese Seite gibt es nicht. Zum Trost haben wir fünf Spiele für dich.
       </p>
       <div class="hero-actions">
         <a class="btn btn-primary btn-sm" href="/">← Zurück zur Startseite</a>
@@ -107,6 +110,20 @@ const description =
         <iframe data-flitzer title="Fuchs-Flitzer – 3D-Kartrennen" allow="autoplay; fullscreen; gamepad"></iframe>
       </div>
     </div>
+
+    <div class="game-view" data-view="zombie">
+      <button class="mclose" type="button" data-arcade-back aria-label="Spiel beenden">✕</button>
+      <div class="game-bar">
+        <button class="bar-back" type="button" data-arcade-back>← Spielauswahl</button>
+        <p class="bar-hint">
+          <span class="hint-fine"><kbd>WASD</kbd> laufen · <kbd>Leertaste</kbd> springen · <kbd>Klick</kbd> schießen · <kbd>1</kbd>–<kbd>3</kbd> Waffen · <kbd>G</kbd> Granate · <kbd>F</kbd> Vollbild</span>
+          <span class="hint-coarse">Nur am Rechner spielbar (Maus + Tastatur)</span>
+        </p>
+      </div>
+      <div class="krawumm-frame">
+        <iframe data-zombie title="Zombie-Welle – 3D-Ego-Shooter" allow="autoplay; fullscreen"></iframe>
+      </div>
+    </div>
   </section>
 </BaseLayout>
 
@@ -146,7 +163,8 @@ const description =
   .lost-page[data-game="fox"] .game-view[data-view="fox"],
   .lost-page[data-game="krawumm"] .game-view[data-view="krawumm"],
   .lost-page[data-game="flitzer"] .game-view[data-view="flitzer"],
-  .lost-page[data-game="orbit"] .game-view[data-view="orbit"] { display: flex; }
+  .lost-page[data-game="orbit"] .game-view[data-view="orbit"],
+  .lost-page[data-game="zombie"] .game-view[data-view="zombie"] { display: flex; }
   .krawumm-frame {
     width: 100%;
     max-width: 960px;
@@ -335,12 +353,13 @@ const description =
     "use strict";
     const page = document.querySelector(".lost-page");
     if (!page) return;
-    const HASH = { fox: "#fuchs", krawumm: "#krawumm", flitzer: "#flitzer", orbit: "#orbit" };
-    const FROM_HASH = { "#fuchs": "fox", "#krawumm": "krawumm", "#flitzer": "flitzer", "#orbit": "orbit" };
+    const HASH = { fox: "#fuchs", krawumm: "#krawumm", flitzer: "#flitzer", orbit: "#orbit", zombie: "#zombie" };
+    const FROM_HASH = { "#fuchs": "fox", "#krawumm": "krawumm", "#flitzer": "flitzer", "#orbit": "orbit", "#zombie": "zombie" };
     const kFrame = page.querySelector("[data-krawumm]");
     const K_SRC = "/spiele/krawumm/";
     const F_SRC = "/spiele/fuchs-flitzer/";
     const O_SRC = "/spiele/orbit-fuchs/";
+    const Z_SRC = "/spiele/zombie-welle/";
 
     function frame(kFrame, K_SRC, on) {
       if (!kFrame) return;
@@ -449,6 +468,7 @@ const description =
       frame(kFrame, K_SRC, game === "krawumm");
       frame(page.querySelector("[data-flitzer]"), F_SRC, game === "flitzer");
       frame(page.querySelector("[data-orbit]"), O_SRC, game === "orbit");
+      frame(page.querySelector("[data-zombie]"), Z_SRC, game === "zombie");
       mobileFull(game);
       window.dispatchEvent(new CustomEvent("arcade:select", { detail: game }));
       try {
@@ -481,6 +501,7 @@ const description =
       if (e.key === "2") select("krawumm");
       if (e.key === "3") select("flitzer");
       if (e.key === "4") select("orbit");
+      if (e.key === "5") select("zombie");
     });
 
     // Karten leicht kippen, wenn die Maus darüber fährt
