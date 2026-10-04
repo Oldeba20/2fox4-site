@@ -468,6 +468,23 @@ function moveBody(o, dx, dy, opts = {}) {
   }
   return { hitX, hitY, ground, onMover };
 }
+// Item, das im Boden/in der Wand steckt, nach oben herausschieben (max. 3 Kacheln)
+function itemInSolid(e) {
+  const x0 = Math.floor((e.x + 1) / T), x1 = Math.floor((e.x + e.w - 2) / T);
+  const y0 = Math.floor((e.y + 1) / T), y1 = Math.floor((e.y + e.h - 2) / T);
+  for (let ty = y0; ty <= y1; ty++) for (let tx = x0; tx <= x1; tx++) if (tileAt(tx, ty) === 1) return true;
+  for (const s of G.ents) if (s.solid && !s.dead && s !== e && overlap({ x: e.x + 1, y: e.y + 1, w: e.w - 2, h: e.h - 2 }, s)) return true;
+  return false;
+}
+function unstickItem(e) {
+  for (let i = 0; i < 48 && itemInSolid(e); i++) e.y -= 1;
+}
+function spawnDrop(o) {
+  const e = Object.assign({ type: 'item', t: 0, w: 12, h: 12, fall: true }, o);
+  unstickItem(e);
+  G.ents.push(e);
+  return e;
+}
 function pointSolid(x, y) { const t = tileAt(Math.floor(x / T), Math.floor(y / T)); if (t === 1) return true; for (const e of G.ents) if (e.solid && x >= e.x && x < e.x + e.w && y >= e.y && y < e.y + e.h) return e; return false; }
 
 // ---------------------------------------------------------------- particles & fx
@@ -540,7 +557,8 @@ function updatePlayer(dt) {
   // fall out
   if (P.y > lv.ph + 40) { P.hp = 0; killPlayer(); }
   // items
-  for (const e of G.ents) if (e.type === 'item' && !e.dead && overlap(P, e)) collect(e);
+  // etwas größerer Einsammel-Bereich (v. a. nach unten), damit nichts knapp unter den Füßen liegen bleibt
+  for (const e of G.ents) if (e.type === 'item' && !e.dead && overlap({ x: P.x - 2, y: P.y - 2, w: P.w + 4, h: P.h + 10 }, e)) collect(e);
   // secrets
   for (const s of lv.secrets) if (!s.found && overlap(P, s)) { s.found = true; G.stats.secrets++; addScore(2500, s.x + 16, s.y); SFX.secret(); say(18, true); floatText(s.x + 16, s.y - 10, 'GEHEIMVERSTECK!', '#50ff90'); }
   // exit
@@ -600,7 +618,7 @@ function killEnemy(e) {
   // voice
   if (G.time - VOICE.lastKill > 6 && Math.random() < 0.55) { if (say(e.type === 'blob' ? 23 : pick(V.KILL))) VOICE.lastKill = G.time; }
   // occasional drop
-  if (Math.random() < 0.12) G.ents.push({ type: 'item', kind: Math.random() < 0.6 ? 'h' : '$', x: cx - 6, y: e.y + e.h - 14, w: 12, h: 12, t: 0, vy: -150, fall: true });
+  if (Math.random() < 0.12) spawnDrop({ kind: Math.random() < 0.6 ? 'h' : '$', x: cx - 6, y: e.y + e.h - 14, vy: -150 });
 }
 function enemyShoot(e, x, y, tx, ty, sp = 170, big) {
   const a = Math.atan2(ty - y, tx - x);
@@ -752,7 +770,7 @@ function damageProp(p, d) {
   if (p.type === 'crate') {
     for (let i = 0; i < 12; i++) part({ x: cx, y: cy, vx: rnd(-140, 140), vy: rnd(-220, -60), g: 700, life: rnd(0.5, 1), size: rnd(2, 4), col: pick(['#a86a2c', '#6b3f16', '#d0924a']), debris: true });
     noise(0.2, 0.35, 1600, 200); addScore(50);
-    const k = Math.random(); G.ents.push({ type: 'item', kind: k < 0.45 ? 'h' : k < 0.85 ? '$' : 'c', x: cx - 6, y: p.y + 2, w: 12, h: 12, t: 0, vy: -120, fall: true });
+    const k = Math.random(); spawnDrop({ kind: k < 0.45 ? 'h' : k < 0.85 ? '$' : 'c', x: cx - 6, y: p.y + 2, vy: -120 });
   } else { // barrel
     explode(cx, cy, true);
     const R = 56;
@@ -796,7 +814,17 @@ function update(dt) {
         if (e.dying) { e.flash -= dt; continue; }
         if (e.enemy) updateEnemy(e, dt);
         else if (e.type === 'mover') { const nx = e.x + e.dir * 40 * dt; if (nx < e.x0 || nx > e.x1) e.dir *= -1; e.vx = e.dir * 40; e.x = clamp(nx, e.x0, e.x1); }
-        else if (e.type === 'item') { e.t += dt; if (e.fall) { e.vy += 900 * dt; const r = moveBody(e, 0, e.vy * dt); if (r.hitY) { e.vy = 0; e.fall = false; } } }
+        else if (e.type === 'item') {
+          e.t += dt;
+          if (e.fall) {
+            // Fallgeschwindigkeit begrenzen (sonst rutscht das Item durch dünne Böden)
+            e.vy = Math.min(e.vy + 900 * dt, 420);
+            const r = moveBody(e, 0, e.vy * dt);
+            if (r.ground) { e.vy = 0; e.fall = false; unstickItem(e); }
+            else if (r.hitY && e.vy < 0) e.vy = 0; // an die Decke gestoßen: weiterfallen statt hängen bleiben
+            if (e.y > G.lv.ph + 40) e.dead = true;
+          }
+        }
         else if (e.type === 'door') {
           const P = G.player;
           if (e.key !== 'boss' && P.keys[e.key] && !e.opening && Math.abs(P.x + P.w / 2 - (e.x + e.w / 2)) < 40 && Math.abs(P.y - e.y) < 60) { e.opening = true; SFX.door(); floatText(e.x + 16, e.y - 6, 'TÜR OFFEN', '#9fe'); }
