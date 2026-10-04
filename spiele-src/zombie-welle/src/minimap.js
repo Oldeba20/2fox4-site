@@ -1,4 +1,4 @@
-import { MAP, CELL } from './level.js';
+import { CELL } from './level.js';
 
 // ------------------------------------------------------------
 // Minimap unten links: dreht sich mit dem Spieler (Blickrichtung = oben),
@@ -14,21 +14,31 @@ export class Minimap {
   constructor(canvas, level) {
     this.c = canvas;
     this.g = canvas.getContext('2d');
-    this.level = level;
-    this.bg = this.renderMap();
+    this.cache = new Map();
     this.t = 0;
+    this.setLevel(level);
   }
 
-  renderMap() {
+  setLevel(level) {
+    this.level = level;
+    if (!this.cache.has(level)) this.cache.set(level, this.renderMap(level));
+    this.bg = this.cache.get(level);
+  }
+
+  renderMap(level) {
+    const MAP = level.map;
     const rows = MAP.length, cols = MAP[0].length;
     const c = document.createElement('canvas');
     c.width = cols * PX; c.height = rows * PX;
     const g = c.getContext('2d');
-    const floor = new Set(['.', 'P', 'L', 'K', 'R', 'S', '@', 'B']);
+    const floor = new Set(['.', 'P', 'L', 'K', 'R', 'S', '@', 'B', 'E', 'Y']);
     for (let r = 0; r < rows; r++) for (let k = 0; k < cols; k++) {
       const ch = MAP[r][k];
-      if (floor.has(ch)) g.fillStyle = 'rgba(255,255,255,0.13)';
-      else if (ch === 'C' || ch === 'W' || ch === 'O') g.fillStyle = 'rgba(255,255,255,0.3)';
+      const h = level.hAt(k, r);
+      if (h >= 3.9) g.fillStyle = 'rgba(255,190,140,0.32)';
+      else if (h > 0) g.fillStyle = `rgba(255,190,140,${0.12 + h * 0.05})`;
+      else if (floor.has(ch)) g.fillStyle = 'rgba(255,255,255,0.13)';
+      else if (ch === 'C' || ch === 'W' || ch === 'O' || ch === 'X') g.fillStyle = 'rgba(255,255,255,0.3)';
       else continue;
       g.fillRect(k * PX, r * PX, PX, PX);
       if (ch === 'S') { g.fillStyle = 'rgba(227,36,27,0.55)'; g.fillRect(k * PX + 1, r * PX + 1, PX - 2, PX - 2); }
@@ -84,6 +94,19 @@ export class Minimap {
       g.fillRect(x - s / 2, y - s / 2, s, s);
     }
 
+    // Ausgang
+    const ex = this.level.exit;
+    if (ex && ex.active) {
+      let [x, y] = rel(this.level.exitPos.x, this.level.exitPos.z);
+      const d = Math.hypot(x, y), lim = R - S * 0.06;
+      if (d > lim) { x *= lim / d; y *= lim / d; }
+      const s = S * (0.045 + 0.012 * Math.sin(this.t * 6));
+      g.strokeStyle = '#35e0ff'; g.lineWidth = Math.max(2, S * 0.014);
+      g.beginPath(); g.arc(x, y, s, 0, Math.PI * 2); g.stroke();
+      g.fillStyle = '#35e0ff';
+      g.beginPath(); g.arc(x, y, s * 0.35, 0, Math.PI * 2); g.fill();
+    }
+
     // Gegner
     g.globalCompositeOperation = 'lighter';
     const pulse = 0.75 + 0.25 * Math.sin(this.t * 7);
@@ -105,6 +128,7 @@ export class Minimap {
       g.globalAlpha = edge ? 0.7 : 1;
       g.fillStyle = z.typeKey === 'bomber' && z.fuse >= 0 ? '#ffffff' : col;
       g.beginPath(); g.arc(x, y, r, 0, Math.PI * 2); g.fill();
+      if (z.marked) { g.strokeStyle = '#ffffff'; g.lineWidth = Math.max(1, S * 0.008); g.beginPath(); g.arc(x, y, r * 2, 0, Math.PI * 2); g.stroke(); }
     }
     g.globalAlpha = 1;
     g.globalCompositeOperation = 'source-over';

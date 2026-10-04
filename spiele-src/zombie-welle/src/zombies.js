@@ -234,6 +234,14 @@ export class Zombie {
     this.blob.renderOrder = 1;
     this.root.add(this.blob);
 
+    if (!MARKER_MAT) MARKER_MAT = new THREE.SpriteMaterial({ map: makeMarkerTexture(), depthTest: false, depthWrite: false, transparent: true, toneMapped: false });
+    this.marker = new THREE.Sprite(MARKER_MAT);
+    this.marker.scale.set(0.42, 0.42, 1);
+    this.marker.renderOrder = 20;
+    this.marker.visible = false;
+    this.root.add(this.marker);
+    this.marked = false;
+
     this.active = false;
     this.cur = null;
     this._v = new THREE.Vector3();
@@ -258,10 +266,14 @@ export class Zombie {
     this.dmg = opts.dmg * T.dmg;
     this.radius = T.radius;
     this.fuse = -1;
+    this.marked = false;
+    this.markT = 0;
+    this.marker.visible = false;
     const s = (0.92 + Math.random() * 0.16) * T.scale;
     this.model.scale.setScalar(this.tpl.scale * s);
     if (T.fat) { this.model.scale.x *= T.fat; this.model.scale.z *= T.fat; }
     this.height = 1.78 * s;
+    this.marker.position.y = this.height + 0.45;
     this.walkClip = T.clip || (Math.random() < 0.3 ? 'walk' : 'walk2');
     this.U.uRim.value.set(T.glow);
     this.U.uDissolve.value = this.style === 'glitch' ? 1 : 0;
@@ -379,6 +391,20 @@ function rayCapsule(ro, rd, a, b, r) {
   return Math.max(0, s - Math.sqrt(Math.max(0, r * r - d * d)));
 }
 
+function makeMarkerTexture() {
+  const c = document.createElement('canvas');
+  c.width = c.height = 64;
+  const g = c.getContext('2d');
+  g.translate(32, 32);
+  g.rotate(Math.PI / 4);
+  g.strokeStyle = '#ffffff'; g.lineWidth = 6; g.strokeRect(-14, -14, 28, 28);
+  g.fillStyle = '#ff6b35'; g.fillRect(-8, -8, 16, 16);
+  const t = new THREE.CanvasTexture(c);
+  t.colorSpace = THREE.SRGBColorSpace;
+  return t;
+}
+let MARKER_MAT = null;
+
 function makeBlobTexture() {
   const c = document.createElement('canvas');
   c.width = c.height = 64;
@@ -443,6 +469,7 @@ export class ZombieManager {
 
   damage(z, amount, zone, point, dir, push = 0, gibIfKill = false) {
     if (z.dead) return false;
+    if (z.marked) amount *= 1.3; // im Fernglas markiert: +30 % Schaden
     z.hp -= amount;
     z.flash = 1;
     const g = this.game;
@@ -469,6 +496,8 @@ export class ZombieManager {
   kill(z, zone, point, dir, push = 0) {
     const g = this.game;
     z.dead = true;
+    z.marker.visible = false;
+    z.deathY = z.root.position.y;
     z.state = 'dead';
     z.deadT = 0;
     z.flinch = 0;
@@ -571,17 +600,19 @@ export class ZombieManager {
         if (z.push > 0.05) {
           p.addScaledVector(z.pushDir, z.push * dt);
           z.push *= Math.exp(-dt * 4);
-          lvl.collide(p, 0.3);
+          lvl.collide(p, 0.3, p.y);
+          const gy = lvl.groundAt(p.x, p.z, 0.3, p.y);
+          if (p.y > gy) { p.y = Math.max(gy, p.y - dt * 8); z.deathY = p.y; }
         }
         if (z.deadT > 1.9 && !z.pooled) {
           z.pooled = true;
           const hips = z.bones.Hips.getWorldPosition(this._d);
-          g.fx.pool(hips.x, hips.z, z.headless ? 2.2 : 1.5);
+          if (p.y < 0.05) g.fx.pool(hips.x, hips.z, z.headless ? 2.2 : 1.5);
         }
         if (z.deadT > 0.4) z.blob.material.opacity = 1;
         if (z.deadT > 28) {
           z.sink += dt * 0.25;
-          p.y = -z.sink;
+          p.y = (z.deathY || 0) - z.sink;
           if (z.sink > 0.6) { z.active = false; z.root.visible = false; z.pooled = false; p.y = 0; z.root.scale.set(1, 1, 1); }
         }
         continue;
@@ -591,6 +622,8 @@ export class ZombieManager {
       // Abstand / Richtung zum Spieler
       const dx = pp.x - p.x, dz = pp.z - p.z;
       const dist = Math.hypot(dx, dz);
+      const dy = Math.abs(player.y - p.y); // Höhenunterschied (Dach/Treppe)
+      z.marker.visible = z.marked;
       const rate = z.typeKey === 'runner' ? 1.05 * z.speedMul : z.speedMul * WALK_RATE;
 
       if (z.state === 'rise') {
@@ -632,7 +665,7 @@ export class ZombieManager {
         const hits = this.tpl.attackHits[z.attackClip];
         while (z.nextHit < hits.length && frac >= hits[z.nextHit]) {
           z.nextHit++;
-          if (dist < z.type.reach + 0.4 + (player.y > 0.4 ? 0.4 : 0) && player.y < 1.3 * z.type.scale && !player.dead) g.hurtPlayer(z.dmg, p);
+          if (dist < z.type.reach + 0.4 + (player.y - p.y > 0.4 ? 0.4 : 0) && dy < 1.3 * z.type.scale && !player.dead) g.hurtPlayer(z.dmg, p);
         }
         if (!a.isRunning() || frac > 0.97 || (dist > z.type.reach + 1.25 && frac > (hits[hits.length - 1] || 0.5) + 0.05)) {
           z.state = 'chase';
@@ -644,7 +677,7 @@ export class ZombieManager {
 
       // ---- Verfolgen ----
       z.attackCD -= dt;
-      if (dist < z.type.reach + (player.y > 0.4 ? 0.45 : 0) && z.attackCD <= 0 && !player.dead) {
+      if (dist < z.type.reach + (player.y - p.y > 0.4 ? 0.45 : 0) && dy < 1.3 * z.type.scale && z.attackCD <= 0 && !player.dead) {
         if (z.typeKey === 'bomber') {
           z.state = 'fuse';
           z.fuse = 0.7;
@@ -664,14 +697,14 @@ export class ZombieManager {
       const dir = this._f;
       const r = 0.42;
       const nx = -dz / (dist || 1), nz = dx / (dist || 1);
-      const clear = dist < 24 && lvl.los(p.x + nx * r, p.z + nz * r, pp.x, pp.z) && lvl.los(p.x - nx * r, p.z - nz * r, pp.x, pp.z);
+      const clear = dist < 24 && dy < 0.6 && lvl.los(p.x + nx * r, p.z + nz * r, pp.x, pp.z, false, p.y) && lvl.los(p.x - nx * r, p.z - nz * r, pp.x, pp.z, false, p.y);
       if (clear) dir.set(dx / dist, 0, dz / dist);
       else lvl.flowDir(p.x, p.z, dir);
 
       // Abstand zu anderen Zombies
       const sep = this._s.set(0, 0, 0);
       for (const o of alive) {
-        if (o === z || o.dead) continue;
+        if (o === z || o.dead || Math.abs(o.root.position.y - p.y) > 1) continue;
         const ox = p.x - o.root.position.x, oz = p.z - o.root.position.z;
         const md = (z.radius + o.radius) * 1.15;
         const d2 = ox * ox + oz * oz;
@@ -690,7 +723,11 @@ export class ZombieManager {
       const fwd = z.root.rotation.y;
       p.x += Math.sin(fwd) * sp * dt;
       p.z += Math.cos(fwd) * sp * dt;
-      lvl.collide(p, z.radius);
+      lvl.collide(p, z.radius, p.y);
+      // Treppen hoch/runter
+      const gy = lvl.groundAt(p.x, p.z, z.radius, p.y);
+      if (gy > p.y) p.y = Math.min(gy, p.y + dt * 3.2);
+      else if (gy < p.y) p.y = Math.max(gy, p.y - dt * 9);
       const act = z.actions[z.walkClip];
       if (act) act.timeScale = rate * (z.stagger > 0 ? 0.4 : 1);
 

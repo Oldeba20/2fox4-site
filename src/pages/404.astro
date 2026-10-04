@@ -7,7 +7,8 @@
  * (kein Blut, Gegner zerfallen in Pixel). Der Hart-Modus ist auf der Website
  * gesperrt (<body data-hardmode="off"> in public/spiele/zombie-welle/index.html).
  * Quellcode: spiele-src/zombie-welle/ (Build: npm run build), Direktlink
- * #zombie, Taste 5, nur Desktop.
+ * #zombie, Taste 5, nur Desktop. Seit v3: nach 2 Wellen Wechsel auf den Hof
+ * (Dach, Scharfschützengewehr, Fernglas), dann im Wechsel Halle/Hof.
  *
  * Seit 30.09.2026 zweites Spiel „Fuchs & Federn“ (Schießbude mit dem
  * 2FOX4-Fuchs, components/arcade/FoxGame.astro) und davor eine
@@ -116,7 +117,7 @@ const description =
       <div class="game-bar">
         <button class="bar-back" type="button" data-arcade-back>← Spielauswahl</button>
         <p class="bar-hint">
-          <span class="hint-fine"><kbd>WASD</kbd> laufen · <kbd>Leertaste</kbd> springen · <kbd>Klick</kbd> schießen · <kbd>1</kbd>–<kbd>3</kbd> Waffen · <kbd>G</kbd> Granate · <kbd>F</kbd> Vollbild</span>
+          <span class="hint-fine"><kbd>WASD</kbd> laufen · <kbd>Leertaste</kbd> springen · <kbd>Klick</kbd> schießen · <kbd>1</kbd>–<kbd>4</kbd> Waffen · <kbd>G</kbd> Granate · <kbd>B</kbd> Fernglas · <kbd>F</kbd> Vollbild</span>
           <span class="hint-coarse">Nur am Rechner spielbar (Maus + Tastatur)</span>
         </p>
       </div>

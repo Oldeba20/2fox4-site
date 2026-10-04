@@ -315,6 +315,73 @@ export class AudioEngine {
     }
   }
 
+  // Scharfschützengewehr: harter Knall mit langem Hall (draußen)
+  sniper() {
+    if (!this.ready) return;
+    const ctx = this.ctx, t = this.t;
+    const out = this._out(null, 0.9, 1);
+    const n = this._noiseSrc();
+    const lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.setValueAtTime(9000, t); lp.frequency.exponentialRampToValueAtTime(500, t + 0.35);
+    const g = ctx.createGain();
+    this._env(g.gain, t, 0.001, 1.4, 0.4);
+    n.connect(lp).connect(g).connect(out);
+    n.start(t, Math.random()); n.stop(t + 0.5);
+    const o = ctx.createOscillator(); o.type = 'sine';
+    o.frequency.setValueAtTime(140, t); o.frequency.exponentialRampToValueAtTime(38, t + 0.3);
+    const og = ctx.createGain();
+    this._env(og.gain, t, 0.002, 1.2, 0.35);
+    o.connect(og).connect(out);
+    o.start(t); o.stop(t + 0.4);
+    // Echo vom Hof
+    const n2 = this._noiseSrc();
+    const bp = ctx.createBiquadFilter(); bp.type = 'lowpass'; bp.frequency.value = 900;
+    const g2 = ctx.createGain();
+    this._env(g2.gain, t + 0.28, 0.02, 0.22, 0.9);
+    n2.connect(bp).connect(g2).connect(out);
+    n2.start(t + 0.28, Math.random()); n2.stop(t + 1.3);
+  }
+
+  bolt(back = true) {
+    if (!this.ready) return;
+    const t = this.t;
+    this._click(t, back ? 1500 : 1900, 0.4);
+    this._click(t + 0.05, back ? 900 : 2400, 0.35);
+  }
+
+  // Fernglas: Ziel markiert
+  mark() {
+    if (!this.ready) return;
+    const ctx = this.ctx, t = this.t;
+    const out = this._out(null, 0.1, 1);
+    [1320, 1760].forEach((f, i) => {
+      const o = ctx.createOscillator(); o.type = 'sine';
+      o.frequency.value = f;
+      const g = ctx.createGain();
+      this._env(g.gain, t + i * 0.07, 0.003, 0.18, 0.12);
+      o.connect(g).connect(out);
+      o.start(t + i * 0.07); o.stop(t + i * 0.07 + 0.16);
+    });
+  }
+
+  zoom(inn = true) {
+    if (!this.ready) return;
+    this._click(this.t, inn ? 700 : 500, 0.18);
+  }
+
+  // Übergang Halle <-> Hof
+  whoosh() {
+    if (!this.ready) return;
+    const ctx = this.ctx, t = this.t;
+    const out = this._out(null, 0.4, 1);
+    const n = this._noiseSrc();
+    const bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.Q.value = 0.8;
+    bp.frequency.setValueAtTime(300, t); bp.frequency.exponentialRampToValueAtTime(2500, t + 0.6);
+    const g = ctx.createGain();
+    this._env(g.gain, t, 0.3, 0.6, 0.6);
+    n.connect(bp).connect(g).connect(out);
+    n.start(t, Math.random()); n.stop(t + 1);
+  }
+
   // Upgrade gewählt
   upgrade() {
     if (!this.ready) return;

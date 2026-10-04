@@ -160,6 +160,35 @@
   .agecard { width: min(460px, 100%); }
   .agecard .sub { font-size: clamp(12px, 1.8vh, 15px); }
 
+  /* ---------- Zielfernrohr / Fernglas ---------- */
+  .scope, .binoc { position: fixed; inset: 0; pointer-events: none; opacity: 0; transition: opacity .08s; z-index: 2; }
+  .scope.on, .binoc.on { opacity: 1; }
+  .scope .ring { position: absolute; left: 50%; top: 50%; width: 92vmin; height: 92vmin; transform: translate(-50%, -50%); border-radius: 50%; box-shadow: 0 0 0 200vmax #000, inset 0 0 70px 24px rgba(0,0,0,.75); }
+  .scope .l { position: absolute; background: #000; }
+  .scope .lh { left: calc(50% - 46vmin); right: calc(50% - 46vmin); top: 50%; height: 2px; margin-top: -1px; }
+  .scope .lv { top: 4vh; bottom: 4vh; left: 50%; width: 2px; margin-left: -1px; }
+  .scope .thick { position: absolute; background: #000; }
+  .scope .t1 { left: calc(50% - 46vmin); width: calc(46vmin * .55); top: 50%; height: 6px; margin-top: -3px; }
+  .scope .t2 { right: calc(50% - 46vmin); width: calc(46vmin * .55); top: 50%; height: 6px; margin-top: -3px; }
+  .scope .t3 { bottom: calc(50% - 46vmin); height: calc(46vmin * .55); left: 50%; width: 6px; margin-left: -3px; }
+  .scope .dot { position: absolute; left: 50%; top: 50%; width: 4px; height: 4px; margin: -2px; border-radius: 50%; background: #ff3a2a; box-shadow: 0 0 6px #ff3a2a; }
+  .scope .mil { position: absolute; left: 50%; top: 50%; width: 6px; height: 6px; margin: -3px; border-radius: 50%; background: #000; }
+  .zoominfo { position: absolute; left: 50%; bottom: 9vh; transform: translateX(-50%); text-align: center; font-family: var(--ui); font-weight: 800; letter-spacing: .14em; font-size: clamp(10px, 1.5vh, 14px); color: #7dff8a; text-shadow: 0 1px 0 #000; text-transform: uppercase; }
+  .zoominfo .breath { width: 140px; height: 4px; margin: 6px auto 0; background: rgba(255,255,255,.15); border-radius: 2px; overflow: hidden; }
+  .zoominfo .breath i { display: block; height: 100%; width: 100%; background: #7dff8a; }
+  .zoominfo .breath.low i { background: var(--red); }
+  .binoc::before { content: ""; position: absolute; inset: 0; background: rgba(0,0,0,.95);
+    -webkit-mask: radial-gradient(circle at calc(50% - min(19vh, 19vw)) 50%, transparent calc(min(30vh, 30vw)), #000 calc(min(30vh, 30vw) + 4px)), radial-gradient(circle at calc(50% + min(19vh, 19vw)) 50%, transparent calc(min(30vh, 30vw)), #000 calc(min(30vh, 30vw) + 4px));
+    -webkit-mask-composite: source-in;
+    mask: radial-gradient(circle at calc(50% - min(19vh, 19vw)) 50%, transparent calc(min(30vh, 30vw)), #000 calc(min(30vh, 30vw) + 4px)), radial-gradient(circle at calc(50% + min(19vh, 19vw)) 50%, transparent calc(min(30vh, 30vw)), #000 calc(min(30vh, 30vw) + 4px));
+    mask-composite: intersect; }
+  .binoc .zoominfo { z-index: 1; }
+  .binoc .ret { position: absolute; left: 50%; top: 50%; width: 40px; height: 40px; margin: -20px; border: 2px solid rgba(53,224,255,.8); border-radius: 4px; }
+  .binoc .ret::after { content: ""; position: absolute; left: 50%; top: 50%; width: 4px; height: 4px; margin: -2px; background: #35e0ff; }
+  .binoc .zoominfo { color: #35e0ff; }
+  .fade { position: fixed; inset: 0; background: #000; opacity: 0; pointer-events: none; transition: opacity .6s; z-index: 4; }
+  .fade.on { opacity: 1; }
+
   #fsbtn { position: fixed; right: 12px; top: 10px; z-index: 6; pointer-events: auto; background: rgba(0,0,0,.45); color: #fff; border: 1px solid rgba(255,255,255,.2); border-radius: 8px; padding: 6px 10px; font: 700 12px var(--ui); cursor: pointer; }
   body.playing #fsbtn { display: none; }
 </style>
@@ -185,10 +214,24 @@
       <div class="slot" data-w="pistol"><b>1</b>Pistole</div>
       <div class="slot" data-w="shotgun"><b>2</b>Pump-Action</div>
       <div class="slot" data-w="rocket"><b>3</b>Raketen</div>
+      <div class="slot" data-w="sniper" hidden><b>4</b>Gewehr</div>
       <div class="slot nade" data-w="nade"><b>G</b>Granaten <i id="h-nades">3</i></div>
+      <div class="slot" data-w="binoc" hidden><b>B</b>Fernglas</div>
     </div>
     <div class="toast" id="toast"></div>
     <canvas class="minimap" id="minimap"></canvas>
+    <div class="scope" id="scope">
+      <div class="ring"></div>
+      <div class="l lh"></div><div class="l lv"></div>
+      <div class="thick t1"></div><div class="thick t2"></div><div class="thick t3"></div>
+      <div class="mil" style="margin-top:calc(-3px + 6vh)"></div><div class="mil" style="margin-top:calc(-3px + 12vh)"></div><div class="mil" style="margin-left:calc(-3px + 6vh)"></div><div class="mil" style="margin-left:calc(-3px - 6vh)"></div>
+      <div class="dot"></div>
+      <div class="zoominfo"><span id="scope-range">– m</span> · Shift = Luft anhalten<div class="breath"><i id="scope-breath"></i></div></div>
+    </div>
+    <div class="binoc" id="binoc">
+      <div class="ret"></div>
+      <div class="zoominfo"><span id="binoc-range">– m</span> · Gegner anvisieren = markieren<br><span id="binoc-mark"></span></div>
+    </div>
     <div class="nextwave" id="nextwave"></div>
     <div class="upgrades" id="upgrades">
       <div class="uphead">Welle geschafft – wähle ein Upgrade</div>
@@ -196,6 +239,8 @@
       <div class="upnote">Taste <kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd></div>
     </div>
   </div>
+
+ <div class="fade" id="fade"></div>
 
   <button id="fsbtn" type="button" title="Vollbild (F)">⛶ Vollbild</button>
 
@@ -215,6 +260,7 @@
           <span><kbd>Klick</kbd></span><span>schießen · <kbd>R</kbd> nachladen</span>
           <span><kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd></span><span>Pistole · Pump-Action · Raketenwerfer (oder Mausrad)</span>
           <span><kbd>G</kbd></span><span>Granate werfen (oder rechte Maustaste)</span>
+          <span><kbd>4</kbd> <kbd>B</kbd></span><span>ab dem Hof: Gewehr (rechte Maustaste = Zielfernrohr) · Fernglas</span>
           <span><kbd>Esc</kbd></span><span>Pause</span>
           <span><kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd></span><span>nach jeder Welle: Upgrade wählen</span>
         </div>

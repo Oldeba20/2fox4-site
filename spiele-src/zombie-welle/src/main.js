@@ -7,7 +7,7 @@ import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
 import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
-import { Level } from './level.js';
+import { Level, MAPS } from './level.js';
 import { FX } from './fx.js';
 import { ZombieTemplate, ZombieManager, TYPES } from './zombies.js';
 import { Minimap } from './minimap.js';
@@ -68,11 +68,15 @@ const TYPE_INTRO = {
   brute: { wave: 4, hint: 'zäh und hart im Nehmen – Raketen helfen' },
 };
 
+// Wie viele Wellen in welchem Gebiet, bevor der Ausgang aufgeht
+const WAVES_PER = { halle: 2, hof: 3 };
+
 const PICKUP = {
   health: { label: '+25 Leben', color: 0x50ff70 },
   shells: { label: '+6 Schrot', color: 0xff8a30, amount: 6 },
   rockets: { label: '+2 Raketen', color: 0xff3a2a, amount: 2 },
   grenade: { label: '+1 Granate', color: 0xffd23a, amount: 1 },
+  rounds: { label: '+5 Gewehrpatronen', color: 0x35e0ff, amount: 5 },
 };
 
 // ============================================================
@@ -112,6 +116,7 @@ class Game {
     this.showBest();
     this.renderer.setAnimationLoop(() => this.frame());
     window.ZW = this; // für Tests
+    if (TEST) window.__RC = THREE.Raycaster;
   }
 
   // ---------------- Renderer ----------------
@@ -242,8 +247,14 @@ class Game {
   }
 
   setupWorld() {
-    this.level = new Level(this.assets.levelTex);
-    this.level.build(this.scene);
+    this.levels = {
+      halle: new Level(this.assets.levelTex, MAPS.halle),
+      hof: new Level(this.assets.levelTex, MAPS.hof),
+    };
+    for (const l of Object.values(this.levels)) l.build(this.scene);
+    this.levels.hof.group.visible = false;
+    this.level = this.levels.halle;
+    this.levelKey = 'halle';
     this.fx = new FX(this.scene, this.level);
     this.fx.blood = this.settings.mode === 'hard';
     this.ztpl = new ZombieTemplate(this.assets.gltf, this.assets.zTex);
@@ -287,6 +298,15 @@ class Game {
         g.add(new THREE.Mesh(new THREE.BoxGeometry(0.36, 0.16, 0.24), new THREE.MeshStandardMaterial({ color: 0x8a1410, roughness: 0.5 })));
         const sm = new THREE.MeshStandardMaterial({ color: 0xc9a046, metalness: 1, roughness: 0.3 });
         for (let i = 0; i < 5; i++) { const s = new THREE.Mesh(new THREE.CylinderGeometry(0.022, 0.022, 0.05, 10), sm); s.position.set(-0.13 + i * 0.065, 0.1, 0); g.add(s); }
+        return g;
+      },
+      rounds: () => {
+        const g = new THREE.Group();
+        g.add(new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.12, 0.2), new THREE.MeshStandardMaterial({ color: 0x23303a, roughness: 0.5, metalness: 0.4 })));
+        const bm = new THREE.MeshStandardMaterial({ color: 0xc9a046, metalness: 1, roughness: 0.3 });
+        for (let i = 0; i < 5; i++) { const b = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.012, 0.11, 8), bm); b.position.set(-0.1 + i * 0.05, 0.11, 0); g.add(b); }
+        const band = new THREE.Mesh(new THREE.BoxGeometry(0.31, 0.03, 0.21), new THREE.MeshStandardMaterial({ color: 0x001018, emissive: 0x35e0ff, emissiveIntensity: 1.5 }));
+        g.add(band);
         return g;
       },
       rockets: () => {
@@ -347,8 +367,13 @@ class Game {
       if (this.renderer.compileAsync) {
         await this.renderer.compileAsync(this.scene, this.camera);
         await this.renderer.compileAsync(this.arsenal.scene, this.arsenal.camera);
+        // auch den Hof (andere Lichter) vorbereiten
+        this.levels.halle.group.visible = false; this.levels.hof.group.visible = true;
+        await this.renderer.compileAsync(this.scene, this.camera);
+        this.composer.render(0.016);
+        this.levels.halle.group.visible = true; this.levels.hof.group.visible = false;
       }
-    } catch (e) { /* egal */ }
+    } catch (e) { this.levels.halle.group.visible = true; this.levels.hof.group.visible = false; }
     this.composer.render(0.016);
     z.root.visible = false;
     z2.root.visible = false;
@@ -416,7 +441,7 @@ class Game {
     document.addEventListener('mousemove', (e) => {
       if (this.state !== 'play') return;
       if (document.pointerLockElement !== this.canvas && !TEST) return;
-      const s = 0.0022 * this.settings.sens;
+      const s = 0.0022 * this.settings.sens * (this.camera.fov / 74);
       const mx = Math.max(-300, Math.min(300, e.movementX || 0)), my = Math.max(-300, Math.min(300, e.movementY || 0));
       this.player.yaw -= mx * s;
       this.player.pitch = Math.max(-1.45, Math.min(1.45, this.player.pitch - my * s));
@@ -426,10 +451,15 @@ class Game {
       if (this.state !== 'play') return;
       if (document.pointerLockElement !== this.canvas && !TEST) { this.lock(); return; }
       if (e.button === 0) { this.mouseDown = true; this.tryFire(); }
-      if (e.button === 2) this.throwGrenade();
+      if (e.button === 2) {
+        if (this.arsenal.current === 'sniper') { this.rmb = true; this.audio.zoom(true); } else this.throwGrenade();
+      }
     });
     document.addEventListener('contextmenu', (e) => e.preventDefault());
-    document.addEventListener('mouseup', (e) => { if (e.button === 0) this.mouseDown = false; });
+    document.addEventListener('mouseup', (e) => {
+      if (e.button === 0) this.mouseDown = false;
+      if (e.button === 2 && this.rmb) { this.rmb = false; this.audio.zoom(false); }
+    });
     document.addEventListener('wheel', (e) => {
       if (this.state !== 'play') return;
       if (Math.abs(e.deltaY) < 4) return;
@@ -447,7 +477,8 @@ class Game {
         if (e.code === 'KeyQ') { if (this.arsenal.selectLast()) this.audio.switchWeapon(); }
         const pickKey = { Digit1: 0, Digit2: 1, Digit3: 2, Numpad1: 0, Numpad2: 1, Numpad3: 2 }[e.code];
         if (this.waveState === 'choose' && pickKey !== undefined) { this.chooseUpgrade(pickKey); return; }
-        const slot = { Digit1: 'pistol', Digit2: 'shotgun', Digit3: 'rocket', Numpad1: 'pistol', Numpad2: 'shotgun', Numpad3: 'rocket' }[e.code];
+        if (e.code === 'KeyB' && this.hasBinoc && !e.repeat) { this.binoc = !this.binoc; this.audio.zoom(this.binoc); }
+        const slot = { Digit1: 'pistol', Digit2: 'shotgun', Digit3: 'rocket', Digit4: 'sniper', Numpad1: 'pistol', Numpad2: 'shotgun', Numpad3: 'rocket', Numpad4: 'sniper' }[e.code];
         if (slot) { if (this.arsenal.select(slot)) this.audio.switchWeapon(); else if (!this.arsenal.hasAmmo(slot)) this.flashSlot(slot); }
         if (['ArrowUp', 'ArrowDown'].includes(e.code)) e.preventDefault();
       }
@@ -455,7 +486,7 @@ class Game {
       if (e.code === 'Enter' && (this.state === 'menu' || this.state === 'over')) this.start();
     });
     document.addEventListener('keyup', (e) => { this.keys[e.code] = false; });
-    window.addEventListener('blur', () => { this.keys = {}; this.mouseDown = false; });
+    window.addEventListener('blur', () => { this.keys = {}; this.mouseDown = false; this.rmb = false; });
   }
 
   applyMode(mode) {
@@ -526,10 +557,19 @@ class Game {
   }
 
   resetRun() {
+    if (this.levelKey !== 'halle') this.switchLevel('halle');
+    for (const l of Object.values(this.levels)) l.setExit(false);
+    this.wavesHere = 0;
+    this.hasBinoc = false;
+    this.binoc = false;
+    this.rmb = false;
+    this.scopeAmt = 0; this.binocAmt = 0;
+    this.breath = 1;
+    $('fade').classList.remove('on');
     const p = this.player;
-    p.pos.copy(this.level.playerStart);
+    p.pos.set(this.level.playerStart.x, 0, this.level.playerStart.z);
     p.vel.set(0, 0, 0);
-    p.y = 0; p.vy = 0; p.onGround = true;
+    p.y = this.level.playerStart.y; p.vy = 0; p.onGround = true;
     p.yaw = Math.PI; p.pitch = 0; p.hp = 100; p.maxHp = 100; p.dead = false; p.deadT = 0; p.shake = 0;
     // Upgrades zurücksetzen
     this.up = {};
@@ -583,6 +623,7 @@ class Game {
 
   nextWave() {
     this.wave++;
+    this.wavesHere = (this.wavesHere || 0) + 1;
     const w = this.wave;
     this.waveCfg = {
       total: 6 + (w - 1) * 3,
@@ -592,6 +633,8 @@ class Game {
       dmg: 11 + w,
       interval: Math.max(0.55, 2.2 - w * 0.13),
     };
+    // draußen sind die Wege weit: etwas schneller und mehr gleichzeitig
+    if (this.level.outdoor) { this.waveCfg.speed *= 1.3; this.waveCfg.maxAlive = Math.min(16, this.waveCfg.maxAlive + 2); }
     this.queue = this.buildQueue(w, this.waveCfg.total);
     this.spawned = 0;
     this.spawnT = 1.6;
@@ -602,6 +645,7 @@ class Game {
       s.shotgun.reserve = Math.min(DEFS.shotgun.maxReserve, s.shotgun.reserve + 6);
       s.rocket.reserve = Math.min(DEFS.rocket.maxReserve, s.rocket.reserve + 1);
       a.grenades = Math.min(this.maxNades, a.grenades + 1);
+      if (a.owned.sniper) s.sniper.reserve = Math.min(DEFS.sniper.maxReserve, s.sniper.reserve + 5);
       this.level.resetBarrels();
     }
     const wl = w === 1 ? QUIPS.start[0] : this.q('wave');
@@ -708,6 +752,7 @@ class Game {
 
   tryFire() {
     if (this.player.dead) return;
+    if (this.binoc) { this.binoc = false; this.audio.zoom(false); return; }
     const a = this.arsenal;
     const k = a.current;
     const res = a.fire();
@@ -723,6 +768,11 @@ class Game {
     this.player.yaw += (Math.random() - 0.5) * d.camKick * 0.35;
     this.player.shake = Math.min(1.2, this.player.shake + (k === 'pistol' ? 0.12 : 0.4));
     this.muzzleT = k === 'pistol' ? 0.06 : 0.09;
+    if (k === 'sniper') {
+      this.audio.sniper();
+      this.player.pitch = Math.min(1.45, this.player.pitch + (this.scopeAmt > 0.5 ? 0.02 : 0));
+      this.shootHitscan(d);
+    }
     if (k === 'pistol') { this.audio.pistol(); this.shootHitscan(d); }
     if (k === 'shotgun') { this.audio.shotgun(); this.shootHitscan(d); }
     if (k === 'rocket') {
@@ -753,15 +803,18 @@ class Game {
     let walls = 0;
     const dmgMul = 1 + 0.15 * (this.up.dmg || 0);
     const headMul = 3.2 + 0.9 * (this.up.head || 0);
-    const pierce = d.pellets === 1 ? (this.up.pierce || 0) : 0;
+    const pierce = d.pellets === 1 ? (this.up.pierce || 0) + (d.pierce || 0) : 0;
+    const sniper = d === DEFS.sniper;
+    let tracerEnd = null;
     for (let i = 0; i < d.pellets; i++) {
-      const spread = d.spread * (d.pellets > 1 ? 1 : 1 + moving * 2.5);
+      const spread = sniper ? (this.scopeAmt > 0.9 ? d.spread * (1 + moving * 4) : d.hipSpread) : d.spread * (d.pellets > 1 ? 1 : 1 + moving * 2.5);
       const a = Math.random() * Math.PI * 2, r = d.pellets > 1 ? Math.sqrt(Math.random()) * spread : (Math.random() - 0.5) * spread;
       const rd = new THREE.Vector3(Math.cos(a) * r, Math.sin(a) * r, -1).normalize().applyQuaternion(cam.quaternion);
       ray.set(ro, rd);
-      ray.far = 90;
+      ray.far = sniper ? 260 : 90;
       const wall = ray.intersectObjects(this.level.colliders, false)[0];
-      const maxT = wall ? wall.distance : 90;
+      const maxT = wall ? wall.distance : ray.far;
+      if (sniper) tracerEnd = ro.clone().addScaledVector(rd, maxT);
       let hit = this.zombies.raycast(ro, rd, maxT);
       if (hit) {
         // Durchschlag: Kugel fliegt durch weitere Gegner (mit etwas weniger Schaden)
@@ -806,6 +859,27 @@ class Game {
       if (killed && shotgun && !close && Math.random() < 0.3) this.quip(this.q('shotgun'));
     }
     if (hits.size) this.hitmarker(anyKill);
+    if (sniper && tracerEnd) {
+      const from = new THREE.Vector3(0.12, -0.08, -0.5).applyMatrix4(this.camera.matrixWorld);
+      this.tracer(this.scopeAmt > 0.5 ? from.lerp(ro, 0.7) : from, tracerEnd);
+    }
+  }
+
+  // Leuchtspur für das Gewehr
+  tracer(a, b) {
+    if (!this.tracers) {
+      this.tracers = [0, 1, 2].map(() => {
+        const g = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(), new THREE.Vector3(0, 0, -1)]);
+        const m = new THREE.LineBasicMaterial({ color: 0xffd8a0, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false });
+        const l = new THREE.Line(g, m); l.frustumCulled = false;
+        this.scene.add(l);
+        return { l, t: 0 };
+      });
+    }
+    const tr = this.tracers.reduce((x, y) => (x.t < y.t ? x : y));
+    const pos = tr.l.geometry.attributes.position;
+    pos.setXYZ(0, a.x, a.y, a.z); pos.setXYZ(1, b.x, b.y, b.z); pos.needsUpdate = true;
+    tr.t = 0.18;
   }
 
   throwGrenade() {
@@ -848,7 +922,7 @@ class Game {
     const ray = new THREE.Raycaster();
     let kills = 0;
     for (const z of this.zombies.alive) {
-      const chest = z.root.position.clone().setY(1.0);
+      const chest = z.root.position.clone(); chest.y += 1.0;
       const d = chest.distanceTo(p);
       if (d > radius) continue;
       const dir = chest.clone().sub(p).setY(0);
@@ -947,6 +1021,7 @@ class Game {
     w.push(['shells', s.shotgun.reserve < 12 ? 3 : 1]);
     w.push(['rockets', s.rocket.reserve < 3 ? 2 : 0.6]);
     w.push(['grenade', a.grenades < 2 ? 1.6 : 0.5]);
+    if (a.owned.sniper) w.push(['rounds', s.sniper.reserve < 8 ? 3 : 1]);
     if (Math.random() > 0.3 + 0.1 * (this.up.magnet || 0) && k === 0) return;
     let sum = w.reduce((x, y) => x + y[1], 0), r = Math.random() * sum;
     let type = w[0][0];
@@ -957,6 +1032,7 @@ class Game {
     pk.t = 0;
     pk.holder.visible = true;
     pk.holder.position.set(pos.x + (k ? (Math.random() - 0.5) * 1.2 : 0), 0, pos.z + (k ? (Math.random() - 0.5) * 1.2 : 0));
+    pk.holder.position.y = this.level.groundAt(pk.holder.position.x, pk.holder.position.z, 0.2, pos.y + 0.1);
   }
 
   updatePickups(dt) {
@@ -975,12 +1051,13 @@ class Game {
         const sp = Math.min(md, dt * (5 + 3 * this.up.magnet));
         m.holder.position.x += (mx / md) * sp; m.holder.position.z += (mz / md) * sp;
       }
-      if (p.y > 1.3 || md > 1.0) continue;
+      if (Math.abs(p.y - m.holder.position.y) > 1.3 || md > 1.0) continue;
       let took = false;
       if (m.type === 'health' && p.hp < p.maxHp) { p.hp = Math.min(p.maxHp, p.hp + 25); took = true; this.audio.pickup(); }
       if (m.type === 'shells' && s.shotgun.reserve < DEFS.shotgun.maxReserve) { s.shotgun.reserve = Math.min(DEFS.shotgun.maxReserve, s.shotgun.reserve + PICKUP.shells.amount); took = true; }
       if (m.type === 'rockets' && s.rocket.reserve < DEFS.rocket.maxReserve) { s.rocket.reserve = Math.min(DEFS.rocket.maxReserve, s.rocket.reserve + PICKUP.rockets.amount); took = true; }
       if (m.type === 'grenade' && a.grenades < this.maxNades) { a.grenades++; took = true; }
+      if (m.type === 'rounds' && s.sniper.reserve < DEFS.sniper.maxReserve) { s.sniper.reserve = Math.min(DEFS.sniper.maxReserve, s.sniper.reserve + PICKUP.rounds.amount); took = true; }
       if (took) {
         if (m.type !== 'health') this.audio.ammo();
         m.active = false; m.holder.visible = false;
@@ -1032,6 +1109,8 @@ class Game {
     document.querySelectorAll('.slot[data-w]').forEach((el) => {
       const w = el.dataset.w;
       if (w === 'nade') { el.classList.toggle('off', a.grenades <= 0); return; }
+      if (w === 'binoc') { el.hidden = !this.hasBinoc; el.classList.toggle('on', !!this.binoc); return; }
+      if (w === 'sniper') el.hidden = !a.owned.sniper;
       el.classList.toggle('on', w === k);
       el.classList.toggle('off', !a.hasAmmo(w));
     });
@@ -1060,6 +1139,15 @@ class Game {
     } else if (this.waveState === 'pre') {
       this.breakT -= dt;
       if (this.breakT <= 0) this.offerUpgrades();
+    } else if (this.waveState === 'exit') {
+      const e = this.level.exitPos, p = this.player;
+      const d = Math.hypot(p.pos.x - e.x, p.pos.z - e.z);
+      const el = $('nextwave');
+      el.textContent = `Ausgang: ${Math.round(d)} m – folge der blauen Markierung`;
+      el.classList.add('show');
+      if (d < 1.1 && Math.abs(p.y - e.y) < 1) this.travel();
+    } else if (this.waveState === 'travel') {
+      this.updateTravel(dt);
     } else if (this.waveState === 'break') {
       this.breakT -= dt;
       const el = $('nextwave');
@@ -1074,7 +1162,7 @@ class Game {
     const avail = UPGRADES.filter((u) => (this.up[u.id] || 0) < u.max);
     for (let i = avail.length - 1; i > 0; i--) { const j = (Math.random() * (i + 1)) | 0; [avail[i], avail[j]] = [avail[j], avail[i]]; }
     this.offer = avail.slice(0, 3);
-    if (!this.offer.length) { this.waveState = 'break'; this.breakT = 4; return; }
+    if (!this.offer.length) { this.afterUpgrade(); return; }
     const box = $('up-cards');
     box.innerHTML = '';
     this.offer.forEach((u, i) => {
@@ -1105,20 +1193,101 @@ class Game {
     setTimeout(() => $('upgrades').classList.remove('show'), 450);
     this.toast(`${u.name}${this.up[u.id] > 1 ? ' ' + 'I'.repeat(this.up[u.id]) : ''}`);
     this.audio.upgrade();
+    this.offer = null;
+    this.afterUpgrade();
+    this.updateHUD();
+  }
+
+  // nach der Upgrade-Wahl: weiter in diesem Gebiet oder Ausgang öffnen
+  afterUpgrade() {
+    if ((this.wavesHere || 0) >= WAVES_PER[this.levelKey]) {
+      this.waveState = 'exit';
+      this.level.setExit(true);
+      const to = this.levelKey === 'halle' ? 'Raus auf den Hof!' : 'Zurück in die Halle!';
+      setTimeout(() => this.state === 'play' && this.waveState === 'exit' && this.banner('AUSGANG OFFEN', `${to} Folge der blauen Markierung.`, 3.2), 500);
+      return;
+    }
     this.waveState = 'break';
     this.breakT = 3.5;
-    this.offer = null;
-    this.updateHUD();
+  }
+
+  // ---------------- Gebiete (Halle / Hof) ----------------
+  applyLevelEnv() {
+    const d = this.level.def;
+    this.scene.fog.density = d.fog;
+    this.scene.fog.color.set(d.fogColor);
+    this.scene.background.set(d.fogColor);
+    this.camera.far = d.outdoor ? 400 : 140;
+    this.camera.updateProjectionMatrix();
+    this.flashlight.intensity = d.outdoor ? 14 : 26;
+  }
+
+  switchLevel(key) {
+    const old = this.level;
+    old.setExit(false);
+    old.group.visible = false;
+    this.level = this.levels[key];
+    this.levelKey = key;
+    this.level.group.visible = true;
+    this.level.flowCell = -1;
+    this.level.resetBarrels();
+    this.fx.level = this.level;
+    this.fx.reset();
+    this.zombies.reset();
+    this.proj.reset();
+    this.pickups.forEach((m) => { m.active = false; m.holder.visible = false; });
+    this.minimap.setLevel(this.level);
+    this.applyLevelEnv();
+    const p = this.player;
+    p.pos.set(this.level.playerStart.x, 0, this.level.playerStart.z);
+    p.y = this.level.playerStart.y;
+    p.vel.set(0, 0, 0); p.vy = 0; p.onGround = true;
+    p.yaw = this.level.def.startYaw; p.pitch = 0;
+    this.wavesHere = 0;
+  }
+
+  // Ausgang betreten: abblenden, Gebiet wechseln, aufblenden
+  travel() {
+    this.waveState = 'travel';
+    this.travelT = 0;
+    this.binoc = false; this.rmb = false;
+    $('fade').classList.add('on');
+    $('nextwave').classList.remove('show');
+    this.audio.whoosh();
+  }
+
+  updateTravel(dt) {
+    this.travelT += dt;
+    if (this.travelT >= 0.7 && !this._switched) {
+      this._switched = true;
+      const to = this.levelKey === 'halle' ? 'hof' : 'halle';
+      this.switchLevel(to);
+      if (to === 'hof') {
+        const a = this.arsenal;
+        const first = !a.owned.sniper;
+        a.owned.sniper = true;
+        this.hasBinoc = true;
+        if (first) { a.state.sniper.ammo = DEFS.sniper.mag; a.state.sniper.reserve = 10; a.select('sniper'); }
+        this.banner('DER HOF', first ? 'Neu: Scharfschützengewehr (4, rechte Maustaste = Zielfernrohr) · Fernglas (B)' : 'Vom Dach aus hast du den Überblick', 4.5);
+      } else this.banner('DIE HALLE', 'Wieder drinnen – eng und laut', 3);
+    }
+    if (this.travelT >= 1.0) {
+      $('fade').classList.remove('on');
+      this._switched = false;
+      this.waveState = 'break';
+      this.breakT = 4.5;
+      this.updateHUD();
+    }
   }
 
   pickSpawn() {
     const pp = this.player.pos;
     const list = this.level.spawns
       .map((s) => ({ s, d: s.distanceTo(pp) }))
-      .filter((o) => o.d > 10)
+      .filter((o) => o.d > (this.level.outdoor ? 22 : 10))
       .sort((a, b) => a.d - b.d);
     if (!list.length) return null;
-    const pool = list.slice(0, Math.min(4, list.length));
+    const pool = this.level.outdoor ? list : list.slice(0, Math.min(4, list.length));
     const s = pick(pool).s;
     return new THREE.Vector3(s.x + (Math.random() - 0.5) * 0.8, 0, s.z + (Math.random() - 0.5) * 0.8);
   }
@@ -1135,8 +1304,9 @@ class Game {
     const k = this.keys;
     const f = (k.KeyW || k.ArrowUp ? 1 : 0) - (k.KeyS || k.ArrowDown ? 1 : 0);
     const s = (k.KeyD || k.ArrowRight ? 1 : 0) - (k.KeyA || k.ArrowLeft ? 1 : 0);
-    const sprint = (k.ShiftLeft || k.ShiftRight) && f > 0;
-    const speed = (sprint ? 7.6 : 5.0) * (1 + 0.1 * (this.up.speed || 0));
+    const zoomed = (this.scopeAmt || 0) > 0.3 || (this.binocAmt || 0) > 0.3;
+    const sprint = (k.ShiftLeft || k.ShiftRight) && f > 0 && !zoomed;
+    const speed = (sprint ? 7.6 : 5.0) * (1 + 0.1 * (this.up.speed || 0)) * (zoomed ? 0.45 : 1);
     const fx = -Math.sin(p.yaw), fz = -Math.cos(p.yaw);
     const rx = Math.cos(p.yaw), rz = -Math.sin(p.yaw);
     let wx = fx * f + rx * s, wz = fz * f + rz * s;
@@ -1149,13 +1319,19 @@ class Game {
     p.pos.z += p.vel.z * dt;
     this.level.collide(p.pos, 0.36, p.y);
     // Zombies wegschieben (nicht durchlaufen)
-    if (p.y < 1.2) for (const z of this.zombies.alive) {
+    for (const z of this.zombies.alive) {
+      if (Math.abs(p.y - z.root.position.y) > 1.2) continue;
       const dx = p.pos.x - z.root.position.x, dz = p.pos.z - z.root.position.z;
       const d = Math.hypot(dx, dz), m = 0.37 + z.radius;
       if (d < m && d > 1e-4) { p.pos.x = z.root.position.x + (dx / d) * m; p.pos.z = z.root.position.z + (dz / d) * m; }
     }
+    this.level.collide(p.pos, 0.36, p.y); // nicht durch Wände/Brüstung schieben lassen
     // Springen / Fallen
     const ground = this.level.groundAt(p.pos.x, p.pos.z, 0.36, p.y);
+    if (p.onGround && ground > p.y + 0.01 && ground - p.y < 0.65) {
+      // Stufe hoch: weich anheben
+      p.y = Math.min(ground, p.y + dt * 7);
+    } else
     if (!p.onGround || p.y > ground + 0.01) {
       p.vy -= 19 * dt;
       p.y += p.vy * dt;
@@ -1179,6 +1355,74 @@ class Game {
     this.updatePickups(dt);
   }
 
+  // Zielfernrohr / Fernglas: Sichtfeld, Overlays, Atem, Markieren
+  updateZoom(dt) {
+    const a = this.arsenal, playing = this.state === 'play' && !this.player.dead;
+    if (a.current !== 'sniper' || a.pending) this.rmb = false;
+    if (!playing) { this.rmb = false; this.binoc = false; }
+    const wantScope = this.rmb && !this.binoc && a.current === 'sniper' && !a.reloading && !a.busy ? 1 : 0;
+    const wantBinoc = this.binoc ? 1 : 0;
+    this.scopeAmt = (this.scopeAmt || 0) + (wantScope - (this.scopeAmt || 0)) * Math.min(1, dt * 12);
+    this.binocAmt = (this.binocAmt || 0) + (wantBinoc - (this.binocAmt || 0)) * Math.min(1, dt * 10);
+    if (this.scopeAmt < 0.01) this.scopeAmt = 0;
+    if (this.binocAmt < 0.01) this.binocAmt = 0;
+    const fov = 74 + (8.5 - 74) * this.scopeAmt + (16 - 74) * this.binocAmt * (1 - this.scopeAmt);
+    if (Math.abs(this.camera.fov - fov) > 0.01) { this.camera.fov = fov; this.camera.updateProjectionMatrix(); }
+    // Optik hellt nachts etwas auf (Restlicht)
+    this.renderer.toneMappingExposure = 1.15 + 0.9 * this.scopeAmt + 0.6 * this.binocAmt * (1 - this.scopeAmt);
+    // Atem anhalten
+    const shift = this.keys.ShiftLeft || this.keys.ShiftRight;
+    if (this.outOfBreath) { this.breath = Math.min(1, (this.breath || 0) + dt * 0.35); if (this.breath >= 1) this.outOfBreath = false; }
+    this.steady = false;
+    if (this.scopeAmt > 0.5 && shift && !this.outOfBreath) {
+      this.steady = true;
+      this.breath = Math.max(0, (this.breath ?? 1) - dt / 3.5);
+      if (this.breath <= 0) this.outOfBreath = true;
+    } else if (!this.outOfBreath) this.breath = Math.min(1, (this.breath ?? 1) + dt * 0.5);
+    // Overlays
+    const sc = $('scope'), bi = $('binoc');
+    sc.classList.toggle('on', this.scopeAmt > 0.85);
+    bi.classList.toggle('on', this.binocAmt > 0.85 && this.scopeAmt < 0.5);
+    $('crosshair').style.opacity = this.scopeAmt > 0.3 || this.binocAmt > 0.3 ? 0 : 1;
+    if (this.scopeAmt > 0.85 || this.binocAmt > 0.85) {
+      // Entfernung messen + im Fernglas markieren
+      const cam = this.camera, ro = cam.getWorldPosition(new THREE.Vector3());
+      const dir = new THREE.Vector3(0, 0, -1).applyQuaternion(cam.quaternion);
+      const ray = new THREE.Raycaster(ro, dir, 0, 260);
+      const wall = ray.intersectObjects(this.level.colliders, false)[0];
+      const maxT = wall ? wall.distance : 260;
+      const hit = this.zombies.raycast(ro, dir, maxT);
+      const dist = hit ? hit.t : wall ? wall.distance : null;
+      const txt = dist ? `${Math.round(dist)} m` : '– m';
+      $('scope-range').textContent = txt;
+      $('binoc-range').textContent = txt;
+      $('scope-breath').style.width = Math.round((this.breath ?? 1) * 100) + '%';
+      $('scope-breath').parentNode.classList.toggle('low', !!this.outOfBreath);
+      if (this.binocAmt > 0.85 && this.scopeAmt < 0.5) {
+        // in einem kleinen Kegel um die Mitte suchen
+        let target = hit ? hit.z : null;
+        if (!target) {
+          let best = 0.035;
+          for (const z of this.zombies.alive) {
+            const c = z.root.position.clone(); c.y += z.height * 0.6;
+            const v = c.sub(ro); const d = v.length(); v.normalize();
+            const ang = Math.acos(Math.min(1, v.dot(dir)));
+            if (ang < best && d < maxT + 2) { best = ang; target = z; }
+          }
+        }
+        if (target && !target.marked) {
+          if (this._markTarget !== target) { this._markTarget = target; this._markT = 0; }
+          this._markT += dt;
+          $('binoc-mark').textContent = 'Markiere …';
+          if (this._markT > 0.3) { target.marked = true; this.audio.mark(); this._markTarget = null; }
+        } else {
+          this._markTarget = null;
+          $('binoc-mark').textContent = target && target.marked ? 'Markiert: +30 % Schaden' : '';
+        }
+      }
+    }
+  }
+
   placeCamera() {
     const p = this.player;
     const cam = this.camera;
@@ -1189,8 +1433,13 @@ class Game {
     cam.position.set(p.pos.x + Math.cos(p.yaw) * bobX, eye + bobY, p.pos.z - Math.sin(p.yaw) * bobX);
     const sh = p.shake * p.shake;
     cam.rotation.order = 'YXZ';
-    cam.rotation.y = p.yaw + (Math.random() - 0.5) * sh * 0.03;
-    cam.rotation.x = p.pitch + (Math.random() - 0.5) * sh * 0.03;
+    // Zielfernrohr wackelt (Atem); Shift = Luft anhalten
+    const sw = (this.scopeAmt || 0) * (this.steady ? 0.12 : this.outOfBreath ? 1.8 : 1);
+    const st = this.time || 0;
+    const swY = (Math.sin(st * 0.9) * 0.0035 + Math.sin(st * 2.3 + 1) * 0.0014) * sw;
+    const swX = (Math.sin(st * 1.3 + 2) * 0.0028 + Math.sin(st * 3.1) * 0.001) * sw;
+    cam.rotation.y = p.yaw + swY + (Math.random() - 0.5) * sh * 0.03;
+    cam.rotation.x = p.pitch + swX + (Math.random() - 0.5) * sh * 0.03;
     cam.rotation.z = (p.dead ? Math.min(0.5, p.deadT * 0.4) : 0) + Math.sin(p.bob * Math.PI * 0.25) * 0.004 * (this.moving || 0);
   }
 
@@ -1255,7 +1504,7 @@ class Game {
     }
 
     // Waffe
-    let light = this.level.lightAt(this.camera.position) * 0.06 + (this.muzzleT > 0 ? 1.5 : 0) + this.flashFx * 2;
+    let light = this.level.lightAt(this.camera.position) * 0.06 + (this.level.def.ambient || 0) + (this.muzzleT > 0 ? 1.5 : 0) + this.flashFx * 2;
     this.fx.setLight(Math.min(1.5, light));
     const ev = this.events;
     ev.length = 0;
@@ -1265,13 +1514,17 @@ class Game {
     }, ev);
     for (const e of ev) {
       if (e === 'pumpBack') this.audio.pump(true);
+      if (e === 'boltBack') this.audio.bolt(true);
+      if (e === 'boltFwd') this.audio.bolt(false);
       if (e === 'pumpFwd') this.audio.pump(false);
       if (e === 'shellIn') this.audio.shellIn();
       if (e === 'nadeRelease') this.releaseGrenade();
       if (e === 'switched') this.updateHUD();
     }
     this.look.dx = 0; this.look.dy = 0;
-    this.arsenal.rig.visible = this.state !== 'menu' && !this.player.dead;
+    this.updateZoom(dt);
+    this.arsenal.rig.visible = this.state !== 'menu' && !this.player.dead && this.scopeAmt < 0.6 && this.binocAmt < 0.4;
+    if (this.tracers) for (const t of this.tracers) { t.t = Math.max(0, t.t - dt); t.l.material.opacity = (t.t / 0.18) * 0.9; }
 
     if (this.audio.ready) {
       const fwd = new THREE.Vector3(0, 0, -1).applyQuaternion(this.camera.quaternion);

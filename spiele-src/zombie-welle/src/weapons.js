@@ -69,8 +69,9 @@ export const DEFS = {
   pistol: { name: 'Pistole', slot: 1, mag: 12, maxReserve: Infinity, cooldown: 0.15, reload: 1.25, damage: 34, pellets: 1, spread: 0.006, kick: [2.2, 26], camKick: 0.012 },
   shotgun: { name: 'Pump-Action', slot: 2, mag: 6, maxReserve: 40, cooldown: 0.2, pump: 0.52, shellTime: 0.42, damage: 15, pellets: 10, spread: 0.075, kick: [5.5, 70], camKick: 0.035 },
   rocket: { name: 'Raketenwerfer', slot: 3, mag: 1, maxReserve: 12, cooldown: 0.4, reload: 1.5, kick: [5, 34], camKick: 0.03 },
+  sniper: { name: 'Scharfschützengewehr', slot: 4, mag: 5, maxReserve: 30, cooldown: 0.2, bolt: 0.95, reload: 2.3, damage: 240, pellets: 1, spread: 0.0007, hipSpread: 0.05, pierce: 2, kick: [7, 55], camKick: 0.045 },
 };
-export const ORDER = ['pistol', 'shotgun', 'rocket'];
+export const ORDER = ['pistol', 'shotgun', 'rocket', 'sniper'];
 export const MAX_GRENADES = 6;
 
 // ------------------------------------------------------------
@@ -122,6 +123,7 @@ export class Arsenal {
       pistol: this.buildPistol(),
       shotgun: this.buildShotgun(),
       rocket: this.buildLauncher(),
+      sniper: this.buildSniper(),
     };
     for (const k of ORDER) {
       const mdl = this.models[k];
@@ -151,9 +153,11 @@ export class Arsenal {
       pistol: { ammo: 12, reserve: Infinity },
       shotgun: { ammo: 6, reserve: 12 },
       rocket: { ammo: 1, reserve: 3 },
+      sniper: { ammo: 5, reserve: 10 },
     };
     this.grenades = 3;
-    this.owned = { pistol: true, shotgun: true, rocket: true };
+    this.owned = { pistol: true, shotgun: true, rocket: true, sniper: false };
+    this.boltT = 0;
     this.current = 'pistol';
     this.last = 'shotgun';
     this.pending = null;
@@ -384,6 +388,47 @@ export class Arsenal {
     return { group: gun, warhead, flash, rigBase: new THREE.Vector3(0.2, -0.2, -0.52), rot: new THREE.Euler(0, 0.06, -0.02) };
   }
 
+  buildSniper() {
+    // Repetiergewehr mit Zielfernrohr (prozedural)
+    const M = this.m, add = (...a) => this._add(...a);
+    const gun = new THREE.Group();
+    // Schaft (Holz)
+    const stock = add(gun, new RoundedBoxGeometry(0.042, 0.075, 0.42, 3, 0.012), M.wood, 0, -0.012, 0.12); void stock;
+    add(gun, new RoundedBoxGeometry(0.045, 0.11, 0.16, 3, 0.02), M.wood, 0, -0.035, 0.36);
+    add(gun, new RoundedBoxGeometry(0.05, 0.12, 0.02, 2, 0.008), M.dark, 0, -0.035, 0.445);
+    const gr = add(gun, new RoundedBoxGeometry(0.034, 0.1, 0.05, 3, 0.012), M.wood, 0, -0.075, 0.075); gr.rotation.x = 0.35;
+    add(gun, new RoundedBoxGeometry(0.04, 0.05, 0.36, 3, 0.01), M.wood, 0, -0.004, -0.2);
+    // System + Lauf
+    const rcv = add(gun, new THREE.CylinderGeometry(0.019, 0.019, 0.2, 18), M.steel, 0, 0.03, -0.01); rcv.rotation.x = Math.PI / 2;
+    const barrel = add(gun, new THREE.CylinderGeometry(0.011, 0.014, 0.62, 16), M.steel, 0, 0.032, -0.42); barrel.rotation.x = Math.PI / 2;
+    const brake = add(gun, new THREE.CylinderGeometry(0.017, 0.017, 0.06, 14), M.steelLight, 0, 0.032, -0.75); brake.rotation.x = Math.PI / 2;
+    for (const z of [-0.74, -0.76]) add(gun, new THREE.BoxGeometry(0.036, 0.006, 0.012), M.black, 0, 0.032, z);
+    // Abzug
+    const tg = add(gun, new THREE.TorusGeometry(0.018, 0.0035, 8, 20, Math.PI), M.steel, 0, -0.03, 0.03); tg.rotation.set(Math.PI, Math.PI / 2, 0);
+    // Kammerstängel
+    const bolt = new THREE.Group();
+    bolt.position.set(0.02, 0.035, 0.05);
+    gun.add(bolt);
+    const bh = add(bolt, new THREE.CylinderGeometry(0.004, 0.004, 0.05, 8), M.steelLight, 0.022, 0, 0); bh.rotation.z = Math.PI / 2;
+    add(bolt, new THREE.SphereGeometry(0.01, 12, 10), M.steelLight, 0.048, 0, 0);
+    // Zielfernrohr
+    const sy = 0.085;
+    const tube = add(gun, new THREE.CylinderGeometry(0.016, 0.016, 0.24, 20), M.dark, 0, sy, -0.03); tube.rotation.x = Math.PI / 2;
+    const obj = add(gun, new THREE.CylinderGeometry(0.026, 0.017, 0.07, 20), M.dark, 0, sy + 0.004, -0.18); obj.rotation.x = Math.PI / 2;
+    const oc = add(gun, new THREE.CylinderGeometry(0.021, 0.016, 0.05, 20), M.dark, 0, sy, 0.11); oc.rotation.x = Math.PI / 2;
+    const lens = add(gun, new THREE.CircleGeometry(0.023, 20), new THREE.MeshStandardMaterial({ color: 0x0a1a2a, metalness: 1, roughness: 0.05, emissive: 0x0a2a40, emissiveIntensity: 0.6 }), 0, sy + 0.004, -0.216); lens.rotation.y = Math.PI;
+    add(gun, new THREE.CylinderGeometry(0.009, 0.009, 0.03, 12), M.dark, 0, sy + 0.022, -0.03);
+    add(gun, new THREE.CylinderGeometry(0.009, 0.009, 0.03, 12), M.dark, 0.022, sy, -0.03).rotation.z = Math.PI / 2;
+    for (const z of [-0.09, 0.04]) add(gun, new THREE.BoxGeometry(0.02, 0.04, 0.018), M.steel, 0, 0.058, z);
+    const stripe = add(gun, new THREE.CylinderGeometry(0.0165, 0.0165, 0.012, 20, 1, true), M.orange, 0, sy, 0.07); stripe.rotation.x = Math.PI / 2;
+    // Hände
+    this.rightHand(gun);
+    this.supportHand(gun, 0, -0.02, -0.26, 0.026);
+    const flash = this.makeFlash(gun, 0, 0.032, -0.8, 0.16);
+    const eject = new THREE.Object3D(); eject.position.set(0.025, 0.035, 0.0); gun.add(eject);
+    return { group: gun, bolt, boltZ: 0.05, flash, eject, rigBase: new THREE.Vector3(0.15, -0.14, -0.42), rot: new THREE.Euler(0, 0.08, -0.03) };
+  }
+
   buildNadeHand() {
     const M = this.m, add = (...a) => this._add(...a);
     const g = new THREE.Group();
@@ -411,7 +456,7 @@ export class Arsenal {
   }
 
   // ---------------- Aktionen ----------------
-  hasAmmo(k) { const s = this.state[k]; return s.ammo > 0 || s.reserve > 0; }
+  hasAmmo(k) { const s = this.state[k]; return !!this.owned[k] && (s.ammo > 0 || s.reserve > 0); }
 
   select(k) {
     if (!DEFS[k] || !this.owned[k]) return false;
@@ -439,7 +484,7 @@ export class Arsenal {
     const k = this.current, d = DEFS[k], s = this.st;
     if (this.busy) return 'wait';
     if (k === 'shotgun' && this.sgReload && s.ammo > 0) this.sgReload = null; // Nachladen abbrechen
-    if (this.cooldown > 0 || this.reloadT > 0 || this.pumpT > 0 || this.sgReload) return 'wait';
+    if (this.cooldown > 0 || this.reloadT > 0 || this.pumpT > 0 || (k === 'sniper' && this.boltT > 0) || this.sgReload) return 'wait';
     if (s.ammo <= 0) { this.cooldown = 0.25; return 'empty'; }
     s.ammo--;
     this.cooldown = d.cooldown;
@@ -454,12 +499,13 @@ export class Arsenal {
     if (k === 'pistol') { this.slideT = 0.085; this.eject('pistol'); }
     if (k === 'shotgun' && (s.ammo > 0 || s.reserve > 0 || true)) { this.pumpT = d.pump + 0.18; }
     if (k === 'rocket') mdl.warhead.visible = false;
+    if (k === 'sniper' && s.ammo > 0) this.boltT = d.bolt;
     return 'shot';
   }
 
   startReload() {
     const k = this.current, d = DEFS[k], s = this.st;
-    if (this.busy || this.reloading || this.pumpT > 0) return false;
+    if (this.busy || this.reloading || this.pumpT > 0 || (k === 'sniper' && this.boltT > 0)) return false;
     if (s.ammo >= d.mag || s.reserve <= 0) return false;
     if (k === 'shotgun') { this.sgReload = { t: 0, phase: 'in' }; return 'shotgun'; }
     this.reloadT = d.reload;
@@ -481,6 +527,7 @@ export class Arsenal {
   eject(kind) {
     const mdl = this.models[kind];
     const list = this.shells.filter((s) => s.shot === (kind === 'shotgun'));
+    if (kind === 'sniper') list.forEach((q) => q.m.scale.set(1.5, 2.6, 1.5)); else if (kind === 'pistol') list.forEach((q) => q.m.scale.set(1, 1, 1));
     const s = list.find((q) => q.life <= 0) || list[0];
     s.m.visible = true;
     const p = new THREE.Vector3();
@@ -554,6 +601,24 @@ export class Arsenal {
           tilt = 0.6 * (1 - r.out / 0.25);
           if (r.out >= 0.25) this.sgReload = null;
         }
+      }
+    }
+
+    // --- Gewehr: Kammerstängel repetieren ---
+    if (k === 'sniper') {
+      if (this.boltT > 0) {
+        const before = this.boltT, tot = d.bolt;
+        this.boltT -= rdt;
+        const p = 1 - Math.max(0, this.boltT) / tot;
+        // 0–0.25 hoch, 0.25–0.5 zurück, 0.5–0.75 vor, 0.75–1 runter
+        const up = p < 0.25 ? p / 0.25 : p < 0.75 ? 1 : 1 - (p - 0.75) / 0.25;
+        const back = p < 0.25 ? 0 : p < 0.5 ? (p - 0.25) / 0.25 : p < 0.75 ? 1 - (p - 0.5) / 0.25 : 0;
+        mdl.bolt.rotation.z = up * 1.2;
+        mdl.bolt.position.z = mdl.boltZ + back * 0.075;
+        roll = up * 0.12;
+        if (before / tot > 0.55 && this.boltT / tot <= 0.55) { this.eject('sniper'); events.push('boltBack'); }
+        if (before / tot > 0.2 && this.boltT / tot <= 0.2) events.push('boltFwd');
+        if (this.boltT <= 0) { this.boltT = 0; mdl.bolt.rotation.z = 0; mdl.bolt.position.z = mdl.boltZ; }
       }
     }
 

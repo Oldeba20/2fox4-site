@@ -63,3 +63,17 @@ WASD laufen · Shift rennen · Leertaste springen · Klick schießen · R nachla
 - **Minimap** unten links, dreht sich mit, Gegner in ihrer Farbe, Beute als kleine Quadrate.
 
 Einstellungen neu: `zw_mode` (`glitch`/`hard`), `zw_adult` (Hart-Modus bestätigt). `zw_blood` entfällt.
+
+## Version 3 (04.10.2026): Der Hof
+
+- **Zwei Gebiete:** Nach 2 Wellen in der Halle geht ein Ausgang auf (blaue Lichtsäule, auf der Minimap markiert).
+  Man läuft hinein und landet auf dem Dach eines Gebäudes im nächtlichen **Hof** (3 Wellen), danach geht es
+  wieder in die Halle (2 Wellen) usw. Steuerung über `WAVES_PER` in `main.js`.
+- **Hof** (`MAPS.hof` in `level.js`, erzeugt mit `tools/hofmap.py`): 48×40 Felder, Dach 4 m hoch mit Brüstung,
+  zwei Treppen (Felder `1`–`7`), Container (`X`), Lampenmasten (`Y`), Mond mit Schatten, Sternenhimmel.
+  Gegner kommen durch die Tore und steigen über die Treppen aufs Dach (Flussfeld beachtet Höhen).
+- **Scharfschützengewehr** (Taste 4, ab dem Hof): rechte Maustaste = Zielfernrohr (8,5-fach), wackelt mit dem Atem,
+  Shift = Luft anhalten (Atemleiste), Repetieren nach jedem Schuss, Kugel durchschlägt 2 Gegner, Leuchtspur.
+- **Fernglas** (Taste B): Entfernungsmesser; Gegner kurz anvisieren = markieren (Raute über dem Kopf, auf der
+  Minimap umkreist, +30 % Schaden).
+- Neue Beute: Gewehrpatronen.
