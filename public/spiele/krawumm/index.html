@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <title>Krawumm! – 2fox4 Arcade</title>
 <meta name="robots" content="noindex">
 <style>
@@ -34,6 +34,7 @@ kbd { font-family: var(--term); font-size: 18px; line-height: 1; color: var(--in
 .embed .legend { display: none; }
 .embed .wrap { padding-inline: 0; }
 .embed .screen { width: min(100%, calc(100vh * 16 / 9)); box-shadow: none; }
+.embed body, .embed .wrap { touch-action: none; }
 @media (pointer: coarse) { .touch { display: block; } .legend { display: none; } .screen { width: min(100%, calc(100dvh * 16 / 9)); } }
 </style>
 </head>
@@ -60,7 +61,12 @@ kbd { font-family: var(--term); font-size: 18px; line-height: 1; color: var(--in
     <span><b>Tipp:</b> Fässer ballern, Kisten knacken, Schlüsselkarten suchen.</span>
   </div>
 </div>
-<script>if (window.self !== window.top) document.documentElement.classList.add("embed");</script>
+<script>if (window.self !== window.top) document.documentElement.classList.add("embed");
+if (matchMedia("(pointer: coarse)").matches) {
+  document.documentElement.style.overscrollBehavior = "none";
+  document.addEventListener("touchmove", function (e) { e.preventDefault(); }, { passive: false });
+  document.addEventListener("gesturestart", function (e) { e.preventDefault(); });
+}</script>
 <script src="levels.js"></script>
 <script src="game.js"></script>
 </body>

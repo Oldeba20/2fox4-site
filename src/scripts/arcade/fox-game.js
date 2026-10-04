@@ -70,9 +70,10 @@ export function initFoxGame(root) {
   let S = 1;
   let layers = {};
   function resize() {
-    const rect = canvas.getBoundingClientRect();
+    // offsetWidth statt getBoundingClientRect: bleibt korrekt, wenn das Spiel auf dem Handy gedreht dargestellt wird
+    const cssW = canvas.offsetWidth || canvas.getBoundingClientRect().width;
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    const w = Math.max(320, Math.round(rect.width * dpr));
+    const w = Math.max(320, Math.round(cssW * dpr));
     if (w === canvas.width && layers.sky) return;
     canvas.width = w;
     canvas.height = Math.round((w * VH) / VW);
@@ -1324,6 +1325,11 @@ export function initFoxGame(root) {
   // ---------- Eingabe ----------
   function toVirtual(e) {
     const r = canvas.getBoundingClientRect();
+    const view = root.closest(".game-view");
+    if (view && view.classList.contains("is-rot")) {
+      // Spiel ist um 90° im Uhrzeigersinn gedreht: Bildschirm-y = Spiel-x, Bildschirm-x (von rechts) = Spiel-y
+      return { x: ((e.clientY - r.top) / r.height) * VW, y: ((r.right - e.clientX) / r.width) * VH };
+    }
     return { x: ((e.clientX - r.left) / r.width) * VW, y: ((e.clientY - r.top) / r.height) * VH };
   }
   canvas.addEventListener("pointermove", (e) => {
@@ -1391,6 +1397,7 @@ export function initFoxGame(root) {
     else { resize(); if (!raf) render(); }
   });
   window.addEventListener("resize", () => { resize(); if (!raf) render(); });
+  window.addEventListener("resize-arcade", () => { resize(); if (!raf) render(); });
 
   // Vorschau-Bild hinter dem Start-Overlay
   function preview() {

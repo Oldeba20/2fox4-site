@@ -52,6 +52,7 @@ const description =
     <GamePicker />
 
     <div class="game-view" data-view="fox">
+      <button class="mclose" type="button" data-arcade-back aria-label="Spiel beenden">✕</button>
       <div class="game-bar">
         <button class="bar-back" type="button" data-arcade-back>← Spielauswahl</button>
         <p class="bar-hint">
@@ -63,6 +64,7 @@ const description =
     </div>
 
     <div class="game-view" data-view="krawumm">
+      <button class="mclose" type="button" data-arcade-back aria-label="Spiel beenden">✕</button>
       <div class="game-bar">
         <button class="bar-back" type="button" data-arcade-back>← Spielauswahl</button>
         <p class="bar-hint">
@@ -76,6 +78,7 @@ const description =
     </div>
 
     <div class="game-view" data-view="flitzer">
+      <button class="mclose" type="button" data-arcade-back aria-label="Spiel beenden">✕</button>
       <div class="game-bar">
         <button class="bar-back" type="button" data-arcade-back>← Spielauswahl</button>
         <p class="bar-hint">
@@ -137,32 +140,58 @@ const description =
     box-shadow: 0 25px 60px -20px rgba(0, 0, 0, 0.6), inset 0 0 0 1px rgba(255, 255, 255, 0.06);
   }
   .krawumm-frame iframe { display: block; width: 100%; height: 100%; border: 0; }
-  /* Fuchs-Flitzer auf dem Handy: Vollbild-Ebene über der ganzen Seite, nichts scrollt */
-  @media (pointer: coarse) {
-    .lost-page[data-game="flitzer"] .game-view[data-view="flitzer"] {
-      position: fixed;
-      inset: 0;
-      z-index: 2147483000;
-      width: 100vw;
-      height: 100vh;
-      height: 100dvh;
-      padding: 0;
-      gap: 0;
-      background: #8cc8ff;
-      touch-action: none;
-      overscroll-behavior: none;
-    }
-    .game-view[data-view="flitzer"] .game-bar { display: none; }
-    .game-view[data-view="flitzer"] .krawumm-frame {
-      max-width: none;
-      width: 100%;
-      height: 100%;
-      aspect-ratio: auto;
-      border-radius: 0;
-      box-shadow: none;
-    }
+  /* Handy: Spiele als Vollbild-Ebene über der ganzen Seite, immer Querformat, nichts scrollt.
+     Größe + Drehung setzt das Skript (Klasse mfull, im Hochformat zusätzlich is-rot). */
+  .game-view.mfull {
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 2147483000;
+    padding: 0;
+    gap: 0;
+    background: #07060d;
+    touch-action: none;
+    overscroll-behavior: none;
+    transform-origin: 0 0;
+    container-type: size;
   }
-  :global(html.flitzer-lock), :global(html.flitzer-lock body) { overflow: hidden !important; overscroll-behavior: none; height: 100%; }
+  .game-view.mfull .game-bar { display: none; }
+  .game-view.mfull .krawumm-frame {
+    max-width: none;
+    width: 100%;
+    height: 100%;
+    aspect-ratio: auto;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  .game-view.mfull :global(.fx) { width: 100%; height: 100%; align-items: center; background: #0b0918; }
+  .game-view.mfull :global(.fx-frame) { width: min(100cqw, 160cqh); max-width: none; border-radius: 0; box-shadow: none; }
+  .game-view.mfull :global(.fx-card-fox),
+  .game-view.mfull :global(.fx-sub),
+  .game-view.mfull :global(.fx-portrait) { display: none; }
+  .game-view.mfull :global(.fx-card) { padding: 0.7rem 1rem 0.8rem; }
+  .game-view.mfull :global(.fx-rules) { font-size: 0.78rem; margin: 0.3rem 0 0.6rem; }
+  .game-view.mfull :global(.fx-card h2) { margin: 0 0 0.2rem; font-size: 1.3rem; }
+  .mclose {
+    display: none;
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    z-index: 10;
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    border: 2px solid rgba(255, 255, 255, 0.75);
+    background: rgba(20, 16, 30, 0.55);
+    color: #fff;
+    font-size: 20px;
+    line-height: 1;
+    padding: 0;
+  }
+  .game-view.mfull .mclose { display: grid; place-items: center; }
+  .game-view.mfull[data-view="flitzer"] .mclose { display: none; }
+  .game-view.mfull[data-view="krawumm"] .mclose { top: auto; bottom: 46%; left: 8px; }
+  :global(html.arcade-lock), :global(html.arcade-lock body) { overflow: hidden !important; overscroll-behavior: none; }
   .lost-page:not([data-game="none"]) :global([data-arcade-picker]) { display: none; }
   .game-bar {
     width: 100%;
@@ -309,23 +338,57 @@ const description =
       }
     }
 
-    // Handy: Rennspiel als Vollbild (Android: echtes Vollbild + Querformat, iPhone: Ebene über der Seite,
-    // das Spiel selbst stellt im Hochformat gedreht dar)
+    // Handy: jedes Spiel als Vollbild-Ebene, immer im Querformat (im Hochformat um 90° gedreht),
+    // Seite dahinter gesperrt. Android bekommt zusätzlich echtes Vollbild + Querformat-Sperre.
     const coarse = window.matchMedia("(pointer: coarse)").matches;
-    function mobileFull(on) {
+    let fullView = null;
+    function layoutFull() {
+      if (!fullView) return;
+      const vv = window.visualViewport;
+      const w = Math.round(vv ? vv.width : window.innerWidth);
+      const h = Math.round(vv ? vv.height : window.innerHeight);
+      const rot = h > w;
+      fullView.style.width = (rot ? h : w) + "px";
+      fullView.style.height = (rot ? w : h) + "px";
+      fullView.style.transform = rot ? "translateX(" + w + "px) rotate(90deg)" : "";
+      fullView.classList.toggle("is-rot", rot);
+      window.dispatchEvent(new Event("resize-arcade"));
+    }
+    window.addEventListener("resize", layoutFull);
+    window.addEventListener("orientationchange", () => { setTimeout(layoutFull, 150); setTimeout(layoutFull, 600); });
+    if (window.visualViewport) window.visualViewport.addEventListener("resize", layoutFull);
+    function blockScroll(e) { if (!e.target.closest(".fx-ov")) e.preventDefault(); }
+    function mobileFull(game) {
       if (!coarse) return;
-      document.documentElement.classList.toggle("flitzer-lock", on);
-      const view = page.querySelector('.game-view[data-view="flitzer"]');
+      if (fullView) {
+        fullView.classList.remove("mfull", "is-rot");
+        fullView.style.width = fullView.style.height = fullView.style.transform = "";
+        fullView.removeEventListener("touchmove", blockScroll);
+        fullView = null;
+      }
+      const on = game !== "none";
+      document.documentElement.classList.toggle("arcade-lock", on);
+      if (on) {
+        fullView = page.querySelector('.game-view[data-view="' + game + '"]');
+        if (fullView) {
+          fullView.classList.add("mfull");
+          fullView.addEventListener("touchmove", blockScroll, { passive: false });
+          layoutFull();
+        }
+        window.scrollTo(0, 0);
+      }
       try {
-        if (on && view && view.requestFullscreen && !document.fullscreenElement) {
-          view.requestFullscreen({ navigationUI: "hide" }).then(() => {
+        // Vollbild auf <html> (nicht auf die Ebene selbst), sonst würde der Browser die Drehung im Hochformat aufheben
+        const root = document.documentElement;
+        if (on && fullView && root.requestFullscreen && !document.fullscreenElement) {
+          root.requestFullscreen({ navigationUI: "hide" }).then(() => {
             try { screen.orientation && screen.orientation.lock && screen.orientation.lock("landscape").catch(() => {}); } catch (e) {}
+            setTimeout(layoutFull, 100);
           }).catch(() => {});
         } else if (!on && document.fullscreenElement) {
           document.exitFullscreen().catch(() => {});
         }
       } catch (e) {}
-      if (on) window.scrollTo(0, 0);
     }
     window.addEventListener("message", (e) => {
       if (e.origin !== location.origin || !e.data) return;
@@ -359,7 +422,7 @@ const description =
       page.dataset.game = game;
       frame(kFrame, K_SRC, game === "krawumm");
       frame(page.querySelector("[data-flitzer]"), F_SRC, game === "flitzer");
-      mobileFull(game === "flitzer");
+      mobileFull(game);
       window.dispatchEvent(new CustomEvent("arcade:select", { detail: game }));
       try {
         history.replaceState(null, "", location.pathname + location.search + (HASH[game] || ""));
@@ -373,7 +436,7 @@ const description =
         first && first.focus({ preventScroll: true });
       } else {
         const view = page.querySelector('.game-view[data-view="' + game + '"]');
-        if (!(coarse && game === "flitzer")) view && view.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        if (!coarse) view && view.scrollIntoView({ behavior: "smooth", block: "nearest" });
         const btn = view && view.querySelector('#btn-start, [data-fx-action="start"]');
         btn && btn.focus({ preventScroll: true });
       }
