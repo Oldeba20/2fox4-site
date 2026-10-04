@@ -224,7 +224,8 @@ export class Kart {
 
     // Lenkung
     const sp = Math.abs(this.spd);
-    const steerAmt = Math.min(1, sp / 7) * (1 - 0.3 * Math.min(1, sp / 34));
+    // auch langsam noch lenkbar (z. B. nach einem Bandenkontakt), aber nicht im Stand
+    const steerAmt = Math.min(1, (sp + (inp.gas > 0 || inp.brake > 0 ? 3.5 : 0)) / 8) * (1 - 0.3 * Math.min(1, sp / 34));
     let yawRate;
     if (this.drift) {
       const tight = inp.steer * this.drift;
@@ -268,17 +269,26 @@ export class Kart {
       // Anteil gegen die Bande
       const into = (Math.sin(this.vh) * rx + Math.cos(this.vh) * rz) * s;
       if (into > 0) {
+        // Bewegung parallel zur Bande weiterlaufen lassen (Gleiten). Die Nase (yaw) bleibt frei,
+        // damit man mit Gegenlenken sofort wieder wegkommt.
         const th = T.heading(this.idx);
         const fwdDot = Math.cos(wrap(this.vh - th));
-        this.vh = wrap(th + (fwdDot < 0 ? Math.PI : 0) - s * 0.05);
-        this.yaw = wrap(this.yaw + wrap(this.vh - this.yaw) * 0.5);
-        const loss = into * 0.7;
-        this.spd *= 1 - loss;
-        if (into > 0.25 && g.time - this.lastWall > 0.3) {
+        this.vh = wrap(th + (fwdDot < 0 ? Math.PI : 0) - s * 0.08);
+        const hit = into > 0.25 && g.time - this.lastWall > 0.3;
+        if (hit) {
+          // Aufprall: Tempo nach Aufprallwinkel abziehen, kleiner Abpraller weg von der Bande
+          this.spd *= 1 - into * 0.55;
+          this.ex -= rx * s * (2 + into * 5); this.ez -= rz * s * (2 + into * 5);
           this.lastWall = g.time;
           if (this.isPlayer) { g.audio.wall(into); g.shake(into * 0.5); }
           g.fx.puff(this.x + rx * s * 1.2, this.y + 0.5, this.z + rz * s * 1.2, 5, COL.smoke);
+        } else {
+          // Schleifen an der Bande: nur leichte Reibung
+          this.spd *= 1 - Math.min(0.5, into) * 2.5 * dt;
         }
+        // Stoßimpuls, der in die Bande zeigt, aufheben
+        const exIn = (this.ex * rx + this.ez * rz) * s;
+        if (exIn > 0) { this.ex -= rx * s * exIn; this.ez -= rz * s * exIn; }
         if (this.drift) { this.drift = 0; this.driftCharge = 0; this.driftLv = -1; }
       }
     }
