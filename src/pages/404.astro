@@ -22,6 +22,9 @@
  * spiele-src/fuchs-flitzer/ (Three.js, Build: build.sh). Lädt erst bei
  * Auswahl per iframe (data-game="flitzer", Direktlink #flitzer).
  *
+ * Orbit-Fuchs (Röhren-Shooter, 04.10.2026): public/spiele/orbit-fuchs/, Kopie in
+ * spiele-src/orbit-fuchs/ (kein Build nötig), Direktlink #orbit, Taste 4.
+ *
  * Apache liefert /404.html bei nicht gefundenen URLs aus (ErrorDocument
  * 404 /404.html steht in der Server-.htaccess).
  */
@@ -31,7 +34,7 @@ import FoxGame from "../components/arcade/FoxGame.astro";
 
 const title = "Ups, verlaufen! — 2fox4";
 const description =
-  "Diese Seite gibt es nicht. Dafür warten drei kleine Spiele auf dich: Fuchs & Federn, Krawumm! und Fuchs-Flitzer.";
+  "Diese Seite gibt es nicht. Dafür warten vier kleine Spiele auf dich: Fuchs & Federn, Krawumm!, Fuchs-Flitzer und Orbit-Fuchs.";
 ---
 
 <BaseLayout title={title} description={description} noindex={true}>
@@ -39,7 +42,7 @@ const description =
     <header class="lost-hero">
       <h1 class="lost-title">Ups, verlaufen.</h1>
       <p class="lost-hint">
-        Diese Seite gibt es nicht. Zum Trost haben wir drei Spiele für dich.
+        Diese Seite gibt es nicht. Zum Trost haben wir vier Spiele für dich.
       </p>
       <div class="hero-actions">
         <a class="btn btn-primary btn-sm" href="/">← Zurück zur Startseite</a>
@@ -74,6 +77,20 @@ const description =
       </div>
       <div class="krawumm-frame">
         <iframe data-krawumm title="Krawumm! – Retro-Plattformer" allow="autoplay; fullscreen"></iframe>
+      </div>
+    </div>
+
+    <div class="game-view" data-view="orbit">
+      <button class="mclose" type="button" data-arcade-back aria-label="Spiel beenden">✕</button>
+      <div class="game-bar">
+        <button class="bar-back" type="button" data-arcade-back>← Spielauswahl</button>
+        <p class="bar-hint">
+          <span class="hint-fine"><kbd>Pfeile</kbd> oder <kbd>Maus</kbd> fliegen · <kbd>Leertaste</kbd>/<kbd>Klick</kbd> feuern · <kbd>P</kbd> Pause · <kbd>M</kbd> Ton</span>
+          <span class="hint-coarse">Finger auf den Bildschirm: fliegen und feuern</span>
+        </p>
+      </div>
+      <div class="krawumm-frame">
+        <iframe data-orbit title="Orbit-Fuchs – Weltraum-Shooter" allow="autoplay; fullscreen"></iframe>
       </div>
     </div>
 
@@ -128,7 +145,8 @@ const description =
   .game-view { display: none; flex-direction: column; gap: 0.5rem; }
   .lost-page[data-game="fox"] .game-view[data-view="fox"],
   .lost-page[data-game="krawumm"] .game-view[data-view="krawumm"],
-  .lost-page[data-game="flitzer"] .game-view[data-view="flitzer"] { display: flex; }
+  .lost-page[data-game="flitzer"] .game-view[data-view="flitzer"],
+  .lost-page[data-game="orbit"] .game-view[data-view="orbit"] { display: flex; }
   .krawumm-frame {
     width: 100%;
     max-width: 960px;
@@ -317,11 +335,12 @@ const description =
     "use strict";
     const page = document.querySelector(".lost-page");
     if (!page) return;
-    const HASH = { fox: "#fuchs", krawumm: "#krawumm", flitzer: "#flitzer" };
-    const FROM_HASH = { "#fuchs": "fox", "#krawumm": "krawumm", "#flitzer": "flitzer" };
+    const HASH = { fox: "#fuchs", krawumm: "#krawumm", flitzer: "#flitzer", orbit: "#orbit" };
+    const FROM_HASH = { "#fuchs": "fox", "#krawumm": "krawumm", "#flitzer": "flitzer", "#orbit": "orbit" };
     const kFrame = page.querySelector("[data-krawumm]");
     const K_SRC = "/spiele/krawumm/";
     const F_SRC = "/spiele/fuchs-flitzer/";
+    const O_SRC = "/spiele/orbit-fuchs/";
 
     function frame(kFrame, K_SRC, on) {
       if (!kFrame) return;
@@ -409,6 +428,13 @@ const description =
         const b = el.querySelector("b");
         if (b) { const m = Math.floor(fBest / 60), sec = fBest - m * 60; b.textContent = m + ":" + (sec < 10 ? "0" : "") + sec.toFixed(2); }
       });
+      let oBest = 0;
+      try { oBest = parseInt(localStorage.getItem("orbit_hi") || "0", 10) || 0; } catch (e) {}
+      document.querySelectorAll("[data-orbit-best]").forEach((el) => {
+        el.hidden = oBest <= 0;
+        const b = el.querySelector("b");
+        if (b) b.textContent = String(oBest);
+      });
       let kBest = 0;
       try { kBest = parseInt(localStorage.getItem("krawumm_hi") || "0", 10) || 0; } catch (e) {}
       document.querySelectorAll("[data-krawumm-best]").forEach((el) => {
@@ -422,6 +448,7 @@ const description =
       page.dataset.game = game;
       frame(kFrame, K_SRC, game === "krawumm");
       frame(page.querySelector("[data-flitzer]"), F_SRC, game === "flitzer");
+      frame(page.querySelector("[data-orbit]"), O_SRC, game === "orbit");
       mobileFull(game);
       window.dispatchEvent(new CustomEvent("arcade:select", { detail: game }));
       try {
@@ -453,6 +480,7 @@ const description =
       if (e.key === "1") select("fox");
       if (e.key === "2") select("krawumm");
       if (e.key === "3") select("flitzer");
+      if (e.key === "4") select("orbit");
     });
 
     // Karten leicht kippen, wenn die Maus darüber fährt
@@ -472,7 +500,7 @@ const description =
     });
 
     window.addEventListener("fox:record", showBest);
-    window.addEventListener("storage", (e) => { if (e.key === "fk_best") showBest(); });
+    window.addEventListener("storage", (e) => { if (e.key === "fk_best" || e.key === "orbit_hi") showBest(); });
     showBest();
     const initial = FROM_HASH[location.hash];
     if (initial) select(initial, true);
