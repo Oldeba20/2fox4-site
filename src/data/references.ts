@@ -72,6 +72,38 @@ export interface Reference {
 
 export const references: Reference[] = [
   {
+    slug: "humanoid-portal",
+    category: "websites",
+    domain: "humanoid-portal.de",
+    image: "/images/referenzen/humanoid-portal.jpg",
+    mobileImage: "/images/referenzen/humanoid-portal-mobile",
+    mobileShots: [
+      { image: "/images/referenzen/humanoid-portal-mobile-vergleich", label: "Roboter-Vergleich" },
+      { image: "/images/referenzen/humanoid-portal-mobile-figure-03", label: "Modellseite Figure 03" },
+    ],
+    date: "2026",
+    title: "Humanoid-Portal",
+    meta: "Themenportal & Modellvergleich",
+    liveUrl: "https://humanoid-portal.de",
+    featured: true,
+    story: {
+      challenge:
+        "Humanoide Roboter gehören zu den schnellsten Technikthemen dieser Jahre, doch auf Deutsch fehlte ein Ort, an dem man die Modelle nüchtern nebeneinanderlegen kann. Herstellerangaben, Preise und Lieferstatus ändern sich laufend, und wer wissen will, ob man einen dieser Roboter heute kaufen kann, landet meist bei englischen Pressemitteilungen. humanoid-portal.de ist ein Eigenprojekt von 2FOX4, das genau diese Lücke schließen soll.",
+      solution:
+        "Herzstück ist ein Register mit derzeit 19 Modellen aus sieben Ländern, jedes mit eigener Seite zu Maßen, Freiheitsgraden, Status, Preis und Quellen. Eine Vergleichstabelle stellt alle Daten nebeneinander, Ratgeber zu Herstellern, Kauf und Technik sowie ein News-Bereich ergänzen das Angebot. Weil große Humanoide in Deutschland noch nicht zu haben sind, zeigen Kauf-Boxen auf den Modellseiten passende Alternativen, die schon erhältlich sind, dazu kommt eine eigene Rubrik für KI-Heimroboter. Im Oktober 2026 bekam das Portal ein neues Erscheinungsbild im Stil eines technischen Datenblatts: helle Fläche, schmale Versalien, Signal-Orange.",
+      outcome:
+        "Gegenüber dem Vorquartal haben sich die Klicks aus der Google-Suche fast vervierfacht. Ein fester Prüfrhythmus hält Preise und Modellstand aktuell.",
+      scope: [
+        "Konzept & Content-Strategie",
+        "Webdesign",
+        "Modellseiten & Vergleichsdaten",
+        "SEO & strukturierte Daten",
+        "Affiliate-Integration",
+      ],
+      liveUrl: "https://humanoid-portal.de",
+    },
+  },
+  {
     slug: "isolierklinker-zentral",
     category: "websites",
     domain: "isolierklinker-zentral.de",
