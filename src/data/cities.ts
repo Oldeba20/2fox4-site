@@ -139,6 +139,15 @@ export const cities: City[] = [
           "Rätsel-Rallye durch die Stadthagener Innenstadt — läuft im Browser, ganz ohne App.",
       },
       {
+        url: "events-stadthagen.de",
+        image: "/images/referenzen/events-stadthagen.jpg",
+        href: "/referenzen/events-stadthagen/",
+        tag: "Veranstaltungs-Portal · Stadthagen",
+        title: "Events Stadthagen",
+        description:
+          "Unser eigener Veranstaltungskalender für Stadthagen: Konzerte, Märkte und Feste der Stadt an einem Ort, täglich automatisch aktualisiert.",
+      },
+      {
         url: "stadthagen-renaissance.de",
         image: "/images/referenzen/renaissance-stadthagen.jpg",
         href: "/referenzen/renaissance-stadthagen/",
@@ -181,7 +190,7 @@ export const cities: City[] = [
       },
       {
         question: "Habt ihr Referenzen aus Stadthagen?",
-        answerHtml: `Ja: unter anderem die Website des Renaissancevereins Stadthagen, ein Tattoo- und Piercing-Studio in Stadthagen sowie die Schule für Sicherheitsmitarbeiter (sad-sicherheit.de). Alle drei findest du weiter oben auf dieser Seite oder in unserer kompletten <a href="/referenzen/" class="text-[var(--color-accent)]">Referenzübersicht</a>.`,
+        answerHtml: `Ja: unter anderem die digitale Stadtrallye Entdecke Stadthagen, unseren Veranstaltungskalender events-stadthagen.de, die Website des Renaissancevereins Stadthagen, ein Tattoo- und Piercing-Studio in Stadthagen sowie die Schule für Sicherheitsmitarbeiter (sad-sicherheit.de). Alle findest du weiter oben auf dieser Seite oder in unserer kompletten <a href="/referenzen/" class="text-[var(--color-accent)]">Referenzübersicht</a>.`,
       },
       {
         question: "Bietet ihr auch SEO und laufende Betreuung?",
