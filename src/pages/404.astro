@@ -4,10 +4,12 @@
  *
  * Zombie-Welle (3D-Ego-Shooter): am 03.10.2026 wegen Jugendschutz entfernt,
  * seit 04.10.2026 als v2 zurück – in der jugendfreien Glitch-Darstellung
- * (kein Blut, Gegner zerfallen in Pixel). Der Hart-Modus ist auf der Website
- * gesperrt (<body data-hardmode="off"> in public/spiele/zombie-welle/index.html).
+ * (kein Blut, Gegner zerfallen in Pixel). Seit 06.10.2026 ist der Hart-Modus
+ * (Blut) im Spiel zuschaltbar, nach Bestätigung „Ich bin 18“
+ * (<body data-hardmode="on"> in public/spiele/zombie-welle/index.html; "off" sperrt ihn wieder).
+ * Seit 06.10.2026 auch am Handy (Touch-Steuerung, Vollbild-Ebene wie die anderen Spiele).
  * Quellcode: spiele-src/zombie-welle/ (Build: npm run build), Direktlink
- * #zombie, Taste 5, nur Desktop. Seit v3: nach 2 Wellen Wechsel auf den Hof
+ * #zombie, Taste 5. Seit v3: nach 2 Wellen Wechsel auf den Hof
  * (Dach, Scharfschützengewehr, Fernglas), dann im Wechsel Halle/Hof.
  *
  * Seit 30.09.2026 zweites Spiel „Fuchs & Federn“ (Schießbude mit dem
@@ -118,7 +120,7 @@ const description =
         <button class="bar-back" type="button" data-arcade-back>← Spielauswahl</button>
         <p class="bar-hint">
           <span class="hint-fine"><kbd>WASD</kbd> laufen · <kbd>Leertaste</kbd> springen · <kbd>Klick</kbd> schießen · <kbd>1</kbd>–<kbd>4</kbd> Waffen · <kbd>G</kbd> Granate · <kbd>B</kbd> Fernglas · <kbd>F</kbd> Vollbild</span>
-          <span class="hint-coarse">Nur am Rechner spielbar (Maus + Tastatur)</span>
+          <span class="hint-coarse">Linker Daumen laufen · rechts wischen zum Umsehen · roter Knopf schießen</span>
         </p>
       </div>
       <div class="krawumm-frame">

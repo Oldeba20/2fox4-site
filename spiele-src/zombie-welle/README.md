@@ -77,3 +77,19 @@ Einstellungen neu: `zw_mode` (`glitch`/`hard`), `zw_adult` (Hart-Modus bestätig
 - **Fernglas** (Taste B): Entfernungsmesser; Gegner kurz anvisieren = markieren (Raute über dem Kopf, auf der
   Minimap umkreist, +30 % Schaden).
 - Neue Beute: Gewehrpatronen.
+
+## Handy-Version + Hart-Modus auf der Website (06.10.2026)
+
+- **Touch-Steuerung** (`src/touch.js`), aktiv auf Geräten ohne Maus (`(hover: none) and (pointer: coarse)`),
+  zum Testen am Rechner mit `?touch` erzwingbar:
+  linke Bildschirmhälfte = Stick zum Laufen (ganz nach vorn = rennen), rechte Hälfte = wischen zum Umsehen,
+  roter Knopf = schießen (halten = Dauerfeuer, dabei ziehen = zielen), Knöpfe für Springen, Granate, Nachladen,
+  ◎ Zielfernrohr (nur Gewehr, umschalten) und „Luft halten“ (nur im Zielfernrohr), Pause oben rechts.
+  Waffenleiste unten in der Mitte antippen = Waffe wechseln bzw. Fernglas an/aus. Upgrade-Karten antippen.
+- Leichte **Zielhilfe** nur am Handy: beim Schuss wird das Fadenkreuz zum nächsten sichtbaren Gegner
+  in einem kleinen Kegel um die Mitte gezogen (`aimAssist()` in `main.js`).
+- HUD am Handy umgebaut (Minimap/Leben oben links, Munition oben rechts, Waffenleiste unten).
+- Handy-Leistung: kein MSAA, Pixeldichte max. 1,3, Start mit 85 % Auflösung (passt sich an),
+  kleinere Schattenkarten (`globalThis.ZW_LOW` in `level.js`). Pausiert, wenn die Seite in den Hintergrund geht.
+- **Hart-Modus auf der Website freigeschaltet:** `<body data-hardmode="on">` in `public/spiele/zombie-welle/index.html`.
+  Standard bleibt *Glitch* (jugendfrei); *Hart* erst nach „Ich bin 18“. Mit `data-hardmode="off"` wieder sperren.

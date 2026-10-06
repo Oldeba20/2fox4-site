@@ -15,6 +15,7 @@ import { Arsenal, DEFS, ORDER, MAX_GRENADES } from './weapons.js';
 import { Projectiles } from './projectiles.js';
 import { AudioEngine } from './audio.js';
 import VOICELINES from './voicelines.json';
+import { TouchControls } from './touch.js';
 
 const $ = (id) => document.getElementById(id);
 const store = {
@@ -22,6 +23,9 @@ const store = {
   set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* egal */ } },
 };
 const TEST = /[?&]test/.test(location.search);
+// Handy/Tablet: Touch-Steuerung statt Maus + Tastatur (?touch erzwingt sie zum Testen)
+const TOUCH = /[?&]touch/.test(location.search) || (matchMedia('(hover: none) and (pointer: coarse)').matches && !TEST);
+globalThis.ZW_LOW = TOUCH; // kleinere Schattenkarten in level.js
 // Sound-Einstellung teilt sich das Spiel mit dem Sound-Knopf der 404-Seite
 function readSound() {
   try { const v = localStorage.getItem('fps_sound_v1'); return v === null ? true : v === '1'; } catch (e) { return true; }
@@ -100,13 +104,13 @@ class Game {
   }
 
   async init() {
-    if (matchMedia('(hover: none) and (pointer: coarse)').matches && !TEST) {
-      $('ov-start').hidden = true;
-      $('ov-mobile').hidden = false;
-      return;
+    if (TOUCH) {
+      document.body.classList.add('touch');
+      this.dynScale = 0.85;
     }
     this.setupRenderer();
     this.bindUI();
+    if (TOUCH) this.touch = new TouchControls(this);
     await this.load();
     this.setupWorld();
     await this.precompile();
@@ -161,7 +165,7 @@ class Game {
 
   setupComposer() {
     const r = this.renderer;
-    const rt = new THREE.WebGLRenderTarget(4, 4, { type: THREE.HalfFloatType, samples: 4 });
+    const rt = new THREE.WebGLRenderTarget(4, 4, { type: THREE.HalfFloatType, samples: TOUCH ? 0 : 4 });
     const c = (this.composer = new EffectComposer(r, rt));
     c.addPass(new RenderPass(this.scene, this.camera));
     const wp = new RenderPass(this.arsenal.scene, this.arsenal.camera);
@@ -208,7 +212,7 @@ class Game {
     this.camera.aspect = w / h;
     this.camera.updateProjectionMatrix();
     if (this.arsenal) this.arsenal.setAspect(w / h);
-    const pr = Math.min(devicePixelRatio || 1, 1.5) * this.dynScale;
+    const pr = Math.min(devicePixelRatio || 1, TOUCH ? 1.3 : 1.5) * this.dynScale;
     this.renderer.setPixelRatio(pr);
     this.renderer.setSize(w, h);
     if (this.composer) {
@@ -427,6 +431,7 @@ class Game {
       syncOpts();
     });
 
+    document.addEventListener('visibilitychange', () => { if (document.hidden && this.state === 'play') this.pause(); });
     $('btn-start').addEventListener('click', () => this.start());
     $('btn-again').addEventListener('click', () => this.start());
     $('btn-resume').addEventListener('click', () => this.resume());
@@ -528,7 +533,7 @@ class Game {
   }
 
   lock() {
-    if (TEST) return;
+    if (TEST || TOUCH) return;
     try {
       const p = this.canvas.requestPointerLock({ unadjustedMovement: true });
       if (p && p.catch) p.catch(() => { try { this.canvas.requestPointerLock(); } catch (e) { /* */ } });
@@ -697,6 +702,7 @@ class Game {
     $('ov-pause').hidden = false;
     this.mouseDown = false;
     this.keys = {};
+    if (this.touch) this.touch.reset();
   }
   resume() {
     if (this.state !== 'pause') return;
@@ -755,6 +761,7 @@ class Game {
     if (this.binoc) { this.binoc = false; this.audio.zoom(false); return; }
     const a = this.arsenal;
     const k = a.current;
+    if (TOUCH && a.cooldown <= 0 && !a.reloading && a.st.ammo > 0) this.aimAssist();
     const res = a.fire();
     if (res === 'empty') {
       this.audio.dryFire();
@@ -791,6 +798,37 @@ class Game {
       this.proj.fireRocket(o, rd);
       this.fx.puff(o.clone().addScaledVector(dir, -0.6), dir.clone().negate(), 0x777777, 1.6);
     }
+  }
+
+  // Handy: leichte Zielhilfe – zieht das Fadenkreuz beim Schuss ein Stück zum nächsten Gegner in der Nähe der Mitte
+  aimAssist() {
+    if ((this.scopeAmt || 0) > 0.3) return;
+    const cam = this.camera, ro = cam.getWorldPosition(new THREE.Vector3());
+    const dir = new THREE.Vector3(0, 0, -1).applyQuaternion(cam.quaternion);
+    let best = null, bestAng = 0.075;
+    const v = new THREE.Vector3();
+    for (const z of this.zombies.alive) {
+      if (z.dying || z.dead) continue;
+      v.copy(z.root.position); v.y += z.height * 0.72;
+      v.sub(ro);
+      const d = v.length();
+      if (d > 38) continue;
+      v.divideScalar(d);
+      const ang = Math.acos(Math.min(1, v.dot(dir)));
+      if (ang < bestAng) {
+        const ray = new THREE.Raycaster(ro, v.clone(), 0, d - 0.4);
+        if (ray.intersectObjects(this.level.colliders, false).length) continue;
+        bestAng = ang; best = v.clone();
+      }
+    }
+    if (!best) return;
+    const yaw = Math.atan2(-best.x, -best.z), pitch = Math.asin(Math.max(-1, Math.min(1, best.y)));
+    let dy = yaw - this.player.yaw;
+    dy = Math.atan2(Math.sin(dy), Math.cos(dy));
+    this.player.yaw += dy * 0.7;
+    this.player.pitch += (pitch - this.player.pitch) * 0.7;
+    this.placeCamera();
+    cam.updateMatrixWorld();
   }
 
   shootHitscan(d) {
@@ -1268,7 +1306,7 @@ class Game {
         a.owned.sniper = true;
         this.hasBinoc = true;
         if (first) { a.state.sniper.ammo = DEFS.sniper.mag; a.state.sniper.reserve = 10; a.select('sniper'); }
-        this.banner('DER HOF', first ? 'Neu: Scharfschützengewehr (4, rechte Maustaste = Zielfernrohr) · Fernglas (B)' : 'Vom Dach aus hast du den Überblick', 4.5);
+        this.banner('DER HOF', first ? (TOUCH ? 'Neu: Gewehr (unten in der Leiste, ◎ = Zielfernrohr) · Fernglas' : 'Neu: Scharfschützengewehr (4, rechte Maustaste = Zielfernrohr) · Fernglas (B)') : 'Vom Dach aus hast du den Überblick', 4.5);
       } else this.banner('DIE HALLE', 'Wieder drinnen – eng und laut', 3);
     }
     if (this.travelT >= 1.0) {
@@ -1302,11 +1340,14 @@ class Game {
       return;
     }
     const k = this.keys;
-    const f = (k.KeyW || k.ArrowUp ? 1 : 0) - (k.KeyS || k.ArrowDown ? 1 : 0);
-    const s = (k.KeyD || k.ArrowRight ? 1 : 0) - (k.KeyA || k.ArrowLeft ? 1 : 0);
+    let f = (k.KeyW || k.ArrowUp ? 1 : 0) - (k.KeyS || k.ArrowDown ? 1 : 0);
+    let s = (k.KeyD || k.ArrowRight ? 1 : 0) - (k.KeyA || k.ArrowLeft ? 1 : 0);
+    let analog = 1;
+    const tc = this.touch;
+    if (tc && tc.move.mag > 0 && !f && !s) { f = tc.move.y; s = tc.move.x; analog = Math.max(0.35, tc.move.mag); }
     const zoomed = (this.scopeAmt || 0) > 0.3 || (this.binocAmt || 0) > 0.3;
-    const sprint = (k.ShiftLeft || k.ShiftRight) && f > 0 && !zoomed;
-    const speed = (sprint ? 7.6 : 5.0) * (1 + 0.1 * (this.up.speed || 0)) * (zoomed ? 0.45 : 1);
+    const sprint = ((k.ShiftLeft || k.ShiftRight) || (tc && tc.sprint)) && f > 0 && !zoomed;
+    const speed = (sprint ? 7.6 : 5.0) * (1 + 0.1 * (this.up.speed || 0)) * (zoomed ? 0.45 : 1) * (sprint ? 1 : analog);
     const fx = -Math.sin(p.yaw), fz = -Math.cos(p.yaw);
     const rx = Math.cos(p.yaw), rz = -Math.sin(p.yaw);
     let wx = fx * f + rx * s, wz = fz * f + rz * s;
@@ -1371,7 +1412,7 @@ class Game {
     // Optik hellt nachts etwas auf (Restlicht)
     this.renderer.toneMappingExposure = 1.15 + 0.9 * this.scopeAmt + 0.6 * this.binocAmt * (1 - this.scopeAmt);
     // Atem anhalten
-    const shift = this.keys.ShiftLeft || this.keys.ShiftRight;
+    const shift = this.keys.ShiftLeft || this.keys.ShiftRight || (this.touch && this.touch.hold);
     if (this.outOfBreath) { this.breath = Math.min(1, (this.breath || 0) + dt * 0.35); if (this.breath >= 1) this.outOfBreath = false; }
     this.steady = false;
     if (this.scopeAmt > 0.5 && shift && !this.outOfBreath) {
@@ -1523,6 +1564,7 @@ class Game {
     }
     this.look.dx = 0; this.look.dy = 0;
     this.updateZoom(dt);
+    if (this.touch) this.touch.update();
     this.arsenal.rig.visible = this.state !== 'menu' && !this.player.dead && this.scopeAmt < 0.6 && this.binocAmt < 0.4;
     if (this.tracers) for (const t of this.tracers) { t.t = Math.max(0, t.t - dt); t.l.material.opacity = (t.t / 0.18) * 0.9; }
 

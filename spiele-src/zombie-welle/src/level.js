@@ -509,7 +509,7 @@ export class Level {
     ml.target.position.set(this.w / 2, 0, this.h / 2);
     g.add(ml.target);
     ml.castShadow = true;
-    ml.shadow.mapSize.set(2048, 2048);
+    ml.shadow.mapSize.set(globalThis.ZW_LOW ? 1024 : 2048, globalThis.ZW_LOW ? 1024 : 2048);
     const sc = ml.shadow.camera;
     sc.left = -62; sc.right = 62; sc.top = 62; sc.bottom = -62; sc.near = 10; sc.far = 180;
     ml.shadow.bias = -0.0006;
@@ -556,7 +556,7 @@ export class Level {
       l.target.position.set(x, 0, z);
       this.group.add(l.target);
       l.castShadow = true;
-      l.shadow.mapSize.set(1024, 1024);
+      l.shadow.mapSize.set(globalThis.ZW_LOW ? 512 : 1024, globalThis.ZW_LOW ? 512 : 1024);
       l.shadow.camera.near = 0.5;
       l.shadow.camera.far = 26;
       l.shadow.bias = -0.0004;

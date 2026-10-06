@@ -2,7 +2,8 @@
 /**
  * Spielauswahl der 404-Seite („404-Arcade“).
  * Buttons mit data-pick="fox|krawumm|flitzer|orbit|zombie" — die Umschaltung macht das Skript in 404.astro.
- * Zombie-Welle: seit 04.10.2026 jugendfreie Version (Glitch-Darstellung), nur Desktop – auf Touch-Geräten ausgeblendet.
+ * Zombie-Welle: Standard ist die jugendfreie Glitch-Darstellung, Hart-Modus (Blut) ab 06.10.2026 im Spiel zuschaltbar
+ * (mit 18+-Bestätigung). Seit 06.10.2026 auch am Handy spielbar (Touch-Steuerung).
  */
 import { foxSVG } from "../../scripts/arcade/fox-svg.js";
 const fox = foxSVG("normal", true);
@@ -91,8 +92,8 @@ const hen = `<svg viewBox="-60 -45 118 80" xmlns="http://www.w3.org/2000/svg"><g
       </span>
       <span class="cart-body">
         <span class="cart-title">Zombie-Welle</span>
-        <span class="cart-desc">3D-Ego-Shooter gegen Glitch-Zombies. Erst in der Halle, dann nachts raus aufs Dach über dem Hof – mit Scharfschützengewehr und Fernglas. Nach jeder Welle ein Upgrade.</span>
-        <span class="cart-tags"><span>3D</span><span>2 Gebiete</span><span>Upgrades</span><span>Nur am Rechner</span></span>
+        <span class="cart-desc">3D-Ego-Shooter gegen Glitch-Zombies. Erst in der Halle, dann nachts raus aufs Dach über dem Hof – mit Scharfschützengewehr und Fernglas. Nach jeder Welle ein Upgrade. Wer mag, schaltet ab 18 den Hart-Modus mit Blut zu.</span>
+        <span class="cart-tags"><span>3D</span><span>2 Gebiete</span><span>Upgrades</span><span>Auch am Handy</span></span>
       </span>
       <span class="cart-cta"><span aria-hidden="true">▶</span> Spielen</span>
     </button>
@@ -208,10 +209,6 @@ const hen = `<svg viewBox="-60 -45 118 80" xmlns="http://www.w3.org/2000/svg"><g
     .cart-zombie .cart-scene { flex: 0 0 50%; }
     .cart-zombie .cart-body { flex: 1 1 0; min-width: 0; padding-top: 1.1rem; padding-bottom: 3.6rem; }
     .cart-zombie .cart-cta { position: absolute; right: 0; bottom: 0; }
-  }
-  /* braucht Maus + Tastatur */
-  @media (pointer: coarse) {
-    .cart-zombie { display: none; }
   }
   .cart:hover,
   .cart:focus-visible {
