@@ -214,9 +214,18 @@ export const cities: City[] = [
         description:
           "Relaunch für den Klinker-Spezialisten aus Bad Eilsen — von der Marktanalyse bis zur Fassadenvisualisierung.",
       },
+      {
+        url: "events-schaumburg.de",
+        image: "/images/referenzen/events-schaumburg.jpg",
+        href: "/referenzen/events-schaumburg/",
+        tag: "Veranstaltungs-Portal · Schaumburg",
+        title: "Events Schaumburg",
+        description:
+          "Unser eigener Veranstaltungskalender für den Landkreis, mit einer Seite nur für Bückeburg: Konzerte, Feste und Führungen rund um Schloss und Residenz an einem Ort.",
+      },
     ],
     localContext:
-      "Bückeburg ist mit dem Schloss, der Hofreitschule und dem Hubschraubermuseum eine touristische Attraktion ersten Ranges — und gleichzeitig eine Wirtschaftsstadt mit über 19.000 Einwohnern. Das fürstliche Erbe der Linie Schaumburg-Lippe prägt das Stadtbild bis heute. Für Hotellerie, Gastronomie und Einzelhandel rund um die Schloss-Achse ist eine starke Online-Präsenz besonders wichtig: das Suchvolumen für „Bückeburg Hotel“, „Bückeburg Restaurant“ oder „Bückeburg Veranstaltung“ ist überraschend hoch, weil Touristen die Stadt gezielt ansteuern. Rund um Bückeburg liegen die kleinen Orte der Samtgemeinde Eilsen — Bad Eilsen, Ahnsen, Buchholz, Heeßen — deren Betriebe wirtschaftlich nach Bückeburg orientiert sind, im Netz aber oft unter dem eigenen Ortsnamen gesucht werden. Für die Isolierklinker Zentralvertrieb Nord GmbH aus Bad Eilsen haben wir genau das umgesetzt.",
+      "Bückeburg ist mit dem Schloss, der Hofreitschule und dem Hubschraubermuseum eine touristische Attraktion ersten Ranges — und gleichzeitig eine Wirtschaftsstadt mit über 19.000 Einwohnern. Das fürstliche Erbe der Linie Schaumburg-Lippe prägt das Stadtbild bis heute. Für Hotellerie, Gastronomie und Einzelhandel rund um die Schloss-Achse ist eine starke Online-Präsenz besonders wichtig: das Suchvolumen für „Bückeburg Hotel“, „Bückeburg Restaurant“ oder „Bückeburg Veranstaltung“ ist überraschend hoch, weil Touristen die Stadt gezielt ansteuern. Rund um Bückeburg liegen die kleinen Orte der Samtgemeinde Eilsen — Bad Eilsen, Ahnsen, Buchholz, Heeßen — deren Betriebe wirtschaftlich nach Bückeburg orientiert sind, im Netz aber oft unter dem eigenen Ortsnamen gesucht werden. Für die Isolierklinker Zentralvertrieb Nord GmbH aus Bad Eilsen haben wir genau das umgesetzt. Und wer wissen will, was in Bückeburg los ist, findet die Termine der Stadt in unserem eigenen Kalender events-schaumburg.de.",
     localFAQs: [
       {
         question: "Habt ihr Erfahrung mit Tourismus- und Schloss-bezogenen Websites in Bückeburg?",
@@ -300,6 +309,15 @@ export const cities: City[] = [
         title: "Isolierklinker Zentralvertrieb Nord",
         description:
           "Relaunch für den Klinker-Spezialisten aus Bad Eilsen — von der Marktanalyse bis zur Fassadenvisualisierung.",
+      },
+      {
+        url: "events-schaumburg.de",
+        image: "/images/referenzen/events-schaumburg.jpg",
+        href: "/referenzen/events-schaumburg/",
+        tag: "Veranstaltungs-Portal · Schaumburg",
+        title: "Events Schaumburg",
+        description:
+          "Unser eigener Veranstaltungskalender für den Landkreis, mit einer Seite nur für Rinteln: Konzerte, Märkte und Feste in der Weserstadt auf einen Blick.",
       },
     ],
     localContext:

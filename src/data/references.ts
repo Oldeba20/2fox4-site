@@ -72,6 +72,37 @@ export interface Reference {
 
 export const references: Reference[] = [
   {
+    slug: "events-schaumburg",
+    category: "websites",
+    domain: "events-schaumburg.de",
+    image: "/images/referenzen/events-schaumburg.jpg",
+    mobileImage: "/images/referenzen/events-schaumburg-mobile",
+    mobileShots: [
+      { image: "/images/referenzen/events-schaumburg-mobile-orte", label: "Orte im Landkreis" },
+      { image: "/images/referenzen/events-schaumburg-mobile-bueckeburg", label: "Ortsseite Bückeburg" },
+    ],
+    date: "2026",
+    title: "Events Schaumburg",
+    meta: "Veranstaltungs-Portal · Landkreis Schaumburg",
+    liveUrl: "https://events-schaumburg.de",
+    featured: true,
+    story: {
+      challenge:
+        "Für Stadthagen gab es mit unserem Kalender events-stadthagen.de schon eine Seite, die alle Termine bündelt. Für den Rest des Landkreises fehlte so ein Überblick. Wer wissen wollte, was in Bückeburg, Rinteln oder Bad Nenndorf los ist, musste sich weiterhin durch die Seiten von Städten, Vereinen und Veranstaltern klicken. Deshalb haben wir events-schaumburg.de gebaut, als Eigenprojekt für den ganzen Landkreis.",
+      solution:
+        "Die Startseite zeigt alle kommenden Termine nach Monaten, mit Suche und einem Ortsfilter, in dem sich einzelne Städte und Gemeinden an- und abwählen lassen. Jeder Ort hat eine eigene Seite mit seinen Veranstaltungen. Dazu kommen Kategorien wie Konzerte, Feste, Märkte oder Führungen und Schnellzugriffe auf „Heute“, „Am Wochenende“ und „Diese Woche“. Den Kalender kannst du in deiner Kalender-App abonnieren (ICS), und Veranstalter können ihre Termine selbst melden. Für Stadthagen verweist die Seite auf das Schwesterportal. So ergänzen sich beide Kalender, statt dieselben Termine doppelt zu zeigen.",
+      outcome:
+        "Anfang Oktober 2026 standen 169 Termine aus Bückeburg, Rinteln, Bad Nenndorf und den übrigen Orten im Kalender.",
+      scope: [
+        "Konzept & Entwicklung",
+        "Ortsseiten & Ortsfilter",
+        "Suche & Kategorien",
+        "Kalender-Abo (ICS)",
+      ],
+      liveUrl: "https://events-schaumburg.de",
+    },
+  },
+  {
     slug: "humanoid-portal",
     category: "websites",
     domain: "humanoid-portal.de",
