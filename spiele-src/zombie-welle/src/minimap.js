@@ -31,22 +31,24 @@ export class Minimap {
     const c = document.createElement('canvas');
     c.width = cols * PX; c.height = rows * PX;
     const g = c.getContext('2d');
-    const floor = new Set(['.', 'P', 'L', 'K', 'R', 'S', '@', 'B', 'E', 'Y']);
+    const solid = new Set(['#', 'M', 'H', 'G']);
+    const obst = new Set(['C', 'W', 'O', 'X', 'A', 'V', 'N']);
     for (let r = 0; r < rows; r++) for (let k = 0; k < cols; k++) {
       const ch = MAP[r][k];
       const h = level.hAt(k, r);
       if (h >= 3.9) g.fillStyle = 'rgba(255,190,140,0.32)';
       else if (h > 0) g.fillStyle = `rgba(255,190,140,${0.12 + h * 0.05})`;
-      else if (floor.has(ch)) g.fillStyle = 'rgba(255,255,255,0.13)';
-      else if (ch === 'C' || ch === 'W' || ch === 'O' || ch === 'X') g.fillStyle = 'rgba(255,255,255,0.3)';
-      else continue;
+      else if (solid.has(ch)) continue;
+      else if (obst.has(ch)) g.fillStyle = 'rgba(255,255,255,0.3)';
+      else if (level.isInterior && level.isInterior(k, r)) g.fillStyle = 'rgba(255,214,150,0.2)';
+      else g.fillStyle = ch === ',' ? 'rgba(255,255,255,0.17)' : 'rgba(255,255,255,0.13)';
       g.fillRect(k * PX, r * PX, PX, PX);
       if (ch === 'S') { g.fillStyle = 'rgba(227,36,27,0.55)'; g.fillRect(k * PX + 1, r * PX + 1, PX - 2, PX - 2); }
     }
     // Wandkanten betonen
     g.fillStyle = 'rgba(255,107,53,0.35)';
     for (let r = 1; r < rows - 1; r++) for (let k = 1; k < cols - 1; k++) {
-      const wall = (rr, kk) => MAP[rr][kk] === '#' || MAP[rr][kk] === 'M';
+      const wall = (rr, kk) => solid.has(MAP[rr][kk]);
       if (!wall(r, k)) continue;
       if (!wall(r - 1, k)) g.fillRect(k * PX, r * PX, PX, 1);
       if (!wall(r + 1, k)) g.fillRect(k * PX, r * PX + PX - 1, PX, 1);

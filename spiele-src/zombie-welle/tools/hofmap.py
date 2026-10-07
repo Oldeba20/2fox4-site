@@ -9,7 +9,10 @@ def rect(r0,c0,r1,c1,ch):
         for c in range(c0,c1+1): g[r][c]=ch
 # Gebaeude mit Dach (Spieler)
 rect(29,19,34,28,'T')
-put(31,23,'@'); put(33,27,'E')
+put(31,23,'@')
+# Tor in der Nordmauer (geht nach den Hof-Wellen auf, dahinter der Gang zur Stadt)
+for r in (0,1):
+    for c in (37,38): g[r][c]='G'
 # Treppen: West (cols 12..18) und Ost (cols 29..35), je 2 breit
 for i in range(7):
     for r in (31,32):
@@ -33,7 +36,7 @@ for (r,c) in [(6,12),(6,35),(14,24),(19,16),(19,32),(26,5),(26,42),(12,4),(12,43
 for row in g: print("  '"+''.join(row)+"',")
 # Erreichbarkeit pruefen (Boden)
 from collections import deque
-blk=set('#XCWBY')
+blk=set('#XCWBYG')
 def h(ch):
     if ch in 'T@E': return 4.0
     if ch.isdigit(): return int(ch)*0.5

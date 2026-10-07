@@ -2,6 +2,8 @@ import * as THREE from 'three';
 import * as SkeletonUtils from 'three/examples/jsm/utils/SkeletonUtils.js';
 
 const B = 'CityDeadOutfit';
+const CALM_BONES = ['Spine1', 'Spine2', 'Neck', 'Head'];
+const CALM_W = { Spine1: 0.45, Spine2: 0.7, Neck: 0.9, Head: 1 };
 const HIT_CAPSULES = [
   // [von, nach, Radius (m), Zone]
   ['Head', '+Head', 0.125, 'head'],
@@ -46,7 +48,8 @@ function makeGlitchMaterial(base, U) {
         float sy = gl_Position.y / gl_Position.w;
         float band = floor(sy * 22.0) + floor(uTime * 11.0) * 13.0;
         float h = fract(sin(band * 12.9898) * 43758.5453);
-        gl_Position.x += step(0.94 - uGlitch * 0.35, h) * (h - 0.5) * 0.06 * gl_Position.w * (0.35 + uGlitch);
+        // nur bei Treffern kurz versetzen – im Ruhezustand steht die Figur still (Kopfschuss soll machbar sein)
+        gl_Position.x += step(0.97 - uGlitch * 0.3, h) * step(0.2, uGlitch) * (h - 0.5) * 0.045 * gl_Position.w * uGlitch;
       }`);
     sh.fragmentShader = 'uniform vec3 uRim; uniform float uTime; uniform float uDissolve; uniform float uPulse; uniform float uGlitch;\nfloat zwh(vec2 p){ return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453); }\n' + sh.fragmentShader
       .replace('#include <clipping_planes_fragment>', `#include <clipping_planes_fragment>
@@ -72,7 +75,9 @@ function makeGlitchMaterial(base, U) {
 // ------------------------------------------------------------
 // Vorlage: lädt Modell, bereitet Animationen auf (Root-Motion, Treffzeitpunkte)
 // ------------------------------------------------------------
-export const WALK_RATE = 2.25; // Lauf-Animationen schneller abspielen (Originale schlurfen sehr langsam)
+export const WALK_RATE = 2.25; // Laufgeschwindigkeit (Originale schlurfen sehr langsam)
+// Animation langsamer abspielen als gelaufen wird – sonst zappelt der Kopf zu stark (07.10.2026)
+export const ANIM_CALM = 0.62;
 
 export class ZombieTemplate {
   constructor(gltf, textures) {
@@ -281,6 +286,7 @@ export class Zombie {
     this.U.uGlitch.value = 0.6;
     this.dissolveDir = -1; // -1: materialisieren, +1: auflösen
     this.flinch = 0; this.flinchSide = 0;
+    this._calmReset = true;
     this.knock = 0; this.knockDir = new THREE.Vector3();
     this.flash = 0;
     this.stagger = 0;
@@ -480,7 +486,7 @@ export class ZombieManager {
     const heavy = z.typeKey === 'brute';
     if (push > 0) { z.knock = push * (heavy ? 0.15 : 0.6); z.knockDir = dir.clone().setY(0).normalize(); }
     // Zucken + kurz stolpern
-    z.flinch = Math.min(1.2, z.flinch + (zone === 'head' ? 1.1 : 0.7) * (heavy ? 0.4 : 1));
+    z.flinch = Math.min(1, z.flinch + (zone === 'head' ? 0.6 : 0.5) * (heavy ? 0.4 : 1));
     z.flinchSide = (Math.random() - 0.5) * 2;
     z.stagger = (zone === 'limb' ? 0.35 : 0.25) * (heavy ? 0.3 : 1);
     if (z.style === 'glitch') z.U.uGlitch.value = 1;
@@ -568,7 +574,7 @@ export class ZombieManager {
       // Glitch: Materialisieren / Auflösen
       if (z.style === 'glitch') {
         if (z.dissolveDir < 0 && z.U.uDissolve.value > 0) z.U.uDissolve.value = Math.max(0, z.U.uDissolve.value - dt * 1.1);
-        z.U.uGlitch.value = Math.max(0.12, z.U.uGlitch.value - dt * 2.5);
+        z.U.uGlitch.value = Math.max(0, z.U.uGlitch.value - dt * 3);
       }
 
       // Treffer-Aufblitzen (+ Pulsieren der Bomben)
@@ -625,13 +631,14 @@ export class ZombieManager {
       const dy = Math.abs(player.y - p.y); // Höhenunterschied (Dach/Treppe)
       z.marker.visible = z.marked;
       const rate = z.typeKey === 'runner' ? 1.05 * z.speedMul : z.speedMul * WALK_RATE;
+      const arate = rate * (z.typeKey === 'runner' ? 0.85 : ANIM_CALM); // Abspielrate der Lauf-Animation
 
       if (z.state === 'rise') {
         const a = z.actions.die;
         if (a.time <= 0.02) {
           z.state = Math.random() < (z.typeKey === 'runner' ? 0.15 : 0.35) ? 'scream' : 'chase';
           if (z.state === 'scream') { z.play('scream', 0.25, 1.4); z.screamT = 1.6; g.audio.roar(p.clone().setY(1.6)); }
-          else z.play(z.walkClip, 0.3, rate);
+          else z.play(z.walkClip, 0.3, arate);
         }
         this.face(z, dx, dz, dt, 2);
         continue;
@@ -639,12 +646,12 @@ export class ZombieManager {
       if (z.state === 'scream') {
         z.screamT -= dt;
         this.face(z, dx, dz, dt, 3);
-        if (z.screamT <= 0) { z.state = 'chase'; z.play(z.walkClip, 0.35, rate); }
+        if (z.screamT <= 0) { z.state = 'chase'; z.play(z.walkClip, 0.35, arate); }
         continue;
       }
       if (z.state === 'hit') {
         z.hitT -= dt;
-        if (z.hitT <= 0) { z.state = 'chase'; z.play(z.walkClip, 0.25, rate); }
+        if (z.hitT <= 0) { z.state = 'chase'; z.play(z.walkClip, 0.25, arate); }
         continue;
       }
       if (z.state === 'fuse') {
@@ -670,7 +677,7 @@ export class ZombieManager {
         if (!a.isRunning() || frac > 0.97 || (dist > z.type.reach + 1.25 && frac > (hits[hits.length - 1] || 0.5) + 0.05)) {
           z.state = 'chase';
           z.attackCD = z.typeKey === 'brute' ? 0.8 : 0.4;
-          z.play(z.walkClip, 0.3, rate);
+          z.play(z.walkClip, 0.3, arate);
         }
         continue;
       }
@@ -729,7 +736,7 @@ export class ZombieManager {
       if (gy > p.y) p.y = Math.min(gy, p.y + dt * 3.2);
       else if (gy < p.y) p.y = Math.max(gy, p.y - dt * 9);
       const act = z.actions[z.walkClip];
-      if (act) act.timeScale = rate * (z.stagger > 0 ? 0.4 : 1);
+      if (act) act.timeScale = arate * (z.stagger > 0 ? 0.4 : 1);
 
       // Stöhnen
       z.groanT -= dt;
@@ -739,15 +746,34 @@ export class ZombieManager {
       }
     }
 
-    // Prozedurales Zucken (nach dem Mixer, additiv)
+    // Kopf beruhigen: Hals/Kopf/Oberkörper folgen der Animation nur geglättet (07.10.2026).
+    // Die Grundhaltung bleibt, das schnelle Wackeln fällt weg – Kopfschüsse werden planbar.
+    const kS = 1 - Math.exp(-dt * 2);
+    for (const z of alive) {
+      if (z.dead || !z.bones.Head) continue;
+      if (z.state === 'rise') { z._calmReset = true; continue; }
+      const calm = z.state === 'attack' ? 0.45 : 0.92;
+      if (!z._calm) z._calm = {};
+      for (const bn of CALM_BONES) {
+        const b = z.bones[bn];
+        if (!b) continue;
+        let q = z._calm[bn];
+        if (!q || z._calmReset) { q = z._calm[bn] = (q || new THREE.Quaternion()).copy(b.quaternion); }
+        q.slerp(b.quaternion, kS);
+        b.quaternion.slerp(q, calm * CALM_W[bn]);
+      }
+      z._calmReset = false;
+    }
+
+    // Prozedurales Zucken (nach dem Mixer, additiv) – bewusst sanft
     for (const z of alive) {
       if (z.dead || z.flinch <= 0.001) continue;
-      z.flinch *= Math.exp(-dt * 7);
+      z.flinch *= Math.exp(-dt * 9);
       const f = z.flinch;
-      z.bones.Spine2.rotation.x -= f * 0.45;
-      z.bones.Spine1.rotation.x -= f * 0.25;
-      z.bones.Head.rotation.x -= f * 0.5;
-      z.bones.Spine2.rotation.z += f * 0.3 * z.flinchSide;
+      z.bones.Spine2.rotation.x -= f * 0.3;
+      z.bones.Spine1.rotation.x -= f * 0.18;
+      z.bones.Head.rotation.x -= f * 0.18;
+      z.bones.Spine2.rotation.z += f * 0.18 * z.flinchSide;
     }
   }
 

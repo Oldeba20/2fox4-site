@@ -66,10 +66,10 @@ function woodTexture() {
 // Waffen-Definitionen
 // ------------------------------------------------------------
 export const DEFS = {
-  pistol: { name: 'Pistole', slot: 1, mag: 12, maxReserve: Infinity, cooldown: 0.15, reload: 1.25, damage: 34, pellets: 1, spread: 0.006, kick: [2.2, 26], camKick: 0.012 },
-  shotgun: { name: 'Pump-Action', slot: 2, mag: 6, maxReserve: 40, cooldown: 0.2, pump: 0.52, shellTime: 0.42, damage: 15, pellets: 10, spread: 0.075, kick: [5.5, 70], camKick: 0.035 },
+  pistol: { name: 'Pistole', slot: 1, mag: 12, maxReserve: Infinity, cooldown: 0.15, reload: 1.25, damage: 34, pellets: 1, spread: 0.006, kick: [2.2, 16], camKick: 0.012 },
+  shotgun: { name: 'Pump-Action', slot: 2, mag: 6, maxReserve: 40, cooldown: 0.2, pump: 0.52, shellTime: 0.42, damage: 22, pellets: 10, spread: 0.068, kick: [5.5, 48], camKick: 0.035 },
   rocket: { name: 'Raketenwerfer', slot: 3, mag: 1, maxReserve: 12, cooldown: 0.4, reload: 1.5, kick: [5, 34], camKick: 0.03 },
-  sniper: { name: 'Scharfschützengewehr', slot: 4, mag: 5, maxReserve: 30, cooldown: 0.2, bolt: 0.95, reload: 2.3, damage: 240, pellets: 1, spread: 0.0007, hipSpread: 0.05, pierce: 2, kick: [7, 55], camKick: 0.045 },
+  sniper: { name: 'Scharfschützengewehr', slot: 4, mag: 5, maxReserve: 30, cooldown: 0.2, bolt: 0.95, reload: 2.3, damage: 240, pellets: 1, spread: 0.0007, hipSpread: 0.05, pierce: 2, kick: [7, 30], camKick: 0.045 },
 };
 export const ORDER = ['pistol', 'shotgun', 'rocket', 'sniper'];
 export const MAX_GRENADES = 6;

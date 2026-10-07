@@ -382,6 +382,24 @@ export class AudioEngine {
     n.start(t, Math.random()); n.stop(t + 1);
   }
 
+  // Rolltor fährt hoch: tiefes Rumpeln + Rasseln
+  gate() {
+    if (!this.ready) return;
+    const ctx = this.ctx, t = this.t;
+    const out = this._out(null, 0.55, 1);
+    const n = this._noiseSrc();
+    const lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 260;
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(0.9, t + 0.25); g.gain.setValueAtTime(0.9, t + 2.3); g.gain.linearRampToValueAtTime(0, t + 2.8);
+    n.connect(lp).connect(g).connect(out);
+    n.start(t, Math.random()); n.stop(t + 2.9);
+    for (let i = 0; i < 22; i++) this._click(t + 0.1 + i * 0.115 + Math.random() * 0.03, 500 + Math.random() * 400, 0.12);
+    const o = ctx.createOscillator(); o.type = 'sawtooth'; o.frequency.setValueAtTime(48, t); o.frequency.linearRampToValueAtTime(62, t + 2.6);
+    const og = ctx.createGain(); og.gain.setValueAtTime(0, t); og.gain.linearRampToValueAtTime(0.08, t + 0.3); og.gain.linearRampToValueAtTime(0, t + 2.8);
+    const ol = ctx.createBiquadFilter(); ol.type = 'lowpass'; ol.frequency.value = 180;
+    o.connect(ol).connect(og).connect(out); o.start(t); o.stop(t + 2.9);
+  }
+
   // Upgrade gewählt
   upgrade() {
     if (!this.ready) return;

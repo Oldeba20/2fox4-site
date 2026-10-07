@@ -73,7 +73,7 @@ const TYPE_INTRO = {
 };
 
 // Wie viele Wellen in welchem Gebiet, bevor der Ausgang aufgeht
-const WAVES_PER = { halle: 2, hof: 3 };
+const WAVES_PER = { halle: 2, hof: 3, stadt: 3 };
 
 const PICKUP = {
   health: { label: '+25 Leben', color: 0x50ff70 },
@@ -254,9 +254,11 @@ class Game {
     this.levels = {
       halle: new Level(this.assets.levelTex, MAPS.halle),
       hof: new Level(this.assets.levelTex, MAPS.hof),
+      stadt: new Level(this.assets.levelTex, MAPS.stadt),
     };
     for (const l of Object.values(this.levels)) l.build(this.scene);
     this.levels.hof.group.visible = false;
+    this.levels.stadt.group.visible = false;
     this.level = this.levels.halle;
     this.levelKey = 'halle';
     this.fx = new FX(this.scene, this.level);
@@ -575,7 +577,7 @@ class Game {
     p.pos.set(this.level.playerStart.x, 0, this.level.playerStart.z);
     p.vel.set(0, 0, 0);
     p.y = this.level.playerStart.y; p.vy = 0; p.onGround = true;
-    p.yaw = Math.PI; p.pitch = 0; p.hp = 100; p.maxHp = 100; p.dead = false; p.deadT = 0; p.shake = 0;
+    p.yaw = Math.PI; p.pitch = 0; p.kick = 0; p.kickV = 0; p.hp = 100; p.maxHp = 100; p.dead = false; p.deadT = 0; p.shake = 0;
     // Upgrades zurücksetzen
     this.up = {};
     this.maxNades = MAX_GRENADES;
@@ -633,8 +635,9 @@ class Game {
     this.waveCfg = {
       total: 6 + (w - 1) * 3,
       maxAlive: Math.min(4 + w, 14),
-      hp: 100 + (w - 1) * 12,
-      speed: Math.min(1.7, 1.1 + (w - 1) * 0.07),
+      // 07.10.2026: flachere Kurve – es soll Spaß machen und nicht ständig schwerer werden
+      hp: 100 + Math.min(w - 1, 8) * 10 + Math.max(0, w - 9) * 4,
+      speed: Math.min(1.55, 1.1 + (w - 1) * 0.06),
       dmg: 11 + w,
       interval: Math.max(0.55, 2.2 - w * 0.13),
     };
@@ -771,13 +774,16 @@ class Game {
     }
     if (res !== 'shot') return;
     const d = DEFS[k];
-    this.player.pitch = Math.min(1.45, this.player.pitch + d.camKick);
-    this.player.yaw += (Math.random() - 0.5) * d.camKick * 0.35;
-    this.player.shake = Math.min(1.2, this.player.shake + (k === 'pistol' ? 0.12 : 0.4));
+    // Rückstoß (07.10.2026): die Kamera springt nur kurz hoch und federt zurück –
+    // das Fadenkreuz bleibt dort, wo man gezielt hat. Im Zielfernrohr noch schwächer.
+    const scoped = (this.scopeAmt || 0) > 0.5;
+    this.player.kickV = (this.player.kickV || 0) + d.camKick * (scoped ? 9 : 22);
+    this.player.pitch = Math.min(1.45, this.player.pitch + d.camKick * 0.06);
+    this.player.yaw += (Math.random() - 0.5) * d.camKick * (scoped ? 0.02 : 0.08);
+    this.player.shake = Math.min(1.2, this.player.shake + (k === 'pistol' ? 0.1 : scoped ? 0.06 : 0.25));
     this.muzzleT = k === 'pistol' ? 0.06 : 0.09;
     if (k === 'sniper') {
       this.audio.sniper();
-      this.player.pitch = Math.min(1.45, this.player.pitch + (this.scopeAmt > 0.5 ? 0.02 : 0));
       this.shootHitscan(d);
     }
     if (k === 'pistol') { this.audio.pistol(); this.shootHitscan(d); }
@@ -1183,7 +1189,7 @@ class Game {
       const el = $('nextwave');
       el.textContent = `Ausgang: ${Math.round(d)} m – folge der blauen Markierung`;
       el.classList.add('show');
-      if (d < 1.1 && Math.abs(p.y - e.y) < 1) this.travel();
+      if (d < (this.level.def.exitR || 1.1) && Math.abs(p.y - e.y) < 1) this.travel();
     } else if (this.waveState === 'travel') {
       this.updateTravel(dt);
     } else if (this.waveState === 'break') {
@@ -1241,8 +1247,13 @@ class Game {
     if ((this.wavesHere || 0) >= WAVES_PER[this.levelKey]) {
       this.waveState = 'exit';
       this.level.setExit(true);
-      const to = this.levelKey === 'halle' ? 'Raus auf den Hof!' : 'Zurück in die Halle!';
-      setTimeout(() => this.state === 'play' && this.waveState === 'exit' && this.banner('AUSGANG OFFEN', `${to} Folge der blauen Markierung.`, 3.2), 500);
+      if (this.level.gate) this.audio.gate();
+      const txt = {
+        halle: ['AUSGANG OFFEN', 'Raus auf den Hof! Folge der blauen Markierung.'],
+        hof: ['DAS TOR GEHT AUF', 'In der Nordmauer – durch den Gang geht es in die Stadt.'],
+        stadt: ['AUSGANG OFFEN', 'Ganz im Norden geht es zurück in die Halle. Folge der blauen Markierung.'],
+      }[this.levelKey];
+      setTimeout(() => this.state === 'play' && this.waveState === 'exit' && this.banner(txt[0], txt[1], 3.6), 500);
       return;
     }
     this.waveState = 'break';
@@ -1257,7 +1268,8 @@ class Game {
     this.scene.background.set(d.fogColor);
     this.camera.far = d.outdoor ? 400 : 140;
     this.camera.updateProjectionMatrix();
-    this.flashlight.intensity = d.outdoor ? 14 : 26;
+    this.flashlight.intensity = d.flash || (d.outdoor ? 14 : 26);
+    this.scene.environmentIntensity = d.envI || 0.12;
   }
 
   switchLevel(key) {
@@ -1298,7 +1310,7 @@ class Game {
     this.travelT += dt;
     if (this.travelT >= 0.7 && !this._switched) {
       this._switched = true;
-      const to = this.levelKey === 'halle' ? 'hof' : 'halle';
+      const to = this.level.def.next || 'halle';
       this.switchLevel(to);
       if (to === 'hof') {
         const a = this.arsenal;
@@ -1307,7 +1319,8 @@ class Game {
         this.hasBinoc = true;
         if (first) { a.state.sniper.ammo = DEFS.sniper.mag; a.state.sniper.reserve = 10; a.select('sniper'); }
         this.banner('DER HOF', first ? (TOUCH ? 'Neu: Gewehr (unten in der Leiste, ◎ = Zielfernrohr) · Fernglas' : 'Neu: Scharfschützengewehr (4, rechte Maustaste = Zielfernrohr) · Fernglas (B)') : 'Vom Dach aus hast du den Überblick', 4.5);
-      } else this.banner('DIE HALLE', 'Wieder drinnen – eng und laut', 3);
+      } else if (to === 'stadt') this.banner('DIE STADT', 'Es dämmert. Die Nacht ist vorbei, die Zombies sind es nicht.', 4.5);
+      else this.banner('DIE HALLE', 'Wieder drinnen – eng und laut', 3);
     }
     if (this.travelT >= 1.0) {
       $('fade').classList.remove('on');
@@ -1480,7 +1493,7 @@ class Game {
     const swY = (Math.sin(st * 0.9) * 0.0035 + Math.sin(st * 2.3 + 1) * 0.0014) * sw;
     const swX = (Math.sin(st * 1.3 + 2) * 0.0028 + Math.sin(st * 3.1) * 0.001) * sw;
     cam.rotation.y = p.yaw + swY + (Math.random() - 0.5) * sh * 0.03;
-    cam.rotation.x = p.pitch + swX + (Math.random() - 0.5) * sh * 0.03;
+    cam.rotation.x = p.pitch + (p.kick || 0) + swX + (Math.random() - 0.5) * sh * 0.03 * (1 - 0.8 * (this.scopeAmt || 0));
     cam.rotation.z = (p.dead ? Math.min(0.5, p.deadT * 0.4) : 0) + Math.sin(p.bob * Math.PI * 0.25) * 0.004 * (this.moving || 0);
   }
 
@@ -1521,6 +1534,10 @@ class Game {
       if (a.st.ammo === 0 && a.st.reserve > 0 && !a.reloading && a.pumpT <= 0 && a.cooldown <= 0 && !a.busy) this.reload();
       this.quipCD -= dt;
       this.player.shake = Math.max(0, this.player.shake - dt * 3);
+      // Rückstoß-Feder der Kamera (kritisch gedämpft, kehrt in ~0,3 s zurück)
+      { const p = this.player; p.kick = p.kick || 0; p.kickV = p.kickV || 0;
+        p.kickV += (-160 * p.kick - 25 * p.kickV) * dt; p.kick += p.kickV * dt;
+        if (Math.abs(p.kick) < 1e-5 && Math.abs(p.kickV) < 1e-4) { p.kick = 0; p.kickV = 0; } }
       this.damageFx = Math.max(0, this.damageFx - dt * 1.3);
       this.flashFx = Math.max(0, this.flashFx - dt * 3);
       if (this._hudT === undefined || (this._hudT -= dt) < 0) { this._hudT = 0.1; this.updateHUD(); }

@@ -93,3 +93,25 @@ Einstellungen neu: `zw_mode` (`glitch`/`hard`), `zw_adult` (Hart-Modus bestätig
   kleinere Schattenkarten (`globalThis.ZW_LOW` in `level.js`). Pausiert, wenn die Seite in den Hintergrund geht.
 - **Hart-Modus auf der Website freigeschaltet:** `<body data-hardmode="on">` in `public/spiele/zombie-welle/index.html`.
   Standard bleibt *Glitch* (jugendfrei); *Hart* erst nach „Ich bin 18“. Mit `data-hardmode="off"` wieder sperren.
+
+## Balancing + Die Stadt (07.10.2026)
+
+- **Rückstoß:** Die Kamera springt beim Schuss nur kurz hoch und federt in ~0,3 s zurück (`kick`/`kickV` am Spieler,
+  Feder in `update()`), dauerhaft bleibt fast nichts. Im Zielfernrohr noch schwächer. Gewehr: vorher 2,6° bleibender
+  Versatz pro Schuss, jetzt 0,15° (Spitze 1,2°, im Zielfernrohr ~0,5°). Pistole/Pump-Action entsprechend.
+- **Ruhigere Zombies:** Lauf-Animation läuft langsamer als gelaufen wird (`ANIM_CALM` in `zombies.js`), Tempo unverändert.
+  Oberkörper, Hals und Kopf folgen der Animation nur geglättet (`CALM_BONES`), Treffer-Zucken schwächer, Glitch-Versatz
+  nur noch kurz nach Treffern. Kopfbewegung gemessen rund 40 % ruhiger.
+- **Pump-Action:** 22 statt 15 Schaden pro Schrotkugel, etwas engere Streuung.
+- **Flachere Schwierigkeit:** Gegner-Leben wächst langsamer (+10 je Welle bis Welle 9, danach +4), Tempo-Deckel 1,55.
+- **Ablauf:** Halle (2 Wellen) → Hof (3) → **Stadt (3)** → Halle … (`next` je Gebiet in `MAPS`).
+- **Tor im Hof:** Nach den Hof-Wellen rollt sich in der Nordmauer ein Tor hoch (`G` in der Karte, `buildGate()`),
+  blaue Lichtsäule (14 m, vom Dach aus sichtbar) + Minimap-Markierung. Dahinter ein Gang mit Licht am Ende.
+- **Die Stadt** (`MAPS.stadt`, Karte aus `tools/stadtmap.py`): Morgendämmerung (eigener Himmel mit Sonne, warmes
+  Streiflicht, rosa Dunst), Start im Gang unter einem Häuserblock. Häuser mit unterschiedlichen Höhen und vier
+  Fassaden (Fenster teils kaputt, vernagelt oder noch erleuchtet), Straßen mit Mittellinie, Gehwege, Autos (teils
+  ausgebrannt), Mülltonnen, Absperrbaken, Laternen, Schutt, Litfaßsäule auf dem Marktplatz. **9 Läden zum Betreten**
+  (Bäckerei, Elektro, Kiosk, Apotheke, Blumen, Supermarkt, Imbiss, Friseur, Pfandhaus) mit Regalen, flackerndem
+  Licht und kaputten Leuchtschildern. Gegner kommen aus den Gullys.
+- Neue Kartenzeichen: `H` Haus, `,` Gehweg, `-`/`|` Markierung, `i` Laden innen, `g` Gang, `k`/`l` Lampe im Gang/Laden,
+  `c` Regal, `a` Start im Gang, `A`/`V` Auto quer/längs, `U` Tonne, `N` Bake, `G` Tor.
