@@ -3,6 +3,7 @@
  * Wird in Pages als `schema={...}` an `BaseLayout` übergeben.
  */
 import { site } from "../data/site";
+import reviewsData from "../data/reviews.json";
 import type { FAQItem } from "../components/FAQ.astro";
 
 /** Plain-Text aus möglichem HTML extrahieren (für Schema-Answer). */
@@ -119,8 +120,9 @@ export function localBusinessSchema(opts?: {
   if (opts?.includeAggregateRating) {
     schema.aggregateRating = {
       "@type": "AggregateRating",
-      ratingValue: "5.0",
-      reviewCount: "19",
+      // Werte kommen aus src/data/reviews.json (manuell gepflegt).
+      ratingValue: Number(reviewsData.rating).toFixed(1),
+      reviewCount: String(reviewsData.user_ratings_total),
       bestRating: "5",
       worstRating: "1",
     };
