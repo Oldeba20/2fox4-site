@@ -148,9 +148,12 @@ const STADT = [
 // Ladenschilder (Front-Zellen und Blickrichtung zur Straße)
 const STADT_SHOPS = [{"r0": 7, "c0": 5, "r1": 7, "c1": 7, "face": "s", "name": "BÄCKEREI KORN"}, {"r0": 7, "c0": 21, "r1": 7, "c1": 23, "face": "s", "name": "ELEKTRO FUNKE"}, {"r0": 7, "c0": 29, "r1": 7, "c1": 30, "face": "s", "name": "KIOSK 24"}, {"r0": 7, "c0": 42, "r1": 7, "c1": 44, "face": "s", "name": "APOTHEKE"}, {"r0": 13, "c0": 5, "r1": 13, "c1": 8, "face": "n", "name": "BLUMEN ROSE"}, {"r0": 19, "c0": 23, "r1": 19, "c1": 26, "face": "s", "name": "SUPERMARKT"}, {"r0": 29, "c0": 11, "r1": 30, "c1": 11, "face": "e", "name": "IMBISS"}, {"r0": 31, "c0": 39, "r1": 32, "c1": 39, "face": "w", "name": "FRISEUR"}, {"r0": 13, "c0": 43, "r1": 13, "c1": 44, "face": "n", "name": "PFANDHAUS"}];
 
+export const GRAFFITI_TEXT = 'ZOMBIES RAUS!';
 export const ROOF_H = 4.0;
 export const MAPS = {
-  halle: { key: 'halle', name: 'Die Halle', map: HALLE, outdoor: false, wallH: 4.4, fog: 0.032, fogColor: 0x070709, startYaw: Math.PI, ambient: 0, exitLabel: 'AUSGANG', next: 'hof' },
+  halle: { key: 'halle', name: 'Die Halle', map: HALLE, outdoor: false, wallH: 4.4, fog: 0.032, fogColor: 0x070709, startYaw: Math.PI, ambient: 0, exitLabel: 'AUSGANG', next: 'hof',
+    // Graffiti an der Wand gegenüber dem Start (Zelle, Seite, Text)
+    graffiti: [{ c: 19, r: 20, cells: 2, side: 'n', text: GRAFFITI_TEXT }] },
   hof: { key: 'hof', name: 'Der Hof', map: HOF, outdoor: true, wallH: 7.5, fog: 0.0095, fogColor: 0x0b1018, startYaw: 0, ambient: 0.55, roofStart: true, sky: 'night', exitLabel: 'ZUR STADT', exitR: 1.7, beamH: 14, next: 'stadt' },
   stadt: { key: 'stadt', name: 'Die Stadt', map: STADT, outdoor: true, city: true, wallH: 3.4, fog: 0.0105, fogColor: 0x8e7f86, startYaw: 0, ambient: 1.0, sky: 'dawn', envI: 0.32, flash: 5, lampI: 26, exitLabel: 'ZUR HALLE', next: 'halle', shops: STADT_SHOPS },
 };
@@ -518,6 +521,7 @@ export class Level {
     else if (this.outdoor) this.buildOutdoor(g, mats, add);
     if (this.outdoor) this.buildSky(g);
     if (this.map.some((row) => row.includes('G'))) this.buildGate(g, mats, add);
+    for (const gf of this.def.graffiti || []) this.addGraffiti(g, gf);
     this.buildExit(g);
 
     this.initLightPool(10);
@@ -772,13 +776,15 @@ export class Level {
       if (comp[i] < 0) continue;
       // Abschnitt 6×6 Zellen: gibt dem Rand eine abwechslungsreiche Silhouette
       const key = comp[i] + ':' + Math.floor(c / 6) + ':' + Math.floor(r / 6);
-      if (!(key in blockH)) blockH[key] = [7 + Math.floor(hr() * 4) * 3 + (hr() < 0.25 ? 6 : 0), Math.floor(hr() * 4)];
+      // ganze Geschosse (3 m) + Attika, damit oben keine Fensterreihe angeschnitten wird
+      if (!(key in blockH)) blockH[key] = [(3 + Math.floor(hr() * 3) + (hr() < 0.25 ? 2 : 0)) * 3 + 0.6, Math.floor(hr() * 4)];
       cellTop[i] = blockH[key][0];
     }
     const vAt = (c, r) => { const i = r * this.cols + c; const key = comp[i] + ':' + Math.floor(c / 6) + ':' + Math.floor(r / 6); return blockH[key][1]; };
     const topAt = (c, r) => (c < 0 || r < 0 || c >= this.cols || r >= this.rows) ? 0 : cellTop[r * this.cols + c];
 
-    const fac = [[], [], [], []], inner = [], ceil = [], roofs = [], tiles = [], tunnelF = [];
+    const fac = [[], [], [], []], inner = [], ceil = [], roofs = [], tiles = [], tunnelF = [], cornice = [], fugen = [];
+    const secAt = (c, r) => comp[r * this.cols + c] + ':' + Math.floor(c / 6) + ':' + Math.floor(r / 6);
     const SIDES = [[0, -1, 'n'], [0, 1, 's'], [-1, 0, 'w'], [1, 0, 'e']];
     const edge = (c, r, side) => {
       const x0 = c * CELL, z0 = r * CELL;
@@ -796,6 +802,21 @@ export class Level {
         if (nc < 0 || nr < 0 || nc >= this.cols || nr >= this.rows) continue;
         const [a, b] = edge(c, r, side);
         const nrm = [dc, 0, dr];
+        // Gesims oben an jeder Außenkante + senkrechte Fuge, wo das Nachbarhaus beginnt
+        if (!isB(nc, nr)) {
+          const ln = CELL + 0.36, cx0 = (a[0] + b[0]) / 2 + dc * 0.12, cz0 = (a[1] + b[1]) / 2 + dr * 0.12;
+          const cb = new THREE.BoxGeometry(dc ? 0.24 : ln, 0.42, dc ? ln : 0.24); cb.translate(cx0, me - 0.12, cz0); cornice.push(cb);
+          // an der Bordsteinkante entlang: prüfen, ob die nächste Zelle entlang der Fassade zu einem anderen Haus gehört
+          const tc = dr ? 1 : 0, tr = dc ? 1 : 0;
+          for (const sgn of [1]) {
+            const ac = c + tc * sgn, ar = r + tr * sgn;
+            if (isB(ac, ar) && !isB(ac + dc, ar + dr) && this.isInterior(ac, ar) === 0 && secAt(ac, ar) !== secAt(c, r)) {
+              const fx = dr ? (c + 1) * CELL : a[0] + dc * 0.06, fz = dc ? (r + 1) * CELL : a[1] + dr * 0.06;
+              const fh = Math.min(me, topAt(ac, ar));
+              const fg = new THREE.BoxGeometry(dr ? 0.22 : 0.14, fh, dr ? 0.14 : 0.22); fg.translate(fx, fh / 2, fz); fugen.push(fg);
+            }
+          }
+        }
         const nB = isB(nc, nr), nIn = this.isInterior(nc, nr) > 0, nTop = topAt(nc, nr);
         if (!inside) {
           if (nB && !nIn) { if (nTop < me) fac[v].push(quad(a, b, nTop, me, nrm, 16, 15)); continue; }
@@ -816,6 +837,8 @@ export class Level {
     }
     const facMats = [0, 1, 2, 3].map((k) => makeFacadeMaterial(k));
     fac.forEach((arr, k) => add(arr, facMats[k]));
+    add(cornice, this.mat('concrete', { color: 0x9a948c, normalScale: 0.5 }), true, false);
+    add(fugen, this.mat('concrete', { color: 0x6a645e, normalScale: 0.5 }), false, false);
     add(inner, this.mat('concrete', { color: 0x9c968e, normalScale: 0.6 }));
     add(ceil, mats.ceiling, false);
     add(roofs, this.mat('concrete', { color: 0x4c4846 }), false, false);
@@ -979,6 +1002,62 @@ export class Level {
     let n = 0;
     for (const [dc, dr] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) { const q = this.map[r + dr] && this.map[r + dr][c + dc]; if (q === ',') n++; }
     return n >= 2;
+  }
+
+  // Sprühfarbe auf einer Wand: dicke Buchstaben mit Kontur, Schatten, Läufern und Sprühnebel
+  addGraffiti(g, gf) {
+    const W = gf.cells * CELL - 0.2, Hh = 1.7;
+    const cv = document.createElement('canvas'); cv.width = 1024; cv.height = Math.round(1024 * Hh / W);
+    const x = cv.getContext('2d'), CW = cv.width, CH = cv.height;
+    const rnd = mulberry(4040);
+    const words = gf.text.split(' ');
+    const lines = words.length >= 2 ? [words.slice(0, Math.ceil(words.length / 2)).join(' '), words.slice(Math.ceil(words.length / 2)).join(' ')] : [gf.text];
+    let fs = Math.min(CH / lines.length * 0.78, 220);
+    x.font = `900 ${fs}px Impact, "Arial Black", Arial, sans-serif`;
+    const widest = Math.max(...lines.map((l) => x.measureText(l).width));
+    if (widest > CW * 0.88) { fs *= CW * 0.88 / widest; x.font = `900 ${fs}px Impact, "Arial Black", Arial, sans-serif`; }
+    x.textAlign = 'center'; x.textBaseline = 'middle'; x.lineJoin = 'round';
+    lines.forEach((ln, li) => {
+      const cy = CH / (lines.length + 0) * (li + 0.5);
+      let px = CW / 2 - x.measureText(ln).width / 2;
+      for (let i = 0; i < ln.length; i++) {
+        const ch = ln[i], w = x.measureText(ch).width;
+        x.save();
+        x.translate(px + w / 2, cy + (rnd() - 0.5) * fs * 0.12);
+        x.rotate((rnd() - 0.5) * 0.18);
+        // Schatten, Kontur, Füllung mit Verlauf
+        x.fillStyle = 'rgba(0,0,0,0.55)'; x.fillText(ch, 8, 8);
+        x.strokeStyle = '#111'; x.lineWidth = fs * 0.16; x.strokeText(ch, 0, 0);
+        x.strokeStyle = '#f2f2f2'; x.lineWidth = fs * 0.07; x.strokeText(ch, 0, 0);
+        const gr = x.createLinearGradient(0, -fs / 2, 0, fs / 2);
+        gr.addColorStop(0, '#ffd23a'); gr.addColorStop(0.5, '#ff6b35'); gr.addColorStop(1, '#e3241b');
+        x.fillStyle = gr; x.fillText(ch, 0, 0);
+        x.restore();
+        // Läufer (Farbe tropft)
+        if (ch !== ' ' && rnd() < 0.55) {
+          const dx = px + w * (0.2 + rnd() * 0.6), dy = cy + fs * 0.32, dl = fs * (0.15 + rnd() * 0.5);
+          x.strokeStyle = rnd() < 0.5 ? '#e3241b' : '#ff6b35'; x.lineWidth = 3 + rnd() * 4; x.lineCap = 'round';
+          x.beginPath(); x.moveTo(dx, dy); x.lineTo(dx + (rnd() - 0.5) * 3, dy + dl); x.stroke();
+          x.fillStyle = x.strokeStyle; x.beginPath(); x.arc(dx, dy + dl, x.lineWidth * 0.8, 0, 7); x.fill();
+        }
+        px += w;
+      }
+    });
+    // Sprühnebel
+    for (let i = 0; i < 2600; i++) {
+      x.fillStyle = ['rgba(255,107,53,0.35)', 'rgba(227,36,27,0.3)', 'rgba(255,210,58,0.3)'][i % 3];
+      const rr = rnd() * 2.2; x.beginPath(); x.arc(CW * (0.04 + rnd() * 0.92), CH * (0.06 + rnd() * 0.88), rr, 0, 7); x.fill();
+    }
+    const tex = new THREE.CanvasTexture(cv); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 8;
+    const m = new THREE.MeshStandardMaterial({ map: tex, transparent: true, depthWrite: false, roughness: 0.75, emissive: 0xffffff, emissiveMap: tex, emissiveIntensity: 0.1, polygonOffset: true, polygonOffsetFactor: -4 });
+    const mesh = new THREE.Mesh(new THREE.PlaneGeometry(W, Hh), m);
+    const x0 = gf.c * CELL, z0 = gf.r * CELL, mid = gf.cells * CELL / 2;
+    if (gf.side === 'n') { mesh.position.set(x0 + mid, 1.9, z0 - 0.02); mesh.rotation.y = Math.PI; }
+    if (gf.side === 's') { mesh.position.set(x0 + mid, 1.9, z0 + CELL + 0.02); }
+    if (gf.side === 'w') { mesh.position.set(x0 - 0.02, 1.9, z0 + mid); mesh.rotation.y = -Math.PI / 2; }
+    if (gf.side === 'e') { mesh.position.set(x0 + CELL + 0.02, 1.9, z0 + mid); mesh.rotation.y = Math.PI / 2; }
+    g.add(mesh);
+    this.addLight(mesh.position.x, 3.2, mesh.position.z + (gf.side === 'n' ? -1.2 : 1.2), 0xffd9b0, 8, 6);
   }
 
   addShopSign(g, sh, H) {

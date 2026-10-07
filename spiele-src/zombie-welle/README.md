@@ -115,3 +115,7 @@ Einstellungen neu: `zw_mode` (`glitch`/`hard`), `zw_adult` (Hart-Modus bestätig
   Licht und kaputten Leuchtschildern. Gegner kommen aus den Gullys.
 - Neue Kartenzeichen: `H` Haus, `,` Gehweg, `-`/`|` Markierung, `i` Laden innen, `g` Gang, `k`/`l` Lampe im Gang/Laden,
   `c` Regal, `a` Start im Gang, `A`/`V` Auto quer/längs, `U` Tonne, `N` Bake, `G` Tor.
+- **Nachbesserung (07.10.2026):** Haushöhen jetzt ganze Geschosse + Attika (keine angeschnittenen Fensterreihen
+  mehr), Gesims an allen Straßenfassaden, senkrechte Fugen, wo ein Nachbarhaus beginnt.
+- **Graffiti** in der Halle an der Wand gegenüber dem Start („ZOMBIES RAUS!“): `graffiti` in `MAPS.halle`,
+  Text in `GRAFFITI_TEXT` (`level.js`), gezeichnet von `addGraffiti()` (Sprühschrift mit Kontur, Läufern, Sprühnebel).
