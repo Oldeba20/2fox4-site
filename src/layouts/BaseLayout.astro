@@ -42,6 +42,8 @@ interface Props {
    *  kein Ortsunterschied zwischen /webdesign-minden/ und /webdesign-hameln/.
    *  Ergänzt 09.09.2026 als lokales Signal für die entfernteren Städte. */
   geo?: { latitude: number; longitude: number; placename: string; region?: string };
+  /** WhatsApp-Button ausblenden (z. B. auf der 404-Seite mit den Spielen). */
+  hideWhatsApp?: boolean;
 }
 
 const {
@@ -52,6 +54,7 @@ const {
   noindex = false,
   schema,
   geo,
+  hideWhatsApp = false,
 } = Astro.props;
 
 const geoRegion = geo?.region ?? "DE-NI";
@@ -146,6 +149,6 @@ const canonicalUrl = canonicalPath
     <Footer />
     <LegalModal />
     <CookieBanner />
-    <WhatsAppButton />
+    {!hideWhatsApp && <WhatsAppButton />}
   </body>
 </html>
