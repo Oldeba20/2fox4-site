@@ -76,8 +76,9 @@ function makeGlitchMaterial(base, U) {
 // Vorlage: lädt Modell, bereitet Animationen auf (Root-Motion, Treffzeitpunkte)
 // ------------------------------------------------------------
 export const WALK_RATE = 2.25; // Laufgeschwindigkeit (Originale schlurfen sehr langsam)
-// Animation langsamer abspielen als gelaufen wird – sonst zappelt der Kopf zu stark (07.10.2026)
-export const ANIM_CALM = 0.62;
+// Animation passend zum Lauftempo abspielen (1 = Füße bleiben am Boden, kein Rutschen).
+// 07.10.: 0,62 machte den Kopf ruhiger, ließ die Zombies aber gleiten – Ruhe kommt jetzt nur aus CALM_BONES (08.10.2026)
+export const ANIM_CALM = 1;
 
 export class ZombieTemplate {
   constructor(gltf, textures) {

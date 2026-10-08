@@ -119,3 +119,10 @@ Einstellungen neu: `zw_mode` (`glitch`/`hard`), `zw_adult` (Hart-Modus bestätig
   mehr), Gesims an allen Straßenfassaden, senkrechte Fugen, wo ein Nachbarhaus beginnt.
 - **Graffiti** in der Halle an der Wand gegenüber dem Start („ZOMBIES RAUS!“): `graffiti` in `MAPS.halle`,
   Text in `GRAFFITI_TEXT` (`level.js`), gezeichnet von `addGraffiti()` (Sprühschrift mit Kontur, Läufern, Sprühnebel).
+
+## Sprinter raus, kein Rutschen mehr (08.10.2026)
+
+- **Sprinter entfernt:** tauchen in keiner Welle mehr auf (`share.runner = 0`, kein Eintrag mehr in `TYPE_INTRO`, `main.js`).
+  Sie waren zu schnell und glitten über den Boden. Der Typ bleibt in `TYPES` definiert, falls er zurückkommen soll.
+- **Kein Gleiten:** `ANIM_CALM` = 1 (`zombies.js`), die Lauf-Animation läuft wieder im Lauftempo, die Füße bleiben am Boden.
+  Der ruhigere Kopf kommt weiter aus der Glättung in `CALM_BONES`.

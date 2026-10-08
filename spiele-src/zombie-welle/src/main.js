@@ -67,7 +67,6 @@ const UPGRADES = [
 
 // Neue Gegnertypen: ab welcher Welle, wie oft garantiert beim ersten Auftreten
 const TYPE_INTRO = {
-  runner: { wave: 2, hint: 'schnell, aber schwach' },
   bomber: { wave: 3, hint: 'platzt in deiner Nähe – auf Abstand halten!' },
   brute: { wave: 4, hint: 'zäh und hart im Nehmen – Raketen helfen' },
 };
@@ -607,7 +606,7 @@ class Game {
   buildQueue(w, total) {
     const q = [];
     const share = {
-      runner: w >= 2 ? Math.min(0.3, 0.1 + 0.03 * w) : 0,
+      runner: 0, // Sprinter entfernt (08.10.2026): zu schnell, rutschten über den Boden
       bomber: w >= 3 ? Math.min(0.16, 0.07 + 0.015 * w) : 0,
       brute: w >= 4 ? Math.min(0.14, 0.04 + 0.015 * w) : 0,
     };
