@@ -1,6 +1,7 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
+import spieleCachebust from './integrations/spiele-cachebust.mjs';
 
 // https://astro.build/config
 export default defineConfig({
@@ -12,5 +13,6 @@ export default defineConfig({
   // Überschreiben in dist/ behindern. Für lokale Entwicklung kann das
   // wieder auf './dist' gesetzt werden — Astro erkennt 'dist' als Default.
   outDir: '/tmp/astro-dist',
+  integrations: [spieleCachebust()],
   vite: { plugins: [tailwindcss()] },
 });
