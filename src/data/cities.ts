@@ -81,9 +81,18 @@ export const cities: City[] = [
     heroSub:
       "2FOX4 sitzt seit 2008 in der Schaumburger Str. 21 — mitten in Sachsenhagen, zwischen Steinhuder Meer und Schaumburger Wald. Wir sind nicht „die Webagentur, die Sachsenhagen bedient“, wir sind die Sachsenhagener Webagentur. Bei uns kannst du klingeln, statt anzurufen — persönlich, vor Ort, ohne Konzern-Hotline und Warteschleife.",
     localContext:
-      "Sachsenhagen liegt am Westrand der Region Hannover, eingerahmt vom Schaumburger Wald im Süden und dem Steinhuder Meer im Norden. Rund 2.300 Einwohner, ein klassischer kleiner Flecken mit Geschichte als Residenzort der Grafen von Schaumburg. Wirtschaftlich geprägt durch Handwerk, kleinere Mittelständler und ein wachsendes Pendler-Umfeld nach Hannover und Stadthagen. Für Unternehmen vor Ort heißt das: lokale Sichtbarkeit ist wichtiger als überregionale Reichweite — und genau dafür bauen wir hier passende Websites.",
-    // Bewusst keine localRefs — die ersten Sachsenhagen-Cases werden hier eingefügt,
-    // sobald Oliver eine veröffentlichbare Referenz aus dem Ort vorzeigt.
+      "Sachsenhagen liegt am Westrand der Region Hannover, eingerahmt vom Schaumburger Wald im Süden und dem Steinhuder Meer im Norden. Rund 2.300 Einwohner, ein klassischer kleiner Flecken mit Geschichte als Residenzort der Grafen von Schaumburg. Wirtschaftlich geprägt durch Handwerk, kleinere Mittelständler und ein wachsendes Pendler-Umfeld nach Hannover und Stadthagen. Für Unternehmen vor Ort heißt das: lokale Sichtbarkeit ist wichtiger als überregionale Reichweite — und genau dafür bauen wir hier passende Websites. Gleich nebenan in Lauenhagen haben wir zum Beispiel die neue Website des Steinmetz-Meisterbetriebs Schüßler & Sohn umgesetzt.",
+    localRefs: [
+      {
+        url: "naturstein-schuessler.de",
+        image: "/images/referenzen/naturstein-schuessler.jpg",
+        href: "/referenzen/naturstein-schuessler/",
+        tag: "Steinmetz-Meisterbetrieb · Lauenhagen",
+        title: "Schüßler & Sohn",
+        description:
+          "Neue Website für den Steinmetzbetrieb aus dem Nachbarort Lauenhagen: Leistungen von der Treppe bis zum Grabmal, eine Galerie mit 86 Fotos und durchnummerierte Grabmale für die Anfrage am Telefon.",
+      },
+    ],
     faq: [
       {
         question: "Wo genau ist euer Büro in Sachsenhagen?",
@@ -100,6 +109,10 @@ export const cities: City[] = [
       {
         question: "Warum eine Sachsenhagener Webagentur statt einer aus Hannover oder Bielefeld?",
         answerHtml: `Drei Gründe: Erstens — du kommst persönlich vorbei oder wir zu dir, und das ist ein 5-Minuten-Weg, kein halber Arbeitstag. Zweitens: wir kennen die regionalen Eigenheiten (Schaumburger Wochenblatt, lokale Vereinsstrukturen, regionale Auftraggeber-Mentalität), das spart Erklärungsschleifen. Drittens: dein Geld bleibt im Ort, statt in einer Großstadt-Agentur zu landen, mit der du nur per Ticket-System redest.`,
+      },
+      {
+        question: "Habt ihr Referenzen aus Sachsenhagen und Umgebung?",
+        answerHtml: `Ja. Für den Steinmetz-Meisterbetrieb <a href="${`/referenzen/naturstein-schuessler/`}" class="text-[var(--color-accent)]">Schüßler & Sohn</a> im Nachbarort Lauenhagen haben wir 2026 die neue Website umgesetzt, samt Umzug von Domain und E-Mail. Weitere Projekte aus dem Schaumburger Land findest du unter <a href="${`/referenzen/`}" class="text-[var(--color-accent)]">Referenzen</a>.`,
       },
       {
         question: "Bietet ihr Webdesign-Förderung für Sachsenhagener Unternehmen an?",
