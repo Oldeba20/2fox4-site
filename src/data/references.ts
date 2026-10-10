@@ -72,6 +72,39 @@ export interface Reference {
 
 export const references: Reference[] = [
   {
+    slug: "naturstein-schuessler",
+    category: "websites",
+    domain: "naturstein-schuessler.de",
+    image: "/images/referenzen/naturstein-schuessler.jpg",
+    mobileImage: "/images/referenzen/naturstein-schuessler-mobile",
+    mobileShots: [
+      { image: "/images/referenzen/naturstein-schuessler-mobile-referenzen", label: "Referenzgalerie mit Filter" },
+      { image: "/images/referenzen/naturstein-schuessler-mobile-grabmale", label: "Leistungsseite Grabmale" },
+    ],
+    date: "2026",
+    title: "Schüßler & Sohn",
+    meta: "Steinmetz-Meisterbetrieb · Naturstein",
+    liveUrl: "https://naturstein-schuessler.de",
+    featured: true,
+    story: {
+      challenge:
+        "Schüßler & Sohn ist ein Steinmetz-Meisterbetrieb in Lauenhagen, seit 1946 in Familienhand. Die bisherige Website stammte aus dem Jahr 2006. Auf dem Handy war sie kaum zu bedienen, das Menü bestand aus Bildern, und die Seitenadressen sagten Suchmaschinen nichts über den Inhalt. Wie breit der Betrieb aufgestellt ist, von der Treppenstufe bis zum Grabmal, ging dabei unter.",
+      solution:
+        "Die neue Website gliedert das Angebot in drei Bereiche: Bau, Innenausbau und Grabmale. Jeder Bereich hat eine eigene Seite mit Antworten auf häufige Fragen. Die Referenzgalerie zeigt 86 Fotos ausgeführter Arbeiten, nach Bereich filterbar und in Großansicht. Die Grabmale sind durchnummeriert, damit Kunden am Telefon einfach die Nummer nennen können. Das Logo von 2006 haben wir originalgetreu als Vektorgrafik nachgebaut, für das Steinmetzzeichen diente die schärfste erhaltene Vorlage. Dazu kamen eine Karriereseite für die Mitarbeitersuche und der Umzug von Domain und Postfächern zu einem neuen Hoster, samt bebilderter Anleitung für das E-Mail-Programm. Die alten Seitenadressen leiten auf die neuen weiter.",
+      outcome:
+        "Seit Oktober 2026 ist die neue Website online. Alle Leistungen sind auf einen Blick zu sehen, die Galerie zeigt die Bandbreite des Betriebs, und die offene Stelle steht gleich auf der Startseite.",
+      scope: [
+        "Website-Relaunch",
+        "Referenzgalerie mit Filter",
+        "Logo-Rekonstruktion",
+        "Karriereseite",
+        "Domain- & E-Mail-Umzug",
+        "Lokale SEO & strukturierte Daten",
+      ],
+      liveUrl: "https://naturstein-schuessler.de",
+    },
+  },
+  {
     slug: "events-schaumburg",
     category: "websites",
     domain: "events-schaumburg.de",
