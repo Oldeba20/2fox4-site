@@ -24,6 +24,8 @@ ROOT="$(dirname "$SITE")"
 KEY="$ROOT/.deploy-key/id_ed25519_2fox4"
 REMOTE="ssh-w0202caa@w0202caa.kasserver.com"
 export HOME=/tmp/h TMPDIR=/tmp; mkdir -p "$HOME"
+# Key nach /tmp kopieren: der Projektpfad enthaelt ein Leerzeichen, ssh-Optionen vertragen das schlecht
+cp "$KEY" /tmp/h/deploykey && chmod 600 /tmp/h/deploykey; KEY=/tmp/h/deploykey
 SSH="ssh -i $KEY -o BatchMode=yes -o StrictHostKeyChecking=accept-new -o UserKnownHostsFile=/tmp/h/known_hosts -o ConnectTimeout=15"
 cd "$SITE"
 
