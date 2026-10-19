@@ -72,6 +72,35 @@ export interface Reference {
 
 export const references: Reference[] = [
   {
+    slug: "natur-buddy",
+    category: "onlineshops",
+    domain: "natur-buddy.de",
+    image: "/images/referenzen/natur-buddy-2026.jpg",
+    mobileImage: "/images/referenzen/natur-buddy-2026-mobile",
+    mobileShots: [
+      { image: "/images/referenzen/natur-buddy-2026-mobile-produktseite", label: "Produktseite" },
+      { image: "/images/referenzen/natur-buddy-2026-mobile-themenwelt", label: "Themenwelt" },
+    ],
+    date: "2026",
+    title: "Natur Buddy",
+    meta: "Astro · Onlineshop",
+    liveUrl: "https://natur-buddy.de",
+    featured: true,
+    story: {
+      challenge:
+        "Natur Buddy verbindet Ratgeber und Shop für Nahrungsergänzung, Naturheilmittel und natürliche Pflege. Die meisten Besucher möchten erst verstehen, was ein Mittel ist und wofür es traditionell verwendet wird, bevor sie kaufen. Beides musste zusammenfinden, ohne Heilversprechen zu machen.",
+      solution:
+        "Nahrungsergänzung, Naturheilmittel und Naturkosmetik & Pflege bilden die drei Themenwelten, erreichbar über ein großes Menü und die Suche. Zu jeder gehören Ratgeberartikel mit Lesezeit, etwa die Pflanzen-Steckbriefe rund um Schwedenbitter. Balsame, Naturkosmetik, Seifen und basische Pflege kauft man direkt im Shop – mit Grundpreis, Live-Bestand, Mini-Warenkorb und Versandfrei-Anzeige. Das Design im Stil einer Kräuterkammer (Waldgrün, Stein, Ringelblumen-Orange) zeigt Produkte wie beschriftete Apotheken-Etiketten. Bei anderen Produkten führt ein klar gekennzeichneter Affiliate-Link weiter, und ein Hinweis auf jeder Seite ordnet die Inhalte ein.",
+      scope: [
+        "Onlineshop",
+        "Ratgeber & Magazin",
+        "Themenwelten",
+        "Affiliate-Kennzeichnung",
+      ],
+      liveUrl: "https://natur-buddy.de",
+    },
+  },
+  {
     slug: "naturstein-schuessler",
     category: "websites",
     domain: "naturstein-schuessler.de",
@@ -770,35 +799,6 @@ export const references: Reference[] = [
     date: "2025",
     title: "KI-Partei",
     meta: "Politik & KI",
-  },
-  {
-    slug: "natur-buddy",
-    category: "onlineshops",
-    domain: "natur-buddy.de",
-    image: "/images/referenzen/natur-buddy-webshop.jpg",
-    mobileImage: "/images/referenzen/natur-buddy-mobile",
-    mobileShots: [
-      { image: "/images/referenzen/natur-buddy-mobile-produktseite", label: "Produktseite" },
-      { image: "/images/referenzen/natur-buddy-mobile-themenwelt", label: "Themenwelt" },
-    ],
-    date: "2024",
-    title: "Natur Buddy",
-    meta: "Shopware 6 · Onlineshop",
-    liveUrl: "https://natur-buddy.de",
-    featured: true,
-    story: {
-      challenge:
-        "Natur Buddy verbindet Ratgeber und Shop für Nahrungsergänzung, Naturheilmittel und natürliche Pflege. Die meisten Besucher möchten erst verstehen, was ein Mittel ist und wofür es traditionell verwendet wird, bevor sie kaufen. Beides musste zusammenfinden, ohne Heilversprechen zu machen.",
-      solution:
-        "Nahrungsergänzung, Naturheilmittel und Naturkosmetik & Pflege bilden die drei Themenwelten, erreichbar über ein großes Menü und die Suche. Zu jeder gehören Ratgeberartikel mit Lesezeit, etwa die Pflanzen-Steckbriefe rund um Schwedenbitter. Basische Pflegeprodukte kauft man direkt im Shop, mit Grundpreis, Lieferzeit und Warenkorb. Bei anderen Produkten führt ein klar gekennzeichneter Affiliate-Link weiter, und ein Hinweis auf jeder Seite ordnet die Inhalte ein.",
-      scope: [
-        "Onlineshop",
-        "Ratgeber & Magazin",
-        "Themenwelten",
-        "Affiliate-Kennzeichnung",
-      ],
-      liveUrl: "https://natur-buddy.de",
-    },
   },
   {
     slug: "ergotherapeutin-trainerin",
