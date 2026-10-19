@@ -198,7 +198,7 @@
       const content = document.querySelector<HTMLElement>(".post-content");
       if (!content) return list;
       content.querySelectorAll<HTMLElement>(BLOCKS).forEach((el) => {
-        if (el.closest("pre, script, style, [aria-hidden='true']")) return;
+        if (el.closest("pre, script, style, [aria-hidden='true'], [data-blog-tool]")) return;
         // nur äußerste Blöcke (kein <p> in <li> doppelt lesen)
         const parentBlock = el.parentElement?.closest(BLOCKS);
         if (parentBlock && content.contains(parentBlock)) return;

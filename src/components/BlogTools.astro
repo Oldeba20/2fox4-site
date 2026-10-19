@@ -1,0 +1,294 @@
+---
+/**
+ * BlogTools — interaktive Werkzeuge in Blogbeiträgen.
+ *
+ * Ein Beitrag bindet ein Werkzeug per Platzhalter im Markdown/HTML ein:
+ *   <div data-blog-tool="ki-seo-analyse"></div>   → KI-SEO-Analyser (Backend: /ki-seo-analyse.php)
+ *   <div data-blog-tool="roi-rechner"></div>      → ROI-Rechner für Marketing-Investitionen
+ *   <div data-blog-tool="projektkosten"></div>    → Website-Kostenrechner (Preise = /preise/)
+ *
+ * Die Komponente wird auf jeder Blog-Seite eingebunden, tut aber nur etwas,
+ * wenn ein Platzhalter vorhanden ist. Preise im Kostenrechner IMMER mit der
+ * Preisseite (src/pages/preise/index.astro) abgleichen, wenn sich dort etwas ändert.
+ */
+---
+
+<style is:global>
+  .bt {
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--color-border-strong);
+    border-radius: 14px;
+    padding: 1.4em 1.5em;
+    margin: 1.8em 0;
+    color: var(--color-text-muted);
+    font-size: 16px;
+  }
+  .bt-head { display: flex; align-items: center; gap: 0.6em; margin-bottom: 0.3em; }
+  .bt-head svg { width: 22px; height: 22px; color: var(--color-accent); flex-shrink: 0; }
+  .bt-title { font-size: 20px; font-weight: 700; color: var(--color-text); line-height: 1.25; }
+  .bt-sub { margin: 0 0 1.1em; font-size: 15px; }
+  .bt-grid { display: grid; gap: 0.9em 1em; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); }
+  .bt label, .bt .bt-lbl { display: block; font-size: 14px; font-weight: 600; color: var(--color-text); margin-bottom: 0.35em; }
+  .bt input[type="number"], .bt input[type="text"], .bt input[type="url"], .bt select {
+    width: 100%;
+    background: var(--color-bg);
+    color: var(--color-text);
+    border: 1px solid var(--color-border-strong);
+    border-radius: 8px;
+    padding: 0.62em 0.8em;
+    font: inherit;
+    font-size: 16px; /* verhindert Zoom auf iOS */
+  }
+  .bt input:focus-visible, .bt select:focus-visible, .bt button:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+  .bt-check { display: flex !important; align-items: flex-start; gap: 0.55em; font-weight: 400 !important; color: var(--color-text-muted) !important; cursor: pointer; margin: 0.35em 0 !important; }
+  .bt-check input { margin-top: 0.3em; accent-color: var(--color-accent); width: 16px; height: 16px; flex-shrink: 0; }
+  .bt-row { display: flex; gap: 0.6em; flex-wrap: wrap; }
+  .bt-row input { flex: 1 1 240px; }
+  .bt-btn {
+    background: var(--color-accent);
+    color: #0a0a0a;
+    border: 0;
+    border-radius: 8px;
+    padding: 0.65em 1.3em;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  html.a11y-light-mode .bt-btn { color: #fff; }
+  .bt-btn[disabled] { opacity: 0.6; cursor: wait; }
+  .bt-result { margin-top: 1.2em; border-top: 1px solid var(--color-border); padding-top: 1.1em; }
+  .bt-result:empty { display: none; }
+  .bt-kpis { display: grid; gap: 0.8em; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); margin-bottom: 0.9em; }
+  .bt-kpi { background: var(--color-bg); border: 1px solid var(--color-border); border-radius: 10px; padding: 0.8em 1em; }
+  .bt-kpi b { display: block; font-size: 24px; color: var(--color-text); letter-spacing: -0.02em; line-height: 1.2; }
+  .bt-kpi span { font-size: 13px; }
+  .bt-kpi.is-accent b { color: var(--color-accent); }
+  .bt-note { font-size: 14px; margin: 0.6em 0 0; }
+  .bt-list { margin: 0.4em 0 0; padding-left: 1.2em; list-style: disc; font-size: 15px; }
+  .bt-err { color: #f87171; font-weight: 600; }
+  html.a11y-light-mode .bt-err { color: #b91c1c; }
+  /* KI-SEO-Analyser */
+  .bt-score { display: flex; align-items: center; gap: 1em; margin-bottom: 1em; }
+  .bt-ring { --p: 0; width: 86px; height: 86px; border-radius: 50%; flex-shrink: 0;
+    background: conic-gradient(var(--ring) calc(var(--p) * 1%), var(--color-border) 0);
+    display: grid; place-items: center; }
+  .bt-ring span { width: 70px; height: 70px; border-radius: 50%; background: var(--color-bg-elevated); display: grid; place-items: center;
+    font-size: 24px; font-weight: 700; color: var(--color-text); }
+  .bt .bt-factors { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.55em; }
+  .bt .bt-factor { margin: 0; }
+  .bt-factor { background: var(--color-bg); border: 1px solid var(--color-border); border-radius: 10px; padding: 0.7em 0.9em; }
+  .bt-factor-top { display: flex; justify-content: space-between; gap: 1em; font-weight: 600; color: var(--color-text); font-size: 15px; }
+  .bt-bar { height: 5px; border-radius: 3px; background: var(--color-border); margin: 0.45em 0; overflow: hidden; }
+  .bt-bar i { display: block; height: 100%; border-radius: 3px; }
+  .bt-factor p { margin: 0; font-size: 14px; line-height: 1.55; }
+  .is-good { --ring: #22c55e; } .is-warn { --ring: #f59e0b; } .is-bad { --ring: #ef4444; }
+  .bt-dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: var(--ring); margin-right: 0.45em; }
+  .bt-cta { margin-top: 1.1em; display: flex; gap: 0.6em; flex-wrap: wrap; align-items: center; }
+  .post-content .bt-cta a.bt-btn { text-decoration: none; display: inline-block; color: #0a0a0a; }
+  html.a11y-light-mode .post-content .bt-cta a.bt-btn { color: #fff; }
+  .post-content .bt p { margin-bottom: 0; }
+  .post-content .bt .bt-sub { margin-bottom: 1.1em; }
+  .bt-spin { display: inline-block; width: 15px; height: 15px; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: bt-spin 0.8s linear infinite; vertical-align: -2px; margin-right: 0.4em; }
+  @keyframes bt-spin { to { transform: rotate(360deg); } }
+</style>
+
+<script>
+  const fmtEUR = (n: number) =>
+    new Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(n);
+  const fmtPct = (n: number) => new Intl.NumberFormat("de-DE", { maximumFractionDigits: 1 }).format(n) + " %";
+  const esc = (s: unknown) =>
+    String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
+  const track = (action: string) => {
+    try { (window as any)._paq?.push(["trackEvent", "Blog-Tool", action, location.pathname]); } catch {}
+  };
+  const ICON_CALC = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M8 6h8M8 11h.01M12 11h.01M16 11h.01M8 15h.01M12 15h.01M16 15h.01M8 19h8"/></svg>';
+  const ICON_SEARCH = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/><path d="M8.5 11h5M11 8.5v5"/></svg>';
+  let uid = 0;
+  const id = (p: string) => `bt-${p}-${++uid}`;
+  const num = (el: HTMLInputElement) => {
+    const v = parseFloat(el.value.replace(",", "."));
+    return Number.isFinite(v) ? v : NaN;
+  };
+
+  /* ================= ROI-Rechner ================= */
+  function roi(root: HTMLElement) {
+    const i = { inv: id("inv"), rev: id("rev"), mar: id("mar"), mon: id("mon") };
+    root.innerHTML = `
+      <div class="bt-head">${ICON_CALC}<div class="bt-title">ROI-Rechner für Marketing-Investitionen</div></div>
+      <p class="bt-sub">Lohnt sich Ihre Kampagne? Tragen Sie Ihre Zahlen ein – das Ergebnis erscheint sofort.</p>
+      <div class="bt-grid">
+        <div><label for="${i.inv}">Marketing-Investition (€)</label><input id="${i.inv}" type="number" inputmode="decimal" min="0" placeholder="z. B. 5000"></div>
+        <div><label for="${i.rev}">Dadurch erzielter Umsatz (€)</label><input id="${i.rev}" type="number" inputmode="decimal" min="0" placeholder="z. B. 15000"></div>
+        <div><label for="${i.mar}">Gewinnmarge auf den Umsatz (%)</label><input id="${i.mar}" type="number" inputmode="decimal" min="0" max="100" value="30"></div>
+        <div><label for="${i.mon}">Zeitraum (Monate)</label><input id="${i.mon}" type="number" inputmode="numeric" min="1" value="6"></div>
+      </div>
+      <div class="bt-result" aria-live="polite"></div>`;
+    const $ = (k: keyof typeof i) => root.querySelector<HTMLInputElement>("#" + i[k])!;
+    const res = root.querySelector<HTMLElement>(".bt-result")!;
+    let tracked = false;
+    const calc = () => {
+      const inv = num($("inv")), rev = num($("rev")), mar = num($("mar")), mon = Math.max(1, num($("mon")) || 1);
+      if (!(inv > 0) || !(rev >= 0) || !(mar >= 0)) { res.innerHTML = ""; return; }
+      const gross = rev * (mar / 100);          // Rohertrag aus dem Umsatz
+      const profit = gross - inv;               // Gewinn nach Abzug der Investition
+      const r = (profit / inv) * 100;           // ROI
+      const roas = rev / inv;                   // Umsatz je eingesetztem Euro
+      const breakEven = mar > 0 ? inv / (mar / 100) : NaN;
+      const verdict = r >= 100 ? "Sehr starker ROI – die Kampagne verdient ihr Budget mehr als doppelt zurück."
+        : r >= 20 ? "Guter ROI – die Investition rentiert sich deutlich."
+        : r >= 0 ? "Knapp positiv – die Investition trägt sich, viel Luft ist aber nicht."
+        : "Negativer ROI – die Kampagne kostet mehr, als sie an Gewinn bringt.";
+      res.innerHTML = `
+        <div class="bt-kpis">
+          <div class="bt-kpi is-accent"><b>${fmtPct(r)}</b><span>ROI</span></div>
+          <div class="bt-kpi"><b>${fmtEUR(profit)}</b><span>Gewinn nach Investition</span></div>
+          <div class="bt-kpi"><b>${fmtEUR(profit / mon)}</b><span>Gewinn pro Monat</span></div>
+          <div class="bt-kpi"><b>${new Intl.NumberFormat("de-DE", { maximumFractionDigits: 2 }).format(roas)} €</b><span>Umsatz je 1 € Budget (ROAS)</span></div>
+        </div>
+        <p class="bt-note"><strong>${verdict}</strong>${Number.isFinite(breakEven) ? ` Die Gewinnschwelle liegt bei ${fmtEUR(breakEven)} Umsatz.` : ""}</p>
+        <p class="bt-note">Rechenweg: ROI = (Umsatz × Marge − Investition) ÷ Investition.</p>`;
+      if (!tracked) { tracked = true; track("ROI-Rechner genutzt"); }
+    };
+    root.addEventListener("input", calc);
+  }
+
+  /* ================= Website-Kostenrechner ================= */
+  // Werte wie auf /preise/ (netto). Bei Preisänderungen hier mitziehen.
+  function kosten(root: HTMLElement) {
+    const i = { typ: id("typ"), pages: id("pages"), lang: id("lang"), txt: id("txt"), foto: id("foto"), seo: id("seo") };
+    root.innerHTML = `
+      <div class="bt-head">${ICON_CALC}<div class="bt-title">Website-Kostenrechner</div></div>
+      <p class="bt-sub">Was kostet Ihre neue Website ungefähr? Eine erste Orientierung auf Basis unserer <a href="/preise/">aktuellen Preise</a>.</p>
+      <div class="bt-grid">
+        <div><label for="${i.typ}">Art der Website</label>
+          <select id="${i.typ}">
+            <option value="card">Visitenkarte / One-Pager</option>
+            <option value="site" selected>Unternehmens-Website</option>
+            <option value="shop">Onlineshop</option>
+          </select></div>
+        <div><label for="${i.pages}">Anzahl Seiten (ca.)</label><input id="${i.pages}" type="number" inputmode="numeric" min="1" max="60" value="6"></div>
+        <div><label for="${i.lang}">Zusätzliche Sprachen</label><input id="${i.lang}" type="number" inputmode="numeric" min="0" max="5" value="0"></div>
+      </div>
+      <div style="margin-top:0.9em">
+        <span class="bt-lbl">Zusätzlich gewünscht</span>
+        <label class="bt-check"><input type="checkbox" id="${i.txt}"> Wir schreiben die Texte (80–120 € pro Seite)</label>
+        <label class="bt-check"><input type="checkbox" id="${i.foto}"> Professionelle Foto-Session (500–900 €)</label>
+        <label class="bt-check"><input type="checkbox" id="${i.seo}"> Laufende SEO-Betreuung (ab 200 € / Monat)</label>
+      </div>
+      <div class="bt-result" aria-live="polite"></div>`;
+    const $ = (k: keyof typeof i) => root.querySelector<HTMLInputElement>("#" + i[k])!;
+    const res = root.querySelector<HTMLElement>(".bt-result")!;
+    let tracked = false;
+    const calc = (ev?: Event) => {
+      const typ = ($("typ") as unknown as HTMLSelectElement).value;
+      let pages = Math.round(num($("pages")));
+      if (!(pages >= 1)) pages = 1;
+      const langs = Math.max(0, Math.min(5, Math.round(num($("lang")) || 0)));
+      let lo: number, hi: number | null, base: string;
+      if (typ === "card") {
+        lo = 500; hi = 1000; base = "Visitenkarten-Site";
+      } else if (typ === "shop") {
+        lo = 2500; hi = null; base = "Onlineshop";
+      } else {
+        base = "Unternehmens-Website";
+        if (pages <= 6) { lo = 1500; hi = 2500; }
+        else if (pages <= 12) { lo = 2500; hi = 3800; }
+        else { lo = 3800; hi = 5000; }
+      }
+      const lines: string[] = [`${base}: ${hi ? `${fmtEUR(lo)} – ${fmtEUR(hi)}` : `ab ${fmtEUR(lo)}`}`];
+      let addLo = 0, addHi = 0;
+      if (langs) { addLo += 300 * langs; addHi += 600 * langs; lines.push(`${langs} zusätzliche Sprache${langs > 1 ? "n" : ""}: ${fmtEUR(300 * langs)} – ${fmtEUR(600 * langs)}`); }
+      if ($("txt").checked) { addLo += 80 * pages; addHi += 120 * pages; lines.push(`Texte für ${pages} Seite${pages > 1 ? "n" : ""}: ${fmtEUR(80 * pages)} – ${fmtEUR(120 * pages)}`); }
+      if ($("foto").checked) { addLo += 500; addHi += 900; lines.push(`Foto-Session: ${fmtEUR(500)} – ${fmtEUR(900)}`); }
+      const totalLo = lo + addLo, totalHi = hi ? hi + addHi : null;
+      const care = typ === "shop" ? "ab 80 €" : "ab 30 €";
+      res.innerHTML = `
+        <div class="bt-kpis">
+          <div class="bt-kpi is-accent"><b>${totalHi ? `${fmtEUR(totalLo)} – ${fmtEUR(totalHi)}` : `ab ${fmtEUR(totalLo)}`}</b><span>einmalig, netto</span></div>
+          <div class="bt-kpi"><b>${care}</b><span>Wartung & Sicherheit pro Monat</span></div>
+          ${$("seo").checked ? `<div class="bt-kpi"><b>ab 200 €</b><span>SEO-Betreuung pro Monat</span></div>` : ""}
+        </div>
+        <ul class="bt-list">${lines.map((l) => `<li>${esc(l)}</li>`).join("")}</ul>
+        <p class="bt-note">${typ === "shop" ? "Beim Shop hängt der Preis vor allem an Produktanzahl, Zahlarten und Schnittstellen (z. B. Warenwirtschaft). " : ""}Unverbindliche Orientierung zzgl. MwSt. Den genauen Preis kalkulieren wir nach einem kostenlosen Erstgespräch.</p>
+        <div class="bt-cta"><a class="bt-btn" href="/kontakt/">Kostenloses Erstgespräch anfragen</a></div>`;
+      if (ev && !tracked) { tracked = true; track("Kostenrechner genutzt"); }
+    };
+    root.addEventListener("input", calc);
+    root.addEventListener("change", calc);
+    calc();
+  }
+
+  /* ================= KI-SEO-Analyser ================= */
+  function kiseo(root: HTMLElement) {
+    const i = { url: id("url") };
+    root.innerHTML = `
+      <div class="bt-head">${ICON_SEARCH}<div class="bt-title">Kostenloser KI-SEO-Analyser</div></div>
+      <p class="bt-sub">Wie gut ist Ihre Website für Google und KI-Suchen wie ChatGPT oder Perplexity aufgestellt? Der Analyser prüft 10 Faktoren und zeigt, wo es hakt.</p>
+      <form class="bt-row" novalidate>
+        <label for="${i.url}" class="bt-sr" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Website-Adresse</label>
+        <input id="${i.url}" type="url" inputmode="url" autocomplete="url" placeholder="https://ihre-website.de" required>
+        <button class="bt-btn" type="submit">Analysieren</button>
+      </form>
+      <p class="bt-note">Geprüft wird die eingegebene Seite (meist die Startseite). Die Adresse wird nur für die Prüfung abgerufen und nicht gespeichert.</p>
+      <div class="bt-result" aria-live="polite"></div>`;
+    const form = root.querySelector("form")!;
+    const input = root.querySelector<HTMLInputElement>("#" + i.url)!;
+    const btn = root.querySelector<HTMLButtonElement>(".bt-btn")!;
+    const res = root.querySelector<HTMLElement>(".bt-result")!;
+    const cls = (s: string) => (s === "good" ? "is-good" : s === "warn" ? "is-warn" : "is-bad");
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const url = input.value.trim();
+      if (!url) { res.innerHTML = '<p class="bt-err">Bitte geben Sie eine Website-Adresse ein.</p>'; input.focus(); return; }
+      btn.disabled = true;
+      btn.innerHTML = '<span class="bt-spin" aria-hidden="true"></span>Prüfe …';
+      res.innerHTML = '<p class="bt-note">Die Seite wird abgerufen und geprüft. Das dauert meist 5–15 Sekunden.</p>';
+      try {
+        const r = await fetch("/ki-seo-analyse.php", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ url }),
+        });
+        const d = await r.json().catch(() => ({ ok: false, error: "Unerwartete Antwort vom Server." }));
+        if (!d.ok) throw new Error(d.error || "Die Analyse ist fehlgeschlagen.");
+        const overall = d.score >= 80 ? "good" : d.score >= 50 ? "warn" : "bad";
+        res.innerHTML = `
+          <div class="bt-score ${cls(overall)}">
+            <div class="bt-ring" style="--p:${Number(d.score)}"><span>${Number(d.score)}</span></div>
+            <div><div class="bt-title">${esc(d.level)}</div><div style="font-size:14px;word-break:break-all">${esc(d.url)}</div><div style="font-size:14px">von 100 möglichen Punkten</div></div>
+          </div>
+          <ul class="bt-factors">${d.factors.map((f: any) => `
+            <li class="bt-factor ${cls(f.status)}">
+              <div class="bt-factor-top"><span><span class="bt-dot" aria-hidden="true"></span>${esc(f.label)}</span><span>${f.points}/${f.max}</span></div>
+              <div class="bt-bar" aria-hidden="true"><i style="width:${(f.points / f.max) * 100}%;background:var(--ring)"></i></div>
+              <p>${esc(f.hint)}</p>
+            </li>`).join("")}
+          </ul>
+          <p class="bt-note">Außerdem: ${d.info.sitemap ? "Sitemap ist in der robots.txt eingetragen" : "keine Sitemap in der robots.txt eingetragen"} · ${d.info.llms_txt ? "llms.txt vorhanden" : "keine llms.txt (optional, noch kein fester Standard)"} · HTML-Größe ${esc(d.info.html_kb)} KB.</p>
+          <div class="bt-cta">
+            <a class="bt-btn" href="/ki-sichtbarkeit-check/">Jetzt prüfen, ob die KI Sie empfiehlt</a>
+            <a href="/kontakt/">Oder: Ergebnisse mit uns besprechen</a>
+          </div>`;
+        track("KI-SEO-Analyse durchgeführt");
+      } catch (err: any) {
+        res.innerHTML = `<p class="bt-err">${esc(err?.message || "Die Analyse ist fehlgeschlagen.")}</p>`;
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Analysieren";
+      }
+    });
+  }
+
+  const TOOLS: Record<string, (el: HTMLElement) => void> = {
+    "roi-rechner": roi,
+    "projektkosten": kosten,
+    "ki-seo-analyse": kiseo,
+  };
+  document.querySelectorAll<HTMLElement>("[data-blog-tool]").forEach((el) => {
+    const fn = TOOLS[el.dataset.blogTool || ""];
+    if (!fn) return;
+    el.classList.add("bt");
+    fn(el);
+  });
+</script>
