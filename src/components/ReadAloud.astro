@@ -1,0 +1,323 @@
+---
+/**
+ * ReadAloud — schwebender „Artikel vorlesen“-Button für Blogbeiträge.
+ *
+ * Nutzt die Sprachausgabe des Browsers (Web Speech API): keine Kosten,
+ * keine API, keine Audiodateien. Datenschutz: Es werden NUR Stimmen genutzt,
+ * die lokal auf dem Gerät laufen (localService) — Online-Stimmen (z. B. die
+ * Google-Stimmen in Chrome Desktop) würden den Text an Server schicken.
+ * Gibt es keine lokale deutsche Stimme, bleibt der Button unsichtbar.
+ *
+ * Bedienung: Start → Pause/Weiter, Tempo (1× / 1,25× / 1,5×), Stopp.
+ * Der gerade gelesene Absatz wird markiert; „Pause“ ist intern ein cancel()
+ * mit gemerkter Position (pause()/resume() sind in Chrome/Android unzuverlässig).
+ *
+ * Position: rechts unten ÜBER dem WhatsApp-Button (der sitzt bei bottom 20px).
+ * Spätere Ausbaustufe: für Top-Artikel echte MP3 in Olivers ElevenLabs-Stimme.
+ */
+---
+
+<div class="tts" data-tts hidden>
+  <button type="button" class="tts-main" data-tts-main aria-label="Artikel vorlesen lassen">
+    <svg class="tts-ico" data-tts-ico="play" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M11 5 6 9H2v6h4l5 4V5z" /><path d="M15.5 8.5a5 5 0 0 1 0 7" /><path d="M19 5a10 10 0 0 1 0 14" />
+    </svg>
+    <svg class="tts-ico" data-tts-ico="pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" hidden>
+      <rect x="6" y="5" width="4" height="14" rx="1" /><rect x="14" y="5" width="4" height="14" rx="1" />
+    </svg>
+    <svg class="tts-ico" data-tts-ico="resume" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" hidden>
+      <path d="M7 4.5v15a1 1 0 0 0 1.5.86l12-7.5a1 1 0 0 0 0-1.72l-12-7.5A1 1 0 0 0 7 4.5z" />
+    </svg>
+    <span data-tts-label>Artikel vorlesen</span>
+  </button>
+  <button type="button" class="tts-small" data-tts-rate hidden aria-label="Lesetempo ändern">1×</button>
+  <button type="button" class="tts-small" data-tts-stop hidden aria-label="Vorlesen beenden">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true">
+      <path d="M6 6l12 12M18 6 6 18" />
+    </svg>
+  </button>
+  <span class="tts-sr" aria-live="polite" data-tts-status></span>
+</div>
+
+<style is:global>
+  .tts {
+    position: fixed;
+    right: 20px;
+    bottom: 92px; /* über dem WhatsApp-Button */
+    z-index: 997;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    animation: tts-in 0.35s ease-out both;
+  }
+  .tts[hidden] { display: none; }
+  @keyframes tts-in {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: none; }
+  }
+  .tts-main,
+  .tts-small {
+    font-family: inherit;
+    border: 0;
+    cursor: pointer;
+    background: var(--color-accent);
+    color: #0a0a0a;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .tts-main {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 18px 12px 15px;
+    border-radius: 999px;
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1;
+    white-space: nowrap;
+  }
+  .tts-small {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    font-size: 13px;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    background: var(--color-bg-elevated);
+    color: var(--color-text);
+    border: 1px solid var(--color-border-strong);
+  }
+  .tts-small[hidden] { display: none; }
+  .tts-small svg { width: 16px; height: 16px; }
+  .tts-ico { width: 20px; height: 20px; flex-shrink: 0; }
+  .tts-ico[hidden] { display: none; }
+  .tts-main:hover, .tts-small:hover { transform: translateY(-2px); box-shadow: 0 10px 26px rgba(0, 0, 0, 0.5); }
+  .tts-main:focus-visible, .tts-small:focus-visible { outline: 3px solid var(--color-text); outline-offset: 3px; }
+  .tts-sr {
+    position: absolute; width: 1px; height: 1px; overflow: hidden;
+    clip: rect(0 0 0 0); white-space: nowrap;
+  }
+  /* Heller Modus: Orange #c2410c braucht weiße Schrift für genug Kontrast */
+  html.a11y-light-mode .tts-main { color: #ffffff; }
+  html.a11y-light-mode .tts-main, html.a11y-light-mode .tts-small { box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18); }
+
+  /* Markierung des gerade gelesenen Abschnitts */
+  .tts-active {
+    background: var(--color-accent-soft);
+    box-shadow: 0 0 0 8px var(--color-accent-soft);
+    border-radius: 4px;
+    transition: background 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  @media (max-width: 480px) {
+    .tts { right: 16px; bottom: 80px; }
+    .tts-main { font-size: 14px; padding: 11px 16px 11px 13px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .tts { animation: none; }
+  }
+  html.a11y-no-motion .tts { animation: none; }
+  @media print { .tts { display: none !important; } }
+</style>
+
+<script>
+  const synth: SpeechSynthesis | undefined = (window as any).speechSynthesis;
+  const root = document.querySelector<HTMLElement>("[data-tts]");
+
+  if (synth && root && "SpeechSynthesisUtterance" in window) {
+    const mainBtn = root.querySelector<HTMLButtonElement>("[data-tts-main]")!;
+    const rateBtn = root.querySelector<HTMLButtonElement>("[data-tts-rate]")!;
+    const stopBtn = root.querySelector<HTMLButtonElement>("[data-tts-stop]")!;
+    const label = root.querySelector<HTMLElement>("[data-tts-label]")!;
+    const status = root.querySelector<HTMLElement>("[data-tts-status]")!;
+    const icons = {
+      play: root.querySelector<SVGElement>('[data-tts-ico="play"]')!,
+      pause: root.querySelector<SVGElement>('[data-tts-ico="pause"]')!,
+      resume: root.querySelector<SVGElement>('[data-tts-ico="resume"]')!,
+    };
+
+    const RATES = [1, 1.25, 1.5];
+    let rateIdx = 0;
+    try {
+      const saved = Number(localStorage.getItem("tts-rate"));
+      if (RATES.includes(saved)) rateIdx = RATES.indexOf(saved);
+    } catch {}
+
+    type Chunk = { text: string; el: HTMLElement };
+    let chunks: Chunk[] = [];
+    let idx = 0;
+    let state: "idle" | "playing" | "paused" = "idle";
+    let session = 0;
+    let voice: SpeechSynthesisVoice | null = null;
+    let activeEl: HTMLElement | null = null;
+    let lastUserScroll = 0;
+
+    synth.cancel(); // evtl. Reste einer vorherigen Seite stoppen
+
+    /* ---------- Stimme: nur lokale deutsche Stimmen ---------- */
+    function pickVoice(): SpeechSynthesisVoice | null {
+      const de = synth!.getVoices().filter((v) => /^de([-_]|$)/i.test(v.lang));
+      const local = de.filter((v) => v.localService !== false);
+      if (!local.length) return null;
+      const score = (v: SpeechSynthesisVoice) =>
+        (/premium|enhanced|natural|neural/i.test(v.name) ? 4 : 0) +
+        (/anna|petra|helena|markus|yannick|katja|hedda|conrad|amala|vicki/i.test(v.name) ? 2 : 0) +
+        (/^de[-_]DE$/i.test(v.lang) ? 1 : 0) +
+        (v.default ? 0.5 : 0) -
+        (/eddy|flo|grandma|grandpa|reed|rocko|sandy|shelley|albert|bad news|bahh|bells|boing|bubbles|cellos|jester|organ|trinoids|whisper|zarvox|wobble|superstar|good news|junior|ralph|fred|kathy/i.test(v.name) ? 5 : 0);
+      return local.sort((a, b) => score(b) - score(a))[0];
+    }
+
+    function initVoice() {
+      if (voice) return;
+      voice = pickVoice();
+      // Nur anzeigen, wenn es eine lokale Stimme UND genug Lesetext gibt
+      if (voice && collect().reduce((n, c) => n + c.text.length, 0) > 400) root!.hidden = false;
+    }
+
+    /* ---------- Text einsammeln ---------- */
+    const BLOCKS = "h2,h3,h4,p,li,blockquote,summary,td,th,figcaption";
+    function splitText(t: string): string[] {
+      const sentences = t.match(/[^.!?…]+[.!?…]+["“”»«)]*\s*|[^.!?…]+$/g) || [t];
+      const out: string[] = [];
+      let buf = "";
+      for (const s of sentences) {
+        if ((buf + s).length > 220 && buf) { out.push(buf.trim()); buf = ""; }
+        buf += s;
+      }
+      if (buf.trim()) out.push(buf.trim());
+      return out;
+    }
+    function collect(): Chunk[] {
+      const list: Chunk[] = [];
+      const h1 = document.querySelector<HTMLElement>("article h1");
+      if (h1) list.push({ text: h1.innerText.trim(), el: h1 });
+      const content = document.querySelector<HTMLElement>(".post-content");
+      if (!content) return list;
+      content.querySelectorAll<HTMLElement>(BLOCKS).forEach((el) => {
+        if (el.closest("pre, script, style, [aria-hidden='true']")) return;
+        // nur äußerste Blöcke (kein <p> in <li> doppelt lesen)
+        const parentBlock = el.parentElement?.closest(BLOCKS);
+        if (parentBlock && content.contains(parentBlock)) return;
+        const text = (el.textContent || "").replace(/\s+/g, " ").trim();
+        if (!text) return;
+        splitText(text).forEach((t) => list.push({ text: t, el }));
+      });
+      return list;
+    }
+
+    initVoice();
+    synth.addEventListener?.("voiceschanged", initVoice);
+    // Manche Browser feuern voiceschanged nicht zuverlässig
+    [300, 1000, 2500].forEach((t) => setTimeout(initVoice, t));
+
+    /* ---------- UI ---------- */
+    function render() {
+      // SVG-Elemente haben keine .hidden-Property → Attribut setzen
+      icons.play.toggleAttribute("hidden", state !== "idle");
+      icons.pause.toggleAttribute("hidden", state !== "playing");
+      icons.resume.toggleAttribute("hidden", state !== "paused");
+      label.textContent = state === "idle" ? "Artikel vorlesen" : state === "playing" ? "Pause" : "Weiter";
+      mainBtn.setAttribute(
+        "aria-label",
+        state === "idle" ? "Artikel vorlesen lassen" : state === "playing" ? "Vorlesen pausieren" : "Vorlesen fortsetzen",
+      );
+      rateBtn.hidden = stopBtn.hidden = state === "idle";
+      rateBtn.textContent = String(RATES[rateIdx]).replace(".", ",") + "×";
+    }
+    render();
+
+    function highlight(el: HTMLElement | null) {
+      if (activeEl === el) return;
+      activeEl?.classList.remove("tts-active");
+      activeEl = el;
+      if (!el) return;
+      el.classList.add("tts-active");
+      const det = el.closest("details");
+      if (det && !det.open) det.open = true;
+      const r = el.getBoundingClientRect();
+      const out = r.top < 70 || r.bottom > window.innerHeight - 140;
+      if (out && Date.now() - lastUserScroll > 4000) {
+        const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+        el.scrollIntoView({ block: "center", behavior: reduce ? "auto" : "smooth" });
+      }
+    }
+    ["wheel", "touchmove", "keydown"].forEach((ev) =>
+      addEventListener(ev, () => (lastUserScroll = Date.now()), { passive: true }),
+    );
+
+    /* ---------- Sprechen ---------- */
+    function speakFrom(i: number) {
+      const my = ++session;
+      if (i >= chunks.length) return finish();
+      idx = i;
+      const c = chunks[i];
+      highlight(c.el);
+      const u = new SpeechSynthesisUtterance(c.text);
+      if (voice) { u.voice = voice; u.lang = voice.lang; } else u.lang = "de-DE";
+      u.rate = RATES[rateIdx];
+      u.onend = () => { if (my === session && state === "playing") speakFrom(i + 1); };
+      u.onerror = (e: any) => {
+        if (my !== session || state !== "playing") return;
+        if (e?.error === "interrupted" || e?.error === "canceled") return;
+        speakFrom(i + 1);
+      };
+      synth!.speak(u);
+    }
+    function restartAt(i: number) {
+      session++;
+      synth!.cancel();
+      setTimeout(() => speakFrom(i), 60); // Chrome braucht nach cancel() kurz Luft
+    }
+    function start() {
+      chunks = collect();
+      if (!chunks.length) return;
+      state = "playing";
+      render();
+      status.textContent = "Vorlesen gestartet";
+      restartAt(0);
+      try {
+        (window as any)._paq?.push(["trackEvent", "Blog", "Vorlesen gestartet", location.pathname]);
+      } catch {}
+    }
+    function pause() {
+      state = "paused";
+      session++;
+      synth!.cancel();
+      render();
+      status.textContent = "Vorlesen pausiert";
+    }
+    function resume() {
+      state = "playing";
+      render();
+      status.textContent = "Vorlesen fortgesetzt";
+      restartAt(idx);
+    }
+    function finish() {
+      session++;
+      synth!.cancel();
+      state = "idle";
+      idx = 0;
+      highlight(null);
+      render();
+      status.textContent = "Vorlesen beendet";
+    }
+
+    mainBtn.addEventListener("click", () => {
+      if (state === "idle") start();
+      else if (state === "playing") pause();
+      else resume();
+    });
+    stopBtn.addEventListener("click", finish);
+    rateBtn.addEventListener("click", () => {
+      rateIdx = (rateIdx + 1) % RATES.length;
+      try { localStorage.setItem("tts-rate", String(RATES[rateIdx])); } catch {}
+      render();
+      if (state === "playing") restartAt(idx);
+    });
+    addEventListener("pagehide", () => synth!.cancel());
+  }
+</script>

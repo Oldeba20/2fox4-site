@@ -10,6 +10,7 @@
  */
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import Breadcrumb from "../../components/Breadcrumb.astro";
+import ReadAloud from "../../components/ReadAloud.astro";
 import { getAllPosts, type WPPost } from "../../lib/wp";
 import { breadcrumbSchema } from "../../lib/schema";
 import { site } from "../../data/site";
@@ -205,6 +206,8 @@ const schema = [
       <div class="post-content" set:html={post.contentHtml} />
     </div>
   </article>
+
+  <ReadAloud />
 
   {/* Verwandte Beiträge */}
   {relatedPosts.length > 0 && (
