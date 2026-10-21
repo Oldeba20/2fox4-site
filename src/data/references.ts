@@ -72,6 +72,39 @@ export interface Reference {
 
 export const references: Reference[] = [
   {
+    slug: "verein-buddy",
+    category: "websites",
+    domain: "verein-buddy.de",
+    image: "/images/referenzen/verein-buddy.jpg",
+    mobileImage: "/images/referenzen/verein-buddy-mobile",
+    mobileShots: [
+      { image: "/images/referenzen/verein-buddy-mobile-eingangskorb", label: "Eingangskorb mit Demo" },
+      { image: "/images/referenzen/verein-buddy-mobile-ki-assistent", label: "KI-Assistent mit Quellen" },
+    ],
+    date: "2026",
+    title: "Verein Buddy",
+    meta: "Vereinsverwaltung mit KI · Eigenes Produkt",
+    liveUrl: "https://verein-buddy.de",
+    featured: true,
+    story: {
+      challenge:
+        "In vielen Vereinen verteilen sich die Unterlagen auf private Postfächer und lose Listen. Mit jedem Vorstandswechsel geht Wissen verloren: Wo ist der Mietvertrag fürs Vereinsheim, wer hat die Rechnung der Druckerei freigegeben, wie viele Mitglieder zahlen eigentlich ihren Beitrag? Deshalb haben wir Verein Buddy entwickelt: eine Vereinsverwaltung, die solche Fragen an einer Stelle beantwortet.",
+      solution:
+        "Die Website stellt das Produkt auf einer Seite vor, Besucher können es dort gleich ausprobieren. In der Demo des Eingangskorbs ziehen sie Beispieldokumente in die passenden Ordner. Beim KI-Assistenten wählen sie eine Frage und bekommen die Antwort samt Quelle. Danach stellt die Seite die Funktionen vor: von der Mitgliederverwaltung über Rechnungsfreigaben nach dem Vier-Augen-Prinzip bis zu Sitzungen und Online-Abstimmungen. Ein eigener Abschnitt erklärt Sicherheit und Datenschutz. Die Preise richten sich nach der Mitgliederzahl, ein Schalter zeigt sie wahlweise für das Monats- oder das Jahresabo. Logo und Erscheinungsbild in Petrol und Gelb haben wir für Verein Buddy neu entworfen. Die Web-App dahinter haben wir ebenfalls gebaut: Über „Jetzt selbst starten“ legen Vereine dort ihren Testzugang an.",
+      outcome:
+        "Seit Oktober 2026 ist verein-buddy.de online. Interessierte Vereine können die Software 14 Tage kostenlos testen.",
+      scope: [
+        "Produktkonzept",
+        "Marke & Logo",
+        "Website mit Live-Demos",
+        "Web-App",
+        "Preisbereich mit Tarifumschalter",
+        "Sicherheit & Datenschutz",
+      ],
+      liveUrl: "https://verein-buddy.de",
+    },
+  },
+  {
     slug: "natur-buddy",
     category: "onlineshops",
     domain: "natur-buddy.de",
