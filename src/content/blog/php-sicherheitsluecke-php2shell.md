@@ -48,7 +48,7 @@ Die folgende Tabelle zeigt, wo du stehst:
 | 8.2 | nur Sicherheitsupdates, Ende am 31.12.2026 | 8.2.35 | Update prüfen, Wechsel bis Jahresende |
 | 8.1 und älter | kein Support mehr (8.1 seit 31.12.2025) | keine offizielle | Hoster nach Schutz fragen, zügig wechseln |
 
-Für 7.4, 8.0 und 8.1 hat das PHP-Projekt zwar minimale Korrekturen im Quellcode bereitgestellt. Ob dein Hoster sie eingebaut hat, weißt du aber nur, wenn er es dir sagt. Laut W3Techs laufen noch 26,9 % der PHP-Websites auf PHP 7 und 7,7 % auf PHP 5. Zusammen ist das rund ein Drittel aller PHP-Websites, und für diese Versionen gibt es keine regulären Updates mehr.
+Für 7.4, 8.0 und 8.1 hat das PHP-Projekt zwar minimale Korrekturen im Quellcode bereitgestellt. Ob dein Hoster sie eingebaut hat, weißt du aber nur, wenn er es dir sagt. Laut W3Techs laufen noch 26,9 % der PHP-Websites auf PHP 7 und 7,7 % auf PHP 5. Zusammen ist das rund ein Drittel aller PHP-Websites, und für diese Versionen gibt es keine regulären Updates mehr. Wie du den Umstieg auf eine aktuelle Version ohne Ausfall angehst, zeigen wir Schritt für Schritt in unserer Anleitung [PHP-Version aktualisieren in WordPress](/blog/php-version-aktualisieren-wordpress/).
 
 Ein wichtiger Haken: Die Versionsnummer allein beweist nichts. Viele Hoster und Linux-Distributionen bauen Sicherheitskorrekturen in ihre eigenen PHP-Pakete ein, ohne die Nummer zu ändern. Netcup weist ausdrücklich darauf hin. Siehst du also in deinem Kundenmenü „8.3.30“, kann das trotzdem gepatcht sein. Steht dort 8.3.36 oder höher, ist die Korrektur enthalten. Im Zweifel zählt die schriftliche Aussage deines Hosters.
 
