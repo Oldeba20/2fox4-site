@@ -23,10 +23,11 @@ SITE="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 ROOT="$(dirname "$SITE")"
 KEY="$ROOT/.deploy-key/id_ed25519_2fox4"
 REMOTE="ssh-w0202caa@w0202caa.kasserver.com"
-export HOME=/tmp/h TMPDIR=/tmp; mkdir -p "$HOME"
+# Eigenes HOME je VM-Benutzer: /tmp ist zwischen Cowork-Sessions geteilt, ein fremdes /tmp/h ist nicht beschreibbar
+export HOME="/tmp/h-$(id -u)" TMPDIR=/tmp; mkdir -p "$HOME"
 # Key nach /tmp kopieren: der Projektpfad enthaelt ein Leerzeichen, ssh-Optionen vertragen das schlecht
-cp "$KEY" /tmp/h/deploykey && chmod 600 /tmp/h/deploykey; KEY=/tmp/h/deploykey
-SSH="ssh -i $KEY -o BatchMode=yes -o StrictHostKeyChecking=accept-new -o UserKnownHostsFile=/tmp/h/known_hosts -o ConnectTimeout=15"
+cp "$KEY" "$HOME/deploykey" && chmod 600 "$HOME/deploykey" || { echo "ABBRUCH: Deploy-Key nicht kopierbar ($HOME)"; exit 5; }; KEY="$HOME/deploykey"
+SSH="ssh -i $KEY -o BatchMode=yes -o StrictHostKeyChecking=accept-new -o UserKnownHostsFile=$HOME/known_hosts -o ConnectTimeout=15"
 cd "$SITE"
 
 # Liegengebliebene Locks frueherer Laeufe (nur wenn kein git laeuft)
@@ -39,9 +40,9 @@ if git diff --cached --quiet; then echo "Nichts Neues zu committen."; else
 fi
 BASE="$(git rev-parse origin/main)"; HEAD="$(git rev-parse HEAD)"
 [ "$BASE" = "$HEAD" ] && { echo "Nichts zu pushen (HEAD = origin/main)."; exit 0; }
-git bundle create /tmp/blog.bundle "origin/main..main" >/dev/null 2>&1
+git bundle create "$HOME/blog.bundle" "origin/main..main" >/dev/null 2>&1
 $SSH "$REMOTE" 'mkdir -p ~/blog-relay'
-scp -q -i "$KEY" -o BatchMode=yes -o UserKnownHostsFile=/tmp/h/known_hosts /tmp/blog.bundle "$REMOTE:blog-relay/blog.bundle"
+scp -q -i "$KEY" -o BatchMode=yes -o UserKnownHostsFile=$HOME/known_hosts "$HOME/blog.bundle" "$REMOTE:blog-relay/blog.bundle"
 $SSH "$REMOTE" "set -e; cd ~/blog-relay
   [ -d repo/.git ] || git clone -q git@github.com:Oldeba20/2fox4-site.git repo
   cd repo; git fetch -q origin main
@@ -51,5 +52,5 @@ $SSH "$REMOTE" "set -e; cd ~/blog-relay
   git push -q origin _incoming:main && echo PUSH_OK
   git branch -q -D _incoming; rm -f ../blog.bundle"
 git update-ref refs/remotes/origin/main "$HEAD"
-rm -f /tmp/blog.bundle
+rm -f "$HOME/blog.bundle"
 echo "Veroeffentlicht: $(git log --oneline -1). GitHub Actions deployt jetzt (2-4 Min)."
