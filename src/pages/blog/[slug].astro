@@ -11,6 +11,8 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import Breadcrumb from "../../components/Breadcrumb.astro";
 import ReadAloud from "../../components/ReadAloud.astro";
+import ArticleAudio from "../../components/ArticleAudio.astro";
+import blogAudio from "../../data/blog-audio.json";
 import BlogTools from "../../components/BlogTools.astro";
 import { getAllPosts, type WPPost } from "../../lib/wp";
 import { breadcrumbSchema } from "../../lib/schema";
@@ -30,6 +32,9 @@ interface Props {
 }
 
 const { post, allPosts } = Astro.props;
+
+// Vorgelesene Fassung (MP3 mit KI-Stimme), falls vorhanden — sonst alter ReadAloud-Button
+const audio = (blogAudio as Record<string, { src: string; duration: number; voice?: string }>)[post.slug];
 
 // Datum formatieren
 const dateFormatted = new Date(post.date).toLocaleDateString("de-DE", {
@@ -149,6 +154,17 @@ const schema = [
       "@type": "Organization",
       name: "2FOX4 Websites and more",
     },
+    ...(audio
+      ? {
+          audio: {
+            "@type": "AudioObject",
+            name: `${post.title} (vorgelesen)`,
+            contentUrl: new URL(audio.src, site.url ?? "https://www.2fox4.de").href,
+            encodingFormat: "audio/mpeg",
+            duration: `PT${Math.floor(audio.duration / 60)}M${Math.round(audio.duration % 60)}S`,
+          },
+        }
+      : {}),
   },
   ...(faqSchema ? [faqSchema] : []),
 ];
@@ -193,6 +209,17 @@ const schema = [
         <time datetime={post.date}>{dateFormatted}</time>
       </div>
 
+      {audio && (
+        <ArticleAudio
+          src={audio.src}
+          duration={audio.duration}
+          voice={audio.voice}
+          title={post.title}
+          slug={post.slug}
+          cover={post.featuredImage?.src}
+        />
+      )}
+
       {post.featuredImage && (
         <img
           src={post.featuredImage.src}
@@ -208,7 +235,7 @@ const schema = [
     </div>
   </article>
 
-  <ReadAloud />
+  {!audio && <ReadAloud />}
   {/<div data-blog-tool=/.test(post.contentHtml) && <BlogTools />}
 
   {/* Verwandte Beiträge */}

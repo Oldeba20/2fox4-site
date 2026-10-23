@@ -1,0 +1,298 @@
+---
+/**
+ * ArticleAudio — Player für die vorgelesene Fassung eines Blogbeitrags.
+ *
+ * Die MP3 wird einmal pro Beitrag mit einer KI-Stimme erzeugt
+ * (scripts/blog-audio-text.py + Higgsfield/ElevenLabs + scripts/blog-audio-build.py)
+ * und liegt unter /uploads/blog/<slug>/audio.mp3. Metadaten: src/data/blog-audio.json.
+ * Gibt es keine MP3, zeigt [slug].astro weiter den alten ReadAloud-Button.
+ *
+ * - preload="none": die Datei lädt erst beim ersten Klick
+ * - Tempo 1× / 1,25× / 1,5× / 0,75×, ±15 s, Fortschritt per Schieberegler
+ * - Mini-Player unten rechts, solange abgespielt wird und der Player nicht sichtbar ist
+ * - merkt sich die Position pro Beitrag (localStorage) und das Tempo
+ * - Media Session: Steuerung über Sperrbildschirm / Tastatur-Medientasten
+ */
+interface Props {
+  src: string;
+  duration: number;
+  title: string;
+  slug: string;
+  cover?: string;
+  voice?: string;
+}
+const { src, duration, title, slug, cover, voice = "Helena" } = Astro.props;
+const minutes = Math.max(1, Math.round(duration / 60));
+const fmt = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
+---
+
+<section class="aa" data-aa data-slug={slug} data-title={title} data-cover={cover ?? ""} aria-label="Artikel anhören">
+  <audio data-aa-audio src={src} preload="none"></audio>
+  <button type="button" class="aa-play" data-aa-play aria-label="Artikel anhören">
+    <svg class="aa-ico" data-aa-ico="play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.14v13.72a1 1 0 0 0 1.52.85l11-6.86a1 1 0 0 0 0-1.7l-11-6.86A1 1 0 0 0 8 5.14z"/></svg>
+    <svg class="aa-ico" data-aa-ico="pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" hidden><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>
+    <span class="aa-spin" data-aa-spin hidden aria-hidden="true"></span>
+  </button>
+  <div class="aa-body">
+    <div class="aa-head">
+      <span class="aa-title">Artikel anhören</span>
+      <span class="aa-meta"><span data-aa-left>{minutes} Min.</span><span class="aa-sep"> · </span><span class="aa-nowrap">vorgelesen von {voice} (KI‑Stimme)</span></span>
+    </div>
+    <div class="aa-bar">
+      <span class="aa-time" data-aa-cur>0:00</span>
+      <input type="range" class="aa-range" data-aa-range min="0" max={Math.round(duration)} step="1" value="0" aria-label="Position im Beitrag" style="--p:0%" />
+      <span class="aa-time" data-aa-dur>{fmt(duration)}</span>
+    </div>
+  </div>
+  <div class="aa-ctrl">
+    <button type="button" class="aa-btn" data-aa-back aria-label="15 Sekunden zurück">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg><span>15</span>
+    </button>
+    <button type="button" class="aa-btn" data-aa-fwd aria-label="15 Sekunden vor">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg><span>15</span>
+    </button>
+    <button type="button" class="aa-btn aa-rate" data-aa-rate aria-label="Abspieltempo ändern">1×</button>
+  </div>
+</section>
+
+<div class="aa-mini" data-aa-mini hidden>
+  <button type="button" class="aa-mini-play" data-aa-mini-play aria-label="Pause">
+    <svg class="aa-ico" data-aa-mini-ico="play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" hidden><path d="M8 5.14v13.72a1 1 0 0 0 1.52.85l11-6.86a1 1 0 0 0 0-1.7l-11-6.86A1 1 0 0 0 8 5.14z"/></svg>
+    <svg class="aa-ico" data-aa-mini-ico="pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>
+  </button>
+  <button type="button" class="aa-mini-info" data-aa-mini-jump aria-label="Zum Player springen">
+    <span class="aa-mini-label">Artikel anhören</span>
+    <span class="aa-mini-time" data-aa-mini-time>0:00</span>
+    <span class="aa-mini-track"><span class="aa-mini-fill" data-aa-mini-fill></span></span>
+  </button>
+  <button type="button" class="aa-mini-close" data-aa-mini-close aria-label="Wiedergabe beenden">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+  </button>
+</div>
+
+<style is:global>
+  .aa {
+    display: flex; align-items: center; gap: 16px;
+    margin: 0 0 36px; padding: 14px 18px 14px 14px;
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--color-border-strong);
+    border-radius: 16px;
+  }
+  .aa-play {
+    position: relative; flex-shrink: 0;
+    width: 56px; height: 56px; border-radius: 50%; border: 0; cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center;
+    background: var(--color-accent); color: #0a0a0a;
+    box-shadow: 0 6px 18px rgba(255, 107, 53, 0.25);
+    transition: transform .15s ease, box-shadow .15s ease;
+  }
+  .aa-play:hover { transform: scale(1.05); box-shadow: 0 8px 24px rgba(255, 107, 53, 0.35); }
+  .aa-ico { width: 24px; height: 24px; }
+  .aa-ico[hidden], .aa-spin[hidden] { display: none; }
+  .aa-spin {
+    position: absolute; inset: -4px; border-radius: 50%;
+    border: 3px solid transparent; border-top-color: var(--color-accent);
+    animation: aa-spin 0.9s linear infinite;
+  }
+  @keyframes aa-spin { to { transform: rotate(360deg); } }
+  .aa-body { flex: 1; min-width: 0; }
+  .aa-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; margin-bottom: 6px; }
+  .aa-title { font-weight: 700; font-size: 16px; color: var(--color-text); }
+  .aa-meta { font-size: 13px; color: var(--color-text-muted); }
+  .aa-nowrap { white-space: nowrap; }
+  .aa-bar { display: flex; align-items: center; gap: 10px; }
+  .aa-time { font-size: 12px; font-variant-numeric: tabular-nums; color: var(--color-text-muted); min-width: 38px; }
+  .aa-time:last-child { text-align: right; }
+  .aa-range {
+    flex: 1; height: 18px; margin: 0; background: transparent; cursor: pointer;
+    -webkit-appearance: none; appearance: none;
+  }
+  .aa-range::-webkit-slider-runnable-track {
+    height: 4px; border-radius: 4px;
+    background: linear-gradient(to right, var(--color-accent) var(--p), var(--color-border-strong) var(--p));
+  }
+  .aa-range::-moz-range-track { height: 4px; border-radius: 4px; background: var(--color-border-strong); }
+  .aa-range::-moz-range-progress { height: 4px; border-radius: 4px; background: var(--color-accent); }
+  .aa-range::-webkit-slider-thumb {
+    -webkit-appearance: none; width: 14px; height: 14px; margin-top: -5px; border-radius: 50%;
+    background: var(--color-accent); border: 2px solid var(--color-bg-elevated);
+  }
+  .aa-range::-moz-range-thumb { width: 12px; height: 12px; border-radius: 50%; background: var(--color-accent); border: 2px solid var(--color-bg-elevated); }
+  .aa-ctrl { display: flex; gap: 6px; flex-shrink: 0; }
+  .aa-btn {
+    position: relative; height: 38px; min-width: 38px; padding: 0 8px; border-radius: 999px; cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center; gap: 2px;
+    background: transparent; color: var(--color-text); border: 1px solid var(--color-border-strong);
+    font: inherit; font-size: 12px; font-weight: 700;
+  }
+  .aa-btn svg { width: 16px; height: 16px; }
+  .aa-btn:hover { border-color: var(--color-accent); color: var(--color-accent); }
+  .aa-rate { min-width: 52px; font-size: 13px; }
+  .aa-play:focus-visible, .aa-btn:focus-visible, .aa-range:focus-visible,
+  .aa-mini button:focus-visible { outline: 3px solid var(--color-text); outline-offset: 3px; }
+
+  .aa-mini {
+    position: fixed; right: 20px; bottom: 92px; z-index: 997;
+    display: flex; align-items: center; gap: 8px; padding: 6px 6px 6px 6px;
+    background: var(--color-bg-elevated); border: 1px solid var(--color-border-strong);
+    border-radius: 999px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+    animation: aa-in .3s ease-out both;
+  }
+  .aa-mini[hidden] { display: none; }
+  @keyframes aa-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+  .aa-mini-play {
+    width: 44px; height: 44px; border-radius: 50%; border: 0; cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center;
+    background: var(--color-accent); color: #0a0a0a;
+  }
+  .aa-mini-play .aa-ico { width: 20px; height: 20px; }
+  .aa-mini-info {
+    display: grid; grid-template-columns: auto auto; column-gap: 10px; row-gap: 5px; align-items: center;
+    background: none; border: 0; cursor: pointer; color: var(--color-text); font: inherit; text-align: left; padding: 0 4px;
+  }
+  .aa-mini-label { font-size: 13px; font-weight: 700; }
+  .aa-mini-time { font-size: 12px; color: var(--color-text-muted); font-variant-numeric: tabular-nums; }
+  .aa-mini-track { grid-column: 1 / -1; width: 150px; height: 3px; border-radius: 3px; background: var(--color-border-strong); overflow: hidden; }
+  .aa-mini-fill { display: block; height: 100%; width: 0; background: var(--color-accent); }
+  .aa-mini-close {
+    width: 32px; height: 32px; border-radius: 50%; cursor: pointer; border: 0;
+    display: inline-flex; align-items: center; justify-content: center;
+    background: transparent; color: var(--color-text-muted);
+  }
+  .aa-mini-close svg { width: 14px; height: 14px; }
+  .aa-mini-close:hover { color: var(--color-text); }
+
+  html.a11y-light-mode .aa-play, html.a11y-light-mode .aa-mini-play { color: #fff; box-shadow: none; }
+
+  @media (max-width: 600px) {
+    .aa { flex-wrap: wrap; gap: 12px; padding: 14px; }
+    .aa-body { flex-basis: calc(100% - 72px); }
+    .aa-head { flex-direction: column; gap: 2px; }
+    .aa-meta { display: flex; flex-direction: column; }
+    .aa-sep { display: none; }
+    .aa-ctrl { width: 100%; justify-content: flex-end; }
+    .aa-mini { right: 16px; bottom: 80px; }
+    .aa-mini-track { width: 110px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .aa-mini, .aa-spin { animation: none; } }
+  @media print { .aa, .aa-mini { display: none !important; } }
+</style>
+
+<script>
+  const root = document.querySelector<HTMLElement>("[data-aa]");
+  if (root) {
+    const $ = <T extends Element>(s: string, el: ParentNode = root) => el.querySelector<T>(s)!;
+    const audio = $<HTMLAudioElement>("[data-aa-audio]");
+    const play = $<HTMLButtonElement>("[data-aa-play]");
+    const icoPlay = $<SVGElement>('[data-aa-ico="play"]');
+    const icoPause = $<SVGElement>('[data-aa-ico="pause"]');
+    const spin = $<HTMLElement>("[data-aa-spin]");
+    const range = $<HTMLInputElement>("[data-aa-range]");
+    const cur = $<HTMLElement>("[data-aa-cur]");
+    const left = $<HTMLElement>("[data-aa-left]");
+    const rateBtn = $<HTMLButtonElement>("[data-aa-rate]");
+    const mini = document.querySelector<HTMLElement>("[data-aa-mini]")!;
+    const miniPlay = $<HTMLButtonElement>("[data-aa-mini-play]", mini);
+    const miniIcoPlay = $<SVGElement>('[data-aa-mini-ico="play"]', mini);
+    const miniIcoPause = $<SVGElement>('[data-aa-mini-ico="pause"]', mini);
+    const miniTime = $<HTMLElement>("[data-aa-mini-time]", mini);
+    const miniFill = $<HTMLElement>("[data-aa-mini-fill]", mini);
+    const slug = root.dataset.slug!;
+    const total = Number(range.max) || 1;
+    const RATES = [1, 1.25, 1.5, 0.75];
+    const POS_KEY = "aa-pos:" + slug;
+    const store = {
+      get(k: string) { try { return localStorage.getItem(k); } catch { return null; } },
+      set(k: string, v: string) { try { localStorage.setItem(k, v); } catch {} },
+      del(k: string) { try { localStorage.removeItem(k); } catch {} },
+    };
+    let rateIdx = Math.max(0, RATES.indexOf(Number(store.get("aa-rate"))));
+    let started = false;
+    let inView = true;
+
+    const fmt = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
+    const setRate = () => {
+      audio.playbackRate = RATES[rateIdx];
+      rateBtn.textContent = String(RATES[rateIdx]).replace(".", ",") + "×";
+    };
+    setRate();
+
+    // gemerkte Position anbieten
+    const saved = Number(store.get(POS_KEY));
+    if (saved > 5 && saved < total - 10) {
+      range.value = String(saved);
+      paint(saved);
+      left.textContent = `weiter bei ${fmt(saved)}`;
+    }
+
+    function paint(t: number) {
+      const p = Math.min(100, (t / total) * 100);
+      range.style.setProperty("--p", p + "%");
+      cur.textContent = fmt(t);
+      miniTime.textContent = `${fmt(t)} / ${fmt(total)}`;
+      miniFill.style.width = p + "%";
+    }
+    function ui() {
+      const playing = !audio.paused && !audio.ended;
+      icoPlay.toggleAttribute("hidden", playing);
+      icoPause.toggleAttribute("hidden", !playing);
+      miniIcoPlay.toggleAttribute("hidden", playing);
+      miniIcoPause.toggleAttribute("hidden", !playing);
+      play.setAttribute("aria-label", playing ? "Pause" : "Artikel anhören");
+      miniPlay.setAttribute("aria-label", playing ? "Pause" : "Weiter anhören");
+      mini.hidden = !started || inView || audio.ended;
+    }
+    function toggle() {
+      if (audio.paused) {
+        if (!started) {
+          started = true;
+          const s = Number(range.value);
+          if (s > 0) audio.currentTime = s;
+          setupMediaSession();
+        }
+        audio.playbackRate = RATES[rateIdx];
+        audio.play().catch(() => {});
+      } else audio.pause();
+    }
+
+    play.addEventListener("click", toggle);
+    miniPlay.addEventListener("click", toggle);
+    $<HTMLButtonElement>("[data-aa-back]").addEventListener("click", () => { audio.currentTime = Math.max(0, (started ? audio.currentTime : Number(range.value)) - 15); paint(audio.currentTime); range.value = String(audio.currentTime); });
+    $<HTMLButtonElement>("[data-aa-fwd]").addEventListener("click", () => { audio.currentTime = Math.min(total, (started ? audio.currentTime : Number(range.value)) + 15); paint(audio.currentTime); range.value = String(audio.currentTime); });
+    rateBtn.addEventListener("click", () => { rateIdx = (rateIdx + 1) % RATES.length; store.set("aa-rate", String(RATES[rateIdx])); setRate(); });
+    range.addEventListener("input", () => { const t = Number(range.value); paint(t); if (started) audio.currentTime = t; });
+    $<HTMLButtonElement>("[data-aa-mini-jump]", mini).addEventListener("click", () => root.scrollIntoView({ behavior: "smooth", block: "center" }));
+    $<HTMLButtonElement>("[data-aa-mini-close]", mini).addEventListener("click", () => { audio.pause(); started = false; mini.hidden = true; });
+
+    audio.addEventListener("waiting", () => (spin.hidden = false));
+    audio.addEventListener("playing", () => (spin.hidden = true));
+    audio.addEventListener("play", ui);
+    audio.addEventListener("pause", ui);
+    let lastSave = 0;
+    audio.addEventListener("timeupdate", () => {
+      const t = audio.currentTime;
+      range.value = String(Math.floor(t));
+      paint(t);
+      left.textContent = `noch ${Math.max(1, Math.round((total - t) / 60 / RATES[rateIdx]))} Min.`;
+      if (Math.abs(t - lastSave) > 5) { store.set(POS_KEY, String(Math.floor(t))); lastSave = t; }
+    });
+    audio.addEventListener("ended", () => { store.del(POS_KEY); spin.hidden = true; left.textContent = "fertig gehört"; ui(); });
+
+    if ("IntersectionObserver" in window) {
+      new IntersectionObserver((e) => { inView = e[0].isIntersecting; ui(); }, { threshold: 0 }).observe(root);
+    }
+
+    function setupMediaSession() {
+      const ms = (navigator as any).mediaSession;
+      if (!ms || !(window as any).MediaMetadata) return;
+      const art = root.dataset.cover ? [{ src: root.dataset.cover, sizes: "1200x675", type: root.dataset.cover.endsWith(".webp") ? "image/webp" : "image/jpeg" }] : [];
+      ms.metadata = new (window as any).MediaMetadata({ title: root.dataset.title, artist: "2fox4.de", album: "2fox4 Blog", artwork: art });
+      const h = (a: string, f: (d: any) => void) => { try { ms.setActionHandler(a, f); } catch {} };
+      h("play", () => audio.play());
+      h("pause", () => audio.pause());
+      h("seekbackward", () => (audio.currentTime = Math.max(0, audio.currentTime - 15)));
+      h("seekforward", () => (audio.currentTime = Math.min(total, audio.currentTime + 15)));
+      h("seekto", (d: any) => (audio.currentTime = d.seekTime));
+    }
+  }
+</script>

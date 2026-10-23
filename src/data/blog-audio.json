@@ -1,0 +1,20 @@
+{
+  "php-sicherheitsluecke-php2shell": {
+    "src": "/uploads/blog/php-sicherheitsluecke-php2shell/audio.mp3",
+    "duration": 1238.0,
+    "voice": "Helena",
+    "chars": 17174
+  },
+  "php-version-aktualisieren-wordpress": {
+    "src": "/uploads/blog/php-version-aktualisieren-wordpress/audio.mp3",
+    "duration": 1091.4,
+    "voice": "Helena",
+    "chars": 16172
+  },
+  "rechnungseingang-automatisieren-e-rechnung-ki": {
+    "src": "/uploads/blog/rechnungseingang-automatisieren-e-rechnung-ki/audio.mp3",
+    "duration": 1285.8,
+    "voice": "Helena",
+    "chars": 19069
+  }
+}

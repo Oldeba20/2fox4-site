@@ -42,3 +42,6 @@ public/reviews/cache/
 
 # Pages CMS lokale Drafts (falls genutzt)
 .pages-cms/
+
+# Vorlese-MP3s (scripts/blog-audio-build.py) gehen per SSH direkt auf den Server, nicht ins Repo
+public/uploads/blog/*/audio.mp3
