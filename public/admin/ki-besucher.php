@@ -1,6 +1,6 @@
 <?php
 /**
- * Admin: KI-Besucher — wer kommt über ChatGPT, Perplexity, Gemini & Co. auf 2fox4.de?
+ * Admin: KI-Besucher — wer kommt über ChatGPT, Perplexity, Gemini & Co. auf Olivers eigene Websites?
  * Login über /admin/ (gleiche Session). Daten aus Tabelle ki_traffic (siehe lib/ki-traffic-lib.php).
  */
 
@@ -14,17 +14,19 @@ $config = kit_config($webRoot);
 
 $days = (int)($_GET['days'] ?? 30);
 if (!in_array($days, [7, 30, 90, 365], true)) $days = 30;
+$site = kit_site_from_host((string)($_GET['site'] ?? ''), $config) ?? '';
 $to = date('Y-m-d');
 $from = date('Y-m-d', strtotime("-" . ($days - 1) . " days"));
 
 $err = ''; $s = null;
-try { $pdo = kit_pdo($config); kit_ensure_table($pdo); $s = kit_summary($pdo, $from, $to); }
+try { $pdo = kit_pdo($config); kit_ensure_table($pdo); $s = kit_summary($pdo, $from, $to, $site); }
 catch (\Throwable $e) { $err = 'Datenbank nicht erreichbar.'; }
 
 header('Content-Type: text/html; charset=utf-8');
 header('X-Robots-Tag: noindex, nofollow');
 function e(string $v): string { return htmlspecialchars($v, ENT_QUOTES, 'UTF-8'); }
 function dmy(string $d): string { return date('d.m.Y', strtotime($d)); }
+function qs(array $over): string { return '?' . http_build_query(array_merge(['days' => $GLOBALS['days'], 'site' => $GLOBALS['site']], $over)); }
 
 // Tagesreihe lückenlos auffüllen
 $series = [];
@@ -86,11 +88,17 @@ $delta = $s ? $s['total'] - $s['prev_total'] : 0;
     <h1>KI-Besucher</h1>
     <a href="./">← Admin</a>
   </div>
-  <p class="sub">Besuche, die aus ChatGPT, Perplexity, Gemini, Copilot, Claude &amp; Co. auf 2fox4.de kommen.</p>
+  <p class="sub">Besuche, die aus ChatGPT, Perplexity, Gemini, Copilot, Claude &amp; Co. auf deine Websites kommen.</p>
 
   <div class="tabs">
+    <a class="<?= $site === '' ? 'on' : '' ?>" href="<?= e(qs(['site' => ''])) ?>">Alle Websites</a>
+    <?php foreach (kit_allowed_sites($config) as $sv): ?>
+      <a class="<?= $sv === $site ? 'on' : '' ?>" href="<?= e(qs(['site' => $sv])) ?>"><?= e($sv) ?></a>
+    <?php endforeach; ?>
+  </div>
+  <div class="tabs">
     <?php foreach ([7 => '7 Tage', 30 => '30 Tage', 90 => '90 Tage', 365 => '12 Monate'] as $d => $lbl): ?>
-      <a class="<?= $d === $days ? 'on' : '' ?>" href="?days=<?= $d ?>"><?= $lbl ?></a>
+      <a class="<?= $d === $days ? 'on' : '' ?>" href="<?= e(qs(['days' => $d])) ?>"><?= $lbl ?></a>
     <?php endforeach; ?>
   </div>
 
@@ -113,6 +121,17 @@ $delta = $s ? $s['total'] - $s['prev_total'] : 0;
     <div class="axis"><span><?= dmy($from) ?></span><span>max. <?= $maxDay ?>/Tag</span><span><?= dmy($to) ?></span></div>
   </div>
 
+  <?php if ($site === '' && $s['by_site']): $maxSite = max(1, $s['by_site'][0]['hits']); ?>
+  <div class="card" style="margin-bottom:12px">
+    <h2>Nach Website</h2>
+    <?php foreach ($s['by_site'] as $r): ?>
+      <div class="bar"><span class="l" style="width:150px"><?= e($r['site']) ?></span>
+        <span class="t"><i style="width:<?= round($r['hits'] / $maxSite * 100) ?>%"></i></span>
+        <span class="n"><?= $r['hits'] ?></span></div>
+    <?php endforeach; ?>
+  </div>
+  <?php endif; ?>
+
   <div class="grid2">
     <div class="card">
       <h2>Nach KI-Assistent</h2>
@@ -129,7 +148,8 @@ $delta = $s ? $s['total'] - $s['prev_total'] : 0;
       <table>
         <tr><th>Seite</th><th>Quelle</th><th class="r">Besuche</th></tr>
         <?php foreach ($s['by_page'] as $r): ?>
-          <tr><td><a href="<?= e($r['page']) ?>" target="_blank" rel="noopener"><?= e($r['page']) ?></a></td>
+          <?php $url = 'https://' . ($r['site'] === '2fox4.de' ? 'www.' : '') . $r['site'] . $r['page']; ?>
+          <tr><td><a href="<?= e($url) ?>" target="_blank" rel="noopener"><?= e(($site === '' ? $r['site'] : '') . $r['page']) ?></a></td>
               <td><?= e((string)$r['sources']) ?></td><td class="r"><?= $r['hits'] ?></td></tr>
         <?php endforeach; ?>
       </table>

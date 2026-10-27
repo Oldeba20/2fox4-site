@@ -22,6 +22,21 @@ declare(strict_types=1);
 
 if (!function_exists('kit_detect_source')) {
 
+/**
+ * Eigene Websites, die an diesen Zähler melden dürfen (Host ohne „www.“).
+ * Die Seiten außer 2fox4.de melden per sendBeacon an https://www.2fox4.de/ki-traffic.php.
+ */
+function kit_allowed_sites(array $c = []): array {
+    return $c['ki_traffic_sites'] ?? ['2fox4.de', 'humanoid-portal.de', 'events-schaumburg.de', 'events-stadthagen.de'];
+}
+
+/** Host normalisieren (klein, ohne www.) und gegen die Liste prüfen. */
+function kit_site_from_host(string $host, array $c = []): ?string {
+    $h = strtolower(trim($host));
+    if (str_starts_with($h, 'www.')) $h = substr($h, 4);
+    return in_array($h, kit_allowed_sites($c), true) ? $h : null;
+}
+
 /** Host-Endungen → Anzeigename. Reihenfolge egal, Abgleich per Endung. */
 function kit_host_map(): array {
     return [
@@ -109,50 +124,69 @@ function kit_ensure_table(PDO $pdo): void {
     $pdo->exec(
         "CREATE TABLE IF NOT EXISTS ki_traffic (
             day    DATE         NOT NULL,
+            site   VARCHAR(64)  NOT NULL DEFAULT '2fox4.de',
             source VARCHAR(32)  NOT NULL,
             via    VARCHAR(10)  NOT NULL,
             page   VARCHAR(255) NOT NULL,
             hits   INT UNSIGNED NOT NULL DEFAULT 0,
-            PRIMARY KEY (day, source, via, page),
+            PRIMARY KEY (day, site, source, via, page),
             KEY idx_day (day)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
     );
+    // Erste Fassung (27.10.2026) hatte noch keine site-Spalte → nachrüsten
+    $has = $pdo->query("SHOW COLUMNS FROM ki_traffic LIKE 'site'")->fetch();
+    if (!$has) {
+        $pdo->exec("ALTER TABLE ki_traffic ADD COLUMN site VARCHAR(64) NOT NULL DEFAULT '2fox4.de' AFTER day,
+                    DROP PRIMARY KEY, ADD PRIMARY KEY (day, site, source, via, page)");
+    }
 }
 
-function kit_record(PDO $pdo, string $source, string $via, string $page): void {
+function kit_record(PDO $pdo, string $site, string $source, string $via, string $page): void {
     $st = $pdo->prepare(
-        "INSERT INTO ki_traffic (day, source, via, page, hits) VALUES (CURDATE(), ?, ?, ?, 1)
+        "INSERT INTO ki_traffic (day, site, source, via, page, hits) VALUES (CURDATE(), ?, ?, ?, ?, 1)
          ON DUPLICATE KEY UPDATE hits = hits + 1"
     );
-    $st->execute([$source, $via, $page]);
+    $st->execute([$site, $source, $via, $page]);
 }
 
 /**
- * Auswertung für einen Zeitraum (inkl. beider Tage).
- * @return array{from:string,to:string,total:int,by_source:array,by_page:array,by_day:array,prev_total:int}
+ * Auswertung für einen Zeitraum (inkl. beider Tage), optional nur für eine Website.
+ * $site = '' → alle Websites zusammen.
  */
-function kit_summary(PDO $pdo, string $from, string $to): array {
-    $q = function (string $sql, array $p) use ($pdo) {
+function kit_summary(PDO $pdo, string $from, string $to, string $site = ''): array {
+    $w = $site !== '' ? ' AND site = ?' : '';
+    $q = function (string $sql, array $p) use ($pdo, $site) {
+        if ($site !== '') $p[] = $site;
         $st = $pdo->prepare($sql); $st->execute($p); return $st->fetchAll(PDO::FETCH_ASSOC);
     };
-    $total = (int)($q("SELECT COALESCE(SUM(hits),0) t FROM ki_traffic WHERE day BETWEEN ? AND ?", [$from, $to])[0]['t'] ?? 0);
-    $bySource = $q("SELECT source, SUM(hits) hits FROM ki_traffic WHERE day BETWEEN ? AND ? GROUP BY source ORDER BY hits DESC", [$from, $to]);
-    $byPage   = $q("SELECT page, SUM(hits) hits, GROUP_CONCAT(DISTINCT source ORDER BY source SEPARATOR ', ') sources
-                      FROM ki_traffic WHERE day BETWEEN ? AND ? GROUP BY page ORDER BY hits DESC LIMIT 25", [$from, $to]);
-    $byDay    = $q("SELECT day, SUM(hits) hits FROM ki_traffic WHERE day BETWEEN ? AND ? GROUP BY day ORDER BY day", [$from, $to]);
+    $total = (int)($q("SELECT COALESCE(SUM(hits),0) t FROM ki_traffic WHERE day BETWEEN ? AND ?$w", [$from, $to])[0]['t'] ?? 0);
+    $bySource = $q("SELECT source, SUM(hits) hits FROM ki_traffic WHERE day BETWEEN ? AND ?$w GROUP BY source ORDER BY hits DESC", [$from, $to]);
+    $byPage   = $q("SELECT site, page, SUM(hits) hits, GROUP_CONCAT(DISTINCT source ORDER BY source SEPARATOR ', ') sources
+                      FROM ki_traffic WHERE day BETWEEN ? AND ?$w GROUP BY site, page ORDER BY hits DESC LIMIT 25", [$from, $to]);
+    $byDay    = $q("SELECT day, SUM(hits) hits FROM ki_traffic WHERE day BETWEEN ? AND ?$w GROUP BY day ORDER BY day", [$from, $to]);
+    $bySite   = $q("SELECT site, SUM(hits) hits FROM ki_traffic WHERE day BETWEEN ? AND ?$w GROUP BY site ORDER BY hits DESC", [$from, $to]);
 
     // Vorperiode gleicher Länge
-    $len = (int)((strtotime($to) - strtotime($from)) / 86400) + 1;
+    $len = (int)round((strtotime($to) - strtotime($from)) / 86400) + 1;
     $pTo = date('Y-m-d', strtotime($from . ' -1 day'));
     $pFrom = date('Y-m-d', strtotime($pTo . ' -' . ($len - 1) . ' days'));
-    $prev = (int)($q("SELECT COALESCE(SUM(hits),0) t FROM ki_traffic WHERE day BETWEEN ? AND ?", [$pFrom, $pTo])[0]['t'] ?? 0);
+    $prev = (int)($q("SELECT COALESCE(SUM(hits),0) t FROM ki_traffic WHERE day BETWEEN ? AND ?$w", [$pFrom, $pTo])[0]['t'] ?? 0);
 
+    // Seit wann wird gezählt? (erste Zählung überhaupt; vor Start des Zählers ist „0“ keine echte 0)
     $cast = fn(array $rows) => array_map(fn($r) => ['hits' => (int)$r['hits']] + $r, $rows);
     return [
-        'from' => $from, 'to' => $to, 'total' => $total,
+        'site' => $site, 'from' => $from, 'to' => $to, 'total' => $total,
         'prev_from' => $pFrom, 'prev_to' => $pTo, 'prev_total' => $prev,
+        'counting_since' => kit_counting_since($site),
         'by_source' => $cast($bySource), 'by_page' => $cast($byPage), 'by_day' => $cast($byDay),
+        'by_site' => $cast($bySite),
     ];
+}
+
+/** Start der Zählung je Website (Einbau-Datum). */
+function kit_counting_since(string $site): string {
+    $map = ['2fox4.de' => '2026-10-27'];
+    return $map[$site] ?? '2026-10-28';
 }
 
 /** Grobe Bremse gegen Massen-Aufrufe ohne IP-Bezug: höchstens $max Zählungen pro Tag insgesamt. */

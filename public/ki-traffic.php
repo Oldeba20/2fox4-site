@@ -3,8 +3,10 @@
  * KI-Besucherzähler — Endpunkt.
  *
  *   POST /ki-traffic.php        Zählt einen Besuch (vom Snippet im Seitenkopf, per sendBeacon).
+ *                               Auch von den anderen eigenen Websites (kit_allowed_sites), dann
+ *                               kommt die Meldung seitenübergreifend – erkannt am Origin-Header.
  *                               Body (JSON als text/plain): {"r":"chatgpt.com","u":"","p":"/leistungen/seo/"}
- *   GET  /ki-traffic.php?key=ADMIN_KEY[&from=YYYY-MM-DD&to=YYYY-MM-DD | &days=30]
+ *   GET  /ki-traffic.php?key=ADMIN_KEY[&site=events-stadthagen.de][&from=YYYY-MM-DD&to=YYYY-MM-DD | &days=30]
  *                               Auswertung als JSON (für den monatlichen GSC-Report).
  *
  * Speichert nur Tag + KI-Quelle + Seite + Zähler (siehe lib/ki-traffic-lib.php).
@@ -33,7 +35,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     }
     try {
         $pdo = kit_pdo($config); kit_ensure_table($pdo);
-        echo json_encode(kit_summary($pdo, $from, $to), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        $site = (string)($_GET['site'] ?? '');
+        if ($site !== '') $site = kit_site_from_host($site, $config) ?? '__unbekannt__';
+        echo json_encode(kit_summary($pdo, $from, $to, $site), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     } catch (\Throwable $e) {
         http_response_code(500); echo '{"error":"db"}';
     }
@@ -43,11 +47,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 /* ---------- Zählen (POST) ---------- */
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') { http_response_code(405); exit; }
 
-// Nur Aufrufe von der eigenen Website annehmen
-$host = strtolower((string)($_SERVER['HTTP_HOST'] ?? ''));
+// Nur Meldungen von den eigenen Websites annehmen (Origin bzw. Referer der meldenden Seite)
 $origin = (string)($_SERVER['HTTP_ORIGIN'] ?? $_SERVER['HTTP_REFERER'] ?? '');
-$originHost = strtolower((string)parse_url($origin, PHP_URL_HOST));
-if ($host === '' || $originHost !== $host) { http_response_code(204); exit; }
+$site = kit_site_from_host((string)parse_url($origin, PHP_URL_HOST), $config);
+if ($site === null) { http_response_code(204); exit; }
 
 $raw = (string)file_get_contents('php://input', false, null, 0, 2048);
 $data = json_decode($raw, true);
@@ -59,7 +62,7 @@ if ($hit === null) { http_response_code(204); exit; }
 try {
     $pdo = kit_pdo($config);
     kit_ensure_table($pdo);
-    if (kit_rate_ok($pdo)) kit_record($pdo, $hit[0], $hit[1], kit_clean_path((string)($data['p'] ?? '/')));
+    if (kit_rate_ok($pdo)) kit_record($pdo, $site, $hit[0], $hit[1], kit_clean_path((string)($data['p'] ?? '/')));
 } catch (\Throwable $e) {
     error_log('[2fox4 KI-Traffic] ' . $e->getMessage());
 }

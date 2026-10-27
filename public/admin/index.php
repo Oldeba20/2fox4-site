@@ -105,7 +105,7 @@ function e(string $s): string { return htmlspecialchars($s, ENT_QUOTES, 'UTF-8')
     <p class="sub" style="margin-top:20px">Website</p>
     <a class="tile" href="ki-besucher.php">
       <b>KI-Besucher →</b>
-      <span>Wer über ChatGPT, Perplexity, Gemini &amp; Co. auf 2fox4.de kommt</span>
+      <span>Wer über ChatGPT, Perplexity, Gemini &amp; Co. auf deine Websites kommt</span>
     </a>
     <a class="logout" href="?logout">Abmelden</a>
   <?php endif; ?>
