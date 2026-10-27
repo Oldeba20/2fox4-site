@@ -1,0 +1,40 @@
+---
+/**
+ * KI-Besucherzähler — erkennt Besucher, die aus ChatGPT, Perplexity, Gemini,
+ * Copilot, Claude & Co. kommen, und meldet das anonym an /ki-traffic.php.
+ *
+ * - Feuert nur, wenn Referrer-Host oder utm_source zu einem KI-Assistenten passt.
+ * - Überträgt nur: Referrer-Host, utm_source, aufgerufener Pfad. Keine IDs,
+ *   keine Cookies, nichts im Endgerät → keine Einwilligung nötig.
+ * - Wer im Cookie-Banner Statistik ablehnt, wird trotzdem nicht gezählt (wie bei Matomo).
+ * Auswertung: /admin/ → „KI-Besucher".
+ */
+---
+<script is:inline>
+  (function () {
+    try {
+      var h = location.hostname;
+      if (h === "localhost" || h === "127.0.0.1" || h.endsWith(".local")) return;
+      try {
+        var c = JSON.parse(localStorage.getItem("consent_v1") || "null");
+        if (c && c.statistics === false) return;
+      } catch (e) {}
+      var ref = "", u = "";
+      try {
+        if (document.referrer) {
+          var rh = new URL(document.referrer).hostname.toLowerCase();
+          if (rh !== h) ref = rh;
+        }
+      } catch (e) {}
+      try { u = (new URLSearchParams(location.search).get("utm_source") || "").slice(0, 60); } catch (e) {}
+      if (!ref && !u) return;
+      var reHost = /(^|\.)(chatgpt\.com|openai\.com|perplexity\.ai|gemini\.google\.com|bard\.google\.com|copilot\.microsoft\.com|copilot\.cloud\.microsoft|claude\.ai|mistral\.ai|deepseek\.com|meta\.ai|grok\.com|you\.com|poe\.com|phind\.com)$/;
+      var reUtm = /chatgpt|openai|perplexity|gemini|bard|copilot|claude|mistral|deepseek|grok|meta\.ai/i;
+      if (!(ref && reHost.test(ref)) && !(u && reUtm.test(u))) return;
+      var body = JSON.stringify({ r: ref, u: u, p: location.pathname });
+      var url = "/ki-traffic.php";
+      if (navigator.sendBeacon) navigator.sendBeacon(url, new Blob([body], { type: "text/plain" }));
+      else fetch(url, { method: "POST", body: body, keepalive: true, headers: { "Content-Type": "text/plain" } });
+    } catch (e) {}
+  })();
+</script>

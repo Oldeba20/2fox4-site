@@ -195,6 +195,17 @@ const datenschutzHtml = `
     die Logs gelöscht oder anonymisiert. Mit ALL-INKL.COM besteht ein
     Auftragsverarbeitungsvertrag gemäß Art. 28 DSGVO.
   </p>
+  <p>
+    <strong>Zählung von Besuchen über KI-Assistenten:</strong> Kommen Sie über
+    einen Link in einem KI-Assistenten (z. B. ChatGPT, Perplexity, Gemini,
+    Copilot oder Claude) auf unsere Website, zählen wir diesen Besuch. Dafür
+    wertet ein kleines Skript die Herkunftsseite bzw. den Link-Parameter
+    &bdquo;utm_source&ldquo; aus. Gespeichert werden ausschließlich das Datum,
+    der Name des KI-Assistenten, die aufgerufene Seite und ein Zähler &ndash;
+    keine IP-Adresse, keine Geräte- oder Browserdaten, keine Cookies. Ein
+    Personenbezug ist damit ausgeschlossen. Lehnen Sie im Cookie-Banner die
+    Statistik ab, findet auch diese Zählung nicht statt.
+  </p>
 </section>
 
 <section>

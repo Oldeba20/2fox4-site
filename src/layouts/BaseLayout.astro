@@ -23,6 +23,7 @@ import LegalModal from "../components/LegalModal.astro";
 import CookieBanner from "../components/CookieBanner.astro";
 import WhatsAppButton from "../components/WhatsAppButton.astro";
 import Matomo from "../components/Matomo.astro";
+import KiTraffic from "../components/KiTraffic.astro";
 import FacebookPixel from "../components/FacebookPixel.astro";
 import { site } from "../data/site";
 
@@ -137,6 +138,9 @@ const canonicalUrl = canonicalPath
 
     {/* Matomo Analytics — cookieless, läuft auf jeder Seite */}
     <Matomo />
+
+    {/* KI-Besucherzähler — anonym, zählt nur Besuche aus ChatGPT, Perplexity & Co. */}
+    <KiTraffic />
 
     {/* Meta-Pixel — feuert NUR nach Marketing-Consent (s. CookieBanner.astro) */}
     <FacebookPixel />
