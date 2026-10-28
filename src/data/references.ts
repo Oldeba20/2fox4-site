@@ -92,7 +92,7 @@ export const references: Reference[] = [
       solution:
         "Für den Neustart haben wir ein ruhiges, museales Design entwickelt: heller Papierton, das Rot aus dem Vereinslogo und eine klassische Schrift, die zur Renaissance passt. Ganz oben auf der Startseite steht, was Besucher zuerst wissen wollen: Öffnungszeiten, Sonderöffnungstage, Eintritt und Treffpunkt. Abgelaufene Termine verschwinden von selbst. Die Seiten zum Mausoleum und zu Adriaen de Vries führen Kapitel für Kapitel durch Geschichte und Kunstwerk. Auf der Seite zur Konzertreihe stehen Programm und Kartenverkauf; der Ticketshop lädt erst, wenn man ihn öffnet. Der Mitgliedsantrag läuft direkt online, mit Prüfung der Bankverbindung und automatischer Eingangsbestätigung. Von der Startseite geht es außerdem zur Renaissance-Rallye, die wir ebenfalls gebaut haben. Die Seite kommt ohne Cookies aus und lässt sich per Klick auf Englisch, Niederländisch, Dänisch und Schwedisch lesen. Alle alten Adressen und Dokumente bleiben erreichbar.",
       outcome:
-        "Seit Oktober 2026 ist der neue Auftritt online. Die Pflege liegt jetzt bei uns: Der Verein schickt Änderungen einfach per E-Mail.",
+        "Seit Oktober 2026 ist der neue Auftritt online. Links aus alten Newslettern und Depeschen funktionieren weiterhin.",
       scope: [
         "Relaunch & Webdesign",
         "Besucherinfos mit Sonderöffnungszeiten",
