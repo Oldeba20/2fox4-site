@@ -153,7 +153,7 @@ export const cities: City[] = [
       },
       {
         url: "stadthagen-renaissance.de",
-        image: "/images/referenzen/renaissance-stadthagen.jpg",
+        image: "/images/referenzen/renaissance-stadthagen-2026.jpg",
         href: "/referenzen/renaissance-stadthagen/",
         tag: "Vereins-Website · Stadthagen",
         title: "Renaissanceverein Stadthagen",
