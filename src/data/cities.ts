@@ -143,6 +143,15 @@ export const cities: City[] = [
       "Stadthagen ist Kreisstadt des Landkreises Schaumburg mit rund 22.000 Einwohnern und Verwaltungssitz der Region. Die Innenstadt rund um den Marktplatz, das Renaissance-Schloss und die St.-Martini-Kirche bringt seit Jahren Tourismus + Einzelhandel zusammen — Branchen, in denen lokale Sichtbarkeit über Google Maps und gepflegte Website-Daten direkt umsatzwirksam ist. Industriell sind wir hier in Niedersachsens Bergbau-Geschichte: ehemalige Zechen, heute Maschinenbauer und Mittelständler. Wir kennen die Auftraggeber-Mentalität: bodenständig, ergebnisorientiert, ohne Buzzword-Geduld.",
     localRefs: [
       {
+        url: "kultur-stadthagen.de",
+        image: "/images/referenzen/kultur-stadthagen.jpg",
+        href: "/referenzen/kultur-stadthagen/",
+        tag: "Vereins-Website · Stadthagen",
+        title: "Kultur Stadthagen e.V.",
+        description:
+          "Neuer Auftritt für die Konzertreihe im Stadthagener Schloss: Saisonprogramm, Kartenreservierung und ein Konzertarchiv seit 2009.",
+      },
+      {
         url: "entdecke-stadthagen.de",
         image: "/images/referenzen/entdecke-stadthagen.jpg",
         href: "/referenzen/entdecke-stadthagen/",
@@ -203,7 +212,7 @@ export const cities: City[] = [
       },
       {
         question: "Habt ihr Referenzen aus Stadthagen?",
-        answerHtml: `Ja: unter anderem die digitale Stadtrallye Entdecke Stadthagen, unseren Veranstaltungskalender events-stadthagen.de, die Website des Renaissancevereins Stadthagen, ein Tattoo- und Piercing-Studio in Stadthagen sowie die Schule für Sicherheitsmitarbeiter (sad-sicherheit.de). Alle findest du weiter oben auf dieser Seite oder in unserer kompletten <a href="/referenzen/" class="text-[var(--color-accent)]">Referenzübersicht</a>.`,
+        answerHtml: `Ja: unter anderem die neue Website des Kultur Stadthagen e.V., die digitale Stadtrallye Entdecke Stadthagen, unseren Veranstaltungskalender events-stadthagen.de, die Website des Renaissancevereins Stadthagen, ein Tattoo- und Piercing-Studio in Stadthagen sowie die Schule für Sicherheitsmitarbeiter (sad-sicherheit.de). Alle findest du weiter oben auf dieser Seite oder in unserer kompletten <a href="/referenzen/" class="text-[var(--color-accent)]">Referenzübersicht</a>.`,
       },
       {
         question: "Bietet ihr auch SEO und laufende Betreuung?",

@@ -72,6 +72,39 @@ export interface Reference {
 
 export const references: Reference[] = [
   {
+    slug: "kultur-stadthagen",
+    category: "websites",
+    domain: "kultur-stadthagen.de",
+    image: "/images/referenzen/kultur-stadthagen.jpg",
+    mobileImage: "/images/referenzen/kultur-stadthagen-mobile",
+    mobileShots: [
+      { image: "/images/referenzen/kultur-stadthagen-mobile-programm", label: "Saisonprogramm" },
+      { image: "/images/referenzen/kultur-stadthagen-mobile-kuenstler", label: "Archiv „Zu Gast bei uns“" },
+    ],
+    date: "2026",
+    title: "Kultur Stadthagen e.V.",
+    meta: "Vereins-Website · Konzertreihe",
+    liveUrl: "https://www.kultur-stadthagen.de",
+    featured: true,
+    story: {
+      challenge:
+        "Seit 1978 holt der Kultur Stadthagen e.V. Kammermusik und Klavierabende in den Kaminsaal des Stadthagener Schlosses. Die bisherige Website stammte von 2014, war auf dem Handy kaum zu bedienen und zeigte im Herbst 2026 noch die vergangene Saison. Karten ließen sich online nicht reservieren, und neue Konzerte einzustellen war mühsam.",
+      solution:
+        "Das neue Design orientiert sich am gedruckten Programmheft: Papierton, tiefes Schwarz und das Rot aus dem Vereinslogo. Die Startseite zeigt das nächste Konzert mit Countdown, darunter folgen alle Termine der Saison, filterbar nach Sparten. Jedes Konzert öffnet sich in einem eigenen Fenster mit Besetzung und Preisen. Von dort lässt es sich in den eigenen Kalender übernehmen oder teilen. Karten reservieren Besucher über ein Formular, bei den Kinderkonzerten auch als Familienkarte. Die Anfrage geht per E-Mail an die Geschäftsführung, bezahlt wird an der Abendkasse. Eine Übersichtskarte zeigt Spielorte und Vorverkaufsstellen. Neu ist außerdem das Archiv „Zu Gast bei uns“: 132 Konzertabende seit 2009, durchsuchbar und mit den alten Programmheften zum Nachlesen. Vor dem Umzug haben wir die alte Seite vollständig gesichert und alle alten Adressen auf die passenden neuen Seiten umgeleitet.",
+      outcome:
+        "Seit Oktober 2026 ist die neue Seite online, rechtzeitig vor dem ersten Konzert der Saison 2026/27. Alle Termine erscheinen zusätzlich automatisch in unserem Veranstaltungskalender events-stadthagen.de.",
+      scope: [
+        "Webdesign",
+        "Saisonprogramm mit Konzertdetails",
+        "Kartenreservierung",
+        "Konzertarchiv seit 2009",
+        "Kalender-Export",
+        "Umzug mit Weiterleitungen",
+      ],
+      liveUrl: "https://www.kultur-stadthagen.de",
+    },
+  },
+  {
     slug: "verein-buddy",
     category: "websites",
     domain: "verein-buddy.de",
