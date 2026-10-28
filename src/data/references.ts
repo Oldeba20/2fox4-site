@@ -72,6 +72,39 @@ export interface Reference {
 
 export const references: Reference[] = [
   {
+    slug: "renaissance-stadthagen",
+    category: "websites",
+    domain: "stadthagen-renaissance.de",
+    image: "/images/referenzen/renaissance-stadthagen.jpg",
+    mobileImage: "/images/referenzen/renaissance-stadthagen-mobile",
+    mobileShots: [
+      { image: "/images/referenzen/renaissance-stadthagen-mobile-konzertreihe", label: "Konzertreihe" },
+      { image: "/images/referenzen/renaissance-stadthagen-mobile-das-mausoleum", label: "Das Mausoleum" },
+    ],
+    date: "2026",
+    title: "Renaissanceverein Stadthagen",
+    meta: "Vereins-Website · Mausoleum",
+    liveUrl: "https://www.stadthagen-renaissance.de",
+    featured: true,
+    story: {
+      challenge:
+        "Der Renaissance Stadthagen e.V. betreut das Mausoleum an der St.-Martini-Kirche mit dem Bronzeensemble von Adriaen de Vries. Dazu organisiert er Führungen, eine Konzertreihe und einen offenen Stammtisch. Die bisherige Website war über die Jahre gewachsen, aufwendig zu pflegen und abzusichern. Auch ihr Erscheinungsbild passte nicht mehr zu einem Kunstwerk von europäischem Rang.",
+      solution:
+        "Für den Neustart haben wir ein ruhiges, museales Design entwickelt: heller Papierton, das Rot aus dem Vereinslogo und eine klassische Schrift, die zur Renaissance passt. Ganz oben auf der Startseite steht, was Besucher zuerst wissen wollen: Öffnungszeiten, Sonderöffnungstage, Eintritt und Treffpunkt. Abgelaufene Termine verschwinden von selbst. Die Seiten zum Mausoleum und zu Adriaen de Vries führen Kapitel für Kapitel durch Geschichte und Kunstwerk. Auf der Seite zur Konzertreihe stehen Programm und Kartenverkauf; der Ticketshop lädt erst, wenn man ihn öffnet. Der Mitgliedsantrag läuft direkt online, mit Prüfung der Bankverbindung und automatischer Eingangsbestätigung. Von der Startseite geht es außerdem zur Renaissance-Rallye, die wir ebenfalls gebaut haben. Die Seite kommt ohne Cookies aus und lässt sich per Klick auf Englisch, Niederländisch, Dänisch und Schwedisch lesen. Alle alten Adressen und Dokumente bleiben erreichbar.",
+      outcome:
+        "Seit Oktober 2026 ist der neue Auftritt online. Die Pflege liegt jetzt bei uns: Der Verein schickt Änderungen einfach per E-Mail.",
+      scope: [
+        "Relaunch & Webdesign",
+        "Besucherinfos mit Sonderöffnungszeiten",
+        "Konzertreihe & Tickets",
+        "Online-Mitgliedsantrag",
+        "Mehrsprachig lesbar",
+        "Umzug mit Weiterleitungen",
+      ],
+      liveUrl: "https://www.stadthagen-renaissance.de",
+    },
+  },
+  {
     slug: "kultur-stadthagen",
     category: "websites",
     domain: "kultur-stadthagen.de",
@@ -745,35 +778,6 @@ export const references: Reference[] = [
         "Kurstermine & Anfrage",
       ],
       liveUrl: "https://healthy-horizons.de",
-    },
-  },
-  {
-    slug: "renaissance-stadthagen",
-    category: "websites",
-    domain: "stadthagen-renaissance.de",
-    image: "/images/referenzen/renaissance-stadthagen.jpg",
-    mobileImage: "/images/referenzen/renaissance-stadthagen-mobile",
-    mobileShots: [
-      { image: "/images/referenzen/renaissance-stadthagen-mobile-konzertreihe", label: "Konzertreihe" },
-      { image: "/images/referenzen/renaissance-stadthagen-mobile-das-mausoleum", label: "Das Mausoleum" },
-    ],
-    date: "2025",
-    title: "Renaissanceverein Stadthagen",
-    meta: "Vereins-Website",
-    liveUrl: "https://www.stadthagen-renaissance.de",
-    featured: true,
-    story: {
-      challenge:
-        "Der Renaissance Stadthagen e.V. kümmert sich um das Mausoleum von Fürst Ernst und organisiert Führungen, eine Konzertreihe und einen offenen Stammtisch. Besucher interessiert vor allem, wann geöffnet ist, was eine Führung kostet und wann das nächste Konzert stattfindet. Der Verein selbst möchte zugleich neue Mitglieder und junge Unterstützer gewinnen.",
-      solution:
-        "Ganz oben auf der Startseite stehen Öffnungszeiten, geänderte Termine, Eintrittspreise und Ansprechpartner, also das, wonach Besucher zuerst suchen. Darunter folgen das nächste Konzert, die Stammtisch-Termine und Neuigkeiten aus dem Verein. Alle Konzerte des Jahres sind auf einer eigenen Seite mit eingebundenem Ticketverkauf versammelt. Außerdem startet hier die Renaissance-Rallye durch Stadthagen, und das Mitgliedsformular liegt direkt im Menü.",
-      scope: [
-        "Webdesign",
-        "Vereins-Website",
-        "Veranstaltungen & Tickets",
-        "Mitgliedsformular",
-      ],
-      liveUrl: "https://www.stadthagen-renaissance.de",
     },
   },
   {

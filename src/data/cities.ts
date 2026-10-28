@@ -152,6 +152,15 @@ export const cities: City[] = [
           "Neuer Auftritt für die Konzertreihe im Stadthagener Schloss: Saisonprogramm, Kartenreservierung und ein Konzertarchiv seit 2009.",
       },
       {
+        url: "stadthagen-renaissance.de",
+        image: "/images/referenzen/renaissance-stadthagen.jpg",
+        href: "/referenzen/renaissance-stadthagen/",
+        tag: "Vereins-Website · Stadthagen",
+        title: "Renaissanceverein Stadthagen",
+        description:
+          "Relaunch für den Verein, der das Mausoleum Stadthagen betreut: Öffnungszeiten, Führungen und Konzerte auf einen Blick, Mitgliedsantrag online.",
+      },
+      {
         url: "entdecke-stadthagen.de",
         image: "/images/referenzen/entdecke-stadthagen.jpg",
         href: "/referenzen/entdecke-stadthagen/",
@@ -168,15 +177,6 @@ export const cities: City[] = [
         title: "Events Stadthagen",
         description:
           "Unser eigener Veranstaltungskalender für Stadthagen: Konzerte, Märkte und Feste der Stadt an einem Ort, täglich automatisch aktualisiert.",
-      },
-      {
-        url: "stadthagen-renaissance.de",
-        image: "/images/referenzen/renaissance-stadthagen.jpg",
-        href: "/referenzen/renaissance-stadthagen/",
-        tag: "Vereins-Website · Stadthagen",
-        title: "Renaissanceverein Stadthagen",
-        description:
-          "Webdesign und Wartung für den Verein, der die Renaissance-Geschichte Stadthagens lebendig hält.",
       },
       {
         url: "tattoo-studio-stadthagen.de",
