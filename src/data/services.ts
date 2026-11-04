@@ -273,7 +273,7 @@ export const services: Service[] = [
     faq: [
       {
         question: "Was kostet eine App?",
-        answerHtml: `Das hängt vor allem davon ab, ob die App eigene Daten verwaltet, eine Anmeldung braucht und an bestehende Systeme angebunden wird. Eine App, die Inhalte einer vorhandenen Website zeigt, ist deutlich schneller fertig als eine mit Benutzerkonten und Bezahlfunktion. Nach einem kurzen Gespräch bekommst du ein Angebot mit klarem Leistungsumfang. Dazu kommen die Gebühren der Stores: Apple verlangt <strong>99 Euro im Jahr</strong>, Google einmalig <strong>25 US-Dollar</strong>.`,
+        answerHtml: `Das hängt vor allem davon ab, ob die App eigene Daten verwaltet, eine Anmeldung braucht und an bestehende Systeme angebunden wird. Eine App, die Inhalte einer vorhandenen Website zeigt, ist deutlich schneller fertig als eine mit Benutzerkonten und Bezahlfunktion. Nach einem kurzen Gespräch bekommst du ein Angebot mit klarem Leistungsumfang.`,
       },
       {
         question: "Unter wessen Namen erscheint die App?",
