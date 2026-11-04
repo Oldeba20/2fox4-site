@@ -171,3 +171,36 @@ export function serviceSchema(opts: {
     url: `${site.url}${basePath}${opts.slug}/`,
   };
 }
+
+/** MobileApplication-Schema für App-Referenzen (Case-Study-Seiten).
+ *  Autor ist die 2FOX4-Organisation (@id aus localBusinessSchema). */
+export function mobileAppSchema(opts: {
+  name: string;
+  description: string;
+  url: string;
+  image: string;
+  screenshots?: string[];
+  ios?: string;
+  android?: string;
+  category?: string;
+}) {
+  const os = [opts.ios && "iOS", opts.android && "Android"].filter(Boolean).join(", ");
+  const stores = [opts.ios, opts.android].filter(Boolean) as string[];
+  return {
+    "@context": "https://schema.org",
+    "@type": "MobileApplication",
+    name: opts.name,
+    description: opts.description,
+    url: new URL(opts.url, site.url).href,
+    image: new URL(opts.image, site.url).href,
+    ...(opts.screenshots?.length ? { screenshot: opts.screenshots.map((s) => new URL(s, site.url).href) } : {}),
+    operatingSystem: os,
+    applicationCategory: opts.category ?? "UtilitiesApplication",
+    inLanguage: "de-DE",
+    installUrl: stores[0],
+    sameAs: stores,
+    // Download in beiden Stores kostenlos (geprüft 04.11.2026)
+    offers: { "@type": "Offer", price: "0", priceCurrency: "EUR" },
+    author: { "@type": "Organization", "@id": `${site.url}/#organization`, name: site.name, url: site.url },
+  };
+}

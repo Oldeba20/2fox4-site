@@ -1,5 +1,5 @@
 /**
- * Daten für die 8 Leistungsseiten unter /leistungen/.
+ * Daten für die Leistungsseiten unter /leistungen/.
  *
  * Struktur pro Service:
  *   - slug, title, kicker (Eyebrow)
@@ -54,6 +54,9 @@ export interface Service {
   tldr?: string;
   /** Sections mit Inhalt */
   sections: ServiceSection[];
+  /** Optional: Slugs von Case Studies (references.ts, featured), die auf der
+   *  Leistungsseite als Referenzkarten erscheinen */
+  references?: string[];
   /** Themen-spezifische FAQs */
   faq: FAQItem[];
 }
@@ -207,6 +210,86 @@ export const services: Service[] = [
       {
         question: "Bleiben die Daten meiner Kunden vertraulich?",
         answerHtml: `Ja. Deine Reportings und Analysedaten behandeln wir vertraulich und geben sie nicht weiter. Wenn wir Beispiele öffentlich zeigen — etwa auf dieser Seite — sind das ausschließlich <strong>anonymisierte Muster mit frei erfundenen Zahlen</strong>, aus denen sich keine Rückschlüsse auf reale Kunden ziehen lassen.`,
+      },
+    ],
+  },
+  {
+    slug: "app-entwicklung",
+    name: "App-Entwicklung",
+    kicker: "Leistung · App-Entwicklung",
+    seoTitle: "App entwickeln lassen – für iPhone & Android | 2FOX4",
+    seoDescription:
+      "Apps für iPhone und Android aus einer Codebasis: Konzept, Entwicklung, Store-Einreichung und Pflege. Zwei eigene Apps sind live. Aus Sachsenhagen.",
+    heroTitleLine1: "Deine App im Store,",
+    heroTitleLine2: "für iPhone und Android.",
+    heroSub:
+      "Wir entwickeln deine App, bringen sie durch die Prüfung bei Apple und Google und halten sie danach aktuell. Zwei eigene Apps sind schon live. An ihnen siehst du vorher, wie wir arbeiten.",
+    cardSummary:
+      "Apps für iPhone und Android aus einer Codebasis: von der Idee über die Store-Prüfung bis zu Updates. Zwei eigene Apps sind live.",
+    iconSvg: `<rect x="5" y="2" width="14" height="20" rx="2.5"/><path d="M11 18h2"/>`,
+    tldr: `<strong>Kurz gesagt:</strong> Wir entwickeln <strong>Apps für iPhone und Android aus einer gemeinsamen Codebasis</strong> und kümmern uns um alles, was dazugehört: Konzept, Gestaltung, Schnittstelle zu deinen Daten, Push-Nachrichten, Store-Einträge, Datenschutzangaben und die Einreichung bei Apple und Google. Danach bleiben wir dran, mit Updates und neuen Funktionen. Wie das aussieht, zeigen unsere eigenen Apps <a href="/referenzen/events-schaumburg-app/">Events Schaumburg</a> und <a href="/referenzen/eulenwart/">Eulenwart</a>.`,
+    sections: [
+      {
+        eyebrow: "Was du bekommst",
+        headline: "Eine App, die nicht nur gebaut, sondern auch veröffentlicht wird.",
+        body: `<p>Eine App zu programmieren ist der eine Teil. Der andere sind Entwicklerkonten, Store-Einträge, Screenshots, Altersfreigaben, Datenschutzangaben und eine Prüfung, bei der Apple und Google genau hinschauen. An diesem Teil scheitern viele Projekte, oder sie ziehen sich über Monate. Wir übernehmen beides.</p><p>Technisch bauen wir mit einer gemeinsamen Codebasis für iOS und Android. Das spart Zeit und Geld, und beide Versionen bleiben auf demselben Stand. Wo die App Funktionen des Handys braucht, etwa Kamera, Standort, Kalender, Face ID oder Push-Nachrichten, binden wir sie an.</p>`,
+        bullets: [
+          "Eine Codebasis für iPhone und Android",
+          "Anbindung an deine Daten über eine passende Schnittstelle",
+          "Push-Nachrichten, Kalender, Standort, Kamera, Face ID",
+          "Store-Einträge, Screenshots und Datenschutzangaben",
+          "Einreichung und Rückfragen bei Apple und Google",
+          "Updates und Weiterentwicklung nach dem Start",
+        ],
+        layout: "split",
+      },
+      {
+        eyebrow: "Web-App oder Store-App?",
+        headline: "Nicht jede Idee braucht den App Store.",
+        body: `<p>Manches läuft besser direkt im Browser: ohne Installation, ohne Prüfung, sofort per Link erreichbar. Unsere <a href="/leistungen/digitale-stadtrallyes/">digitalen Stadtrallyes</a> sind so gebaut. Eine Store-App lohnt sich, wenn Menschen sie immer wieder öffnen. Dann zählen Push-Nachrichten, Erinnerungen, Offline-Daten und die Anmeldung per Face ID.</p><p>Wir sagen dir ehrlich, was zu deinem Vorhaben passt. Oft ist es eine Kombination: eine Website oder Web-App für alle und eine App für die, die regelmäßig wiederkommen.</p>`,
+        layout: "stacked",
+      },
+      {
+        eyebrow: "Aus eigener Erfahrung",
+        headline: "Zwei Apps, die wir selbst betreiben.",
+        body: `<p><strong>Events Schaumburg</strong> zeigt alle Veranstaltungen im Landkreis, ohne Anmeldung. Die Termine kommen jeden Morgen frisch vom Server, die Merkliste erinnert am Vortag, und „In der Nähe“ sortiert nach Entfernung. Vom ersten klickbaren Entwurf bis zur Freigabe durch Apple vergingen bei diesem Projekt zwei Tage. Öffentlich im Store stand die App allerdings erst eine Woche später, weil Apple noch die Händlerangaben prüfen musste.</p><p><strong>Eulenwart</strong> ist unsere Vereinsverwaltung mit KI. Die App bringt Termine, Abstimmungen, Dokumente und den Mitgliedsausweis aufs Handy, und Vorstände geben damit unterwegs Rechnungen frei. Die App arbeitet mit denselben Daten wie die Web-App und lässt sich per Face ID sperren.</p><p>Beide Apps entwickeln wir laufend weiter. Was wir dabei über Store-Prüfungen, Updates und das Verhalten der Nutzer lernen, fließt in jedes Kundenprojekt.</p>`,
+        layout: "stacked",
+      },
+      {
+        eyebrow: "So läuft es ab",
+        headline: "Von der Idee bis zum Update.",
+        body: `<p>Wir starten mit einem Gespräch über Ziel, Zielgruppe und die wichtigsten Funktionen. Daraus entsteht ein klickbarer Entwurf, den du auf deinem eigenen Handy ausprobierst, bevor wir die eigentliche App bauen.</p><p>Nach dem Start geht es weiter: Neue iOS- und Android-Versionen erscheinen, Store-Regeln ändern sich, und deine Nutzer haben neue Wünsche. Wir kümmern uns darum, damit deine App aktuell bleibt.</p>`,
+        bullets: [
+          "Gespräch über Ziel, Zielgruppe und Funktionen",
+          "Klickbarer Entwurf zum Ausprobieren",
+          "Entwicklung und Tests auf echten Geräten",
+          "Store-Einträge und Einreichung bei Apple und Google",
+          "Start, Updates und Weiterentwicklung",
+        ],
+        layout: "split",
+      },
+    ],
+    references: ["events-schaumburg-app", "eulenwart"],
+    faq: [
+      {
+        question: "Was kostet eine App?",
+        answerHtml: `Das hängt vor allem davon ab, ob die App eigene Daten verwaltet, eine Anmeldung braucht und an bestehende Systeme angebunden wird. Eine App, die Inhalte einer vorhandenen Website zeigt, ist deutlich schneller fertig als eine mit Benutzerkonten und Bezahlfunktion. Nach einem kurzen Gespräch bekommst du ein Angebot mit klarem Leistungsumfang. Dazu kommen die Gebühren der Stores: Apple verlangt <strong>99 Euro im Jahr</strong>, Google einmalig <strong>25 US-Dollar</strong>.`,
+      },
+      {
+        question: "Unter wessen Namen erscheint die App?",
+        answerHtml: `Unter deinem. Die App liegt in deinem eigenen Entwicklerkonto bei Apple und Google. So gehört sie dir und nicht uns. Wir helfen beim Einrichten. Für ein Firmenkonto verlangen Apple und Google eine D-U-N-S-Nummer. Sie ist kostenlos, die Vergabe dauert aber oft ein paar Tage.`,
+      },
+      {
+        question: "Wie lange dauert die Prüfung bei Apple und Google?",
+        answerHtml: `Meist ein bis zwei Tage, manchmal länger. Bei neuen Konten schaut Apple genauer hin und fragt zum Beispiel nach einem Bildschirmvideo vom echten iPhone. Für den Vertrieb in der EU prüft Apple außerdem deine Händlerangaben, das kann sich über Tage ziehen. Bei Google brauchen neue private Entwicklerkonten vorab einen Test mit mindestens zwölf Personen über 14 Tage, Firmenkonten nicht. Solche Wartezeiten planen wir von Anfang an ein.`,
+      },
+      {
+        question: "Kann ich die Inhalte selbst ändern?",
+        answerHtml: `Ja, wenn die App ihre Inhalte vom Server holt. Texte, Termine oder Produkte pflegst du dann in deinem System oder in einem einfachen Verwaltungsbereich, und die App zeigt sie automatisch an. Ein Update im Store brauchst du nur für neue Funktionen.`,
+      },
+      {
+        question: "Geht das auch datenschutzfreundlich?",
+        answerHtml: `Ja. Unsere eigenen Apps zeigen, wie: <a href="/referenzen/events-schaumburg-app/" class="text-[var(--color-accent)]">Events Schaumburg</a> kommt ohne Anmeldung und ohne Tracking aus, der Standort bleibt auf dem Handy. Bei <a href="/referenzen/eulenwart/" class="text-[var(--color-accent)]">Eulenwart</a> enthalten Push-Nachrichten keine persönlichen Daten. Die Angaben in den Stores (App-Datenschutz bei Apple, Datensicherheit bei Google) füllen wir passend zur App aus. Für deine Datenschutzerklärung liefern wir dir alle technischen Angaben.`,
       },
     ],
   },

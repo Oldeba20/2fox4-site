@@ -1,0 +1,64 @@
+---
+/**
+ * AppCard — Karte für App-Referenzen: drei Handys nebeneinander statt
+ * Browser-Fenster (Apps haben keine Desktop-Ansicht).
+ *
+ * Gleiches Gerüst wie MonitorCard, damit Filter, Info-Bereich und
+ * Stretched-Link-Muster ohne Sonderfälle funktionieren:
+ *   - Wurzel ist IMMER ein <div class="monitor-card app-card"> — nie ein <a>
+ *     (im Slot stecken eigene Links, verschachtelte Anchor zerlegt der Browser).
+ *   - Klickbar über den flächendeckenden .monitor-card__link.
+ *
+ * Props:
+ *   phones  — 1–3 Basis-Pfade der Handy-Screenshots (siehe lib/phone.ts);
+ *             der erste steht vorn in der Mitte.
+ *   alt     — Alt-Text für das vordere Handy
+ *   href    — Link zur Case Study (sonst nicht klickbar)
+ *   size    — "card" (Übersicht) oder "hero" (Detailseite, größer)
+ */
+import { phoneSrc, phoneSrcset } from "../lib/phone";
+
+interface Props {
+  phones: string[];
+  alt: string;
+  href?: string;
+  size?: "card" | "hero";
+  /** sizes-Attribut der Handy-Bilder (Standard passt zur 3er-Referenzübersicht) */
+  sizes?: string;
+}
+
+const { phones, alt, href, size = "card", sizes: sizesProp } = Astro.props;
+const [front, left, right] = phones;
+const sizes = sizesProp ?? (size === "hero" ? "(min-width: 1024px) 220px, 34vw" : "(min-width: 1024px) 120px, (min-width: 640px) 26vw, 34vw");
+const order = [
+  left && { base: left, pos: "l" },
+  right && { base: right, pos: "r" },
+  front && { base: front, pos: "c" },
+].filter(Boolean) as Array<{ base: string; pos: string }>;
+---
+
+<div class:list={["monitor-card", "app-card", "default", `app-card--${size}`, !href && "monitor-card--static"]} data-variant="default">
+  {href && <a class="monitor-card__link" href={href} aria-label={`${alt} — Case Study ansehen`}></a>}
+  <div class="app-stage">
+    {order.map((p) => (
+      <div class:list={["app-phone", `app-phone--${p.pos}`]} aria-hidden={p.pos === "c" ? undefined : "true"}>
+        <div class="app-phone__screen">
+          <img
+            src={phoneSrc(p.base, size === "hero" ? 540 : 360)}
+            srcset={phoneSrcset(p.base)}
+            sizes={sizes}
+            alt={p.pos === "c" ? alt : ""}
+            width="360"
+            height="779"
+            loading={size === "hero" ? "eager" : "lazy"}
+            decoding="async"
+          />
+          <span class="app-phone__island"></span>
+        </div>
+      </div>
+    ))}
+  </div>
+  <div class="info">
+    <slot />
+  </div>
+</div>

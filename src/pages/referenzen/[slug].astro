@@ -15,8 +15,9 @@ import Breadcrumb from "../../components/Breadcrumb.astro";
 import CTASection from "../../components/CTASection.astro";
 import MonitorCard from "../../components/MonitorCard.astro";
 import PhoneFrame from "../../components/PhoneFrame.astro";
-import { featuredReferences, type Reference } from "../../data/references";
-import { breadcrumbSchema } from "../../lib/schema";
+import AppCard from "../../components/AppCard.astro";
+import { featuredReferences, referenceBySlug, type Reference } from "../../data/references";
+import { breadcrumbSchema, mobileAppSchema } from "../../lib/schema";
 
 export async function getStaticPaths() {
   return featuredReferences().map((ref) => ({
@@ -33,18 +34,42 @@ const { ref } = Astro.props;
 const story = ref.story!; // garantiert da, weil featured + story Filter in featuredReferences()
 
 // Handy-Ansichten für den Abschnitt „So sieht es auf dem Handy aus"
+const isApp = ref.category === "apps";
 const phoneShots = ref.mobileImage
-  ? [{ image: ref.mobileImage, label: "Startseite" }, ...(ref.mobileShots ?? [])]
+  ? [{ image: ref.mobileImage, label: isApp ? "Start" : "Startseite" }, ...(ref.mobileShots ?? [])]
   : [];
+
+// Absätze: Leerzeile im Text = neuer Absatz
+const paras = (t: string) => t.split(/\n\n+/).map((x) => x.trim()).filter(Boolean);
+
+// Verwandte Case Studies („Dazu passt")
+const related = (ref.related ?? [])
+  .map((s) => referenceBySlug(s))
+  .filter((r): r is Reference => !!r && !!r.featured);
 
 const title = `${ref.title} — Case Study | 2FOX4`;
 const description = story.challenge;
 
-const schema = breadcrumbSchema([
+const crumbs = breadcrumbSchema([
   { name: "Start", url: "/" },
   { name: "Referenzen", url: "/referenzen/" },
   { name: ref.title, url: `/referenzen/${ref.slug}/` },
 ]);
+const schema = ref.app
+  ? [
+      crumbs,
+      mobileAppSchema({
+        name: ref.title.replace(/ App$/, ""),
+        description: story.challenge,
+        url: `/referenzen/${ref.slug}/`,
+        image: ref.app.icon ?? ref.image,
+        screenshots: phoneShots.map((p) => `${p.image}-720.webp`),
+        ios: ref.app.ios,
+        android: ref.app.android,
+        category: ref.app.schemaCategory,
+      }),
+    ]
+  : crumbs;
 ---
 
 <BaseLayout
@@ -71,8 +96,11 @@ const schema = breadcrumbSchema([
           <div class="mb-3 text-xs uppercase tracking-[0.16em] text-[var(--color-accent)]">
             Case Study · {ref.date}
           </div>
-          <h1 class="mb-4 text-[clamp(32px,4.5vw,52px)] font-bold tracking-[-0.03em] leading-[1.1]">
-            {ref.title}
+          <h1 class="mb-4 flex items-center gap-4 text-[clamp(32px,4.5vw,52px)] font-bold tracking-[-0.03em] leading-[1.1]">
+            {ref.app?.icon && (
+              <img src={ref.app.icon} alt="" width="64" height="64" class="h-14 w-14 flex-shrink-0 rounded-[14px] border border-[var(--color-border)]" />
+            )}
+            <span>{ref.title}</span>
           </h1>
           <div class="mb-6 text-[15px] text-[var(--color-text-muted)]">
             {ref.meta} · <span class="text-[var(--color-text-faint)]">{ref.domain}</span>
@@ -85,6 +113,29 @@ const schema = breadcrumbSchema([
                   {item}
                 </span>
               ))}
+            </div>
+          )}
+
+          {ref.app && (
+            <div class="mb-5 flex flex-wrap items-center gap-6">
+              <div class="store-badges">
+                {ref.app.ios && (
+                  <a href={ref.app.ios} target="_blank" rel="noopener" aria-label={`${ref.title} im App Store laden (öffnet in neuem Tab)`}>
+                    <img src="/images/badges/appstore-badge.svg" alt="Download on the App Store" width="132" height="44" />
+                  </a>
+                )}
+                {ref.app.android && (
+                  <a href={ref.app.android} target="_blank" rel="noopener" aria-label={`${ref.title} bei Google Play laden (öffnet in neuem Tab)`}>
+                    <img src="/images/badges/googleplay-badge.png" alt="Get it on Google Play" width="148" height="44" />
+                  </a>
+                )}
+              </div>
+              {ref.app.qr && (
+                <figure class="hidden lg:flex items-center gap-3">
+                  <img src={ref.app.qr.image} alt={`QR-Code: ${ref.title} aufs Handy laden`} width="88" height="88" class="h-[88px] w-[88px] rounded-lg p-1.5" style="background:#fff" />
+                  <figcaption class="max-w-[120px] text-[12px] leading-snug text-[var(--color-text-faint)]">Mit dem Handy scannen und direkt im passenden Store landen.</figcaption>
+                </figure>
+              )}
             </div>
           )}
 
@@ -104,9 +155,19 @@ const schema = breadcrumbSchema([
         </div>
 
         <div>
-          <MonitorCard url={ref.domain} image={ref.image} mobileImage={ref.mobileImage} phoneSizes="(min-width: 1024px) 140px, 85px" variant="default">
-            <span class="sr-only">{ref.title}</span>
-          </MonitorCard>
+          {isApp ? (
+            <AppCard
+              phones={[ref.mobileImage!, ...(ref.mobileShots ?? []).slice(0, 2).map((m) => m.image)]}
+              alt={`${ref.title} auf dem Smartphone`}
+              size="hero"
+            >
+              <span class="sr-only">{ref.title}</span>
+            </AppCard>
+          ) : (
+            <MonitorCard url={ref.domain} image={ref.image} mobileImage={ref.mobileImage} phoneSizes="(min-width: 1024px) 140px, 85px" variant="default">
+              <span class="sr-only">{ref.title}</span>
+            </MonitorCard>
+          )}
         </div>
       </div>
     </div>
@@ -122,9 +183,9 @@ const schema = breadcrumbSchema([
         <h2 class="mb-4 text-[clamp(24px,3vw,34px)] font-bold tracking-[-0.02em] leading-[1.2]">
           Wo das Projekt begann.
         </h2>
-        <p class="text-[17px] leading-[1.7] text-[var(--color-text-muted)]">
-          {story.challenge}
-        </p>
+        {paras(story.challenge).map((t) => (
+          <p class="mb-4 text-[17px] leading-[1.7] text-[var(--color-text-muted)] last:mb-0">{t}</p>
+        ))}
       </section>
 
       <section class="mb-12">
@@ -134,9 +195,9 @@ const schema = breadcrumbSchema([
         <h2 class="mb-4 text-[clamp(24px,3vw,34px)] font-bold tracking-[-0.02em] leading-[1.2]">
           Wie wir es umgesetzt haben.
         </h2>
-        <p class="text-[17px] leading-[1.7] text-[var(--color-text-muted)]">
-          {story.solution}
-        </p>
+        {paras(story.solution).map((t) => (
+          <p class="mb-4 text-[17px] leading-[1.7] text-[var(--color-text-muted)] last:mb-0">{t}</p>
+        ))}
       </section>
 
       {story.outcome && (
@@ -147,9 +208,27 @@ const schema = breadcrumbSchema([
           <h2 class="mb-4 text-[clamp(24px,3vw,34px)] font-bold tracking-[-0.02em] leading-[1.2]">
             Was dabei rumgekommen ist.
           </h2>
-          <p class="text-[17px] leading-[1.7] text-[var(--color-text-muted)]">
-            {story.outcome}
-          </p>
+          {paras(story.outcome).map((t) => (
+            <p class="mb-4 text-[17px] leading-[1.7] text-[var(--color-text-muted)] last:mb-0">{t}</p>
+          ))}
+        </section>
+      )}
+
+      {related.length > 0 && (
+        <section class="mb-12 rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg-card)] p-6">
+          <div class="mb-2 text-xs uppercase tracking-[0.16em] text-[var(--color-accent)]">
+            Dazu passt
+          </div>
+          <ul class="flex flex-col gap-2">
+            {related.map((r) => (
+              <li>
+                <a href={`/referenzen/${r.slug}/`} class="text-[17px] font-semibold text-[var(--color-text)] hover:text-[var(--color-accent)]">
+                  {r.title} →
+                </a>
+                <span class="ml-2 text-[14px] text-[var(--color-text-muted)]">{r.meta}</span>
+              </li>
+            ))}
+          </ul>
         </section>
       )}
     </div>
@@ -163,13 +242,14 @@ const schema = breadcrumbSchema([
           Mobil
         </div>
         <h2 class="mb-4 text-[clamp(24px,3vw,34px)] font-bold tracking-[-0.02em] leading-[1.2]">
-          So sieht es auf dem Handy aus.
+          {isApp ? "So sieht die App aus." : "So sieht es auf dem Handy aus."}
         </h2>
         <p class="mb-10 max-w-[640px] text-[17px] leading-[1.7] text-[var(--color-text-muted)]">
-          Jede Seite ist fürs Smartphone gebaut. Hier ein paar Ansichten aus dem
-          fertigen Projekt, so wie Besucher sie auf dem Handy sehen.
+          {isApp
+            ? "Ein paar Ansichten aus der fertigen App, so wie sie auf dem iPhone aussieht. Die Android-Version entsteht aus derselben Codebasis."
+            : "Jede Seite ist fürs Smartphone gebaut. Hier ein paar Ansichten aus dem fertigen Projekt, so wie Besucher sie auf dem Handy sehen."}
         </p>
-        <div class="phone-row">
+        <div class:list={["phone-row", phoneShots.length >= 4 && "phone-row--4"]}>
           {phoneShots.map((shot) => (
             <PhoneFrame
               image={shot.image}

@@ -1,18 +1,20 @@
 ---
 /**
  * /referenzen/ — Übersicht aller Projekt-Referenzen.
- * Filter-Pills (Alle / Webseiten / Onlineshops) per Vanilla-JS.
- * Karten verwenden MonitorCard in default-Variante (mit Hover-Zoom).
+ * Filter-Pills (Alle / Webseiten / Onlineshops / Apps) per Vanilla-JS.
+ * Karten: MonitorCard (Websites, Shops) bzw. AppCard (Apps, drei Handys).
+ * Jede Karte trägt alle ihre Kategorien in data-cats (Hauptkategorie + alsoIn).
  */
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import Breadcrumb from "../../components/Breadcrumb.astro";
 import MonitorCard from "../../components/MonitorCard.astro";
-import { references, referenceCounts } from "../../data/references";
+import AppCard from "../../components/AppCard.astro";
+import { references, referenceCounts, refCategories, refCategoryLabel } from "../../data/references";
 import { breadcrumbSchema } from "../../lib/schema";
 
-const title = "Referenzen — 2FOX4 Webdesign & Onlineshops aus 18 Jahren";
+const title = "Referenzen — 2FOX4 Webdesign, Onlineshops & Apps";
 const description =
-  "Eine Auswahl aus 18 Jahren Webdesign: WordPress, WooCommerce, Shopware, Oxid. Von Vereinswebsites bis zu KI-Tools.";
+  "Eine Auswahl aus 18 Jahren Webdesign: WordPress, WooCommerce, Shopware, Oxid. Von Vereinswebsites über KI-Tools bis zu Apps für iPhone und Android.";
 
 const counts = referenceCounts();
 
@@ -42,8 +44,8 @@ const schema = breadcrumbSchema([
       </h1>
       <p class="max-w-[640px] text-lg text-[var(--color-text-muted)]">
         Eine Auswahl aus 18 Jahren Webdesign. Von Onlineshops auf WooCommerce,
-        Shopware und Oxid über Vereinswebseiten bis zu KI-gestützten
-        Vertriebs-Tools.
+        Shopware und Oxid über Vereinswebseiten und KI-Tools bis zu
+        eigenen Apps für iPhone und Android.
       </p>
     </div>
   </section>
@@ -52,14 +54,17 @@ const schema = breadcrumbSchema([
   <section class="sticky top-16 z-40 border-b border-[var(--color-border)] bg-[rgba(10,10,10,0.85)] py-5 backdrop-blur-xl">
     <div class="container-content">
       <div class="flex flex-wrap justify-center gap-2" id="filter-bar">
-        <button class="pill active" data-filter="alle">
+        <button class="pill active" data-filter="alle" aria-pressed="true">
           Alle <span class="count">{counts.alle}</span>
         </button>
-        <button class="pill" data-filter="websites">
+        <button class="pill" data-filter="websites" aria-pressed="false">
           Webseiten <span class="count">{counts.websites}</span>
         </button>
-        <button class="pill" data-filter="onlineshops">
+        <button class="pill" data-filter="onlineshops" aria-pressed="false">
           Onlineshops <span class="count">{counts.onlineshops}</span>
+        </button>
+        <button class="pill" data-filter="apps" aria-pressed="false">
+          Apps <span class="count">{counts.apps}</span>
         </button>
       </div>
     </div>
@@ -68,20 +73,14 @@ const schema = breadcrumbSchema([
   <section class="py-14 pb-24">
     <div class="container-content max-w-[1280px]">
       <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3" id="ref-grid">
-        {references.map((ref) => (
-          <MonitorCard
-            url={ref.domain}
-            image={ref.image}
-            mobileImage={ref.mobileImage}
-            alt={`${ref.title} — ${ref.meta} (${ref.category === "onlineshops" ? "Onlineshop" : "Webseite"})`}
-            href={ref.featured ? `/referenzen/${ref.slug}/` : undefined}
-            variant="default"
-          >
-            <div data-cat={ref.category}>
+        {references.map((ref) => {
+          const label = refCategoryLabel(ref.category);
+          const info = (
+            <div data-cats={refCategories(ref).join(" ")}>
               <div class="mb-2 flex items-center gap-2.5">
                 <span class:list={["info-cat", ref.category]}>
                   <span class="dot"></span>
-                  {ref.category === "onlineshops" ? "Onlineshop" : "Webseite"}
+                  {label}
                 </span>
                 <span class="ml-auto text-xs text-[var(--color-text-faint)]">
                   {ref.date}
@@ -94,7 +93,16 @@ const schema = breadcrumbSchema([
                 <span class="text-[13px] text-[var(--color-text-muted)]">
                   {ref.meta}
                 </span>
-                {ref.liveUrl && (
+                {ref.app ? (
+                  <span class="store-pills">
+                    {ref.app.ios && (
+                      <a href={ref.app.ios} target="_blank" rel="noopener" class="live-badge" aria-label={`iOS: ${ref.title} im App Store (öffnet in neuem Tab)`}>iOS</a>
+                    )}
+                    {ref.app.android && (
+                      <a href={ref.app.android} target="_blank" rel="noopener" class="live-badge" aria-label={`Android: ${ref.title} bei Google Play (öffnet in neuem Tab)`}>Android</a>
+                    )}
+                  </span>
+                ) : ref.liveUrl && (
                   <a
                     href={ref.liveUrl}
                     target="_blank"
@@ -110,8 +118,28 @@ const schema = breadcrumbSchema([
                 )}
               </div>
             </div>
-          </MonitorCard>
-        ))}
+          );
+          return ref.category === "apps" ? (
+            <AppCard
+              phones={[ref.mobileImage!, ...(ref.mobileShots ?? []).slice(0, 2).map((m) => m.image)]}
+              alt={`${ref.title} — ${ref.meta} (${label})`}
+              href={ref.featured ? `/referenzen/${ref.slug}/` : undefined}
+            >
+              {info}
+            </AppCard>
+          ) : (
+            <MonitorCard
+              url={ref.domain}
+              image={ref.image}
+              mobileImage={ref.mobileImage}
+              alt={`${ref.title} — ${ref.meta} (${label})`}
+              href={ref.featured ? `/referenzen/${ref.slug}/` : undefined}
+              variant="default"
+            >
+              {info}
+            </MonitorCard>
+          );
+        })}
         <div class="no-results hidden col-span-full py-20 text-center text-[var(--color-text-muted)]" id="no-results">
           Keine Projekte in dieser Kategorie.
         </div>
@@ -176,25 +204,6 @@ const schema = breadcrumbSchema([
     color: rgba(0, 0, 0, 0.6);
   }
 
-  .info-cat {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: var(--color-text-faint);
-  }
-  .info-cat .dot {
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
-    background: var(--color-accent);
-  }
-  .info-cat.onlineshops .dot {
-    background: var(--color-teal);
-  }
-
   .live-badge {
     display: inline-flex;
     align-items: center;
@@ -235,7 +244,7 @@ const schema = breadcrumbSchema([
 <script>
   // Filter-Logik: Klick auf Pill → Karten ein-/ausblenden basierend auf data-cat
   const pills = document.querySelectorAll<HTMLButtonElement>("#filter-bar .pill");
-  const cards = document.querySelectorAll<HTMLAnchorElement>("#ref-grid .monitor-card");
+  const cards = document.querySelectorAll<HTMLElement>("#ref-grid .monitor-card");
   const noResults = document.getElementById("no-results");
 
   pills.forEach((pill) => {
@@ -243,15 +252,16 @@ const schema = breadcrumbSchema([
       const filter = pill.dataset.filter;
       if (!filter) return;
 
-      pills.forEach((p) => p.classList.remove("active"));
+      pills.forEach((p) => { p.classList.remove("active"); p.setAttribute("aria-pressed", "false"); });
       pill.classList.add("active");
+      pill.setAttribute("aria-pressed", "true");
 
       let visibleCount = 0;
       cards.forEach((card) => {
-        // data-cat liegt auf dem inneren Container in der MonitorCard
-        const inner = card.querySelector<HTMLElement>("[data-cat]");
-        const cat = inner?.dataset.cat;
-        const shouldShow = filter === "alle" || cat === filter;
+        // data-cats liegt auf dem inneren Container (Hauptkategorie + alsoIn)
+        const inner = card.querySelector<HTMLElement>("[data-cats]");
+        const cats = (inner?.dataset.cats ?? "").split(" ");
+        const shouldShow = filter === "alle" || cats.includes(filter);
         card.classList.toggle("is-hidden", !shouldShow);
         if (shouldShow) visibleCount++;
       });

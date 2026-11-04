@@ -1,7 +1,13 @@
 /**
  * Referenz-Projekte für /referenzen/.
- * Kategorien: "websites" und "onlineshops" — der Filter auf der Übersichtsseite
- * basiert genau auf diesen beiden Werten.
+ * Kategorien: "websites", "onlineshops" und "apps" — der Filter auf der
+ * Übersichtsseite basiert auf `category` plus optional `alsoIn`
+ * (ein Projekt kann so unter mehreren Filtern erscheinen, z. B. eine App
+ * mit Web-App auch unter „Webseiten").
+ *
+ * Apps (category "apps") werden ohne Browser-Rahmen gezeigt: Die Karte
+ * stellt drei Handys nebeneinander (mobileImage + die ersten zwei
+ * mobileShots), statt „Live ansehen" gibt es Store-Links aus `app`.
  *
  * Reihenfolge: neueste zuerst.
  *
@@ -13,7 +19,23 @@
  *     unter /referenzen/{slug}/ und die Karte wird klickbar.
  */
 
-export type RefCategory = "websites" | "onlineshops";
+export type RefCategory = "websites" | "onlineshops" | "apps";
+
+/** Store-Daten einer App-Referenz. */
+export interface ReferenceApp {
+  /** App-Store-Link (https://apps.apple.com/de/app/...) */
+  ios?: string;
+  /** Google-Play-Link (https://play.google.com/store/apps/details?id=...) */
+  android?: string;
+  /** App-Symbol (PNG, ca. 192 px), z. B. "/images/referenzen/<slug>-app-icon.png" */
+  icon?: string;
+  /** Optional: QR-Code für die Detailseite (nur Desktop sichtbar). `url` ist das
+   *  Ziel, das im Code steckt (am besten eine Weiche, die je nach Handy in den
+   *  passenden Store leitet). */
+  qr?: { image: string; url: string };
+  /** Schema.org applicationCategory, z. B. "LifestyleApplication" */
+  schemaCategory?: string;
+}
 
 /** Eine ausführliche Case-Study, optional je Referenz. */
 export interface ReferenceStory {
@@ -34,8 +56,14 @@ export interface ReferenceStory {
 export interface Reference {
   /** URL-Slug (für /referenzen/[slug]/) */
   slug: string;
-  /** Kategorie für Filter */
+  /** Hauptkategorie (Label auf der Karte, Kartenart) */
   category: RefCategory;
+  /** Optional: weitere Filter, unter denen die Referenz auch erscheint */
+  alsoIn?: RefCategory[];
+  /** Optional: Store-Links etc. — Pflicht bei category "apps" */
+  app?: ReferenceApp;
+  /** Optional: Slugs verwandter Case Studies (Hinweis „Dazu passt" auf der Detailseite) */
+  related?: string[];
   /** Anzeige in der URL-Bar des Monitor-Mockups */
   domain: string;
   /** Hintergrund-Screenshot */
@@ -71,6 +99,77 @@ export interface Reference {
 }
 
 export const references: Reference[] = [
+  {
+    slug: "eulenwart",
+    category: "apps",
+    alsoIn: ["websites"],
+    domain: "eulenwart.de",
+    image: "/images/referenzen/eulenwart.jpg",
+    mobileImage: "/images/referenzen/eulenwart-mobile",
+    mobileShots: [
+      { image: "/images/referenzen/eulenwart-mobile-abstimmung", label: "Abstimmung" },
+      { image: "/images/referenzen/eulenwart-mobile-eule", label: "Frag die Eule" },
+      { image: "/images/referenzen/eulenwart-mobile-rechnung", label: "Rechnung freigeben" },
+    ],
+    date: "2026",
+    title: "Eulenwart",
+    meta: "iOS, Android & Web-App · Vereinsverwaltung",
+    liveUrl: "https://eulenwart.de",
+    app: {
+      ios: "https://apps.apple.com/de/app/eulenwart-vereinssoftware/id6828592697",
+      android: "https://play.google.com/store/apps/details?id=de.eulenwart.app",
+      icon: "/images/referenzen/eulenwart-app-icon.png",
+      schemaCategory: "BusinessApplication",
+    },
+    featured: true,
+    story: {
+      challenge:
+        "In vielen Vereinen verteilen sich die Unterlagen auf private Postfächer und lose Listen. Mit jedem Vorstandswechsel geht Wissen verloren: Wo liegt der Mietvertrag fürs Vereinsheim, wer hat die Rechnung der Druckerei freigegeben, wer hat seinen Beitrag schon bezahlt? Deshalb haben wir Eulenwart entwickelt, eine Vereinsverwaltung mit KI, die solche Fragen an einer Stelle beantwortet.",
+      solution:
+        "Eulenwart besteht aus der Web-App für den Vorstand, der App fürs Handy und der Website mit Live-Demo. Alle drei haben wir selbst gebaut. Die Web-App ist das Arbeitszimmer des Vorstands: Mitglieder, Beiträge und Lastschriften, ein Eingangskorb für Belege, Rechnungsfreigaben nach dem Vier-Augen-Prinzip, Budget, Termine und Online-Abstimmungen. Der KI-Assistent „Eule“ beantwortet Fragen zum Verein und nennt dazu die Quelle.\n\nDie App für iPhone und Android bringt das Wichtigste aufs Handy: Termine mit Zu- und Absage, Abstimmungen, Rundmails, freigegebene Dokumente, den Mitgliedsausweis mit QR-Code und „Frag die Eule“. Vorstände fotografieren unterwegs einen Beleg oder geben eine Rechnung frei. Die App lässt sich mit Face ID oder Fingerabdruck sperren, Push-Nachrichten enthalten keine persönlichen Daten. Auf eulenwart.de können Interessierte alles in einer Demo ausprobieren, ohne sich anzumelden.",
+      outcome:
+        "Die Web-App läuft seit Oktober 2026, die Handy-App ist seit Anfang November im App Store und bei Google Play. Vereine können Eulenwart 14 Tage kostenlos testen.",
+      scope: ["Produktkonzept", "Marke & Logo", "Web-App", "iOS- & Android-App", "KI-Assistent mit Quellen", "Website mit Live-Demo"],
+      extraImages: [
+        { src: "/images/referenzen/eulenwart.jpg", alt: "Startseite von eulenwart.de am Desktop", caption: "Die Website eulenwart.de mit Live-Demo" },
+        { src: "/images/referenzen/eulenwart-webapp.jpg", alt: "Übersicht der Eulenwart-Web-App im Demoverein", caption: "Die Web-App für den Vorstand, hier im Demoverein mit erfundenen Daten" },
+      ],
+      liveUrl: "https://eulenwart.de",
+    },
+  },
+  {
+    slug: "events-schaumburg-app",
+    category: "apps",
+    domain: "events-schaumburg.de/app",
+    image: "/images/referenzen/events-schaumburg-app.jpg",
+    mobileImage: "/images/referenzen/events-schaumburg-app-mobile",
+    mobileShots: [
+      { image: "/images/referenzen/events-schaumburg-app-mobile-termin", label: "Termin mit Kalender und Route" },
+      { image: "/images/referenzen/events-schaumburg-app-mobile-naehe", label: "In der Nähe" },
+      { image: "/images/referenzen/events-schaumburg-app-mobile-merkliste", label: "Merkliste mit Erinnerung" },
+    ],
+    date: "2026",
+    title: "Events Schaumburg App",
+    meta: "iOS & Android · Veranstaltungs-App",
+    app: {
+      ios: "https://apps.apple.com/de/app/events-schaumburg/id6825075687",
+      android: "https://play.google.com/store/apps/details?id=de.eventsschaumburg.app",
+      icon: "/images/referenzen/events-schaumburg-app-icon.png",
+      qr: { image: "/images/badges/qr-events-schaumburg-app.svg", url: "https://events-schaumburg.de/app/?s=2fox4" },
+      schemaCategory: "LifestyleApplication",
+    },
+    related: ["events-schaumburg"],
+    featured: true,
+    story: {
+      challenge:
+        "Mit events-schaumburg.de gab es schon einen Kalender für den ganzen Landkreis. Am Handy wollten viele aber mehr als eine Website: Termine merken, rechtzeitig daran erinnert werden und schnell sehen, was in der Nähe los ist. Deshalb haben wir als Eigenprojekt eine App für iPhone und Android gebaut.",
+      solution:
+        "Die App kommt ohne Anmeldung aus und fragt beim ersten Start nur, welche Orte und Themen dich interessieren. Danach zeigt sie die Termine für heute, das Wochenende oder die nächsten sieben Tage, mit Suche und Schnellfiltern wie „Heute Abend“ oder „Eintritt frei“. Oben steht ein besonders gefragter Termin im Fokus; welcher das ist, ergibt sich automatisch aus den Suchanfragen der letzten zwei Wochen. „In der Nähe“ sortiert nach Entfernung, die Merkliste erinnert am Vortag und meldet Absagen. Mit einem Tipp landet ein Termin im Kalender, für die Route öffnet sich je nach Handy Apple Karten oder Google Maps.\n\nDie Termine kommen jeden Morgen frisch vom Server, neue Veranstaltungen erscheinen also ohne App-Update. Die App sammelt keine persönlichen Daten, der Standort bleibt auf dem Handy. Beide Versionen entstehen aus einer Codebasis. Store-Einträge, Datenschutzangaben und die Einreichung bei Apple und Google haben wir ebenfalls übernommen.",
+      outcome:
+        "Seit Ende Oktober 2026 ist die App kostenlos im App Store und bei Google Play. Auf events-schaumburg.de und events-stadthagen.de machen ein Menüpunkt, ein Hinweis am Handy und ein QR-Code am Desktop auf die App aufmerksam.",
+      scope: ["App-Konzept", "iOS & Android aus einer Codebasis", "Store-Einreichung bei Apple & Google", "Daten-Schnittstelle", "Erinnerungen & Kalender", "App-Hinweise auf den Websites"],
+    },
+  },
   {
     slug: "renaissance-stadthagen",
     category: "websites",
@@ -135,39 +234,6 @@ export const references: Reference[] = [
         "Umzug mit Weiterleitungen",
       ],
       liveUrl: "https://www.kultur-stadthagen.de",
-    },
-  },
-  {
-    slug: "verein-buddy",
-    category: "websites",
-    domain: "verein-buddy.de",
-    image: "/images/referenzen/verein-buddy.jpg",
-    mobileImage: "/images/referenzen/verein-buddy-mobile",
-    mobileShots: [
-      { image: "/images/referenzen/verein-buddy-mobile-eingangskorb", label: "Eingangskorb mit Demo" },
-      { image: "/images/referenzen/verein-buddy-mobile-ki-assistent", label: "KI-Assistent mit Quellen" },
-    ],
-    date: "2026",
-    title: "Verein Buddy",
-    meta: "Vereinsverwaltung mit KI · Eigenes Produkt",
-    liveUrl: "https://verein-buddy.de",
-    featured: true,
-    story: {
-      challenge:
-        "In vielen Vereinen verteilen sich die Unterlagen auf private Postfächer und lose Listen. Mit jedem Vorstandswechsel geht Wissen verloren: Wo ist der Mietvertrag fürs Vereinsheim, wer hat die Rechnung der Druckerei freigegeben, wie viele Mitglieder zahlen eigentlich ihren Beitrag? Deshalb haben wir Verein Buddy entwickelt: eine Vereinsverwaltung, die solche Fragen an einer Stelle beantwortet.",
-      solution:
-        "Die Website stellt das Produkt auf einer Seite vor, Besucher können es dort gleich ausprobieren. In der Demo des Eingangskorbs ziehen sie Beispieldokumente in die passenden Ordner. Beim KI-Assistenten wählen sie eine Frage und bekommen die Antwort samt Quelle. Danach stellt die Seite die Funktionen vor: von der Mitgliederverwaltung über Rechnungsfreigaben nach dem Vier-Augen-Prinzip bis zu Sitzungen und Online-Abstimmungen. Ein eigener Abschnitt erklärt Sicherheit und Datenschutz. Die Preise richten sich nach der Mitgliederzahl, ein Schalter zeigt sie wahlweise für das Monats- oder das Jahresabo. Logo und Erscheinungsbild in Petrol und Gelb haben wir für Verein Buddy neu entworfen. Die Web-App dahinter haben wir ebenfalls gebaut: Über „Jetzt selbst starten“ legen Vereine dort ihren Testzugang an.",
-      outcome:
-        "Seit Oktober 2026 ist verein-buddy.de online. Interessierte Vereine können die Software 14 Tage kostenlos testen.",
-      scope: [
-        "Produktkonzept",
-        "Marke & Logo",
-        "Website mit Live-Demos",
-        "Web-App",
-        "Preisbereich mit Tarifumschalter",
-        "Sicherheit & Datenschutz",
-      ],
-      liveUrl: "https://verein-buddy.de",
     },
   },
   {
@@ -246,6 +312,7 @@ export const references: Reference[] = [
     title: "Events Schaumburg",
     meta: "Veranstaltungs-Portal · Landkreis Schaumburg",
     liveUrl: "https://events-schaumburg.de",
+    related: ["events-schaumburg-app"],
     featured: true,
     story: {
       challenge:
@@ -1029,12 +1096,24 @@ export const references: Reference[] = [
   },
 ];
 
-/** Wie viele Projekte pro Kategorie? — für Filter-Pill-Badges */
+/** Alle Filter-Kategorien einer Referenz (Hauptkategorie zuerst). */
+export function refCategories(ref: Reference): RefCategory[] {
+  return [ref.category, ...(ref.alsoIn ?? [])];
+}
+
+/** Anzeige-Label der Hauptkategorie. */
+export function refCategoryLabel(cat: RefCategory): string {
+  return cat === "onlineshops" ? "Onlineshop" : cat === "apps" ? "App" : "Webseite";
+}
+
+/** Wie viele Projekte pro Kategorie? — für Filter-Pill-Badges (inkl. alsoIn) */
 export function referenceCounts() {
+  const count = (c: RefCategory) => references.filter((r) => refCategories(r).includes(c)).length;
   return {
     alle: references.length,
-    websites: references.filter((r) => r.category === "websites").length,
-    onlineshops: references.filter((r) => r.category === "onlineshops").length,
+    websites: count("websites"),
+    onlineshops: count("onlineshops"),
+    apps: count("apps"),
   };
 }
 

@@ -49,6 +49,7 @@ export const site = {
     leistungen: [
       { label: 'Webdesign', href: '/leistungen/webdesign/' },
       { label: 'SEO & Lokale Auffindbarkeit', href: '/leistungen/seo/' },
+      { label: 'App-Entwicklung', href: '/leistungen/app-entwicklung/' },
       { label: 'WordPress-Service', href: '/leistungen/wartung-support/' },
       { label: 'Digitalisierungsberatung', href: '/leistungen/digitalisierungsberatung/' },
       { label: 'Hosting', href: '/leistungen/hosting/' },

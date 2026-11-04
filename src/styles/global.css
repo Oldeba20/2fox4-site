@@ -631,3 +631,105 @@ html.a11y-high-contrast *:focus-visible {
   color: var(--color-text-muted);
 }
 
+
+/* ---------------------------------------------------------------------
+ * AppCard — App-Referenzen: drei Handys auf einer Bühne statt Monitor.
+ * Nutzt .monitor-card als Wurzel (Filter, Info, Stretched Link).
+ * ------------------------------------------------------------------- */
+.app-card .app-stage {
+  position: relative;
+  aspect-ratio: 16 / 11.2;
+  overflow: hidden;
+  border-radius: 14px;
+  border: 1px solid #2a2a2c;
+  background:
+    radial-gradient(ellipse at 50% 115%, rgba(255, 107, 53, 0.30), transparent 62%),
+    radial-gradient(ellipse at 12% 0%, rgba(45, 212, 191, 0.10), transparent 55%),
+    #0d0d0f;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4), 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+.app-phone {
+  position: absolute;
+  bottom: -14%;
+  width: 30%;
+  aspect-ratio: 9 / 19.2;
+  padding: 1.6%;
+  background: #0b0b0c;
+  border-radius: 18px;
+  border: 1px solid #3a3a3c;
+  box-shadow: 0 24px 50px rgba(0, 0, 0, 0.55), inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+  transition: transform 0.45s cubic-bezier(0.22, 0.9, 0.28, 1);
+}
+.app-phone__screen {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #050505;
+}
+.app-phone__screen img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  display: block;
+}
+.app-phone__island {
+  position: absolute;
+  top: 4%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 30%;
+  height: 3.2%;
+  border-radius: 999px;
+  background: #000;
+}
+.app-phone--c { left: 33%; width: 34%; bottom: -10%; z-index: 3; }
+.app-phone--l { left: 8%; bottom: -22%; transform: rotate(-7deg); z-index: 2; }
+.app-phone--r { right: 8%; bottom: -22%; transform: rotate(7deg); z-index: 2; }
+.app-card.default:hover .app-phone--c { transform: translateY(-6%); }
+.app-card.default:hover .app-phone--l { transform: rotate(-10deg) translateX(-8%); }
+.app-card.default:hover .app-phone--r { transform: rotate(10deg) translateX(8%); }
+@media (prefers-reduced-motion: reduce) {
+  .app-phone { transition: none; }
+}
+/* Große Variante für die Detailseite */
+.app-card--hero .app-stage { aspect-ratio: 16 / 12; }
+.app-card--hero .app-phone { border-radius: 30px; padding: 1.4%; }
+.app-card--hero .app-phone__screen { border-radius: 24px; }
+@media (max-width: 639px) {
+  .app-phone, .app-card--hero .app-phone { border-radius: 14px; }
+  .app-phone__screen, .app-card--hero .app-phone__screen { border-radius: 11px; }
+}
+
+/* Store-Links auf den Referenzkarten (kleine Pills statt „Live ansehen") */
+.app-card .store-pills, .store-pills { display: inline-flex; gap: 6px; flex-shrink: 0; }
+
+/* Offizielle Store-Badges auf der Detailseite */
+.store-badges { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+.store-badges a { display: inline-block; line-height: 0; transition: transform 0.16s; }
+.store-badges a:hover { transform: translateY(-1px); }
+.store-badges img { height: 44px; width: auto; }
+
+/* Kategorie-Label auf Referenzkarten (auch auf Leistungsseiten genutzt) */
+.info-cat {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--color-text-faint);
+}
+.info-cat .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--color-accent); }
+.info-cat.onlineshops .dot { background: var(--color-teal); }
+.info-cat.apps .dot { background: #fbbf24; }
+
+/* Vier Handys auf der Detailseite (Apps): etwas schmaler, damit sie in eine Reihe passen */
+@media (min-width: 768px) {
+  .phone-row--4 { gap: 28px; }
+  .phone-row--4 .phone-frame { width: 230px; }
+}

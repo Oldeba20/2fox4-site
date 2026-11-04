@@ -7,6 +7,9 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import Breadcrumb from "../../components/Breadcrumb.astro";
 import FAQ from "../../components/FAQ.astro";
 import CTASection from "../../components/CTASection.astro";
+import AppCard from "../../components/AppCard.astro";
+import MonitorCard from "../../components/MonitorCard.astro";
+import { referenceBySlug, refCategoryLabel, type Reference } from "../../data/references";
 import { services, type Service } from "../../data/services";
 import { breadcrumbSchema, faqSchema, serviceSchema } from "../../lib/schema";
 
@@ -31,6 +34,7 @@ const { service } = Astro.props;
 const serviceTypeMap: Record<string, string> = {
   webdesign: "Web Design",
   seo: "Search Engine Optimization",
+  "app-entwicklung": "Mobile App Development",
   "digitale-stadtrallyes": "Interactive Tourism Experience Development",
   "wartung-support": "WordPress Maintenance",
   digitalisierungsberatung: "Digital Transformation Consulting",
@@ -39,6 +43,11 @@ const serviceTypeMap: Record<string, string> = {
   "barrierefreie-website": "Accessibility Compliance Service",
   "print-design": "Graphic Design Service",
 };
+
+// Referenzkarten auf der Leistungsseite (optional, aus services.ts → references)
+const serviceRefs = (service.references ?? [])
+  .map((s) => referenceBySlug(s))
+  .filter((r): r is Reference => !!r && !!r.featured);
 
 const schema = [
   breadcrumbSchema([
@@ -165,6 +174,49 @@ const schema = [
       </div>
     </section>
   ))}
+
+  {serviceRefs.length > 0 && (
+    <section class="border-t border-[var(--color-border)] py-20">
+      <div class="container-content">
+        <div class="mb-3.5 text-xs uppercase tracking-[0.16em] text-[var(--color-accent)]">
+          Referenzen
+        </div>
+        <h2 class="mb-10 max-w-[760px] text-[clamp(28px,3.5vw,42px)] font-bold tracking-[-0.03em] leading-[1.1]">
+          Projekte zu dieser Leistung.
+        </h2>
+        <div class="grid gap-8 sm:grid-cols-2 max-w-[920px]">
+          {serviceRefs.map((ref) => {
+            const info = (
+              <div>
+                <div class="mb-2 flex items-center gap-2.5">
+                  <span class:list={["info-cat", ref.category]}>
+                    <span class="dot"></span>
+                    {refCategoryLabel(ref.category)}
+                  </span>
+                </div>
+                <div class="text-[18px] font-semibold leading-[1.3] tracking-[-0.01em]">{ref.title}</div>
+                <div class="mt-1.5 text-[13px] text-[var(--color-text-muted)]">{ref.meta}</div>
+              </div>
+            );
+            return ref.category === "apps" ? (
+              <AppCard
+                phones={[ref.mobileImage!, ...(ref.mobileShots ?? []).slice(0, 2).map((m) => m.image)]}
+                alt={`${ref.title} — ${ref.meta}`}
+                href={`/referenzen/${ref.slug}/`}
+                sizes="(min-width: 640px) 160px, 34vw"
+              >
+                {info}
+              </AppCard>
+            ) : (
+              <MonitorCard url={ref.domain} image={ref.image} mobileImage={ref.mobileImage} alt={`${ref.title} — ${ref.meta}`} href={`/referenzen/${ref.slug}/`} variant="default">
+                {info}
+              </MonitorCard>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  )}
 
   <FAQ items={service.faq} title="Häufige Fragen zu dieser Leistung." />
 
