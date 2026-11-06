@@ -107,7 +107,7 @@ Frag dein Team, welche KI-Tools es schon nutzt und wofür. Mach daraus kein Verh
 
 ### Schritt 2: Offizielle Tools auswählen
 
-Wähle auf Basis der Liste ein bis zwei Werkzeuge aus, die die häufigsten Fälle abdecken. Achte auf drei Dinge: einen Vertrag zur Auftragsverarbeitung, die Zusicherung, dass Eingaben nicht zum Training genutzt werden, und eine Verwaltung, mit der du Konten anlegen und wieder entziehen kannst. Wenn ihr ohnehin mit Microsoft 365 oder Google Workspace arbeitet, lohnt der Blick auf die dort enthaltenen KI-Funktionen. Bei Fragen zur Auswahl hilft dir unsere [Digitalisierungsberatung](/leistungen/digitalisierungsberatung/).
+Wähle auf Basis der Liste ein bis zwei Werkzeuge aus, die die häufigsten Fälle abdecken. Achte auf drei Dinge: einen Vertrag zur Auftragsverarbeitung, die Zusicherung, dass Eingaben nicht zum Training genutzt werden, und eine Verwaltung, mit der du Konten anlegen und wieder entziehen kannst. Wenn ihr ohnehin mit Microsoft 365 oder Google Workspace arbeitet, lohnt der Blick auf die dort enthaltenen KI-Funktionen. Was die gängigen Business-Tarife kosten und wo sie die Daten speichern, haben wir im [Vergleich von ChatGPT Business, Copilot und Gemini](/blog/chatgpt-business-copilot-gemini-vergleich/) zusammengestellt. Bei Fragen zur Auswahl hilft dir unsere [Digitalisierungsberatung](/leistungen/digitalisierungsberatung/).
 
 ### Schritt 3: Regeln aufschreiben
 
