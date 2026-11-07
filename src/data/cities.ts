@@ -304,11 +304,11 @@ export const cities: City[] = [
     heroSub:
       "Websites und Onlineshops für die Rattenfänger-Stadt und das Weserbergland. Wir sind zwar 50 km entfernt — dafür mit echter Mittelstands-Erfahrung und einer Liebe zu detailverliebten Projekten. Termine vor Ort sind selbstverständlich möglich.",
     localContext:
-      "Hameln ist mit knapp 57.000 Einwohnern die größte Stadt im Weserbergland und zugleich Rattenfänger-Tourismus-Stadt Nummer eins: jährlich kommen Hunderttausende für Open-Air-Spiele, Altstadt-Bummel und Weserrundfahrt. Für Hotels, Gastronomen, Souvenir-Händler und Tagungs-Veranstalter heißt das: Sichtbarkeit auf Google Maps ist überlebenswichtig, weil viele Besucher die Stadt erst auf der Anfahrt googeln. Daneben gibt's eine starke industrielle Basis (Continental, KSB), die regelmäßig B2B-Webdesign braucht — Karriereseiten, Produkt-Mikro-Sites, Investor-Relations.",
+      "Hameln ist mit rund 58.000 Einwohnern die größte Stadt im Weserbergland und zugleich Rattenfänger-Tourismus-Stadt Nummer eins: jährlich kommen Hunderttausende für Open-Air-Spiele, Altstadt-Bummel und Weserrundfahrt. Für Hotels, Gastronomen, Souvenir-Händler und Tagungs-Veranstalter heißt das: Sichtbarkeit auf Google Maps ist überlebenswichtig, weil viele Besucher die Stadt erst auf der Anfahrt googeln. Daneben gibt's eine starke industrielle Basis mit Arbeitgebern wie Siegfried, Volvo Construction Equipment und Reintjes, dazu viele Zulieferer, die B2B-Websites brauchen: Karriereseiten, Produktseiten, Fachkräfte-Recruiting.",
     localFAQs: [
       {
         question: "Warum eine Webagentur aus Sachsenhagen statt direkt aus Hameln?",
-        answerHtml: `Drei Gründe — auch wenn die Anfahrt 50 Minuten dauert: 1) Wir haben mit Hamelner Mittelständlern und Tourismus-Betrieben seit über 10 Jahren regelmäßig gearbeitet. 2) Unsere Preise sind oft niedriger als die der spezialisierten Hamelner Agenturen, weil wir nicht im Tourismus-Quadrat sitzen. 3) Bei größeren Projekten kommen wir gerne in Tagespaketen vor Ort, das ist effizienter als wöchentliche 30-Minuten-Termine.`,
+        answerHtml: `Die Anfahrt dauert rund 50 Minuten, trotzdem spricht einiges für uns: Wir bauen seit 2008 Websites und Onlineshops für kleine und mittlere Betriebe. Du sprichst direkt mit den Menschen, die deine Website bauen, ohne Projektmanager dazwischen. Und weil wir klein sind, kalkulieren wir ohne den Overhead einer großen Agentur. Bei größeren Projekten kommen wir gern für einen ganzen Tag vorbei. Das bringt mehr als jede Woche ein 30-Minuten-Termin.`,
       },
       {
         question: "Habt ihr Erfahrung mit Hamelner Tourismus- und Altstadt-Geschäften?",
@@ -316,7 +316,7 @@ export const cities: City[] = [
       },
       {
         question: "Wie häufig kommt ihr für Vor-Ort-Termine nach Hameln?",
-        answerHtml: `Bei laufenden Projekten in Hameln planen wir typischerweise alle 4-6 Wochen einen halben Tag vor Ort — entweder bei dir oder in einem unserer Lieblings-Cafés in der Altstadt. Für Erstgespräche und Strategie-Workshops bieten wir auch Komplett-Tagesblöcke an, dann lohnt sich die Anfahrt für beide Seiten richtig.`,
+        answerHtml: `Bei laufenden Projekten in Hameln planen wir typischerweise alle 4-6 Wochen einen halben Tag vor Ort — entweder bei dir oder in einem Café in der Altstadt. Für Erstgespräche und Strategie-Workshops bieten wir auch Komplett-Tagesblöcke an, dann lohnt sich die Anfahrt für beide Seiten richtig.`,
       },
     ],
   },

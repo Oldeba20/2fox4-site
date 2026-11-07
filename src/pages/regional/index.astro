@@ -7,6 +7,14 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import Breadcrumb from "../../components/Breadcrumb.astro";
 import CTASection from "../../components/CTASection.astro";
 import { cities } from "../../data/cities";
+import { serviceCities } from "../../data/service-cities";
+
+// Fachseiten je Stadt (SEO / WordPress), gruppiert nach Leistung.
+const localGroups = [
+  { key: "seo", label: "SEO & lokale Auffindbarkeit", prefix: "SEO" },
+  { key: "wordpress", label: "WordPress-Entwicklung & Service", prefix: "WordPress" },
+].map((g) => ({ ...g, pages: serviceCities.filter((sc) => sc.service === g.key) }))
+ .filter((g) => g.pages.length > 0);
 import { breadcrumbSchema } from "../../lib/schema";
 
 const title = "Webagentur für 12 Städte rund um Schaumburg & Hannover | 2FOX4";
@@ -75,6 +83,36 @@ const schema = breadcrumbSchema([
               </svg>
             </div>
           </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="border-t border-[var(--color-border)] py-16">
+    <div class="container-content">
+      <div class="mb-3.5 text-xs uppercase tracking-[0.16em] text-[var(--color-accent)]">
+        Für deine Stadt
+      </div>
+      <h2 class="mb-8 max-w-[760px] text-[clamp(24px,3vw,36px)] font-bold tracking-[-0.02em] leading-[1.15]">
+        SEO und WordPress in deiner Stadt.
+      </h2>
+      <div class="grid gap-10 md:grid-cols-2">
+        {localGroups.map((g) => (
+          <div>
+            <h3 class="mb-4 text-[17px] font-semibold tracking-[-0.01em]">{g.label}</h3>
+            <ul class="flex flex-wrap gap-2.5">
+              {g.pages.map((lp) => (
+                <li>
+                  <a
+                    href={`/${lp.slug}/`}
+                    class="inline-flex items-center rounded-lg border border-[var(--color-border)] bg-[var(--color-bg-card)] px-4 py-2.5 text-[15px] transition-colors hover:border-[var(--color-border-strong)] hover:text-[var(--color-accent)]"
+                  >
+                    {g.prefix} {lp.city}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
         ))}
       </div>
     </div>

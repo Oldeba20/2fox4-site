@@ -461,12 +461,12 @@ export const serviceCities: ServiceCity[] = [
       "Hameln ist die größte Stadt im Weserbergland — und ein Markt, in dem Tourismus und Industrie völlig unterschiedliche Suchen erzeugen. Ein Hotel an der Altstadt braucht etwas anderes als ein Zulieferer im Gewerbegebiet. Wir sortieren das, statt beiden dieselbe Maßnahmenliste zu verkaufen.",
     seoTitle: "SEO Agentur Hameln: lokale Suchmaschinen-Optimierung",
     seoDescription:
-      "SEO für Hameln: lokale Rankings, Google-Business-Profil, technisches SEO. Für Tourismus, Handel und Industrie im Weserbergland. BAFA-gefördert.",
+      "SEO für Hameln: lokale Rankings, Google-Business-Profil, technisches SEO. Für Tourismus, Handel und Industrie im Weserbergland. BAFA-förderfähig.",
     sections: [
       {
         eyebrow: "Zwei Märkte in einer Stadt",
         headline: "Der Tagesgast und der Einkäufer suchen nicht dasselbe.",
-        body: `<p>Hameln hat knapp 57.000 Einwohner und zwei Wirtschaftswelten, die sich im Suchverhalten kaum berühren. Auf der einen Seite der Rattenfänger-Tourismus: Besucher, die Hotel, Restaurant oder Ausflugsziel oft erst auf der Anfahrt googeln, meist mobil und über Google Maps. Auf der anderen Seite eine industrielle Basis mit Namen wie Continental und KSB, deren Zulieferer nach Produktbegriffen und Fachkräften gefunden werden müssen.</p>
+        body: `<p>Hameln hat rund 58.000 Einwohner und zwei Wirtschaftswelten, die sich im Suchverhalten kaum berühren. Auf der einen Seite der Rattenfänger-Tourismus: Besucher, die Hotel, Restaurant oder Ausflugsziel oft erst auf der Anfahrt googeln, meist mobil und über Google Maps. Auf der anderen Seite die Industrie mit Arbeitgebern wie Siegfried, Volvo Construction Equipment und Reintjes, dazu viele Zulieferer, die über ihre Produktbegriffe gefunden werden wollen. Und fast alle suchen Fachkräfte.</p>
 <p>Für die erste Gruppe entscheidet sich fast alles im lokalen Kartenpaket: Google-Business-Profil, Bewertungen, korrekte Öffnungszeiten, schnelle mobile Seite. Für die zweite zählt etwas anderes — Produktseiten, die die richtigen Fachbegriffe treffen, und eine Karriereseite, die bei „Techniker Hameln“ auftaucht.</p>`,
         bullets: [
           "Google-Business-Profil für Altstadt-Betriebe",
@@ -480,14 +480,20 @@ export const serviceCities: ServiceCity[] = [
       {
         eyebrow: "Warum diese Seite existiert",
         headline: "Weil die Suchen längst da waren — nur die passende Seite fehlte.",
-        body: `<p>Ein Blick in unsere eigene Search Console: In den letzten 90 Tagen entfielen rund 800 Einblendungen auf Hamelner SEO-Suchen — „seo hameln“, „seo agentur hameln“, „suchmaschinenoptimierung hameln“. Wer daraufhin klickte, landete auf unserer Webdesign-Seite für Hameln. Und wer nach SEO sucht und eine Webdesign-Überschrift sieht, klickt weiter.</p>
+        body: `<p>Ein Blick in unsere eigene Search Console im Sommer 2026: In 90 Tagen entfielen rund 800 Einblendungen auf Hamelner SEO-Suchen — „seo hameln“, „seo agentur hameln“, „suchmaschinenoptimierung hameln“. Wer daraufhin klickte, landete auf unserer Webdesign-Seite für Hameln. Und wer nach SEO sucht und eine Webdesign-Überschrift sieht, klickt weiter.</p>
 <p>Das ist übrigens genau die Diagnose, die wir auch für Kunden stellen: Nicht fehlende Sichtbarkeit ist das Problem, sondern eine Seite, die etwas anderes verspricht als das, wonach gesucht wurde. Bei uns selbst haben wir es jetzt korrigiert.</p>`,
+      },
+      {
+        eyebrow: "So fangen wir an",
+        headline: "Erst schauen, wofür Google deinen Betrieb heute schon zeigt.",
+        body: `<p>Bevor wir etwas ändern, sehen wir uns an, wo du stehst: Für welche Suchen erscheinst du schon, auf welcher Position, mit welcher Seite? Wie ist dein Google-Business-Profil eingerichtet, und wer steht in Hameln bei deinen wichtigsten Begriffen vor dir? Oft zeigt sich dabei dasselbe Muster wie oben bei uns: Die Nachfrage ist da, aber Google zeigt eine Seite, die nicht zur Suche passt. Manchmal steht auch einfach das Profil in der falschen Hauptkategorie.</p>
+<p>Daraus entsteht ein Maßnahmenplan mit klarer Reihenfolge: zuerst das, was schnell wirkt, danach das, was Zeit braucht. Den Plan bekommst du schriftlich. Umsetzen kannst du ihn mit uns, mit einer anderen Agentur oder selbst.</p>`,
       },
     ],
     faq: [
       {
         question: "Warum eine SEO-Agentur aus Sachsenhagen und nicht aus Hameln?",
-        answerHtml: `Ehrliche Antwort: Wegen der Anfahrt gibt es Argumente für eine Hamelner Agentur. Unsere: Wir arbeiten seit 2008 regelmäßig für Betriebe im Weserbergland, wir kalkulieren ohne Agentur-Overhead, und du sprichst direkt mit dem Menschen, der die Arbeit macht. Vor-Ort-Termine legen wir auf Tagesblöcke — bei 50 Minuten Fahrt lohnt sich das für beide mehr als halbstündige Häppchen.`,
+        answerHtml: `Ehrliche Antwort: Wegen der Anfahrt gibt es Argumente für eine Hamelner Agentur. Für uns spricht: Wir arbeiten seit 2008 für kleine und mittlere Betriebe, wir kalkulieren ohne den Overhead einer großen Agentur, und du sprichst direkt mit dem Menschen, der die Arbeit macht. Vor-Ort-Termine bündeln wir lieber zu einem ganzen Tag. Bei 50 Minuten Anfahrt bringt das beiden Seiten mehr als ein kurzer Termin zwischendurch.`,
       },
       {
         question: "Welche Hamelner Branchen profitieren am meisten von lokaler SEO?",
@@ -495,7 +501,7 @@ export const serviceCities: ServiceCity[] = [
       },
       {
         question: "Was kostet SEO für ein Hamelner Unternehmen?",
-        answerHtml: `Audit und Maßnahmenplan: <strong>800 € netto</strong> einmalig. Laufende Betreuung ab <strong>200 € / Monat</strong>. Projekte mit mehrsprachigem Content oder Karriereseiten liegen meist bei <strong>400-600 € / Monat</strong>. Über die BAFA-Beratungsförderung sind je nach Fördergebiet und Unternehmensalter bis zu 80 % erstattungsfähig, sofern der Antrag bewilligt wird — den stellen wir für dich.`,
+        answerHtml: `Audit und Maßnahmenplan: <strong>800 € netto</strong> einmalig. Laufende Betreuung ab <strong>200 € netto / Monat</strong>. Projekte mit mehrsprachigem Content oder Karriereseiten liegen meist bei <strong>400-600 € netto / Monat</strong>. Über die BAFA-Beratungsförderung sind je nach Fördergebiet und Unternehmensalter bis zu 80 % der Beratungskosten erstattungsfähig, sofern der Antrag bewilligt wird. Die laufende Betreuung ist nicht förderfähig. Beim Antrag helfen wir dir.`,
       },
       {
         question: "Wie lange dauert es, bis ich in Hameln vorne stehe?",
@@ -504,6 +510,10 @@ export const serviceCities: ServiceCity[] = [
       {
         question: "Übernehmt ihr auch das Google-Business-Profil?",
         answerHtml: `Ja, auf Wunsch komplett: Einrichtung oder Übernahme, Kategorien, Leistungen, Fotos, Öffnungszeiten inklusive Feiertagen, Beiträge und die Antworten auf Bewertungen. Gerade bei Tourismus-Betrieben in Hameln wirkt das meist schneller als alles, was auf der Website passiert.`,
+      },
+      {
+        question: "Unsere Website hat eine andere Agentur gebaut. Könnt ihr trotzdem nur die SEO übernehmen?",
+        answerHtml: `Ja. Für SEO müssen wir deine Website nicht neu bauen. Wir brauchen Zugang zur Search Console und, je nach Maßnahme, zum Redaktionssystem. Technische Änderungen stimmen wir mit deiner Agentur ab, Inhalte und das Google-Business-Profil übernehmen wir direkt. Ist die technische Basis so schwach, dass SEO-Arbeit verpuffen würde, steht das im Audit, bevor laufende Kosten entstehen.`,
       },
     ],
   },
@@ -592,13 +602,13 @@ export const serviceCities: ServiceCity[] = [
       "Rintelner Unternehmen suchen lokale SEO-Partner — die meisten Agenturen sitzen in Hameln, Hannover oder Bielefeld und kennen den Rintelner Markt nur vom Vorbeifahren. Wir sind 30 km entfernt in Sachsenhagen, kennen das Weserbergland und bauen SEO, die für Rintelner Kunden funktioniert, nicht für ein Agentur-Portfolio.",
     seoTitle: "SEO Agentur Rinteln: lokale Suchmaschinen-Optimierung",
     seoDescription:
-      "Suchmaschinenoptimierung für Rinteln: lokale Rankings, Google Business, technische SEO. Persönlich, aus dem Weserbergland, seit 2008. BAFA-gefördert ab 800 € netto.",
+      "Suchmaschinenoptimierung für Rinteln: lokale Rankings, Google Business, technische SEO. Persönlich, aus dem Weserbergland, seit 2008. BAFA-förderfähig, Audit ab 800 € netto.",
     sections: [
       {
         eyebrow: "Rintelner SEO-Lage",
         headline: "Kleiner Markt, klare Suchen — und kaum lokale SEO-Konkurrenz.",
         body: `<p>Rinteln hat rund 25.000 Einwohner, eine sehenswerte Weserrenaissance-Altstadt, Tourismus an der Weser und einen soliden Mix aus Handwerk, Einzelhandel und Mittelstand. Genau dieser Zuschnitt ist aus SEO-Sicht dankbar: Die Suchen sind konkret und lokal („… Rinteln“), das Volumen reicht für echte Anfragen, und es gibt kaum Agenturen, die sich gezielt um den Rintelner Markt kümmern.</p>
-<p>Unsere Search-Console-Daten (Mai 2026) zeigen genau das: Begriffe wie „seo rinteln“, „suchmaschinenoptimierung rinteln“ und „seo optimierung rinteln“ tauchen regelmäßig auf — bislang ohne eigene Rintelner Seite, weshalb dafür nur die Startseite rankte. Diese Lücke schließt diese Seite.</p>`,
+<p>Gesucht wird trotzdem: In unserer eigenen Search Console tauchen Suchen wie „seo agentur rinteln“, „seo rinteln“ und „suchmaschinenoptimierung rinteln“ regelmäßig auf, zusammen mehrere Hundert Einblendungen pro Quartal. Wer sie bedienen will, braucht eine Seite, die genau diese Leistung für genau diesen Ort erklärt, und keine Startseite, auf der SEO eine von zehn Leistungen ist.</p>`,
         bullets: [
           "Rintelner Google-Business-Profile-Optimierung",
           "Local-Pack-Optimierung Rinteln + Weserbergland",
@@ -614,6 +624,12 @@ export const serviceCities: ServiceCity[] = [
         body: `<p>Für die meisten Rintelner Betriebe geht es nicht um abstrakte Reichweite, sondern um die handfeste lokale Suche: Wer „Heizung Rinteln“, „Steuerberater Rinteln“ oder „Friseur Rinteln“ googelt, soll dich finden — und zwar oben, im lokalen Drei-Pack mit Karte. Das entscheidet sich über ein sauberes Google-Business-Profil, konsistente Adressdaten (NAP), Bewertungen und eine Website, die mobil schnell lädt.</p>
 <p>Wir bauen genau diesen Unterbau auf und ergänzen ihn um Inhalte zu deinen konkreten Leistungen. Kein SEO-Theater, sondern messbar mehr qualifizierte Anfragen aus Rinteln und dem Umland.</p>`,
       },
+      {
+        eyebrow: "Rinteln ist mehr als die Altstadt",
+        headline: "Wer in Exten oder Steinbergen sucht, tippt oft trotzdem „Rinteln“.",
+        body: `<p>Zu Rinteln gehören neben der Kernstadt viele Ortsteile, von Steinbergen über Exten und Krankenhagen bis Möllenbeck. Für lokale SEO heißt das: Dein Einzugsgebiet ist größer als die Kernstadt, und viele Kunden aus den Ortsteilen suchen mit dem Stadtnamen.</p>
+<p>Wir richten dein Google-Business-Profil auf das Gebiet aus, das du tatsächlich bedienst, und nennen Ortsteile dort, wo sie für Kunden einen Unterschied machen, etwa bei Anfahrt oder Notdienst. Seiten, die nur aus aneinandergereihten Ortsnamen bestehen, bauen wir nicht. Google erkennt das, und deine Kunden auch.</p>`,
+      },
     ],
     faq: [
       {
@@ -626,7 +642,7 @@ export const serviceCities: ServiceCity[] = [
       },
       {
         question: "Was kostet SEO für ein Rintelner Unternehmen?",
-        answerHtml: `Audit + Maßnahmenplan: <strong>800 € netto</strong> einmalig. Laufende Betreuung ab <strong>200 € / Monat</strong>. Über die BAFA-Förderung „Förderung unternehmerischen Know-hows“ sind bis zu 80 % der Beratung erstattungsfähig — den Antrag machen wir für dich.`,
+        answerHtml: `Audit + Maßnahmenplan: <strong>800 € netto</strong> einmalig. Laufende Betreuung ab <strong>200 € netto / Monat</strong>. Über die BAFA-Förderung „Förderung unternehmerischen Know-hows“ sind je nach Fördergebiet und Unternehmensalter bis zu 80 % der Beratungskosten erstattungsfähig, sofern der Antrag bewilligt wird. Die laufende Betreuung ist nicht förderfähig. Beim Antrag helfen wir dir.`,
       },
       {
         question: "Wie lange dauert es, bis ich in Rinteln vorne stehe?",

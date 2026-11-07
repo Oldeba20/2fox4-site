@@ -11,6 +11,7 @@ import AppCard from "../../components/AppCard.astro";
 import MonitorCard from "../../components/MonitorCard.astro";
 import { referenceBySlug, refCategoryLabel, type Reference } from "../../data/references";
 import { services, type Service } from "../../data/services";
+import { serviceCities, type ServiceCity } from "../../data/service-cities";
 import { breadcrumbSchema, faqSchema, serviceSchema } from "../../lib/schema";
 
 export async function getStaticPaths() {
@@ -43,6 +44,17 @@ const serviceTypeMap: Record<string, string> = {
   "barrierefreie-website": "Accessibility Compliance Service",
   "print-design": "Graphic Design Service",
 };
+
+// Orts-Seiten zu dieser Leistung (z. B. /seo-hameln/ auf /leistungen/seo/).
+// Interne Links vom Leistungs-Hub auf die Stadt-Fachseiten, damit Google
+// sie findet und als zugehörig einordnet (GSC-Kontrolle 07.11.2026).
+const serviceCityMap: Record<string, { service: ServiceCity["service"]; headline: string }> = {
+  seo: { service: "seo", headline: "SEO und lokale Auffindbarkeit in deiner Stadt." },
+};
+const localCfg = serviceCityMap[service.slug];
+const localPages = localCfg
+  ? serviceCities.filter((sc) => sc.service === localCfg.service)
+  : [];
 
 // Referenzkarten auf der Leistungsseite (optional, aus services.ts → references)
 const serviceRefs = (service.references ?? [])
@@ -174,6 +186,42 @@ const schema = [
       </div>
     </section>
   ))}
+
+  {localPages.length > 0 && (
+    <section class="border-t border-[var(--color-border)] py-16">
+      <div class="container-content">
+        <div class="mb-3.5 text-xs uppercase tracking-[0.16em] text-[var(--color-accent)]">
+          In deiner Region
+        </div>
+        <h2 class="mb-4 max-w-[760px] text-[clamp(24px,3vw,36px)] font-bold tracking-[-0.02em] leading-[1.15]">
+          {localCfg?.headline}
+        </h2>
+        <p class="mb-8 max-w-[760px] text-[17px] leading-[1.7] text-[var(--color-text-muted)]">
+          Jede Stadt hat ihre eigenen Suchen und ihre eigene Konkurrenz. Für diese Städte haben wir aufgeschrieben, worauf es jeweils ankommt.
+        </p>
+        <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {localPages.map((lp) => (
+            <a
+              href={`/${lp.slug}/`}
+              class="group flex items-center justify-between gap-4 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-card)] p-6 transition-colors hover:border-[var(--color-border-strong)]"
+            >
+              <div>
+                <h3 class="mb-1 text-[17px] font-semibold tracking-[-0.01em]">
+                  {lp.service === "seo" ? "SEO" : "WordPress"} {lp.city}
+                </h3>
+                <p class="text-sm leading-[1.6] text-[var(--color-text-muted)]">
+                  {lp.distanceKm} km von Sachsenhagen
+                </p>
+              </div>
+              <svg class="h-5 w-5 flex-shrink-0 text-[var(--color-accent)] transition-transform group-hover:translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
 
   {serviceRefs.length > 0 && (
     <section class="border-t border-[var(--color-border)] py-20">
