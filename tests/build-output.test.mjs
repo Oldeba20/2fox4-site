@@ -23,10 +23,10 @@ test("keine verschachtelten <a> (Karten zerfallen sonst im Browser)", { skip: !h
 });
 
 test("JSON-LD auf den neuen Seiten ist gültig, Apps mit MobileApplication", { skip: !has }, () => {
-  for (const p of ["leistungen/app-entwicklung/index.html", "referenzen/eulenwart/index.html", "referenzen/events-schaumburg-app/index.html"]) {
+  for (const p of ["leistungen/app-entwicklung/index.html", "referenzen/eulenwart-app/index.html", "referenzen/events-schaumburg-app/index.html", "referenzen/eulenwart/index.html", "referenzen/lumioart/index.html"]) {
     const blocks = [...html(p).matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)].map((m) => JSON.parse(m[1]));
     assert.ok(blocks.length > 0, p);
-    if (p.startsWith("referenzen/")) assert.ok(blocks.flat().some((b) => b["@type"] === "MobileApplication"), p);
+    if (/-app\//.test(p)) assert.ok(blocks.flat().some((b) => b["@type"] === "MobileApplication"), p);
   }
 });
 

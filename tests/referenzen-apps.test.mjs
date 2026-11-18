@@ -55,15 +55,40 @@ test("related verweist auf vorhandene Case Studies", () => {
   for (const r of references) for (const s of r.related ?? []) assert.ok(featured.has(s), `${r.slug} → ${s}`);
 });
 
-test("Eulenwart ersetzt Verein Buddy, App-Referenzen vorhanden", () => {
+test("Eulenwart: Website und App als getrennte Referenzen, Verein Buddy weg", () => {
   assert.equal(references.find((r) => r.slug === "verein-buddy"), undefined);
-  const ew = references.find((r) => r.slug === "eulenwart");
+  const web = references.find((r) => r.slug === "eulenwart");
+  const app = references.find((r) => r.slug === "eulenwart-app");
   const es = references.find((r) => r.slug === "events-schaumburg-app");
-  assert.equal(ew?.category, "apps");
-  assert.deepEqual(ew?.alsoIn, ["websites"]);
+  assert.equal(web?.category, "websites");
+  assert.equal(web?.app, undefined);
+  assert.equal(app?.category, "apps");
+  assert.equal(app?.alsoIn, undefined);
   assert.equal(es?.category, "apps");
-  assert.ok(ew.featured && es.featured);
+  assert.ok(web.featured && app.featured && es.featured);
+  assert.deepEqual(web.related, ["eulenwart-app"]);
+  assert.deepEqual(app.related, ["eulenwart"]);
   assert.doesNotMatch(JSON.stringify(references), /Verein Buddy|verein-buddy/);
+});
+
+test("Jede App steht direkt hinter ihrer Website", () => {
+  const idx = (slug) => references.findIndex((r) => r.slug === slug);
+  assert.equal(idx("eulenwart-app"), idx("eulenwart") + 1);
+  assert.equal(idx("events-schaumburg-app"), idx("events-schaumburg") + 1);
+  for (const [i, r] of references.entries()) {
+    if (r.category !== "apps") continue;
+    const prev = references[i - 1];
+    assert.ok(prev && (r.related ?? []).includes(prev.slug), `${r.slug} steht nicht hinter seiner Website`);
+  }
+});
+
+test("Lumioart ist als neueste Referenz angelegt", () => {
+  const l = references[0];
+  assert.equal(l.slug, "lumioart");
+  assert.equal(l.category, "onlineshops");
+  assert.equal(l.liveUrl, "https://lumioart.de");
+  assert.match(l.meta, /Onlineshop/);
+  assert.ok(l.featured && l.story && (l.mobileShots ?? []).length >= 2);
 });
 
 test("Zähler berücksichtigen alsoIn", () => {
@@ -77,6 +102,8 @@ test("Zähler berücksichtigen alsoIn", () => {
 test("Leistung App-Entwicklung existiert und verlinkt gültige Referenzen", () => {
   const s = services.find((x) => x.slug === "app-entwicklung");
   assert.ok(s, "Service fehlt");
+  assert.deepEqual(s.references, ["events-schaumburg-app", "eulenwart-app"]);
+  assert.doesNotMatch(JSON.stringify(s), /\/referenzen\/eulenwart\//);
   const featured = new Set(featuredReferences().map((r) => r.slug));
   assert.ok((s.references ?? []).length >= 2);
   for (const slug of s.references) assert.ok(featured.has(slug), slug);

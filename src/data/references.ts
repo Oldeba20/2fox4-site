@@ -100,9 +100,71 @@ export interface Reference {
 
 export const references: Reference[] = [
   {
+    slug: "lumioart",
+    category: "onlineshops",
+    domain: "lumioart.de",
+    image: "/images/referenzen/lumioart.jpg",
+    mobileImage: "/images/referenzen/lumioart-mobile",
+    mobileShots: [
+      { image: "/images/referenzen/lumioart-mobile-gedenktafel", label: "Produktseite Gedenktafel" },
+      { image: "/images/referenzen/lumioart-mobile-gestalter", label: "Gestalter mit Live-Vorschau" },
+    ],
+    date: "2026",
+    title: "Lumioart",
+    meta: "Astro · Onlineshop",
+    liveUrl: "https://lumioart.de",
+    featured: true,
+    story: {
+      challenge:
+        "Lumioart ist unser eigener Shop für personalisierte Unikate aus Sachsenhagen. Im Mittelpunkt stehen Gedenktafeln und Grabmarkierungen aus Naturschiefer, in die wir das Foto eines verstorbenen Tieres lasern. Wer so ein Stück bestellt, möchte vorher genau wissen, wie es aussehen wird. Und die meisten Besucher kommen über Facebook und Instagram, also vom Handy.",
+      solution:
+        "Im Gestalter lädt man ein Foto hoch und gibt Name, Daten und Text ein. Die Live-Vorschau zeigt die Tafel maßstabsgetreu, den Hintergrund des Fotos entfernt der Gestalter direkt im Browser. Am Handy geht das Schritt für Schritt. Wer eine Gedenktafel in den Warenkorb legt, kann mit einem Klick die passende Grabmarkierung mit demselben Motiv dazulegen.\n\nSelbst gebaut haben wir auch die Kasse (PayPal und Vorkasse), Gutscheine, Bewertungen mit Kundenfotos und eine Besucherstatistik ohne Cookies. Bestellungen landen automatisch in der Warenwirtschaft, für Google Shopping gibt es einen täglich aktualisierten Produktfeed. Dazu kommen Themenseiten für Hunde, Katzen und Kleintiere, Ratgeberartikel und eine Landingpage für Werbeanzeigen.",
+      outcome:
+        "Lumioart ist im November 2026 gestartet. Jede Bestellung wird einzeln bei uns graviert. Für die sozialen Netzwerke haben wir Reels produziert.",
+      scope: [
+        "Shop-Konzept & Design",
+        "Gestalter mit Live-Vorschau",
+        "Freistellen im Browser",
+        "Kasse mit PayPal & Vorkasse",
+        "Google-Shopping-Feed",
+        "Reels & Anzeigen",
+      ],
+      liveUrl: "https://lumioart.de",
+    },
+  },
+  {
     slug: "eulenwart",
+    category: "websites",
+    domain: "eulenwart.de",
+    image: "/images/referenzen/eulenwart.jpg",
+    mobileImage: "/images/referenzen/eulenwart-web-mobile",
+    mobileShots: [
+      { image: "/images/referenzen/eulenwart-web-mobile-ki", label: "KI-Assistent zum Ausprobieren" },
+      { image: "/images/referenzen/eulenwart-web-mobile-anleitungen", label: "Erklärvideos" },
+    ],
+    date: "2026",
+    title: "Eulenwart",
+    meta: "Produkt-Website & Web-App · Vereinsverwaltung",
+    liveUrl: "https://eulenwart.de",
+    related: ["eulenwart-app"],
+    featured: true,
+    story: {
+      challenge:
+        "In vielen Vereinen verteilen sich die Unterlagen auf private Postfächer und lose Listen. Mit jedem Vorstandswechsel geht Wissen verloren: Wo liegt der Mietvertrag fürs Vereinsheim, wer hat die Rechnung der Druckerei freigegeben? Deshalb haben wir Eulenwart entwickelt, eine Vereinsverwaltung mit KI. Die Website sollte Vorständen zeigen, wie die Arbeit damit im Alltag aussieht, ohne dass sie sich erst anmelden müssen.",
+      solution:
+        "Auf eulenwart.de lässt sich alles direkt ausprobieren: Dokumente in den Eingangskorb ziehen, dem KI-Assistenten Eule Beispielfragen stellen und die Antworten samt Quelle lesen. Ein Erklärvideo zeigt die Software in 100 Sekunden. Anleitungen und Ratgeberartikel für Vorstände ergänzen wir laufend. Die Preise stehen offen auf der Seite, gestaffelt nach Mitgliederzahl. Ein Kasten „Auf einen Blick“ fasst das Wichtigste so zusammen, dass auch KI-Suchmaschinen es sauber wiedergeben können.\n\nDahinter steht die Web-App für den Vorstand: Mitglieder, Beiträge und Lastschriften, ein Eingangskorb für Belege, Rechnungsfreigaben nach dem Vier-Augen-Prinzip, Budget, Termine und Online-Abstimmungen.",
+      outcome:
+        "Website und Web-App laufen seit Oktober 2026. Vereine können Eulenwart 14 Tage kostenlos testen, ohne Zahlungsdaten anzugeben.",
+      scope: ["Produktkonzept", "Marke & Logo", "Website mit Mitmach-Demo", "Erklärvideos & Ratgeber", "Web-App für den Vorstand", "KI-Assistent mit Quellen"],
+      extraImages: [
+        { src: "/images/referenzen/eulenwart-webapp.jpg", alt: "Übersicht der Eulenwart-Web-App im Demoverein", caption: "Die Web-App für den Vorstand, hier im Demoverein mit erfundenen Daten" },
+      ],
+      liveUrl: "https://eulenwart.de",
+    },
+  },
+  {
+    slug: "eulenwart-app",
     category: "apps",
-    alsoIn: ["websites"],
     domain: "eulenwart.de",
     image: "/images/referenzen/eulenwart.jpg",
     mobileImage: "/images/referenzen/eulenwart-mobile",
@@ -112,62 +174,24 @@ export const references: Reference[] = [
       { image: "/images/referenzen/eulenwart-mobile-rechnung", label: "Rechnung freigeben" },
     ],
     date: "2026",
-    title: "Eulenwart",
-    meta: "iOS, Android & Web-App · Vereinsverwaltung",
-    liveUrl: "https://eulenwart.de",
+    title: "Eulenwart App",
+    meta: "iOS & Android · Vereinsverwaltung",
     app: {
       ios: "https://apps.apple.com/de/app/eulenwart-vereinssoftware/id6828592697",
       android: "https://play.google.com/store/apps/details?id=de.eulenwart.app",
       icon: "/images/referenzen/eulenwart-app-icon.png",
       schemaCategory: "BusinessApplication",
     },
+    related: ["eulenwart"],
     featured: true,
     story: {
       challenge:
-        "In vielen Vereinen verteilen sich die Unterlagen auf private Postfächer und lose Listen. Mit jedem Vorstandswechsel geht Wissen verloren: Wo liegt der Mietvertrag fürs Vereinsheim, wer hat die Rechnung der Druckerei freigegeben, wer hat seinen Beitrag schon bezahlt? Deshalb haben wir Eulenwart entwickelt, eine Vereinsverwaltung mit KI, die solche Fragen an einer Stelle beantwortet.",
+        "Mit der Web-App von Eulenwart arbeitet der Vorstand am Rechner. Vieles im Verein passiert aber unterwegs: Eine Rechnung kommt rein, ein Termin fällt aus, eine Abstimmung läuft ab. Also haben wir Eulenwart auch als App für iPhone und Android gebaut, für den Vorstand und für die Mitglieder.",
       solution:
-        "Eulenwart besteht aus der Web-App für den Vorstand, der App fürs Handy und der Website mit Live-Demo. Alle drei haben wir selbst gebaut. Die Web-App ist das Arbeitszimmer des Vorstands: Mitglieder, Beiträge und Lastschriften, ein Eingangskorb für Belege, Rechnungsfreigaben nach dem Vier-Augen-Prinzip, Budget, Termine und Online-Abstimmungen. Der KI-Assistent „Eule“ beantwortet Fragen zum Verein und nennt dazu die Quelle.\n\nDie App für iPhone und Android bringt das Wichtigste aufs Handy: Termine mit Zu- und Absage, Abstimmungen, Rundmails, freigegebene Dokumente, den Mitgliedsausweis mit QR-Code und „Frag die Eule“. Vorstände fotografieren unterwegs einen Beleg oder geben eine Rechnung frei. Die App lässt sich mit Face ID oder Fingerabdruck sperren, Push-Nachrichten enthalten keine persönlichen Daten. Auf eulenwart.de können Interessierte alles in einer Demo ausprobieren, ohne sich anzumelden.",
+        "Die App bringt das Wichtigste aufs Handy: Termine mit Zu- und Absage, Abstimmungen, Rundmails, freigegebene Dokumente, den Mitgliedsausweis mit QR-Code und „Frag die Eule“. Vorstände fotografieren Belege gleich vor Ort oder geben Rechnungen frei. Die App arbeitet mit denselben Daten wie die Web-App.\n\nSie lässt sich mit Face ID oder Fingerabdruck absichern. Push-Nachrichten enthalten keine persönlichen Daten. Store-Einträge, Datenschutzangaben und die Einreichung bei Apple und Google haben wir ebenfalls übernommen.",
       outcome:
-        "Die Web-App läuft seit Oktober 2026, die Handy-App ist seit Anfang November im App Store und bei Google Play. Vereine können Eulenwart 14 Tage kostenlos testen.",
-      scope: ["Produktkonzept", "Marke & Logo", "Web-App", "iOS- & Android-App", "KI-Assistent mit Quellen", "Website mit Live-Demo"],
-      extraImages: [
-        { src: "/images/referenzen/eulenwart.jpg", alt: "Startseite von eulenwart.de am Desktop", caption: "Die Website eulenwart.de mit Live-Demo" },
-        { src: "/images/referenzen/eulenwart-webapp.jpg", alt: "Übersicht der Eulenwart-Web-App im Demoverein", caption: "Die Web-App für den Vorstand, hier im Demoverein mit erfundenen Daten" },
-      ],
-      liveUrl: "https://eulenwart.de",
-    },
-  },
-  {
-    slug: "events-schaumburg-app",
-    category: "apps",
-    domain: "events-schaumburg.de/app",
-    image: "/images/referenzen/events-schaumburg-app.jpg",
-    mobileImage: "/images/referenzen/events-schaumburg-app-mobile",
-    mobileShots: [
-      { image: "/images/referenzen/events-schaumburg-app-mobile-termin", label: "Termin mit Kalender und Route" },
-      { image: "/images/referenzen/events-schaumburg-app-mobile-naehe", label: "In der Nähe" },
-      { image: "/images/referenzen/events-schaumburg-app-mobile-merkliste", label: "Merkliste mit Erinnerung" },
-    ],
-    date: "2026",
-    title: "Events Schaumburg App",
-    meta: "iOS & Android · Veranstaltungs-App",
-    app: {
-      ios: "https://apps.apple.com/de/app/events-schaumburg/id6825075687",
-      android: "https://play.google.com/store/apps/details?id=de.eventsschaumburg.app",
-      icon: "/images/referenzen/events-schaumburg-app-icon.png",
-      qr: { image: "/images/badges/qr-events-schaumburg-app.svg", url: "https://events-schaumburg.de/app/?s=2fox4" },
-      schemaCategory: "LifestyleApplication",
-    },
-    related: ["events-schaumburg"],
-    featured: true,
-    story: {
-      challenge:
-        "Mit events-schaumburg.de gab es schon einen Kalender für den ganzen Landkreis. Am Handy wollten viele aber mehr als eine Website: Termine merken, rechtzeitig daran erinnert werden und schnell sehen, was in der Nähe los ist. Deshalb haben wir als Eigenprojekt eine App für iPhone und Android gebaut.",
-      solution:
-        "Die App kommt ohne Anmeldung aus und fragt beim ersten Start nur, welche Orte und Themen dich interessieren. Danach zeigt sie die Termine für heute, das Wochenende oder die nächsten sieben Tage, mit Suche und Schnellfiltern wie „Heute Abend“ oder „Eintritt frei“. Oben steht ein besonders gefragter Termin im Fokus; welcher das ist, ergibt sich automatisch aus den Suchanfragen der letzten zwei Wochen. „In der Nähe“ sortiert nach Entfernung, die Merkliste erinnert am Vortag und meldet Absagen. Mit einem Tipp landet ein Termin im Kalender, für die Route öffnet sich je nach Handy Apple Karten oder Google Maps.\n\nDie Termine kommen jeden Morgen frisch vom Server, neue Veranstaltungen erscheinen also ohne App-Update. Die App sammelt keine persönlichen Daten, der Standort bleibt auf dem Handy. Beide Versionen entstehen aus einer Codebasis. Store-Einträge, Datenschutzangaben und die Einreichung bei Apple und Google haben wir ebenfalls übernommen.",
-      outcome:
-        "Seit Ende Oktober 2026 ist die App kostenlos im App Store und bei Google Play. Auf events-schaumburg.de und events-stadthagen.de machen ein Menüpunkt, ein Hinweis am Handy und ein QR-Code am Desktop auf die App aufmerksam.",
-      scope: ["App-Konzept", "iOS & Android aus einer Codebasis", "Store-Einreichung bei Apple & Google", "Daten-Schnittstelle", "Erinnerungen & Kalender", "App-Hinweise auf den Websites"],
+        "Seit Anfang November 2026 steht die App im App Store und bei Google Play.",
+      scope: ["App-Konzept", "iOS- & Android-App", "Store-Einreichung bei Apple & Google", "Beleg per Kamera", "Schutz per Face ID & Fingerabdruck", "Push ohne persönliche Daten"],
     },
   },
   {
@@ -328,6 +352,39 @@ export const references: Reference[] = [
         "Kalender-Abo (ICS)",
       ],
       liveUrl: "https://events-schaumburg.de",
+    },
+  },
+  {
+    slug: "events-schaumburg-app",
+    category: "apps",
+    domain: "events-schaumburg.de/app",
+    image: "/images/referenzen/events-schaumburg-app.jpg",
+    mobileImage: "/images/referenzen/events-schaumburg-app-mobile",
+    mobileShots: [
+      { image: "/images/referenzen/events-schaumburg-app-mobile-termin", label: "Termin mit Kalender und Route" },
+      { image: "/images/referenzen/events-schaumburg-app-mobile-naehe", label: "In der Nähe" },
+      { image: "/images/referenzen/events-schaumburg-app-mobile-merkliste", label: "Merkliste mit Erinnerung" },
+    ],
+    date: "2026",
+    title: "Events Schaumburg App",
+    meta: "iOS & Android · Veranstaltungs-App",
+    app: {
+      ios: "https://apps.apple.com/de/app/events-schaumburg/id6825075687",
+      android: "https://play.google.com/store/apps/details?id=de.eventsschaumburg.app",
+      icon: "/images/referenzen/events-schaumburg-app-icon.png",
+      qr: { image: "/images/badges/qr-events-schaumburg-app.svg", url: "https://events-schaumburg.de/app/?s=2fox4" },
+      schemaCategory: "LifestyleApplication",
+    },
+    related: ["events-schaumburg"],
+    featured: true,
+    story: {
+      challenge:
+        "Mit events-schaumburg.de gab es schon einen Kalender für den ganzen Landkreis. Am Handy wollten viele aber mehr als eine Website: Termine merken, rechtzeitig daran erinnert werden und schnell sehen, was in der Nähe los ist. Deshalb haben wir als Eigenprojekt eine App für iPhone und Android gebaut.",
+      solution:
+        "Die App kommt ohne Anmeldung aus und fragt beim ersten Start nur, welche Orte und Themen dich interessieren. Danach zeigt sie die Termine für heute, das Wochenende oder die nächsten sieben Tage, mit Suche und Schnellfiltern wie „Heute Abend“ oder „Eintritt frei“. Oben steht ein besonders gefragter Termin im Fokus; welcher das ist, ergibt sich automatisch aus den Suchanfragen der letzten zwei Wochen. „In der Nähe“ sortiert nach Entfernung, die Merkliste erinnert am Vortag und meldet Absagen. Mit einem Tipp landet ein Termin im Kalender, für die Route öffnet sich je nach Handy Apple Karten oder Google Maps.\n\nDie Termine kommen jeden Morgen frisch vom Server, neue Veranstaltungen erscheinen also ohne App-Update. Die App sammelt keine persönlichen Daten, der Standort bleibt auf dem Handy. Beide Versionen entstehen aus einer Codebasis. Store-Einträge, Datenschutzangaben und die Einreichung bei Apple und Google haben wir ebenfalls übernommen.",
+      outcome:
+        "Seit Ende Oktober 2026 ist die App kostenlos im App Store und bei Google Play. Auf events-schaumburg.de und events-stadthagen.de machen ein Menüpunkt, ein Hinweis am Handy und ein QR-Code am Desktop auf die App aufmerksam.",
+      scope: ["App-Konzept", "iOS & Android aus einer Codebasis", "Store-Einreichung bei Apple & Google", "Daten-Schnittstelle", "Erinnerungen & Kalender", "App-Hinweise auf den Websites"],
     },
   },
   {

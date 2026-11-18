@@ -227,7 +227,7 @@ export const services: Service[] = [
     cardSummary:
       "Apps für iPhone und Android aus einer Codebasis: von der Idee über die Store-Prüfung bis zu Updates. Zwei eigene Apps sind live.",
     iconSvg: `<rect x="5" y="2" width="14" height="20" rx="2.5"/><path d="M11 18h2"/>`,
-    tldr: `<strong>Kurz gesagt:</strong> Wir entwickeln <strong>Apps für iPhone und Android aus einer gemeinsamen Codebasis</strong> und kümmern uns um alles, was dazugehört: Konzept, Gestaltung, Schnittstelle zu deinen Daten, Push-Nachrichten, Store-Einträge, Datenschutzangaben und die Einreichung bei Apple und Google. Danach bleiben wir dran, mit Updates und neuen Funktionen. Wie das aussieht, zeigen unsere eigenen Apps <a href="/referenzen/events-schaumburg-app/">Events Schaumburg</a> und <a href="/referenzen/eulenwart/">Eulenwart</a>.`,
+    tldr: `<strong>Kurz gesagt:</strong> Wir entwickeln <strong>Apps für iPhone und Android aus einer gemeinsamen Codebasis</strong> und kümmern uns um alles, was dazugehört: Konzept, Gestaltung, Schnittstelle zu deinen Daten, Push-Nachrichten, Store-Einträge, Datenschutzangaben und die Einreichung bei Apple und Google. Danach bleiben wir dran, mit Updates und neuen Funktionen. Wie das aussieht, zeigen unsere eigenen Apps <a href="/referenzen/events-schaumburg-app/">Events Schaumburg</a> und <a href="/referenzen/eulenwart-app/">Eulenwart</a>.`,
     sections: [
       {
         eyebrow: "Was du bekommst",
@@ -269,7 +269,7 @@ export const services: Service[] = [
         layout: "split",
       },
     ],
-    references: ["events-schaumburg-app", "eulenwart"],
+    references: ["events-schaumburg-app", "eulenwart-app"],
     faq: [
       {
         question: "Was kostet eine App?",
@@ -289,7 +289,7 @@ export const services: Service[] = [
       },
       {
         question: "Geht das auch datenschutzfreundlich?",
-        answerHtml: `Ja. Unsere eigenen Apps zeigen, wie: <a href="/referenzen/events-schaumburg-app/" class="text-[var(--color-accent)]">Events Schaumburg</a> kommt ohne Anmeldung und ohne Tracking aus, der Standort bleibt auf dem Handy. Bei <a href="/referenzen/eulenwart/" class="text-[var(--color-accent)]">Eulenwart</a> enthalten Push-Nachrichten keine persönlichen Daten. Die Angaben in den Stores (App-Datenschutz bei Apple, Datensicherheit bei Google) füllen wir passend zur App aus. Für deine Datenschutzerklärung liefern wir dir alle technischen Angaben.`,
+        answerHtml: `Ja. Unsere eigenen Apps zeigen, wie: <a href="/referenzen/events-schaumburg-app/" class="text-[var(--color-accent)]">Events Schaumburg</a> kommt ohne Anmeldung und ohne Tracking aus, der Standort bleibt auf dem Handy. Bei <a href="/referenzen/eulenwart-app/" class="text-[var(--color-accent)]">Eulenwart</a> enthalten Push-Nachrichten keine persönlichen Daten. Die Angaben in den Stores (App-Datenschutz bei Apple, Datensicherheit bei Google) füllen wir passend zur App aus. Für deine Datenschutzerklärung liefern wir dir alle technischen Angaben.`,
       },
     ],
   },
