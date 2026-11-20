@@ -119,7 +119,7 @@ Wenn du nach dem Update tatsächlich deutlich verloren hast, führt kein Weg an 
 
 **Wer, wie, warum.** Ist klar, wer den Inhalt erstellt hat, wie er entstanden ist, etwa mit KI-Unterstützung, und ob er in erster Linie Menschen helfen soll oder Suchmaschinen-Traffic einsammeln?
 
-Google empfiehlt außerdem, die eigene Website von Menschen bewerten zu lassen, die nicht an ihr beteiligt sind. Das klingt banal. In unserer Arbeit ist es aber eines der wirksamsten Werkzeuge. Wer jahrelang auf die eigenen Texte schaut, sieht nicht mehr, dass die Leistungsseite vor allem aus Floskeln besteht oder dass der Ratgeber von 2021 längst veraltet ist.
+Google empfiehlt außerdem, die eigene Website von Menschen bewerten zu lassen, die nicht an ihr beteiligt sind. Das klingt banal. In unserer Arbeit ist es aber eines der wirksamsten Werkzeuge. Wer jahrelang auf die eigenen Texte schaut, sieht nicht mehr, dass die Leistungsseite vor allem aus Floskeln besteht oder dass der Ratgeber von 2021 längst veraltet ist. Wie du dafür alle Seiten systematisch durchgehst, zeigen wir in unserer Anleitung [Content-Audit durchführen](/blog/content-audit-durchfuehren/).
 
 ## Wie das in der Praxis aussieht
 
